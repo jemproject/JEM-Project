@@ -21,6 +21,12 @@ require_once __DIR__ . '/../../helpers/calendaragenda.php';
  */
 class JemViewWeekcal extends JemView
 {
+    /** @var array Normalized model period shared with the templates. */
+    public array $calendarPeriod = [];
+
+    /** @var string ISO week caption, independent of Sunday-first display. */
+    public string $weekTitle = '';
+
     /**
      * Creates the Calendar View
      */
@@ -86,23 +92,10 @@ class JemViewWeekcal extends JemView
         $calendarScript = JPATH_ROOT . '/media/com_jem/js/calendar.js';
         $document->addScript($url . 'media/com_jem/js/calendar.js' . (is_file($calendarScript) ? '?v=' . filemtime($calendarScript) : ''));
 
-        $hasYear = $jinput->get('yearID', null) !== null;
-        $year  = (int)$jinput->getInt('yearID', date("o"));
-        $month  = (int)$jinput->getInt('monthID', date("m"));
-        $week = (int)$jinput->getInt('weekID', $this->get('Currentweek'));
-
-        // Adjustment of the ISO-8601 week number at the end or beginning of the year.
-        // Case 1: Late December days belonging to Week 1 of the NEXT year.
-        // Case 2: Early January days belonging to Week 52/53 of the PREVIOUS year.
-        
-        if (!$hasYear && $month == 12 && $week == 1) {
-            $year++;
-        } elseif (!$hasYear && $month == 1 && $week >= 52) {
-            $year--;
-        }
-
-        // get data from model and set the month
         $model = $this->getModel();
+        $period = $model->getCalendarPeriod();
+        $year = $period['year'];
+        $week = $period['week'];
         if (JemCalendarAgendaHelper::getWeekMode($params) === 'timetable') {
             $model->getState();
             $model->setLimit(0);
@@ -141,8 +134,8 @@ class JemViewWeekcal extends JemView
         $url_base = 'index.php?option=com_jem&view=weekcal' . $partItemid
             . '&mode=' . JemCalendarAgendaHelper::getWeekMode($params);
         $archive_link = Route::_($url_base . $partDate);
-        $nrweeks = max(1, (int) $params->get('nrweeks', 1));
-        $weekStart = (new \DateTimeImmutable())->setISODate($year, $week, 1);
+        $nrweeks = $period['weeks'];
+        $weekStart = $period['iso_start'];
         $weekEnd = $weekStart->modify('+' . ($nrweeks - 1) . ' weeks');
         $previousWeek = $weekStart->modify('-' . $nrweeks . ' weeks');
         $nextWeek = $weekStart->modify('+' . $nrweeks . ' weeks');
@@ -185,6 +178,8 @@ class JemViewWeekcal extends JemView
         $this->settings      = $settings;
         $this->permissions   = $permissions;
         $this->currentweek   = $week;
+        $this->calendarPeriod = $period;
+        $this->weekTitle     = $weekTitle;
         $this->cal           = $cal;
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
         $this->print_link    = $print_link;

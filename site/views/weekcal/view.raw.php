@@ -27,8 +27,10 @@ class JemViewWeekcal extends HtmlView
         $app       = Factory::getApplication();
         $jinput    = $app->input;
 
-        $year = (int)$jinput->getInt('yearID', date("Y"));
-        $week = (int)$jinput->getInt('weekID', $this->get('Currentweek'));
+        $model = $this->getModel();
+        $period = $model->getCalendarPeriod();
+        $year = $period['year'];
+        $week = $period['week'];
         $layout = $jinput->getCmd('layout', '');
 
         if ($layout === 'pdf') {
@@ -46,7 +48,8 @@ class JemViewWeekcal extends HtmlView
                 'jem-week-' . $year . str_pad((string) $week, 2, '0', STR_PAD_LEFT) . '.pdf',
                 $year,
                 $week,
-                $params
+                $params,
+                $period
             );
 
             return;

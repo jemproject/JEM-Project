@@ -19,6 +19,64 @@ class JemModelWeekcal extends JemModelEventslist
 {
     protected $_currentweek = null;
 
+    /** @var array|null One normalized ISO period for all consumers of this model. */
+    private ?array $calendarPeriod = null;
+
+    /**
+     * Resolve the requested ISO week and displayed date range once per request.
+     *
+     * Finite week overflow keeps PHP's ISO normalization (for example week zero).
+     * Unsupported years/ranges fall back to the current Joomla-local ISO week.
+     *
+     * @return array{year: int, week: int, iso_start: DateTimeImmutable, start: DateTimeImmutable,
+     *     end: DateTimeImmutable, weeks: int, first_weekday: int, today: string} Shared period.
+     */
+    public function getCalendarPeriod(): array
+    {
+        if ($this->calendarPeriod === null) {
+            $app = Factory::getApplication();
+            $params = $app->getParams();
+            $today = JemHelper::getJoomlaDate();
+            $now = new DateTimeImmutable($today);
+            $year = (int) $app->input->getInt('yearID', (int) $now->format('o'));
+            $week = (int) $app->input->getInt('weekID', (int) $now->format('W'));
+            $weeks = max(1, (int) $params->get('nrweeks', 1));
+            $firstWeekday = (int) $params->get('firstweekday', 1) === 0 ? 0 : 1;
+            if ($year < 1 || $year > 9999 || $week < -520000 || $week > 520000) {
+                $year = (int) $now->format('o');
+                $week = (int) $now->format('W');
+            }
+            // Avoid arithmetic overflow from an unsupported stored week count.
+            if ($weeks > 520000) {
+                $weeks = 1;
+            }
+            $isoStart = $now->setISODate($year, $week, 1);
+            $start = $firstWeekday === 0 ? $isoStart->modify('-1 day') : $isoStart;
+            $end = $start->modify('+' . ($weeks * 7 - 1) . ' days');
+            if ($start->format('Y') < 1 || $end->format('Y') > 9999) {
+                $isoStart = $now->setISODate((int) $now->format('o'), (int) $now->format('W'), 1);
+                $start = $firstWeekday === 0 ? $isoStart->modify('-1 day') : $isoStart;
+                $end = $start->modify('+' . ($weeks * 7 - 1) . ' days');
+                if ($end->format('Y') > 9999) {
+                    $weeks = 1;
+                    $end = $start->modify('+6 days');
+                }
+            }
+            $this->calendarPeriod = [
+                'year' => (int) $isoStart->format('o'),
+                'week' => (int) $isoStart->format('W'),
+                'iso_start' => $isoStart,
+                'start' => $start,
+                'end' => $end,
+                'weeks' => $weeks,
+                'first_weekday' => $firstWeekday,
+                'today' => $today,
+            ];
+        }
+
+        return $this->calendarPeriod;
+    }
+
     /**
      * Constructor
      */
@@ -39,11 +97,7 @@ class JemModelWeekcal extends JemModelEventslist
         $show_archived_events = (bool) $params->get('show_archived_events', 0);
         $this->show_archived_events = $show_archived_events;
         $startdayonly  = $params->get('show_only_start', false);
-        $numberOfWeeks = $params->get('nrweeks', '1');
-        $firstweekday  = $params->get('firstweekday', 1);
-        $now           = new DateTimeImmutable('now', new DateTimeZone(JemHelper::getJoomlaTimeZoneName()));
-        $year          = (int) $app->input->getInt('yearID', (int) $now->format('o'));
-        $week          = (int) $app->input->getInt('weekID', (int) $now->format('W'));
+        $period        = $this->getCalendarPeriod();
 
         # params
         $this->setState('params', $params);
@@ -58,14 +112,8 @@ class JemModelWeekcal extends JemModelEventslist
 
         #only select events within specified dates. (chosen weeknrs)
 
-        $datetime = new DateTime('now', new DateTimeZone(JemHelper::getJoomlaTimeZoneName()));
-        $datetime->setISODate($year, $week, 1);
-        if ((int) $firstweekday === 0) {
-            $datetime->modify('-1 day');
-        }
-        $filter_date_from = $datetime->format('Y-m-d');
-        $datetime->modify('+'.$numberOfWeeks.' weeks'.' -1 day'); // just to be compatible to php < 5.3 ;-)
-        $filter_date_to   = $datetime->format('Y-m-d');
+        $filter_date_from = $period['start']->format('Y-m-d');
+        $filter_date_to   = $period['end']->format('Y-m-d');
 
         $where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $this->_db->quote($filter_date_from) . ') >= 0';
         $this->setState('filter.calendar_from', $where);
@@ -186,20 +234,9 @@ class JemModelWeekcal extends JemModelEventslist
         $startdate = $this->getState('filter.date.from');
         $enddate   = $this->getState('filter.date.to');
         if (empty($startdate) || empty($enddate)) {
-            $firstweekday  = $params->get('firstweekday', 1); // 1 = Monday, 0 = Sunday
-            $numberOfWeeks = $params->get('nrweeks', '1');
-            $now           = new DateTimeImmutable('now', new DateTimeZone(JemHelper::getJoomlaTimeZoneName()));
-            $year          = (int) $app->input->getInt('yearID', (int) $now->format('o'));
-            $week          = (int) $app->input->getInt('weekID', (int) $now->format('W'));
-
-            $datetime = new DateTime('now', new DateTimeZone(JemHelper::getJoomlaTimeZoneName()));
-            $datetime->setISODate($year, $week, 1);
-            if ((int) $firstweekday === 0) {
-                $datetime->modify('-1 day');
-            }
-            $startdate = $datetime->format('Y-m-d');
-            $datetime->modify('+'.$numberOfWeeks.' weeks'.' -1 day'); // just to be compatible to php < 5.3 ;-)
-            $enddate   = $datetime->format('Y-m-d');
+            $period = $this->getCalendarPeriod();
+            $startdate = $period['start']->format('Y-m-d');
+            $enddate = $period['end']->format('Y-m-d');
         }
 
         foreach ($items as $index => $item) {
@@ -235,29 +272,14 @@ class JemModelWeekcal extends JemModelEventslist
     }
 
     /**
-     * Method to get the Currentweek
+     * Get the current ISO week in the configured Joomla timezone.
      *
-     * Info MYSQL WEEK
-     * @link https://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_week
+     * @return int Current ISO week, independent of the displayed first weekday.
      */
     public function getCurrentweek()
     {
         if (!isset($this->_currentweek)) {
-            $app = Factory::getApplication();
-            $params  = $app->getParams('com_jem');
-            $weekday = $params->get('firstweekday', 1); // 1 = Monday, 0 = Sunday
-
-            if ($weekday == 1) {
-                $number = 3; // Monday, with more than 3 days this year
-            } else {
-                $number = 6; // Sunday, with more than 3 days this year
-            }
-
-            $today =  Date("Y-m-d");
-            $query = 'SELECT WEEK(\''.$today.'\','.$number.')' ;
-
-            $this->_db->setQuery($query);
-            $this->_currentweek = $this->_db->loadResult();
+            $this->_currentweek = (int) (new DateTimeImmutable(JemHelper::getJoomlaDate()))->format('W');
         }
 
         return $this->_currentweek;
