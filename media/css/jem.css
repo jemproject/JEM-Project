@@ -243,6 +243,104 @@ div#jem .jem-search-filter-grid-two  { grid-template-columns: 1fr 1fr; margin-bo
     }
 }
 
+/* Search rows adapt to the available content width, including long option labels. */
+div#jem .jem-search-filter-primary {
+    align-items: end;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+div#jem .jem-search-filter-primary .form-control,
+div#jem .jem-search-filter-primary .form-select {
+    height: 2rem;
+    min-height: 2rem;
+}
+div#jem .jem-search-filter-selects {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+}
+div#jem .jem-search-filter-grid > *,
+div#jem .jem-search-filter .form-select,
+div#jem .jem-search-filter input[type="date"] {
+    min-width: 0;
+    max-width: 100%;
+}
+div#jem .jem-search-date-range {
+    margin: 0;
+    padding: 0;
+    /* Override the legacy global fieldset border without changing other forms. */
+    border: 0 !important;
+}
+div#jem .jem-search-date-range legend {
+    float: none;
+    width: auto;
+    font-size: 0.75rem;
+}
+div#jem .jem-search-date-range .jem-search-filter-grid-two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+div#jem .jem-search-filter-footer {
+    flex-wrap: wrap;
+}
+div#jem .jem-search-filter-actions {
+    margin-left: auto;
+}
+
+div#jem .jem-search-bottom {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    grid-auto-rows: minmax(3.5rem, auto);
+    align-items: end;
+    margin-bottom: 0;
+}
+div#jem .jem-search-bottom .jem-search-filter-footer {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+    margin-top: 0;
+    gap: 0.75rem;
+}
+div#jem .jem-search-bottom .jem-search-filter-actions {
+    margin-left: 0;
+}
+div#jem .jem-search-date-range input:only-child {
+    grid-column: 1 / -1;
+}
+div#jem .jem-search-location-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0.25rem;
+}
+div#jem .jem-search-location-label .jem-filter-label {
+    margin-bottom: 0;
+}
+div#jem .jem-search-location-hint {
+    display: inline-flex;
+    color: #9b1c2c;
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: help;
+}
+div#jem .jem-search-location-hint:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+div#jem .jem-search-filter select:disabled {
+    background-color: #d9dde2;
+    border-color: #aeb4bb;
+    color: #555d65;
+    opacity: 1;
+    cursor: not-allowed;
+}
+@container (min-width: 480px) {
+    div#jem .jem-search-bottom {
+        grid-template-columns: repeat(var(--jem-location-count), minmax(0, 1fr));
+    }
+}
+@container (min-width: 400px) and (max-width: 719px) {
+    div#jem .jem-search-bottom-four {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+/* JavaScript refines spans from selected labels; these rules remain the no-script fallback. */
+
 /* Controls fill their grid cell */
 div#jem .jem-search-filter select,
 div#jem .jem-search-filter input[type="date"],
@@ -280,20 +378,26 @@ div#jem .jem-search-filter-footer {
 }
 div#jem .jem-search-filter-limit {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    flex: 0 0 auto;
+    justify-self: start;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
 }
 div#jem .jem-search-filter-limit .jem-filter-label {
     margin-bottom: 0;
     white-space: nowrap;
 }
-div#jem .jem-search-filter-limit select {
+div#jem .jem-search-filter .jem-search-filter-limit select {
     width: auto;
     min-width: 5rem;
+    max-width: none;
     flex: 0 0 auto;
 }
 div#jem .jem-search-filter-actions {
     display: flex;
+    flex: 0 0 auto;
+    justify-self: end;
     align-items: center;
     gap: 0.5rem;
 }

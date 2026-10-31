@@ -50,21 +50,17 @@ class JemViewSearch extends JemView
         // HTMLHelper::_('script', 'com_jem/search.js', false, true);
         $document->addScript($url.'media/com_jem/js/search.js');
 
-        $filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
-        $filter_country   = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
-        $filter_city      = $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');
-        $filter_date_from = $app->getUserStateFromRequest('com_jem.search.filter_date_from', 'filter_date_from', '', 'string');
-        $filter_date_to   = $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
-        $filter_category  = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
-        $filter_type_id   = $app->getUserStateFromRequest('com_jem.search.filter_type_id', 'filter_type_id', 0, 'int');
-        $filter_venue_id  = $app->getUserStateFromRequest('com_jem.search.filter_venue_id', 'filter_venue_id', 0, 'int');
+        $filter_continent = $model->getSearchFilter('filter_continent', '', 'string');
+        $filter_country   = $model->getSearchFilter('filter_country', '', 'string');
+        $filter_city      = $model->getSearchFilter('filter_city', '', 'string');
+        $filter_date_from = $model->getSearchFilter('filter_date_from', '', 'string');
+        $filter_date_to   = $model->getSearchFilter('filter_date_to', '', 'string');
+        $filter_category  = $model->getSearchFilter('filter_category', 0, 'int');
+        $filter_type_id   = $model->getSearchFilter('filter_type_id', 0, 'int');
+        $filter_venue_id  = $model->getSearchFilter('filter_venue_id', 0, 'int');
         $task             = $model->getEventSearchScope() === 'archived' ? 'archive' : '';
         $uri->delVar('task');
 
-        if(empty($filter_continent) && empty($filter_country)){
-            $filter_country = $jemsettings->defaultCountry;
-            $filter_continent = $model->getContinentFromCountry($filter_country);
-        }
 
         // get data from model
         $rows = $this->get('Data');
@@ -161,19 +157,47 @@ class JemViewSearch extends JemView
 
         // country filter
         $countries = array();
+        $locationLabels = ['filter_continent' => 'COM_JEM_CONTINENT', 'filter_country' => 'COM_JEM_COUNTRY',
+            'filter_state' => 'COM_JEM_TABLE_STATE', 'filter_city' => 'COM_JEM_CITY'];
+        $this->location_filter_hints = [];
+        foreach ($locationLabels as $field => $label) {
+            $parent = $model->getLocationPrerequisite($field);
+            $this->location_filter_hints[$field] = $parent === '' ? ''
+                : Text::sprintf('COM_JEM_SEARCH_SELECT_LOCATION_FIRST', Text::_($locationLabels[$parent]));
+        }
         $countries[] = HTMLHelper::_('select.option', '', Text::_('COM_JEM_SELECT_COUNTRY'));
         $countries = array_merge($countries, $this->get('CountryOptions'));
-        $lists['countries'] = HTMLHelper::_('select.genericlist', $countries, 'filter_country', array('class'=>'form-select'), 'value', 'text', $filter_country);
+        $countryAttributes = ['class' => 'form-select'];
+        if (!$model->isLocationFilterAvailable('filter_country')) {
+            $countryAttributes['disabled'] = 'disabled';
+            $countryAttributes['title'] = $this->location_filter_hints['filter_country'];
+            $countryAttributes['aria-describedby'] = 'filter_country_hint';
+        }
+        $lists['countries'] = HTMLHelper::_('select.genericlist', $countries, 'filter_country', $countryAttributes, 'value', 'text', $filter_country);
         unset($countries);
 
-        // city filter
-        if ($filter_country) {
-            $cities = array();
-            $cities[] = HTMLHelper::_('select.option', '', Text::_('COM_JEM_SELECT_CITY'));
-            $cities = array_merge($cities, $this->get('CityOptions'));
-            $lists['cities'] = HTMLHelper::_('select.genericlist', $cities, 'filter_city', array('class'=>'form-select'), 'value', 'text', $filter_city);
-            unset($cities);
+        // Skip controls disabled by the menu; otherwise activate each geographic level in order.
+        $locationAttributes = ['class' => 'form-select'];
+        if (!$model->isLocationFilterAvailable('filter_state')) {
+            $locationAttributes['disabled'] = 'disabled';
+            $locationAttributes['title'] = $this->location_filter_hints['filter_state'];
+            $locationAttributes['aria-describedby'] = 'filter_state_hint';
         }
+        $states = [HTMLHelper::_('select.option', '', Text::_('COM_JEM_SEARCH_SELECT_STATE'))];
+        $states = array_merge($states, $this->get('StateOptions'));
+        $lists['states'] = HTMLHelper::_('select.genericlist', $states, 'filter_state',
+            $locationAttributes, 'value', 'text', $model->getRegionFilter());
+
+        $locationAttributes = ['class' => 'form-select'];
+        if (!$model->isLocationFilterAvailable('filter_city')) {
+            $locationAttributes['disabled'] = 'disabled';
+            $locationAttributes['title'] = $this->location_filter_hints['filter_city'];
+            $locationAttributes['aria-describedby'] = 'filter_city_hint';
+        }
+        $cities = [HTMLHelper::_('select.option', '', Text::_('COM_JEM_SELECT_CITY'))];
+        $cities = array_merge($cities, $this->get('CityOptions'));
+        $lists['cities'] = HTMLHelper::_('select.genericlist', $cities, 'filter_city',
+            $locationAttributes, 'value', 'text', $filter_city);
 
         // event type filter
         $eventtypes   = array();
@@ -190,15 +214,25 @@ class JemViewSearch extends JemView
         unset($venues);
 
         // Filter visibility params
-        $this->filter_show_eventtype = (int)$params->get('filter_show_eventtype', 1);
-        $this->filter_show_category  = (int)$params->get('filter_show_category', 1);
-        $this->filter_show_venue     = (int)$params->get('filter_show_venue', 1);
-        $this->filter_show_continent = (int)$params->get('filter_show_continent', 1);
-        $this->filter_show_country   = (int)$params->get('filter_show_country', 1);
-        $this->filter_show_dates     = (int)$params->get('filter_show_dates', 1);
+        foreach ([
+            'eventtype' => 'filter_type_id', 'category' => 'filter_category',
+            'venue' => 'filter_venue_id', 'continent' => 'filter_continent',
+            'country' => 'filter_country', 'state' => 'filter_state', 'city' => 'filter_city',
+            'date_from' => 'filter_date_from', 'date_to' => 'filter_date_to', 'limit' => 'limit',
+        ] as $option => $field) {
+            $this->{'filter_show_' . $option} = $model->isSearchFilterEnabled($field);
+        }
+        $this->filter_show_dates = $this->filter_show_date_from || $this->filter_show_date_to;
 
+        // Keep navigation context, not stale GET filters, in the POST target.
+        $action = clone $uri;
+        foreach (['filter', 'filter_search', 'filter_type', 'filter_category', 'filter_type_id',
+            'filter_venue_id', 'filter_continent', 'filter_country', 'filter_state', 'filter_city',
+            'filter_date_from', 'filter_date_to', 'limitstart', 'start', 'search_reset'] as $name) {
+            $action->delVar($name);
+        }
         $this->lists            = $lists;
-        $this->action           = $uri->toString();
+        $this->action           = $action->toString();
         $this->rows             = $rows;
         $this->task             = $task;
         $this->noevents         = $noevents;
@@ -239,7 +273,7 @@ class JemViewSearch extends JemView
             $filter_order_DirDefault = 'DESC';
         }
         $filter_order_Dir = $app->input->get('filter_order_Dir', $filter_order_DirDefault);
-        $filter           = $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
+        $filter           = $this->getModel('search')->getSearchFilter('filter_search', '', 'string');
         $filter_type      = $app->input->getString('filter_type', '');
 
         $sortselects = array();

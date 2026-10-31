@@ -45,6 +45,7 @@ final class SearchScopeApplication
     public Input $input;
     public ?SearchScopeMenuItem $active = null;
     public Registry $params;
+    public array $state = [];
 
     /** @return void Initialize an isolated application/request. */
     public function __construct()
@@ -77,10 +78,21 @@ final class SearchScopeApplication
         return 'site';
     }
 
+    /** @param string $key Session key. @param mixed $value Stored value. @return void */
+    public function setUserState(string $key, mixed $value): void
+    {
+        $this->state[$key] = $value;
+    }
+
     /** @param string $key Session key. @param string $request Input. @param mixed $default Fallback. @param string $type Filter. @return mixed Input value. */
     public function getUserStateFromRequest($key, $request, $default, $type): mixed
     {
-        return $this->input->get($request, $default, $type);
+        $value = $this->input->get($request, null, $type);
+        if ($value !== null) {
+            $this->state[$key] = $value;
+        }
+
+        return $this->state[$key] ?? $default;
     }
 }
 
