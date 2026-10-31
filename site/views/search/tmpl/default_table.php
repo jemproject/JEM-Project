@@ -26,81 +26,130 @@ use Joomla\CMS\Uri\Uri;
     }
 </script>
 
-<div id="jem_filter" class="jem-search-filter mb-3">
+<div id="jem_filter" class="jem-search-filter mb-3" data-default-limit="<?php echo (int) $this->jemsettings->display_num; ?>">
     <h5 class="jem-search-filter-heading"><?php echo Text::_('COM_JEM_SEARCH_EVENTS_HEADING'); ?></h5>
 
-    <!-- KEYWORDS + EVENT TYPE -->
-    <div class="jem-search-filter-grid<?php echo $this->filter_show_eventtype ? ' jem-search-filter-grid-top' : ''; ?>">
+    <!-- KEYWORDS + DATE RANGE -->
+    <div class="jem-search-filter-grid jem-search-filter-primary">
         <div>
-            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_KEYWORDS'); ?></div>
+            <label class="jem-filter-label" for="filter_search"><?php echo Text::_('COM_JEM_SEARCH_KEYWORDS'); ?></label>
             <div class="input-group">
                 <?php echo $this->lists['filter_types']; ?>
                 <input type="text" name="filter_search" id="filter_search"
                        value="<?php echo htmlspecialchars($this->lists['filter'], ENT_QUOTES, 'UTF-8'); ?>"
                        class="form-control"
                        placeholder="<?php echo Text::_('COM_JEM_SEARCH_TYPE_TO_SEARCH'); ?>"
-                       onchange="document.getElementById('adminForm').submit();" />
+                       onchange="jem_search_submit(this.form);" />
             </div>
         </div>
-        <?php if ($this->filter_show_eventtype): ?>
-        <div>
-            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_EVENT_TYPE'); ?></div>
-            <?php echo $this->lists['event_types']; ?>
-        </div>
+        <?php if ($this->filter_show_dates): ?>
+        <fieldset class="jem-search-date-range">
+            <legend class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_DATE_RANGE'); ?></legend>
+            <div class="jem-search-filter-grid jem-search-filter-grid-two">
+                <?php if ($this->filter_show_date_from): ?>
+                <input type="date" name="filter_date_from" id="filter_date_from"
+                       class="form-control" aria-label="<?php echo Text::_('COM_JEM_SEARCH_FROM'); ?>"
+                       value="<?php echo htmlspecialchars($this->filter_date_from, ENT_QUOTES, 'UTF-8'); ?>" />
+                <?php endif; ?>
+                <?php if ($this->filter_show_date_to): ?>
+                <input type="date" name="filter_date_to" id="filter_date_to"
+                       class="form-control" aria-label="<?php echo Text::_('COM_JEM_SEARCH_TO'); ?>"
+                       value="<?php echo htmlspecialchars($this->filter_date_to, ENT_QUOTES, 'UTF-8'); ?>" />
+                <?php endif; ?>
+            </div>
+        </fieldset>
         <?php endif; ?>
     </div>
 
-    <!-- CATEGORY / VENUES / CONTINENT / COUNTRY -->
-    <?php if ($this->filter_show_category || $this->filter_show_venue || $this->filter_show_continent || $this->filter_show_country): ?>
-    <div class="jem-search-filter-grid jem-search-filter-grid-four">
+    <!-- CATEGORY / VENUES / EVENT TYPE -->
+    <?php if ($this->filter_show_category || $this->filter_show_venue || $this->filter_show_eventtype): ?>
+    <div class="jem-search-filter-grid jem-search-filter-selects">
         <?php if ($this->filter_show_category): ?>
         <div>
-            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_CATEGORY'); ?></div>
+            <label class="jem-filter-label" for="filter_category"><?php echo Text::_('COM_JEM_CATEGORY'); ?></label>
             <?php echo $this->lists['categories']; ?>
         </div>
         <?php endif; ?>
         <?php if ($this->filter_show_venue): ?>
         <div>
-            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_VENUES'); ?></div>
+            <label class="jem-filter-label" for="filter_venue_id"><?php echo Text::_('COM_JEM_SEARCH_VENUES'); ?></label>
             <?php echo $this->lists['venues']; ?>
         </div>
         <?php endif; ?>
+        <?php if ($this->filter_show_eventtype): ?>
+        <div>
+            <label class="jem-filter-label" for="filter_type_id"><?php echo Text::_('COM_JEM_SEARCH_EVENT_TYPE'); ?></label>
+            <?php echo $this->lists['event_types']; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+    <!-- LOCATION + RESPONSIVE ACTION ROW -->
+    <div class="jem-search-filter-grid jem-search-bottom<?php echo $this->filter_show_continent && $this->filter_show_country && $this->filter_show_state && $this->filter_show_city ? ' jem-search-bottom-four' : ''; ?>"
+         style="--jem-location-count: <?php echo max(1, (int) $this->filter_show_continent + (int) $this->filter_show_country + (int) $this->filter_show_state + (int) $this->filter_show_city); ?>">
         <?php if ($this->filter_show_continent): ?>
         <div>
-            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_CONTINENT'); ?></div>
+            <label class="jem-filter-label" for="filter_continent"><?php echo Text::_('COM_JEM_CONTINENT'); ?></label>
             <?php echo $this->lists['continents']; ?>
         </div>
         <?php endif; ?>
         <?php if ($this->filter_show_country): ?>
-        <div>
-            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_COUNTRY'); ?></div>
+        <?php $locationHint = $this->location_filter_hints['filter_country'] ?? ''; ?>
+        <div class="jem-search-location-field<?php echo $locationHint !== '' ? ' is-disabled' : ''; ?>">
+            <div class="jem-search-location-label">
+                <label class="jem-filter-label" for="filter_country"><?php echo Text::_('COM_JEM_COUNTRY'); ?></label>
+                <?php if ($locationHint !== ''): ?>
+                <span id="filter_country_hint" class="jem-search-location-hint" tabindex="0" role="img"
+                      title="<?php echo htmlspecialchars($locationHint, ENT_QUOTES, 'UTF-8'); ?>"
+                      aria-label="<?php echo htmlspecialchars($locationHint, ENT_QUOTES, 'UTF-8'); ?>">
+                    <i class="fa fa-ban" aria-hidden="true"></i>
+                </span>
+                <?php endif; ?>
+            </div>
             <?php echo $this->lists['countries']; ?>
         </div>
         <?php endif; ?>
-    </div>
-    <?php endif; ?>
-
-    <!-- DATE RANGE -->
-    <?php if ($this->filter_show_dates): ?>
-    <div style="margin-bottom:1rem">
-        <div class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_DATE_RANGE'); ?></div>
-        <div class="jem-search-filter-grid jem-search-filter-grid-two">
-            <input type="date" name="filter_date_from" id="filter_date_from"
-                   class="form-control"
-                   value="<?php echo htmlspecialchars($this->filter_date_from, ENT_QUOTES, 'UTF-8'); ?>" />
-            <input type="date" name="filter_date_to" id="filter_date_to"
-                   class="form-control"
-                   value="<?php echo htmlspecialchars($this->filter_date_to, ENT_QUOTES, 'UTF-8'); ?>" />
+        <?php if ($this->filter_show_state): ?>
+        <?php $locationHint = $this->location_filter_hints['filter_state'] ?? ''; ?>
+        <div class="jem-search-location-field<?php echo $locationHint !== '' ? ' is-disabled' : ''; ?>">
+            <div class="jem-search-location-label">
+                <label class="jem-filter-label" for="filter_state"><?php echo Text::_('COM_JEM_TABLE_STATE'); ?></label>
+                <?php if ($locationHint !== ''): ?>
+                <span id="filter_state_hint" class="jem-search-location-hint" tabindex="0" role="img"
+                      title="<?php echo htmlspecialchars($locationHint, ENT_QUOTES, 'UTF-8'); ?>"
+                      aria-label="<?php echo htmlspecialchars($locationHint, ENT_QUOTES, 'UTF-8'); ?>">
+                    <i class="fa fa-ban" aria-hidden="true"></i>
+                </span>
+                <?php endif; ?>
+            </div>
+            <?php echo $this->lists['states']; ?>
         </div>
-    </div>
-    <?php endif; ?>
-
+        <?php endif; ?>
+        <?php if ($this->filter_show_city): ?>
+        <?php $locationHint = $this->location_filter_hints['filter_city'] ?? ''; ?>
+        <div class="jem-search-location-field<?php echo $locationHint !== '' ? ' is-disabled' : ''; ?>">
+            <div class="jem-search-location-label">
+                <label class="jem-filter-label" for="filter_city"><?php echo Text::_('COM_JEM_CITY'); ?></label>
+                <?php if ($locationHint !== ''): ?>
+                <span id="filter_city_hint" class="jem-search-location-hint" tabindex="0" role="img"
+                      title="<?php echo htmlspecialchars($locationHint, ENT_QUOTES, 'UTF-8'); ?>"
+                      aria-label="<?php echo htmlspecialchars($locationHint, ENT_QUOTES, 'UTF-8'); ?>">
+                    <i class="fa fa-ban" aria-hidden="true"></i>
+                </span>
+                <?php endif; ?>
+            </div>
+            <?php echo $this->lists['cities']; ?>
+        </div>
+        <?php endif; ?>
     <!-- LIMIT + buttons -->
     <div class="jem-search-filter-footer">
+        <?php if ($this->filter_show_limit): ?>
         <div class="jem-search-filter-limit">
             <span class="jem-filter-label"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?>:</span>
             <?php echo $this->pagination->getLimitBox(); ?>
         </div>
+        <?php endif; ?>
         <div class="jem-search-filter-actions">
             <button class="btn btn-secondary" type="button" onclick="jem_search_clear();">
                 <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
@@ -110,21 +159,9 @@ use Joomla\CMS\Uri\Uri;
             </button>
         </div>
     </div>
+    </div>
 </div>
-
-<script>
-function jem_search_clear() {
-    var f = document.getElementById('adminForm');
-    f.filter_search.value = '';
-    f.filter_date_from.value = '';
-    f.filter_date_to.value = '';
-    ['filter_category', 'filter_type_id', 'filter_venue_id', 'filter_continent', 'filter_country'].forEach(function(n) {
-        var el = f.elements[n];
-        if (el && el.options) { el.selectedIndex = 0; }
-    });
-    f.submit();
-}
-</script>
+<!-- /SEARCH FILTERS -->
 
 <div class="table-responsive">
     <table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">

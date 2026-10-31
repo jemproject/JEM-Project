@@ -53,7 +53,7 @@
             </field>
         </fieldset>
 
-        <fieldset name="filter_fields" label="COM_JEM_SEARCH_FILTER_FIELDS">
+        <fieldset name="filter_fields" label="COM_JEM_SEARCH_FILTER_FIELDS" description="COM_JEM_SEARCH_FILTER_FIELDS_DESC" addfieldpath="/administrator/components/com_jem/models/fields">
             <field name="filter_show_eventtype" type="radio"
                 default="1"
                 label="COM_JEM_SEARCH_SHOW_FILTER_EVENTTYPE"
@@ -99,10 +99,43 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="filter_show_dates" type="radio"
-                default="1"
-                label="COM_JEM_SEARCH_SHOW_FILTER_DATES"
-                description="COM_JEM_SEARCH_SHOW_FILTER_DATES_DESC"
+            <field name="filter_show_state" type="searchfiltertoggle" default="" legacysetting="filter_show_country"
+                label="COM_JEM_SEARCH_SHOW_FILTER_STATE"
+                description="COM_JEM_SEARCH_SHOW_FILTER_STATE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <!-- Retain old saved date visibility as the fallback for the individual fields. -->
+            <field name="filter_show_dates" type="hidden" default="1" />
+            <field name="filter_show_city" type="searchfiltertoggle" default="" legacysetting="filter_show_country"
+                label="COM_JEM_SEARCH_SHOW_FILTER_CITY"
+                description="COM_JEM_SEARCH_SHOW_FILTER_CITY_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="filter_show_date_from" type="searchfiltertoggle" default="" legacysetting="filter_show_dates"
+                label="COM_JEM_SEARCH_SHOW_FILTER_DATE_FROM"
+                description="COM_JEM_SEARCH_SHOW_FILTER_DATE_FROM_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="filter_show_date_to" type="searchfiltertoggle" default="" legacysetting="filter_show_dates"
+                label="COM_JEM_SEARCH_SHOW_FILTER_DATE_TO"
+                description="COM_JEM_SEARCH_SHOW_FILTER_DATE_TO_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="filter_show_limit" type="radio" default="1"
+                label="COM_JEM_SEARCH_SHOW_FILTER_LIMIT"
+                description="COM_JEM_SEARCH_SHOW_FILTER_LIMIT_DESC"
                 class="btn-group btn-group-yesno"
             >
                 <option value="1">JYES</option>

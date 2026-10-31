@@ -60,9 +60,10 @@ class JemModelSearch extends BaseDatabaseModel
 
         $app = Factory::getApplication();
         $jemsettings = JemHelper::config();
+        $this->resetSearchFilters((int) $jemsettings->display_num);
 
         //get the number of events from database
-        $limit      = $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $jemsettings->display_num, 'int');
+        $limit      = $this->getSearchFilter('limit', $jemsettings->display_num, 'int');
         $limitstart = $app->input->getInt('limitstart', 0);
         // correct start value if required
         $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
@@ -109,6 +110,122 @@ class JemModelSearch extends BaseDatabaseModel
             && ($menuitem->query['view'] ?? '') === 'search'
             ? $menuitem
             : null;
+    }
+
+    /**
+     * Check a control's menu setting; Keywords are always available.
+     *
+     * @param string $name Request field name.
+     * @return bool Whether this filter may affect Search.
+     */
+    public function isSearchFilterEnabled(string $name): bool
+    {
+        $menuitem = $this->getSearchMenuItem();
+        $params = $menuitem ? $menuitem->getParams() : Factory::getApplication()->getParams();
+        $options = [
+            'filter_category' => 'category', 'filter_venue_id' => 'venue',
+            'filter_type_id' => 'eventtype', 'filter_continent' => 'continent',
+            'filter_country' => 'country', 'filter_state' => 'state',
+            'filter_city' => 'city', 'filter_date_from' => 'date_from',
+            'filter_date_to' => 'date_to', 'limit' => 'limit',
+        ];
+        if (!isset($options[$name])) {
+            return $name === 'filter_search';
+        }
+
+        // Honor old menu settings until the new individual options are saved.
+        $default = 1;
+        if ($name === 'filter_date_from' || $name === 'filter_date_to') {
+            $default = (int) $params->get('filter_show_dates', 1);
+        } elseif ($name === 'filter_city' || $name === 'filter_state') {
+            $default = (int) $params->get('filter_show_country', 1);
+        }
+
+        $value = $params->get('filter_show_' . $options[$name], '');
+
+        return $value === '' ? (bool) $default : (bool) $value;
+    }
+
+    /**
+     * Read enabled visitor filters, ignoring URL/session values for disabled controls.
+     *
+     * @param string $name Request field name.
+     * @param mixed $default Unset/disabled fallback.
+     * @param string $type Joomla input filter.
+     * @return mixed Effective filter value; does not alter mandatory visibility rules.
+     */
+    public function getSearchFilter(string $name, $default = '', string $type = 'string')
+    {
+        if (!$this->isSearchFilterEnabled($name)) {
+            Factory::getApplication()->setUserState('com_jem.search.' . $name, $default);
+            return $default;
+        }
+        if (in_array($name, ['filter_country', 'filter_state', 'filter_city'], true)
+            && !$this->isLocationFilterAvailable($name)
+        ) {
+            Factory::getApplication()->setUserState('com_jem.search.' . $name, $default);
+            return $default;
+        }
+
+        return Factory::getApplication()->getUserStateFromRequest('com_jem.search.' . $name, $name, $default, $type);
+    }
+
+    /**
+     * Enable a geographic control only after all preceding enabled controls have values.
+     *
+     * @param string $name Geographic request field.
+     * @return bool Whether the visitor may select this level.
+     */
+    public function isLocationFilterAvailable(string $name): bool
+    {
+        if (!$this->isSearchFilterEnabled($name)) {
+            return false;
+        }
+        return $this->getLocationPrerequisite($name) === '';
+    }
+
+    /**
+     * Find the first enabled geographic parent still awaiting a selection.
+     *
+     * @param string $name Geographic request field.
+     * @return string Missing parent field name, or empty when selection is available.
+     */
+    public function getLocationPrerequisite(string $name): string
+    {
+        foreach (['filter_continent', 'filter_country', 'filter_state', 'filter_city'] as $parent) {
+            if ($parent === $name) {
+                break;
+            }
+            if ($this->isSearchFilterEnabled($parent) && $this->getSearchFilter($parent) === '') {
+                return $parent;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Clear every visitor filter, including hidden controls, on an explicit Clear submission.
+     *
+     * @param int $defaultLimit Configured JEM page size.
+     * @return void Menu settings, publication scope and permissions are not modified.
+     */
+    private function resetSearchFilters(int $defaultLimit): void
+    {
+        $app = Factory::getApplication();
+        if (!$app->input->post->getBool('search_reset', false)) {
+            return;
+        }
+        $defaults = [
+            'filter_search' => '', 'filter_type' => 'title', 'filter_category' => 1,
+            'filter_type_id' => 0, 'filter_venue_id' => 0, 'filter_continent' => '',
+            'filter_country' => '', 'filter_state' => '', 'filter_city' => '',
+            'filter_date_from' => '', 'filter_date_to' => '', 'limit' => $defaultLimit, 'limitstart' => 0,
+        ];
+        foreach ($defaults as $name => $value) {
+            $app->input->set($name, $value);
+            $app->setUserState('com_jem.search.' . $name, $value);
+        }
     }
 
     /**
@@ -319,21 +436,21 @@ class JemModelSearch extends BaseDatabaseModel
         }
 
         //$filter            = $app->input->getString('filter', '');
-        $filter            = $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
+        $filter            = $this->getSearchFilter('filter_search', '', 'string');
         $filter_type       = $app->input->get('filter_type', '');
-        $filter_continent  = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
-        $filter_country    = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
-        $filter_city       = $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');
-        $filter_date_from  = $app->getUserStateFromRequest('com_jem.search.filter_date_from', 'filter_date_from', '', 'string');
-        $filter_date_to    = $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
-        $filter_category   = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
+        $filter_continent  = $this->getSearchFilter('filter_continent', '', 'string');
+        $filter_country    = $this->getSearchFilter('filter_country', '', 'string');
+        $filter_city       = $this->getSearchFilter('filter_city', '', 'string');
+        $filter_date_from  = $this->getSearchFilter('filter_date_from', '', 'string');
+        $filter_date_to    = $this->getSearchFilter('filter_date_to', '', 'string');
+        $filter_category   = $this->getSearchFilter('filter_category', 0, 'int');
         // "Please select..." entry has number 1 which must be interpreted as "not set" and replaced by top category (which maybe 1 ;-)
         $filter_category   = (($filter_category > 1) ? $filter_category : $top_category);
-        $filter_type_id    = $app->getUserStateFromRequest('com_jem.search.filter_type_id', 'filter_type_id', 0, 'int');
-        $filter_venue_id   = $app->getUserStateFromRequest('com_jem.search.filter_venue_id', 'filter_venue_id', 0, 'int');
+        $filter_type_id    = $this->getSearchFilter('filter_type_id', 0, 'int');
+        $filter_venue_id   = $this->getSearchFilter('filter_venue_id', 0, 'int');
 
         // no result if no filter:
-        if (!($filter || $filter_continent || $filter_country || $filter_city || $filter_date_from || $filter_date_to || $filter_category != $top_category || $filter_type_id || $filter_venue_id)) {
+        if (!($filter || $filter_continent || $filter_country || $this->getRegionFilter() || $filter_city || $filter_date_from || $filter_date_to || $filter_category != $top_category || $filter_type_id || $filter_venue_id)) {
             return ' WHERE 0 ';
         }
 
@@ -391,7 +508,11 @@ class JemModelSearch extends BaseDatabaseModel
             $where .= ' AND c.published = 1';
         }
         // filter city
-        if ($filter_country && $filter_city) {
+        $filter_state = $this->getRegionFilter();
+        if ($filter_state !== '') {
+            $where .= ' AND l.state = ' . $this->_db->Quote($filter_state);
+        }
+        if ($filter_city !== '') {
             $where .= ' AND l.city = ' . $this->_db->Quote($filter_city);
         }
         // filter category
@@ -444,9 +565,12 @@ class JemModelSearch extends BaseDatabaseModel
 
     public function getCountryOptions()
     {
+        if (!$this->isLocationFilterAvailable('filter_country')) {
+            return [];
+        }
         $app = Factory::getApplication();
 
-        $filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
+        $filter_continent = $this->getSearchFilter('filter_continent', '', 'string');
 
         $query = ' SELECT c.iso2 as value, c.name as text '
                . ' FROM #__jem_events AS a'
@@ -484,9 +608,9 @@ class JemModelSearch extends BaseDatabaseModel
         $params = $app->getParams();
         $top_category = $params->get('top_category', 1);
 
-        $filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
-        $filter_country   = $app->getUserStateFromRequest('com_jem.search.filter_country',   'filter_country',   '', 'string');
-        $filter_category  = $app->getUserStateFromRequest('com_jem.search.filter_category',  'filter_category',  0,  'int');
+        $filter_continent = $this->getSearchFilter('filter_continent', '', 'string');
+        $filter_country   = $this->getSearchFilter('filter_country', '', 'string');
+        $filter_category  = $this->getSearchFilter('filter_category', 0, 'int');
         $filter_category  = ($filter_category > 1) ? $filter_category : $top_category;
 
         $needsLocation = $filter_continent || $filter_country;
@@ -524,17 +648,80 @@ class JemModelSearch extends BaseDatabaseModel
         return $this->_db->loadObjectList();
     }
 
+    /**
+     * Resolve the optional county/region filter independently of other controls.
+     *
+     * @return string Existing venue region, or empty when disabled.
+     */
+    public function getRegionFilter(): string
+    {
+        return $this->getSearchFilter('filter_state');
+    }
+
+    /**
+     * Restrict dependent location options to an enabled continent selection.
+     *
+     * @return string SQL fragment using the country alias c.
+     */
+    private function getContinentOptionWhere(): string
+    {
+        $continent = $this->getSearchFilter('filter_continent');
+
+        return $continent !== '' ? ' AND c.continent = ' . $this->_db->Quote($continent) : '';
+    }
+
+    /**
+     * List nonempty venue counties/regions for the selected country and event scope.
+     *
+     * @return object[] Distinct value/text options using stored venue values.
+     */
+    public function getStateOptions(): array
+    {
+        if (!$this->isLocationFilterAvailable('filter_state')) {
+            return [];
+        }
+        $app = Factory::getApplication();
+        $country = $this->getSearchFilter('filter_country', '', 'string');
+
+        $query = 'SELECT DISTINCT l.state AS value, l.state AS text'
+            . ' FROM #__jem_events AS a'
+            . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
+            . ' INNER JOIN #__jem_countries AS c ON c.iso2 = l.country'
+            . ' WHERE ' . $this->getSearchPublicationWhere()
+            . ' AND l.published = 1 AND c.published = 1'
+            . ($country !== '' ? ' AND l.country = ' . $this->_db->Quote($country) : '')
+            . $this->getContinentOptionWhere()
+            . " AND l.state IS NOT NULL AND TRIM(l.state) <> ''"
+            . ' ORDER BY l.state';
+
+        return $this->_db->setQuery($query)->loadObjectList();
+    }
+
+    /**
+     * List cities for the effective country and optional county/region.
+     *
+     * @return object[] Distinct value/text options, excluding empty cities.
+     */
     public function getCityOptions()
     {
-        if (!$country = Factory::getApplication()->input->getString('filter_country', '')) {
-            return array();
+        if (!$this->isLocationFilterAvailable('filter_city')) {
+            return [];
         }
+        $app = Factory::getApplication();
+        $country = $this->getSearchFilter('filter_country', '', 'string');
         $query = ' SELECT DISTINCT l.city as value, l.city as text '
                . ' FROM #__jem_events AS a'
                . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
                . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
-               . ' WHERE ' . $this->getSearchPublicationWhere() . ' AND c.published = 1 AND l.country = ' . $this->_db->Quote($country)
-               . ' ORDER BY l.city ';
+               . ' WHERE ' . $this->getSearchPublicationWhere() . ' AND c.published = 1'
+               . ($country !== '' ? ' AND l.country = ' . $this->_db->Quote($country) : '')
+               . $this->getContinentOptionWhere()
+               . " AND l.published = 1 AND l.city IS NOT NULL AND TRIM(l.city) <> ''";
+        $state = $this->getRegionFilter();
+        if ($state !== '') {
+            $query .= ' AND l.state = ' . $this->_db->Quote($state);
+        }
+        $query .= ' ORDER BY l.city ';
 
         $this->_db->setQuery($query);
         return $this->_db->loadObjectList();
@@ -543,8 +730,8 @@ class JemModelSearch extends BaseDatabaseModel
     public function getVenueOptions()
     {
         $app = Factory::getApplication();
-        $filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
-        $filter_country   = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
+        $filter_continent = $this->getSearchFilter('filter_continent', '', 'string');
+        $filter_country   = $this->getSearchFilter('filter_country', '', 'string');
 
         $query = ' SELECT DISTINCT l.id AS value, l.venue AS text'
                . ' FROM #__jem_events AS a'
@@ -559,6 +746,14 @@ class JemModelSearch extends BaseDatabaseModel
             $query .= ' AND l.country = ' . $this->_db->Quote($filter_country);
         }
 
+        $state = $this->getRegionFilter();
+        if ($state !== '') {
+            $query .= ' AND l.state = ' . $this->_db->Quote($state);
+        }
+        $city = $this->getSearchFilter('filter_city', '', 'string');
+        if ($city !== '') {
+            $query .= ' AND l.city = ' . $this->_db->Quote($city);
+        }
         $query .= ' ORDER BY l.venue';
         $this->_db->setQuery($query);
         return $this->_db->loadObjectList();

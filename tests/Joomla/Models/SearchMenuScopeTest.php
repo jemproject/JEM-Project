@@ -153,6 +153,9 @@ final class SearchMenuScopeTest extends TestCase
     public function testResultsAndOptionQueriesUseOnlyMenuScope(mixed $scope, array $request, array $ids): void
     {
         $this->configure($scope, $request);
+        // This test isolates event scope, starting location selection at Country.
+        $this->app->params->set('filter_show_continent', 0);
+        $this->app->params->set('filter_show_state', 0);
         self::assertSame($ids, $this->resultIds());
         foreach (['getVenueOptions', 'getEventTypeOptions'] as $method) {
             self::assertSame($ids, array_map(static fn ($row) => (int) $row->value, $this->model->$method()), $method);
