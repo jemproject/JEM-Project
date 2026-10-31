@@ -72,7 +72,7 @@ class JemViewTypeevents extends JemView
             $this->pagetitle     = $pagetitle;
             $this->pageclass_sfx = '';
             $this->print         = $print;
-            $this->print_link    = $uri->toString() . '?print=1&tmpl=component';
+            $this->print_link    = JemOutput::buildPrintLink($uri->toString());
             $this->pdf_link      = Route::_('index.php?option=com_jem&view=typeevents&id=' . (int) $requestedTypeId . '&format=raw&layout=pdf');
             $this->archive_link  = $uri->toString();
             $this->task          = '';
@@ -156,7 +156,7 @@ class JemViewTypeevents extends JemView
         $this->pagetitle     = $pagetitle;
         $this->pageclass_sfx = '';
         $this->print         = $print;
-        $this->print_link    = $uri->toString() . '?print=1&tmpl=component';
+        $this->print_link    = JemOutput::buildPrintLink($uri->toString());
         $this->pdf_link      = Route::_('index.php?option=com_jem&view=typeevents&id=' . (int) $typeObj->id . '&format=raw&layout=pdf');
         $this->archive_link  = $uri->toString();
         $this->task          = '';

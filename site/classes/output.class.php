@@ -390,6 +390,39 @@ static public function lightbox() {
     }
 
     /**
+     * Prepare a print URL without changing the current request or its filter values.
+     *
+     * @param string $link Existing internal or routed URL, optionally HTML-escaped.
+     * @param bool $archive Whether to explicitly retain the archive task.
+     * @return string URL with one print flag and component template parameter.
+     */
+    public static function buildPrintLink(string $link, bool $archive = false): string
+    {
+        $fragment = '';
+        $fragmentOffset = strpos($link, '#');
+        if ($fragmentOffset !== false) {
+            $fragment = substr($link, $fragmentOffset);
+            $link = substr($link, 0, $fragmentOffset);
+        }
+
+        // Keep Joomla's "&option=..." query-only form for the existing route helper.
+        $queryOnly = str_starts_with($link, '&');
+        $parts = explode('?', $link, 2);
+        $path = $queryOnly ? '' : $parts[0];
+        $query = $queryOnly ? substr($link, 1) : ($parts[1] ?? '');
+        parse_str(str_replace('&amp;', '&', $query), $values);
+        $values['print'] = 1;
+        $values['tmpl'] = 'component';
+        if ($archive) {
+            $values['task'] = 'archive';
+        }
+
+        // Do not decode the rebuilt query: &, + and # may belong to a filter value.
+        return $path . ($queryOnly ? '&' : '?')
+            . http_build_query($values, '', '&', PHP_QUERY_RFC3986) . $fragment;
+    }
+
+    /**
      * Builds a PDF link from the current request.
      */
     static protected function buildCurrentPdfLink()
@@ -698,7 +731,8 @@ static public function lightbox() {
                 //button in view
                 $overlib = Text::_('COM_JEM_PRINT_DESC');
                 $text = Text::_('COM_JEM_PRINT');
-                $output = '<a href="' . self::escapeLinkAttribute($print_link . '&tmpl=component') . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom')
+                $print_link = self::buildPrintLink((string) $print_link);
+                $output = '<a href="' . self::escapeLinkAttribute($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom')
                         . ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
             }
             return $output;
