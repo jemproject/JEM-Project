@@ -443,27 +443,29 @@ class JemModelSearch extends BaseDatabaseModel
             }
         }
 
+        // Parse each boundary once: timestamp zero is a valid date, not a parsing failure.
+        $fromTimestamp = $filter_date_from ? strtotime($filter_date_from) : false;
+        $toTimestamp = $filter_date_to ? strtotime($filter_date_to) : false;
+
         // filter date
         if ($params->get('date_filter_type', 0) == 1) // match on all events dates (between start and end)
         {
-            if ($filter_date_from && strtotime($filter_date_from))
-            {
-                $filter_date_from = $this->_db->Quote(date('Y-m-d', strtotime($filter_date_from)));
+            if ($fromTimestamp !== false) {
+                $filter_date_from = $this->_db->Quote(date('Y-m-d', $fromTimestamp));
                 $where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $filter_date_from .') >= 0';
             }
-            if ($filter_date_to && strtotime($filter_date_to))
-            {
-                $filter_date_to = $this->_db->Quote(date('Y-m-d', strtotime($filter_date_to)));
+            if ($toTimestamp !== false) {
+                $filter_date_to = $this->_db->Quote(date('Y-m-d', $toTimestamp));
                 $where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
             }
         } else {
             // match only on start date
-            if ($filter_date_from && strtotime($filter_date_from)) {
-                $filter_date_from = $this->_db->Quote(date('Y-m-d', strtotime($filter_date_from)));
+            if ($fromTimestamp !== false) {
+                $filter_date_from = $this->_db->Quote(date('Y-m-d', $fromTimestamp));
                 $where .= ' AND DATEDIFF(a.dates, '. $filter_date_from .') >= 0';
             }
-            if ($filter_date_to && strtotime($filter_date_to)) {
-                $filter_date_to = $this->_db->Quote(date('Y-m-d', strtotime($filter_date_to)));
+            if ($toTimestamp !== false) {
+                $filter_date_to = $this->_db->Quote(date('Y-m-d', $toTimestamp));
                 $where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
             }
         }

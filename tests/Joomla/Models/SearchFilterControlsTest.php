@@ -279,6 +279,96 @@ final class SearchFilterControlsTest extends TestCase
         }
     }
 
+    /**
+     * Provide date boundaries for both Search modes and timezone-sensitive epoch parsing.
+     *
+     * @return iterable<string, array{string, int, string, string, bool, array}>
+     */
+    public static function dateBoundaries(): iterable
+    {
+        foreach (['UTC', 'Europe/Madrid', 'America/New_York'] as $timezone) {
+            foreach ([0, 1] as $mode) {
+                $fromEpoch = $mode === 1 ? [2, 3, 4, 7] : [2, 3, 7];
+                foreach ([
+                    'from epoch' => ['1970-01-01', '', true, $fromEpoch],
+                    'to epoch' => ['', '1970-01-01', true, [1, 2, 4]],
+                    'exact epoch' => ['1970-01-01', '1970-01-01', true, $mode === 1 ? [2, 4] : [2]],
+                    'before epoch from' => ['1969-12-31', '', true, [2, 3, 4, 7]],
+                    'before epoch to' => ['', '1969-12-30', true, [1]],
+                    'modern date' => ['2026-10-31', '2026-10-31', true, [7]],
+                    'invalid from' => ['not-a-date', '', true, [1, 2, 3, 4, 7]],
+                    'invalid to' => ['', 'not-a-date', true, [1, 2, 3, 4, 7]],
+                    'empty boundaries' => ['', '', true, [1, 2, 3, 4, 7]],
+                    'disabled controls' => ['1970-01-01', '1970-01-01', false, [1, 2, 3, 4, 7]],
+                    'valid from invalid to' => ['1970-01-01', 'not-a-date', true, $fromEpoch],
+                    'reversed boundaries' => ['1970-01-02', '1969-12-30', true, []],
+                ] as $case => $values) {
+                    yield $timezone . ' / mode ' . $mode . ' / ' . $case => [$timezone, $mode, ...$values];
+                }
+            }
+        }
+    }
+
+    /**
+     * Execute the production date predicates, including epoch zero and overlapping events.
+     *
+     * @param string $timezone PHP default timezone.
+     * @param int $mode Start-date (0) or complete event-range (1) matching.
+     * @param string $from Lower visitor boundary.
+     * @param string $to Upper visitor boundary.
+     * @param bool $enabled Whether the administrator enables the date controls.
+     * @param int[] $expected Expected public, published event IDs.
+     * @return void
+     */
+    #[DataProvider('dateBoundaries')]
+    public function testSearchDateBoundaries(
+        string $timezone,
+        int $mode,
+        string $from,
+        string $to,
+        bool $enabled,
+        array $expected
+    ): void {
+        $previousTimezone = date_default_timezone_get();
+        try {
+            date_default_timezone_set($timezone);
+            $this->db->setQuery('ALTER TABLE t_jem_events ADD COLUMN enddates TEXT')->execute();
+            $this->db->setQuery('DELETE FROM t_jem_events')->execute();
+            foreach ([
+                [1, '1969-12-30', null, 1, 1],
+                [2, '1970-01-01', null, 1, 1],
+                [3, '1970-01-02', null, 1, 1],
+                [4, '1969-12-31', '1970-01-02', 1, 1],
+                [5, '1970-01-01', null, 1, 9],
+                [6, '1970-01-01', null, 2, 1],
+                [7, '2026-10-31', null, 1, 1],
+            ] as [$id, $date, $end, $published, $access]) {
+                $row = (object) ['id' => $id, 'dates' => $date, 'enddates' => $end,
+                    'published' => $published, 'access' => $access, 'locid' => $id,
+                    'parent_event_id' => 0, 'show_in_calendar' => 1];
+                $this->db->insertObject('#__jem_events', $row);
+            }
+            // Implement the two MySQL date expressions in this isolated SQLite fixture.
+            $pdo = $this->db->getConnection();
+            $pdo->sqliteCreateFunction('DATEDIFF', static function ($a, $b): ?int {
+                if ($a === null || $b === null) {
+                    return null;
+                }
+
+                return (int) (new DateTimeImmutable($b))->diff(new DateTimeImmutable($a))->format('%r%a');
+            }, 2);
+            $pdo->sqliteCreateFunction('IF', static fn ($condition, $yes, $no) => $condition ? $yes : $no, 3);
+            $this->configure('published', ['filter_date_from' => $from, 'filter_date_to' => $to]);
+            $this->app->params->set('date_filter_type', $mode);
+            $this->app->params->set('filter_show_date_from', (int) $enabled);
+            $this->app->params->set('filter_show_date_to', (int) $enabled);
+
+            self::assertSame($expected, $this->resultIds());
+        } finally {
+            date_default_timezone_set($previousTimezone);
+        }
+    }
+
     /** @return void Clearing all values also overwrites stale session values. */
     public function testClearLeavesNoSearchRestrictionOrOldSessionValue(): void
     {
