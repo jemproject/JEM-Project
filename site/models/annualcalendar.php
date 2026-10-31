@@ -17,6 +17,44 @@ require_once __DIR__ . '/eventslist.php';
  */
 class JemModelAnnualcalendar extends JemModelEventslist
 {
+    /** @var array|null Normalized date-only period, shared throughout this model's request. */
+    private ?array $calendarPeriod = null;
+
+    /**
+     * Resolve and cache the requested twelve-month period using Joomla-local today.
+     *
+     * Invalid years fall back before date construction. Both ends must fit within
+     * four-digit years; dates retain their existing date-only timezone semantics.
+     *
+     * @return array{year: int, start_month: int, start: DateTimeImmutable, end: DateTimeImmutable,
+     *     today: string, previous_year: int|null, next_year: int|null} Validated period and navigation bounds.
+     */
+    public function getCalendarPeriod(): array
+    {
+        if ($this->calendarPeriod === null) {
+            $app = Factory::getApplication();
+            $today = JemHelper::getJoomlaDate();
+            $currentYear = (int) substr($today, 0, 4);
+            $startMonth = max(1, min(12, (int) $app->getParams()->get('annual_start_month', 1)));
+            $lastYear = $startMonth === 1 ? 9999 : 9998;
+            $year = $app->input->getInt('yearID', $currentYear);
+            $year = $year >= 1 && $year <= $lastYear ? $year : $currentYear;
+            $start = new DateTimeImmutable(sprintf('%04d-%02d-01', $year, $startMonth));
+
+            $this->calendarPeriod = [
+                'year' => $year,
+                'start_month' => $startMonth,
+                'start' => $start,
+                'end' => $start->modify('+12 months -1 day'),
+                'today' => $today,
+                'previous_year' => $year > 1 ? $year - 1 : null,
+                'next_year' => $year < $lastYear ? $year + 1 : null,
+            ];
+        }
+
+        return $this->calendarPeriod;
+    }
+
     /**
      * Method to auto-populate the model state.
      */
@@ -29,11 +67,9 @@ class JemModelAnnualcalendar extends JemModelEventslist
         $show_archived_events = (bool) $params->get('show_archived_events', 0);
         $this->show_archived_events = $show_archived_events;
         $startdayonly         = $params->get('show_only_start', false);
-        $year                 = (int) $app->input->getInt('yearID', substr(JemHelper::getJoomlaDate(), 0, 4));
-        $startMonth           = max(1, min(12, (int) $params->get('annual_start_month', 1)));
-
-        $periodStart = new DateTimeImmutable(sprintf('%04d-%02d-01', $year, $startMonth));
-        $periodEnd   = $periodStart->modify('+12 months -1 day');
+        $period               = $this->getCalendarPeriod();
+        $periodStart          = $period['start'];
+        $periodEnd            = $period['end'];
 
         $this->setState('params', $params);
         $this->applyMenuEventFilters($params);
