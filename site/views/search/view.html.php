@@ -58,7 +58,8 @@ class JemViewSearch extends JemView
         $filter_category  = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
         $filter_type_id   = $app->getUserStateFromRequest('com_jem.search.filter_type_id', 'filter_type_id', 0, 'int');
         $filter_venue_id  = $app->getUserStateFromRequest('com_jem.search.filter_venue_id', 'filter_venue_id', 0, 'int');
-        $task             = $app->input->getCmd('task', '');
+        $task             = $model->getEventSearchScope() === 'archived' ? 'archive' : '';
+        $uri->delVar('task');
 
         if(empty($filter_continent) && empty($filter_country)){
             $filter_country = $jemsettings->defaultCountry;
@@ -90,7 +91,9 @@ class JemViewSearch extends JemView
         $pageclass_sfx = $params->get('pageclass_sfx');
 
         if ($task == 'archive') {
-            $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=search&task=archive'));
+            $archiveLink = 'index.php?option=com_jem&view=search'
+                . ($useMenuItemParams ? '&Itemid=' . (int) $menuitem->id : '');
+            $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_($archiveLink));
             $pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
             $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
         }
@@ -227,7 +230,7 @@ class JemViewSearch extends JemView
     protected function _buildSortLists()
     {
         $app = Factory::getApplication();
-        $task = $app->input->getCmd('task', '');
+        $task = $this->getModel('search')->getEventSearchScope() === 'archived' ? 'archive' : '';
 
         $filter_order = $app->input->getCmd('filter_order', 'a.dates');
         $filter_order_DirDefault = 'ASC';

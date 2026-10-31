@@ -76,11 +76,60 @@ class JemModelSearch extends BaseDatabaseModel
 
         $filter_order_DirDefault = 'ASC';
         // Reverse default order for dates in archive mode
-        $task = $app->input->getCmd('task', '');
-        if (($task == 'archive') && ($filter_order == 'a.dates')) {
+        if ($this->getEventSearchScope() === 'archived' && $filter_order == 'a.dates') {
             $filter_order_DirDefault = 'DESC';
         }
         $this->setState('filter_order_Dir', $app->input->getCmd('filter_order_Dir', $filter_order_DirDefault));
+    }
+
+    /**
+     * Resolve the event states allowed by the Search menu, never by visitor input.
+     *
+     * @return string Published, archived, or all (published and archived).
+     */
+    public function getEventSearchScope(): string
+    {
+        $menuitem = $this->getSearchMenuItem();
+        $scope = $menuitem ? $menuitem->getParams()->get('search_event_scope', 'published') : 'published';
+
+        return in_array($scope, array('published', 'archived', 'all'), true) ? $scope : 'published';
+    }
+
+    /**
+     * Get the active menu only when it belongs to this component and view.
+     *
+     * @return \Joomla\CMS\Menu\MenuItem|null The Search menu or no applicable menu.
+     */
+    private function getSearchMenuItem()
+    {
+        $menuitem = Factory::getApplication()->getMenu()->getActive();
+
+        return $menuitem
+            && ($menuitem->query['option'] ?? '') === 'com_jem'
+            && ($menuitem->query['view'] ?? '') === 'search'
+            ? $menuitem
+            : null;
+    }
+
+    /**
+     * Build the shared event-state condition for Search results and filter options.
+     *
+     * Publication windows apply to published events, not to explicitly archived ones.
+     *
+     * @return string Parenthesized SQL predicate using the event alias a.
+     */
+    private function getSearchPublicationWhere(): string
+    {
+        $scope = $this->getEventSearchScope();
+        if ($scope === 'archived') {
+            return '(a.published = 2)';
+        }
+
+        $published = JemHelper::getEventPublicationWhere('a');
+
+        return $scope === 'all'
+            ? '((' . $published . ') OR a.published = 2)'
+            : '(' . $published . ')';
     }
 
     /**
@@ -132,6 +181,13 @@ class JemModelSearch extends BaseDatabaseModel
         // Lets load the content if it doesn't already exist
         if (empty($this->_pagination)) {
             $this->_pagination = new Pagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
+            $this->_pagination->setAdditionalUrlParam('option', 'com_jem');
+            $this->_pagination->setAdditionalUrlParam('view', 'search');
+            $this->_pagination->setAdditionalUrlParam('task', null);
+            $menuitem = $this->getSearchMenuItem();
+            if ($menuitem) {
+                $this->_pagination->setAdditionalUrlParam('Itemid', (int) $menuitem->id);
+            }
         }
 
         return $this->_pagination;
@@ -185,12 +241,9 @@ class JemModelSearch extends BaseDatabaseModel
      */
     protected function _buildOrderBy()
     {
-        $app  = Factory::getApplication();
-        $task = $app->input->getCmd('task', '');
-
         $filter_order      = $this->getState('filter_order');
         $filter_order_Dir  = $this->getState('filter_order_Dir');
-        $default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
+        $default_order_Dir = $this->getEventSearchScope() === 'archived' ? 'DESC' : 'ASC';
 
         $filter_order      = InputFilter::getInstance()->clean($filter_order, 'cmd');
         $filter_order_Dir  = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
@@ -225,17 +278,12 @@ class JemModelSearch extends BaseDatabaseModel
 
         // Get the paramaters of the active menu item
         $params       = $app->getParams();
-        $task         = $app->input->getCmd('task', '');
         $user         = JemFactory::getUser();
         $levels       = $user->getAuthorisedViewLevels();
         $top_category = $params->get('top_category', 1);
 
         // First thing we need to do is to select only needed events
-        if ($task == 'archive') {
-            $where = ' WHERE a.published = 2';
-        } else {
-            $where = ' WHERE ' . JemHelper::getEventPublicationWhere('a');
-        }
+        $where = ' WHERE ' . $this->getSearchPublicationWhere();
 
         // filter by user's access levels
         $where .= ' AND a.access IN (' . implode(', ', $levels) .')';
@@ -376,7 +424,7 @@ class JemModelSearch extends BaseDatabaseModel
                . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
                ;
 
-        $query .= ' WHERE c.published = 1';
+        $query .= ' WHERE c.published = 1 AND ' . $this->getSearchPublicationWhere();
 
         if ($filter_continent) {
             $query .= ' AND c.continent = ' . $this->_db->Quote($filter_continent);
@@ -421,9 +469,7 @@ class JemModelSearch extends BaseDatabaseModel
             ->where('t.published = 1')
             ->where('t.access IN (' . implode(',', $levels) . ')');
 
-        if ($needsLocation || $needsCategory) {
-            $query->join('INNER', $this->_db->quoteName('#__jem_events') . ' AS a ON a.type_id = t.id AND ' . JemHelper::getEventPublicationWhere('a') . ' AND a.access IN (' . implode(',', $levels) . ')');
-        }
+        $query->join('INNER', $this->_db->quoteName('#__jem_events') . ' AS a ON a.type_id = t.id AND ' . $this->getSearchPublicationWhere() . ' AND a.access IN (' . implode(',', $levels) . ')');
 
         if ($needsLocation) {
             $query->join('LEFT', $this->_db->quoteName('#__jem_venues') . ' AS lv ON lv.id = a.locid');
@@ -457,7 +503,7 @@ class JemModelSearch extends BaseDatabaseModel
                . ' FROM #__jem_events AS a'
                . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
                . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
-               . ' WHERE ' . JemHelper::getEventPublicationWhere('a') . ' AND c.published = 1 AND l.country = ' . $this->_db->Quote($country)
+               . ' WHERE ' . $this->getSearchPublicationWhere() . ' AND c.published = 1 AND l.country = ' . $this->_db->Quote($country)
                . ' ORDER BY l.city ';
 
         $this->_db->setQuery($query);
@@ -474,7 +520,7 @@ class JemModelSearch extends BaseDatabaseModel
                . ' FROM #__jem_events AS a'
                . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
                . ' LEFT JOIN #__jem_countries AS c ON c.iso2 = l.country'
-               . ' WHERE ' . JemHelper::getEventPublicationWhere('a') . ' AND l.published = 1 AND c.published = 1';
+               . ' WHERE ' . $this->getSearchPublicationWhere() . ' AND l.published = 1 AND c.published = 1';
 
         if ($filter_continent) {
             $query .= ' AND c.continent = ' . $this->_db->Quote($filter_continent);
