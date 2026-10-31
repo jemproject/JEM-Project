@@ -824,7 +824,11 @@ class JemModelEventslist extends ListModel
         $jubilee_show_past = $this->getState('filter.jubilee_show_past', 0);
         $published = $this->getState('filter.published', 1);
 
-        $applyCalendarDateFilters = !is_numeric($published) || (int) $published < 2 || (bool) $this->getState('filter.show_archived_events', false);
+        // An explicit calendar period also bounds archive queries and raw exports.
+        // Do not enable Events List's relative date filters merely because it is archived.
+        $hasCalendarPeriod = $this->getState('filter.date.from') && $this->getState('filter.date.to');
+        $applyCalendarDateFilters = $hasCalendarPeriod || !is_numeric($published)
+            || (int) $published < 2 || (bool) $this->getState('filter.show_archived_events', false);
 
         if($opendates != 2 && $applyCalendarDateFilters) {
 

@@ -36,6 +36,13 @@ final class JemCalendarHourGridHelper
         $today = new DateTimeImmutable(JemHelper::getJoomlaDate());
         $itemId = Factory::getApplication()->input->getInt('Itemid', 0);
         $context = $itemId > 0 ? '&Itemid=' . $itemId : '';
+        $input = Factory::getApplication()->input;
+        if ($input->getCmd('task', '') === 'archive') {
+            $context .= '&task=archive';
+        }
+        if ($input->getBool('print', false)) {
+            $context .= '&print=1&tmpl=component';
+        }
 
         if ($view === 'weekcal') {
             $mode = $mode === 'agenda' ? 'agenda' : 'timetable';
@@ -206,8 +213,12 @@ final class JemCalendarHourGridHelper
                 $html[] = '<div class="jem-hourgrid-date"><h3>';
 
                 if ($isWeek) {
+                    $input = Factory::getApplication()->input;
+                    $itemId = $input->getInt('Itemid', 0);
                     $dayUrl = 'index.php?option=com_jem&view=day&id=' . str_replace('-', '', $date) . '&mode=timetable'
-                        . ($topCategoryId > 0 ? '&topcat=' . $topCategoryId : '');
+                        . ($topCategoryId > 0 ? '&topcat=' . $topCategoryId : '')
+                        . ($itemId > 0 ? '&Itemid=' . $itemId : '')
+                        . ($input->getCmd('task', '') === 'archive' ? '&task=archive' : '');
                     $html[] = '<a class="jem-hourgrid-day-link" href="' . self::escape(Route::_($dayUrl, false))
                         . '" aria-label="' . $fullDate . '" title="' . $fullDate . '">'
                         . '<span class="jem-hourgrid-day-short">' . self::escape(JemOutput::formatdate($date, 'D j')) . '</span>'

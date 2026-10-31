@@ -154,18 +154,23 @@ class JemViewCategory extends JemView
             $url_base = 'index.php?option=com_jem&view=category&layout=calendar' . $partCatid . $partItemid;
             $partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
 
-            $print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
-            $archive_link = Route::_('index.php?option=com_jem&view=category');
-            $archive_link = Route::_(JemHelperRoute::getCategoryRoute($catid));
+            $task = $app->input->getCmd('task', '');
+            $partArchive = $task === 'archive' ? '&task=archive' : '';
+            $requestedMode = $app->input->getCmd('mode', '');
+            $partMode = in_array($requestedMode, array('calendar', 'agenda'), true) ? '&mode=' . $requestedMode : '';
+            $url_base .= $partMode;
+            $navigationBase = $url_base . $partArchive . ($print ? '&print=1&tmpl=component' : '');
+            $print_link = Route::_(JemOutput::buildPrintLink($url_base . $partDate, $task === 'archive'));
+            $archive_link = Route::_($url_base . $partDate);
 
             // init calendar
             $cal = new JemCalendar($year, $month, 0);
             if ($params->get('show_year_navigation', 0)) {
-                $cal->enableYearNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
+                $cal->enableYearNav($navigationBase);
             }
-            $cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
+            $cal->enableMonthNav($navigationBase);
             $cal->setFirstWeekDay($params->get('firstweekday', 1));
-            $cal->enableDayLinks('index.php?option=com_jem&view=day&catid='.$catid);
+            $cal->enableDayLinks('index.php?option=com_jem&view=day&catid=' . $catid . $partItemid . $partArchive);
 
             $this->rows          = $rows;
             $this->catid         = $catid;
@@ -182,6 +187,7 @@ class JemViewCategory extends JemView
             $this->print         = $print;
             $this->ical_link     = $partDate;
             $this->archive_link  = $archive_link;
+            $this->task          = $task;
 
         }
         else

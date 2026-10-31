@@ -168,17 +168,24 @@ class JemViewVenue extends JemView
             $partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
             $url_base = 'index.php?option=com_jem&view=venue&layout=calendar' . $partVenid . $partItemid;
 
-            $print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
-            $pdf_link = Route::_($url_base . $partDate . '&layout=pdf&venue_calendar_pdf=1&format=raw');
+            $partArchive = $task === 'archive' ? '&task=archive' : '';
+            $requestedMode = $jinput->getCmd('mode', '');
+            $partMode = in_array($requestedMode, array('calendar', 'agenda'), true) ? '&mode=' . $requestedMode : '';
+            $url_base .= $partMode;
+            $navigationBase = $url_base . $partArchive . ($print ? '&print=1&tmpl=component' : '');
+            $print_link = Route::_(JemOutput::buildPrintLink($url_base . $partDate, $task === 'archive'));
+            $pdf_link = Route::_('index.php?option=com_jem&view=venue&layout=pdf' . $partVenid
+                . $partItemid . $partDate . $partArchive . '&venue_calendar_pdf=1&format=raw');
+            $archive_link = Route::_($url_base . $partDate);
 
             // init calendar
             $cal = new JemCalendar($year, $month, 0);
             if ($params->get('show_year_navigation', 0)) {
-                $cal->enableYearNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
+                $cal->enableYearNav($navigationBase);
             }
-            $cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
+            $cal->enableMonthNav($navigationBase);
             $cal->setFirstWeekDay($params->get('firstweekday',1));
-            $cal->enableDayLinks('index.php?option=com_jem&view=day'.$partLocid);
+            $cal->enableDayLinks('index.php?option=com_jem&view=day' . $partLocid . $partItemid . $partArchive);
 
             // map variables
             $this->rows          = $rows;

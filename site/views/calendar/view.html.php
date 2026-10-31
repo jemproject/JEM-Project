@@ -159,12 +159,17 @@ class JemViewCalendar extends JemView
 
         // init calendar
         $cal = new JemCalendar($year, $month, 0);
+        $partArchive = $task === 'archive' ? '&task=archive' : '';
+        $requestedMode = $jinput->getCmd('mode', '');
+        $partMode = in_array($requestedMode, array('calendar', 'agenda'), true) ? '&mode=' . $requestedMode : '';
+        $navigationBase = $url_base . $partItemid . $partArchive . $partMode
+            . ($print ? '&print=1&tmpl=component' : '');
         if ($params->get('show_year_navigation', 0)) {
-            $cal->enableYearNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
+            $cal->enableYearNav($navigationBase);
         }
-        $cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
+        $cal->enableMonthNav($navigationBase);
         $cal->setFirstWeekDay($params->get('firstweekday', 1));
-        $cal->enableDayLinks('index.php?option=com_jem&view=day' . $this->param_topcat);
+        $cal->enableDayLinks('index.php?option=com_jem&view=day' . $this->param_topcat . $partItemid . $partArchive);
 
         $this->rows          = $rows;
         $this->catIds        = $catIds;

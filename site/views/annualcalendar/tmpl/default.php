@@ -26,6 +26,7 @@ $dayLinkTarget = (string) $this->params->get('annual_day_link_target', 'timetabl
 $dayLinkTarget = in_array($dayLinkTarget, array('default', 'timetable', 'timeline'), true) ? $dayLinkTarget : 'timetable';
 $dayLinkItemid = !empty($this->itemid) ? '&Itemid=' . (int) $this->itemid : '';
 $dayLinkArchived = $this->params->get('show_archived_events', 0) ? '&show_archived_events=1' : '';
+$dayLinkArchived .= $this->task === 'archive' ? '&task=archive' : '';
 $createDayLink = static function (DateTimeImmutable $date) use ($dayLinkTarget, $dayLinkItemid, $dayLinkArchived) {
     $layout = in_array($dayLinkTarget, array('timetable', 'timeline'), true) ? '&layout=' . $dayLinkTarget : '';
 
@@ -293,7 +294,7 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                 ?>
                 <section class="jem-annual-agenda-month">
                     <h2 class="jem-annual-agenda-month-title">
-                        <a href="<?php echo Route::_('index.php?option=com_jem&view=calendar&yearID=' . (int) $monthStart->format('Y') . '&monthID=' . (int) $monthStart->format('n')); ?>">
+                        <a href="<?php echo Route::_('index.php?option=com_jem&view=calendar&yearID=' . (int) $monthStart->format('Y') . '&monthID=' . (int) $monthStart->format('n') . $dayLinkItemid . $dayLinkArchived); ?>">
                             <?php echo HTMLHelper::_('date', $monthStart->format('Y-m-d'), 'F Y'); ?>
                         </a>
                     </h2>
@@ -380,7 +381,7 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
             $daysInMonth = (int) $monthStart->format('t');
             $weekday = (int) $monthStart->format('w');
             $offset = $firstWeekDay === 0 ? $weekday : ($weekday === 0 ? 6 : $weekday - 1);
-            $monthLink = Route::_('index.php?option=com_jem&view=calendar&yearID=' . $monthYear . '&monthID=' . $monthNumber);
+            $monthLink = Route::_('index.php?option=com_jem&view=calendar&yearID=' . $monthYear . '&monthID=' . $monthNumber . $dayLinkItemid . $dayLinkArchived);
             ?>
             <section class="jem-annual-month">
                 <h2 class="jem-annual-month-title">
@@ -406,7 +407,7 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                             $weekDate = $firstWeekDay === 0 ? $cellDate->modify('+1 day') : $cellDate;
                             $weekYear = (int) $weekDate->format('o');
                             $weekNumber = (int) $weekDate->format('W');
-                            $weekLink = Route::_('index.php?option=com_jem&view=weekcal&yearID=' . $weekYear . '&weekID=' . $weekNumber);
+                            $weekLink = Route::_('index.php?option=com_jem&view=weekcal&yearID=' . $weekYear . '&weekID=' . $weekNumber . $dayLinkItemid . $dayLinkArchived);
                             ?>
                             <a class="jem-annual-week-number" href="<?php echo $weekLink; ?>" aria-label="<?php echo Text::_('COM_JEM_WKCAL_WEEK') . ' ' . $weekNumber; ?>">
                                 <span class="jem-annual-week-number-label"><?php echo $weekNumber; ?></span>

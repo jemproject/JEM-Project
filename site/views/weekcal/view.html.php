@@ -134,6 +134,10 @@ class JemViewWeekcal extends JemView
         $url_base = 'index.php?option=com_jem&view=weekcal' . $partItemid
             . '&mode=' . JemCalendarAgendaHelper::getWeekMode($params);
         $archive_link = Route::_($url_base . $partDate);
+        $task = $jinput->getCmd('task', '');
+        $partArchive = $task === 'archive' ? '&task=archive' : '';
+        $navigationBase = $url_base . $partArchive
+            . ($jinput->getBool('print', false) ? '&print=1&tmpl=component' : '');
         $nrweeks = $period['weeks'];
         $weekStart = $period['iso_start'];
         $weekEnd = $weekStart->modify('+' . ($nrweeks - 1) . ' weeks');
@@ -153,21 +157,21 @@ class JemViewWeekcal extends JemView
             }
         }
 
-        $print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
+        $print_link = Route::_($url_base . $partDate . $partArchive . '&print=1&tmpl=component');
 
         // init calendar
         $cal = new activeCalendarWeek($year,1,1);
         $cal->enableWeekNum(Text::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
         $cal->setFirstWeekDay($params->get('firstweekday', 1));
-        $cal->enableDayLinks('index.php?option=com_jem&view=day' . $this->param_topcat);
+        $cal->enableDayLinks('index.php?option=com_jem&view=day' . $this->param_topcat . $partItemid . $partArchive);
         $cal->setWeekNavigation(
             $this->escape($weekTitle),
-            Route::_($url_base . '&yearID=' . $previousWeek->format('o') . '&weekID=' . (int) $previousWeek->format('W')),
-            Route::_($url_base . '&yearID=' . $nextWeek->format('o') . '&weekID=' . (int) $nextWeek->format('W')),
+            Route::_($navigationBase . '&yearID=' . $previousWeek->format('o') . '&weekID=' . (int) $previousWeek->format('W')),
+            Route::_($navigationBase . '&yearID=' . $nextWeek->format('o') . '&weekID=' . (int) $nextWeek->format('W')),
             jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angle-left jem-calendar-nav-icon', Text::_('COM_JEM_WKCAL_PREVIOUS_WEEK'), array('class' => 'jem-calendar-nav-icon')),
             jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angle-right jem-calendar-nav-icon', Text::_('COM_JEM_WKCAL_NEXT_WEEK'), array('class' => 'jem-calendar-nav-icon')),
-            $params->get('show_year_navigation', 0) ? Route::_($url_base . '&yearID=' . $previousYear . '&weekID=' . $previousYearWeek) : null,
-            $params->get('show_year_navigation', 0) ? Route::_($url_base . '&yearID=' . $nextYear . '&weekID=' . $nextYearWeek) : null,
+            $params->get('show_year_navigation', 0) ? Route::_($navigationBase . '&yearID=' . $previousYear . '&weekID=' . $previousYearWeek) : null,
+            $params->get('show_year_navigation', 0) ? Route::_($navigationBase . '&yearID=' . $nextYear . '&weekID=' . $nextYearWeek) : null,
             jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angles-left jem-calendar-nav-icon', Text::_('JPREV'), array('class' => 'jem-calendar-nav-icon')),
             jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angles-right jem-calendar-nav-icon', Text::_('JNEXT'), array('class' => 'jem-calendar-nav-icon'))
         );
@@ -186,6 +190,7 @@ class JemViewWeekcal extends JemView
         $this->print         = $print;
         $this->ical_link     = $partDate;
         $this->archive_link  = $archive_link;
+        $this->task          = $task;
 
         parent::display($tpl);
     }

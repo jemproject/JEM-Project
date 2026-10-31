@@ -146,15 +146,24 @@ namespace {
             \Joomla\CMS\Factory::$application = (object) [
                 'input' => new class () {
                     public string $mode = '';
+                    public string $task = '';
+                    public bool $print = false;
+                    public array $integers = [];
 
                     public function getCmd(string $key, string $default = ''): string
                     {
-                        return $key === 'mode' ? $this->mode : $default;
+                        return in_array($key, ['mode', 'task'], true) ? $this->$key : $default;
                     }
 
                     public function getInt(string $key, int $default = 0): int
                     {
-                        return $default;
+                        return $this->integers[$key] ?? $default;
+                    }
+
+                    /** @param string $key Input. @param bool $default Fallback. @return bool Flag. */
+                    public function getBool(string $key, bool $default = false): bool
+                    {
+                        return $key === 'print' ? $this->print : $default;
                     }
                 },
             ];
@@ -201,6 +210,58 @@ namespace {
             self::assertStringContainsString('weekID=44', $html);
             self::assertStringContainsString('weekID=46', $html);
             self::assertStringNotContainsString('&amp;amp;', $html);
+        }
+
+        /** @return void Calendar navigation keeps only the explicit archive task and print context. */
+        public function testArchiveNavigationKeepsMenuScopeAndPrintContext(): void
+        {
+            $input = \Joomla\CMS\Factory::$application->input;
+            $input->integers = ['Itemid' => 101, 'catid' => 9, 'locid' => 11];
+            foreach (['', 'archive', 'event.remove'] as $task) {
+                $input->task = $task;
+                foreach ([false, true] as $print) {
+                    $input->print = $print;
+                    foreach (['day', 'weekcal'] as $view) {
+                        $html = JemCalendarHourGridHelper::renderNavigation($view, '2026-11-02', 7, false, 'agenda');
+                        $document = new \DOMDocument();
+                        $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+                        $links = $document->getElementsByTagName('a');
+                        self::assertCount(3, $links);
+                        foreach ($links as $link) {
+                            parse_str(parse_url($link->getAttribute('href'), PHP_URL_QUERY), $query);
+                            self::assertSame('101', $query['Itemid']);
+                            self::assertSame($task === 'archive' ? 'archive' : null, $query['task'] ?? null);
+                            self::assertSame($print ? '1' : null, $query['print'] ?? null);
+                            self::assertSame($print ? 'component' : null, $query['tmpl'] ?? null);
+                            if ($view === 'day') {
+                                self::assertSame('9', $query['catid']);
+                                self::assertSame('11', $query['locid']);
+                            }
+                        }
+                        self::assertStringNotContainsString('&amp;amp;', $html);
+                    }
+                }
+            }
+        }
+
+        /** @return void Week headings open archived Day results without losing menu/category context. */
+        public function testArchiveWeekDayHeadingsPreserveContext(): void
+        {
+            $input = \Joomla\CMS\Factory::$application->input;
+            $input->task = 'archive';
+            $input->integers = ['Itemid' => 101];
+            $html = JemCalendarHourGridHelper::render([], '2026-11-02', 7, 9);
+            $document = new \DOMDocument();
+            $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+            $links = (new \DOMXPath($document))->query('//a[@class="jem-hourgrid-day-link"]');
+            self::assertCount(7, $links);
+            foreach ($links as $link) {
+                parse_str(parse_url($link->getAttribute('href'), PHP_URL_QUERY), $query);
+                self::assertSame('archive', $query['task']);
+                self::assertSame('101', $query['Itemid']);
+                self::assertSame('9', $query['topcat']);
+                self::assertSame('timetable', $query['mode']);
+            }
         }
 
         public function testLegacyDailyHoursAndOvernightContinuation(): void

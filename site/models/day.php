@@ -311,7 +311,7 @@ class JemModelDay extends JemModelEventslist
             }
         }
         // default to 'published'
-        if (empty($published)) {
+        if ($task === 'archive' || empty($published)) {
             //$published[] = 1;
             $this->_populatePublishState($task);
         } else {
