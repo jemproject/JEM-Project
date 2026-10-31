@@ -17,7 +17,7 @@ $firstWeekDay = (int) $this->params->get('firstweekday', 1);
 $markerLimit = max(1, (int) $this->params->get('annual_marker_limit', 4));
 $showDayEventCount = (bool) $this->params->get('annual_show_day_event_count', 0);
 $eventUseCategoryBackground = !empty($this->params->get('eventbg_usecatcolor', 0));
-$today = (new DateTimeImmutable())->format('Y-m-d');
+$today = $this->today;
 $eventsByDate = array();
 $eventDateKeys = array();
 $countcatevents = array();
@@ -221,9 +221,15 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
     <?php endif; ?>
 
     <div class="jem-annual-nav">
-        <a class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-prev" href="<?php echo $this->previous_link; ?>" aria-label="<?php echo Text::_('JPREV'); ?>">
-            <span class="jem-annual-nav-text" aria-hidden="true">&lt;&lt;</span>
-        </a>
+        <?php if ($this->previous_link !== null) : ?>
+            <a class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-prev" href="<?php echo $this->previous_link; ?>" aria-label="<?php echo Text::_('JPREV'); ?>">
+                <span class="jem-annual-nav-text" aria-hidden="true">&lt;&lt;</span>
+            </a>
+        <?php else : ?>
+            <span class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-prev disabled" aria-disabled="true" aria-label="<?php echo Text::_('JPREV'); ?>">
+                <span class="jem-annual-nav-text" aria-hidden="true">&lt;&lt;</span>
+            </span>
+        <?php endif; ?>
         <div class="jem-annual-period">
             <span class="jem-annual-period-title"><?php echo $this->escape($this->periodLabel); ?></span>
             <span class="jem-annual-period-range">
@@ -232,9 +238,15 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                 <?php echo HTMLHelper::_('date', $this->periodEnd->format('Y-m-d'), 'F Y'); ?>
             </span>
         </div>
-        <a class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-next" href="<?php echo $this->next_link; ?>" aria-label="<?php echo Text::_('JNEXT'); ?>">
-            <span class="jem-annual-nav-text" aria-hidden="true">&gt;&gt;</span>
-        </a>
+        <?php if ($this->next_link !== null) : ?>
+            <a class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-next" href="<?php echo $this->next_link; ?>" aria-label="<?php echo Text::_('JNEXT'); ?>">
+                <span class="jem-annual-nav-text" aria-hidden="true">&gt;&gt;</span>
+            </a>
+        <?php else : ?>
+            <span class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-next disabled" aria-disabled="true" aria-label="<?php echo Text::_('JNEXT'); ?>">
+                <span class="jem-annual-nav-text" aria-hidden="true">&gt;&gt;</span>
+            </span>
+        <?php endif; ?>
     </div>
 
     <?php if (in_array($displayLegend, array(2, 4, 6), true)) : ?>

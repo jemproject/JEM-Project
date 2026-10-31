@@ -63,12 +63,13 @@ class JemViewAnnualcalendar extends JemView
         $calendarScript = JPATH_ROOT . '/media/com_jem/js/calendar.js';
         $document->addScript($url . 'media/com_jem/js/calendar.js' . (is_file($calendarScript) ? '?v=' . filemtime($calendarScript) : ''));
 
-        $year       = (int) $jinput->getInt('yearID', date('Y'));
-        $startMonth = max(1, min(12, (int) $params->get('annual_start_month', 1)));
-        $periodStart = new DateTimeImmutable(sprintf('%04d-%02d-01', $year, $startMonth));
-        $periodEnd   = $periodStart->modify('+12 months -1 day');
-
         $model = $this->getModel();
+        $period = $model->getCalendarPeriod();
+        $year = $period['year'];
+        $startMonth = $period['start_month'];
+        $periodStart = $period['start'];
+        $periodEnd = $period['end'];
+
         $db = Factory::getContainer()->get('DatabaseDriver');
         $model->getState('params');
         $model->setState('filter.calendar_from', ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($periodStart->format('Y-m-d')) . ') >= 0');
@@ -149,12 +150,17 @@ class JemViewAnnualcalendar extends JemView
         $this->startMonth    = $startMonth;
         $this->periodStart   = $periodStart;
         $this->periodEnd     = $periodEnd;
+        $this->today         = $period['today'];
         $this->periodLabel   = $periodLabel;
         $this->displayMode   = $displayMode;
         $this->calendar_link = Route::_($url_base . $partItemid . $partDate . ($task == 'archive' ? '&task=archive' : ''));
         $this->agenda_link   = Route::_($url_base . $partItemid . $partDate . '&mode=agenda' . ($task == 'archive' ? '&task=archive' : ''));
-        $this->previous_link = Route::_($url_base . $partItemid . '&yearID=' . ($year - 1) . $partMode . ($task == 'archive' ? '&task=archive' : ''));
-        $this->next_link     = Route::_($url_base . $partItemid . '&yearID=' . ($year + 1) . $partMode . ($task == 'archive' ? '&task=archive' : ''));
+        $this->previous_link = $period['previous_year'] !== null
+            ? Route::_($url_base . $partItemid . '&yearID=' . $period['previous_year'] . $partMode . ($task == 'archive' ? '&task=archive' : ''))
+            : null;
+        $this->next_link = $period['next_year'] !== null
+            ? Route::_($url_base . $partItemid . '&yearID=' . $period['next_year'] . $partMode . ($task == 'archive' ? '&task=archive' : ''))
+            : null;
 
         parent::display($tpl);
     }

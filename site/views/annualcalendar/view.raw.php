@@ -32,10 +32,10 @@ class JemViewAnnualcalendar extends HtmlView
         $params    = $app->getParams();
         $layout    = $jinput->getCmd('layout', '');
 
-        $year       = (int) $jinput->getInt('yearID', date('Y'));
-        $startMonth = max(1, min(12, (int) $params->get('annual_start_month', 1)));
-        $periodStart = new DateTimeImmutable(sprintf('%04d-%02d-01', $year, $startMonth));
-        $periodEnd   = $periodStart->modify('+12 months -1 day');
+        $model = $this->getModel();
+        $period = $model->getCalendarPeriod();
+        $periodStart = $period['start'];
+        $periodEnd = $period['end'];
 
         if ($layout === 'pdf') {
             $this->renderPdf($periodStart, $periodEnd, $params);
@@ -44,7 +44,6 @@ class JemViewAnnualcalendar extends HtmlView
         }
 
         if ($settings2->get('global_show_ical_icon', '0') == 1) {
-            $model = $this->getModel();
             $model->getState();
             $model->setState('list.start', 0);
             $model->setState('list.limit', $settings->ical_max_items);
