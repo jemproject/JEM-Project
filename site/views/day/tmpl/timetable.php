@@ -220,6 +220,13 @@ $itemId = $input->getInt('Itemid', 0);
 $catId = $input->getInt('catid', 0);
 $locId = $input->getInt('locid', 0);
 $extraLinkParts = array();
+if ($input->getCmd('task', '') === 'archive') {
+    $extraLinkParts[] = 'task=archive';
+}
+if ($input->getBool('print', false)) {
+    $extraLinkParts[] = 'print=1';
+    $extraLinkParts[] = 'tmpl=component';
+}
 if ($itemId > 0) {
     $extraLinkParts[] = 'Itemid=' . $itemId;
 }

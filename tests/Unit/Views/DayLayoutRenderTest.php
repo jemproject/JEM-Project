@@ -67,6 +67,34 @@ final class DayLayoutRenderTest extends TestCase
         }
     }
 
+    /** @return void Real templates render usable archive links, including the responsive copies. */
+    public function testArchiveNavigationSurvivesHtmlRendering(): void
+    {
+        DayLayoutInput::$task = 'archive';
+        foreach (['timetable', 'responsive/timetable', 'timeline', 'responsive/timeline', 'venueboard'] as $layout) {
+            $view = new DayLayoutFixture();
+            $view->venueBoard = ['mode' => 'spaces', 'locations' => []];
+            $view->venueBoardAssignments = [];
+            $html = $view->render($layout);
+            $document = new DOMDocument();
+            @$document->loadHTML($html);
+            $count = 0;
+            foreach ($document->getElementsByTagName('a') as $link) {
+                parse_str(parse_url($link->getAttribute('href'), PHP_URL_QUERY) ?? '', $query);
+                if (($query['view'] ?? '') === 'day') {
+                    ++$count;
+                    self::assertSame('archive', $query['task'] ?? null, $layout);
+                    self::assertSame('42', $query['Itemid'] ?? null, $layout);
+                    self::assertSame('7', $query['catid'] ?? null, $layout);
+                }
+            }
+            self::assertGreaterThanOrEqual(3, $count, $layout);
+            if (str_contains($layout, 'timeline')) {
+                self::assertStringContainsString('name="task" value="archive"', $html);
+            }
+        }
+    }
+
     #[DataProvider('timelines')]
     public function testTimelineShowsOvernightPartsAndNotClosedProgrammeDay(string $layout, string $hours): void
     {

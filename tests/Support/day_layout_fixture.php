@@ -18,9 +18,19 @@ final class DayLayoutRegistry
 
 final class DayLayoutInput
 {
+    public static string $task = '';
     public function getInt($key, $default = 0) { return ['Itemid' => 42, 'catid' => 7, 'locid' => 0][$key] ?? $default; }
-    public function getCmd($key, $default = '') { return $default; }
+    /** @param string $key Input. @param string $default Fallback. @return string Fixture command. */
+    public function getCmd($key, $default = '')
+    {
+        return $key === 'task' ? self::$task : $default;
+    }
     public function getString($key, $default = '') { return $default; }
+    /** @param string $key Input. @param bool $default Fallback. @return bool Flag. */
+    public function getBool(string $key, bool $default = false): bool
+    {
+        return $default;
+    }
 }
 
 final class DayLayoutServices

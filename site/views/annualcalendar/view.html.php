@@ -76,7 +76,7 @@ class JemViewAnnualcalendar extends JemView
         $model->setState('filter.calendar_to', ' DATEDIFF(a.dates, ' . $db->quote($periodEnd->format('Y-m-d')) . ') <= 0');
         $model->setState('filter.date.from', $periodStart->format('Y-m-d'));
         $model->setState('filter.date.to', $periodEnd->format('Y-m-d'));
-        $model->setState('filter.published', 1);
+        // Keep the publication state established by the model, including archive mode.
         $model->setState('filter.show_archived_events', (bool) $params->get('show_archived_events', 0));
         $model->setState('filter.calendar_multiday', true);
         $model->setState('filter.calendar_startdayonly', (bool) $params->get('show_only_start', false));

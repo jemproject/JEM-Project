@@ -211,7 +211,7 @@ final class DayPrintContextTest extends TestCase
     public function testArchiveTaskAndExplicitArchiveToggleArePreserved(): void
     {
         foreach ([0, 1] as $showArchived) {
-            Factory::$app = new Application(['id' => '20261030', 'task' => 'archive', 'show_archived_events' => $showArchived],
+            Factory::$app = new Application(['id' => '20261030', 'task' => 'archive', 'pub' => '1,2', 'show_archived_events' => $showArchived],
                 ['show_archived_events' => 1]);
             $model = new DayModel();
             $view = new DayView('default');

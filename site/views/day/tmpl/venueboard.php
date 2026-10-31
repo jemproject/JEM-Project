@@ -24,7 +24,10 @@ foreach ($this->rows ?: array() as $row) {
 $mode = $this->venueBoard['mode'];
 $columns = JemVenueBoard::group($rows, $this->venueBoard['locations'], $this->venueBoardAssignments, $mode);
 $input = Factory::getApplication()->input;
-$extraLink = '';
+$extraLink = $input->getCmd('task', '') === 'archive' ? '&task=archive' : '';
+if ($input->getBool('print', false)) {
+    $extraLink .= '&print=1&tmpl=component';
+}
 foreach (array('Itemid', 'catid', 'locid') as $key) {
     $value = $input->getInt($key, 0);
     if ($value > 0) {
@@ -32,7 +35,7 @@ foreach (array('Itemid', 'catid', 'locid') as $key) {
     }
 }
 $dayLink = static function ($date) use ($extraLink) {
-    return Route::_('index.php?option=com_jem&view=day&layout=venueboard&id=' . $date->format('Ymd') . $extraLink);
+    return Route::_('index.php?option=com_jem&view=day&layout=venueboard&id=' . $date->format('Ymd') . $extraLink, false);
 };
 $todayLink = $dayLink(new DateTimeImmutable(JemHelper::getJoomlaDate()));
 $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($this->day);

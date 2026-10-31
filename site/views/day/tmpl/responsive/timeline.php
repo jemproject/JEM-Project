@@ -410,6 +410,13 @@ $itemId = $input->getInt('Itemid', 0);
 $catId = $input->getInt('catid', 0);
 $locId = $input->getInt('locid', 0);
 $extraLinkParts = array();
+if ($input->getCmd('task', '') === 'archive') {
+    $extraLinkParts[] = 'task=archive';
+}
+if ($input->getBool('print', false)) {
+    $extraLinkParts[] = 'print=1';
+    $extraLinkParts[] = 'tmpl=component';
+}
 if ($itemId > 0) {
     $extraLinkParts[] = 'Itemid=' . $itemId;
 }
@@ -1402,6 +1409,13 @@ document.addEventListener('keydown', function (event) {
             <input type="hidden" name="option" value="com_jem">
             <input type="hidden" name="view" value="day">
             <input type="hidden" name="layout" value="timeline">
+            <?php if ($input->getCmd('task', '') === 'archive') : ?>
+                <input type="hidden" name="task" value="archive">
+            <?php endif; ?>
+            <?php if ($input->getBool('print', false)) : ?>
+                <input type="hidden" name="print" value="1">
+                <input type="hidden" name="tmpl" value="component">
+            <?php endif; ?>
             <input type="hidden" name="id" value="<?php echo $currentDate->format('Ymd'); ?>">
             <?php if ($itemId > 0) : ?>
                 <input type="hidden" name="Itemid" value="<?php echo (int) $itemId; ?>">

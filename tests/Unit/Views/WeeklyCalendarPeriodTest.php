@@ -151,6 +151,16 @@ final class WeeklyCalendarPeriodTest extends TestCase
         }
         $view->cal->enableNewEventLinks('<span data-test-date="{date}"></span>');
         $markup = $view->cal->showWeeksByID($period['week'], $period['weeks']);
+        self::assertStringContainsString('&task=archive', $view->print_link);
+        $document = new \DOMDocument();
+        @$document->loadHTML($markup);
+        foreach ($document->getElementsByTagName('a') as $anchor) {
+            parse_str(parse_url($anchor->getAttribute('href'), PHP_URL_QUERY) ?? '', $query);
+            if (isset($query['weekID']) || isset($query['yearID']) || ($query['view'] ?? '') === 'day') {
+                self::assertSame('archive', $query['task'] ?? null);
+                self::assertSame('101', $query['Itemid'] ?? null);
+            }
+        }
         preg_match_all('/data-test-date="([\d-]+)"/', $markup, $days);
         $actual = array_map(static fn ($day) => str_replace('-', '', $day), $days[1]);
         $expected = [];

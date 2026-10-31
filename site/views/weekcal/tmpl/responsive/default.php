@@ -20,7 +20,7 @@ use Joomla\CMS\Factory;
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
     <div class="buttons">
         <?php
-        $btn_params = array('print_link' => $this->print_link, 'ical_link' => $this->ical_link, 'archive_link' => $this->archive_link);
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'ical_link' => $this->ical_link, 'archive_link' => $this->archive_link);
         if (!$this->params->get('show_archived_events', 0)) {
             $btn_params['show'] = array('archive');
         }
