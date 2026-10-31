@@ -153,6 +153,7 @@ class JemController extends BaseController
         if ($view) {
             // Do any specific processing by view.
             switch ($viewName) {
+                case 'annualcalendar':
                 case 'attendees':
                 case 'attendeeregistrations':
                 case 'calendar':
