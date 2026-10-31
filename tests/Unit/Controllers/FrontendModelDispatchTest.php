@@ -45,6 +45,40 @@ final class FrontendModelDispatchTest extends TestCase
         yield 'fallback' => ['unknown', 'html', 'default', '', 'eventslist'];
     }
 
+    /** @return iterable<string, array{string, string, string, string, string}> Personal routes and general-list controls. */
+    public static function personalRoutes(): iterable
+    {
+        foreach (['', 'archive'] as $task) {
+            foreach (['html' => 'default', 'raw' => 'pdf'] as $format => $layout) {
+                foreach (['mytimeline', 'myevents', 'myvenues', 'myattendances', 'eventslist', 'eventsmap'] as $view) {
+                    yield $view . ':' . $format . ':' . $task
+                        => [$view, $format, $layout, $task, $view === 'eventsmap' ? 'eventslist' : $view];
+                }
+            }
+        }
+    }
+
+    /**
+     * Verify personal timeline dispatch and preserve adjacent model assignments.
+     *
+     * @param string $view Requested view.
+     * @param string $format HTML or raw document.
+     * @param string $layout Default or PDF layout.
+     * @param string $task Normal or archived timeline.
+     * @param string $expected Expected model name.
+     * @return void
+     */
+    #[DataProvider('personalRoutes')]
+    public function testPersonalTimelineDispatch(
+        string $view,
+        string $format,
+        string $layout,
+        string $task,
+        string $expected
+    ): void {
+        $this->testDispatchUsesTheExpectedDefaultModel($view, $format, $layout, $task, $expected);
+    }
+
     /**
      * Check model selection, default attachment, document/layout and rendering.
      *
