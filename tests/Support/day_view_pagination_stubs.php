@@ -121,6 +121,12 @@ namespace {
 
     final class JemOutput
     {
+        /** @param string $link URL. @param bool $archive Context. @return string Print-service boundary for heading tests. */
+        public static function buildPrintLink(string $link, bool $archive = false): string
+        {
+            return $link . '&print=1&tmpl=component' . ($archive ? '&task=archive' : '');
+        }
+
         public static function formatdate(string $date): string
         {
             return $date;
@@ -210,6 +216,12 @@ namespace {
                     return $default;
                 }
 
+                /** @param string $key Input. @param string $default Default. @return string Value. */
+                public function getString(string $key, string $default = ''): string
+                {
+                    return $default;
+                }
+
                 public function getBool(string $key, bool $default = false): bool
                 {
                     return $default;
@@ -277,7 +289,7 @@ namespace {
             return $this->date;
         }
 
-        public function getState(): array
+        public function getState(?string $key = null, mixed $default = null): mixed
         {
             // Joomla populates request/session state on the first getState(), not setState().
             if (!$this->populated) {
@@ -286,7 +298,7 @@ namespace {
                 $this->populated = true;
             }
 
-            return $this->state;
+            return $key === null ? $this->state : ($this->state[$key] ?? $default);
         }
 
         public function setLimit(int $limit): void

@@ -260,17 +260,7 @@ class JemViewDay extends JemView
         // Set Page title
         $document->setTitle($pagetitle);
 
-        $printDate = str_replace('-', '', (string) $day);
-
-        if ($requestVenueId){
-            $print_link = Route::_('index.php?option=com_jem&view=day&tmpl=component&print=1&locid='.$requestVenueId.'&id='.$printDate);
-        }
-        elseif ($requestCategoryId){
-            $print_link = Route::_('index.php?option=com_jem&view=day&tmpl=component&print=1&catid='.$requestCategoryId.'&id='.$printDate);
-        }
-        else /*(!$requestCategoryId && !$requestVenueId)*/ {
-            $print_link = Route::_('index.php?option=com_jem&view=day&tmpl=component&print=1&id='.$printDate);
-        }
+        $print_link = $this->buildDayPrintLink($model, $params, (string) $day);
 
         // Check if the user has permission to add things
         $permissions = new stdClass();
@@ -332,6 +322,75 @@ class JemViewDay extends JemView
         //$this->prepareDocument();
 
         parent::display($tpl);
+    }
+
+    /**
+     * Freeze the effective Day display/filter context for the existing print action.
+     *
+     * The resolved date may replace a menu's empty/zero Today id, changing its
+     * session-state key. Include effective search/order/pagination values too.
+     * Only known display inputs are carried; never copy arbitrary tasks or tokens.
+     *
+     * @param JemModelDay $model Initialized model that supplied the displayed rows.
+     * @param \Joomla\Registry\Registry $params Effective Day menu parameters.
+     * @param string $day Resolved civil date (YYYY-MM-DD).
+     * @return string Routed internal print URL; request and model remain unchanged.
+     */
+    private function buildDayPrintLink($model, $params, string $day): string
+    {
+        $app = Factory::getApplication();
+        $input = $app->input;
+        $menuitem = $app->getMenu()->getActive();
+        $layout = $this->getLayout();
+
+        $start = new \DateTimeImmutable($day);
+        $end = new \DateTimeImmutable($model->getDayEnd());
+        $query = [
+            'option' => 'com_jem',
+            'view' => 'day',
+            'id' => $start->format('Ymd'),
+            'layout' => $layout,
+            'mode' => JemCalendarAgendaHelper::getDayMode($params),
+            'timeline_days_to_show' => max(1, min(30, (int) $start->diff($end)->format('%r%a') + 1)),
+            'show_archived_events' => (int) (bool) $model->getState('filter.show_archived_events', false),
+            'filter_search' => (string) $model->getState('filter.filter_search', ''),
+            'filter_type' => (int) $model->getState('filter.filter_type', 0),
+            'filter_order' => (string) $model->getState('filter.filter_ordering', 'a.dates'),
+            'filter_order_Dir' => (string) $model->getState('filter.filter_direction', 'ASC'),
+            'limit' => (int) $model->getState('list.limit', 0),
+            'limitstart' => (int) $model->getState('list.start', 0),
+        ];
+
+        $itemid = $input->getInt('Itemid', (int) ($menuitem->id ?? 0));
+        if ($itemid > 0) {
+            $query['Itemid'] = $itemid;
+        }
+        foreach (['locid', 'catid', 'topcat'] as $key) {
+            $value = $input->getInt($key, 0);
+            if ($value !== 0) {
+                $query[$key] = $value;
+            }
+        }
+        foreach (['locids', 'catids', 'pub'] as $key) {
+            $value = $input->getString($key, '');
+            if ($value !== '') {
+                $query[$key] = $value;
+            }
+        }
+        $language = $input->getCmd('lang', '');
+        if ($language !== '') {
+            $query['lang'] = $language;
+        }
+        if ($this->getLayout() === 'timeline') {
+            $configured = (string) $params->get('timeline_card_layout', 'compact');
+            $cardLayout = in_array($configured, ['details', 'compact'], true) ? $configured : 'details';
+            $requested = $input->getCmd('jem_timeline_layout', '');
+            $query['jem_timeline_layout'] = in_array($requested, ['details', 'compact'], true) ? $requested : $cardLayout;
+        }
+
+        $link = 'index.php?' . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+
+        return Route::_(JemOutput::buildPrintLink($link, $input->getCmd('task', '') === 'archive'));
     }
 }
 ?>
