@@ -390,6 +390,74 @@ static public function lightbox() {
     }
 
     /**
+     * Retain known frontend filters when preparing a print or PDF link.
+     *
+     * Call before routing: the originating Itemid selects the same menu options
+     * and session-filter namespace. Read Input rather than just Uri so submitted
+     * form values are retained too. Destination controls and resolved values win.
+     * Models still validate inputs and enforce menu settings and access.
+     *
+     * @param string $link Internal or current-view URL, optionally HTML-escaped.
+     * @param bool $currentRequest Whether input must override stale query values in the current URI.
+     * @return string URL with known filters, without replaying reset actions.
+     */
+    public static function prepareExportLink(string $link, bool $currentRequest = false): string
+    {
+        $input = Factory::getApplication()->input;
+        $fragment = '';
+        $fragmentOffset = strpos($link, '#');
+        if ($fragmentOffset !== false) {
+            $fragment = substr($link, $fragmentOffset);
+            $link = substr($link, 0, $fragmentOffset);
+        }
+
+        $queryOnly = str_starts_with($link, '&');
+        $parts = explode('?', $link, 2);
+        $path = $queryOnly ? '' : $parts[0];
+        $query = $queryOnly ? substr($link, 1) : ($parts[1] ?? '');
+        parse_str(str_replace('&amp;', '&', $query), $values);
+
+        $filters = [
+            'id' => 'string', 'typeid' => 'string', 'lang' => 'cmd',
+            'filter_search' => 'string', 'filter' => 'int', 'filter_type' => 'int',
+            'filter_typeid' => 'int', 'filter_month' => 'string',
+            'filter_order' => 'cmd', 'filter_order_Dir' => 'word',
+            'filter_country' => 'array', 'show_all_venues' => 'int',
+            'filter_status' => 'int', 'filter_state' => 'string',
+            'filter_day_type' => 'string', 'filter_year' => 'int',
+            'filter_contact_category' => 'int', 'filter_contacts' => 'array',
+            'filter_custom' => 'array',
+            'locid' => 'int', 'catid' => 'int', 'topcat' => 'int',
+            'locids' => 'string', 'catids' => 'string', 'pub' => 'string',
+            'yearID' => 'int', 'monthID' => 'int', 'weekID' => 'int',
+            'show_archived_events' => 'int', 'timeline_days_to_show' => 'int',
+            'mode' => 'cmd', 'jem_timeline_layout' => 'cmd',
+            'jem_map_filter_mode' => 'string', 'jem_map_filter_date' => 'string',
+            'jem_map_filter_country' => 'string', 'jem_map_filter_city' => 'string',
+            'jem_map_filter_catid' => 'int',
+        ];
+        foreach ($filters as $name => $type) {
+            if (($currentRequest || !array_key_exists($name, $values)) && $input->exists($name)) {
+                $value = $input->get($name, null, $type);
+                // An empty multiselect must clear remembered values on the next request.
+                $values[$name] = is_array($value) && $value === [] ? [''] : $value;
+            }
+        }
+
+        // A route helper can pick another menu for the same entity. Keep this view's context.
+        if ($input->exists('Itemid')) {
+            $values['Itemid'] = $input->getInt('Itemid', 0);
+        }
+        if (!isset($values['task']) && $input->getCmd('task', '') === 'archive') {
+            $values['task'] = 'archive';
+        }
+        unset($values['filter_reset'], $values['search_reset']);
+
+        return $path . ($queryOnly ? '&' : '?')
+            . http_build_query($values, '', '&', PHP_QUERY_RFC3986) . $fragment;
+    }
+
+    /**
      * Prepare a print URL without changing the current request or its filter values.
      *
      * @param string $link Existing internal or routed URL, optionally HTML-escaped.
@@ -436,7 +504,7 @@ static public function lightbox() {
         unset($query['print'], $query['tmpl']);
         $uri->setQuery($query);
 
-        return $uri->toString(array('path', 'query'));
+        return self::prepareExportLink($uri->toString(array('path', 'query')), true);
     }
 
     /**

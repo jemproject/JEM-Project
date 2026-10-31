@@ -254,8 +254,8 @@ class JemViewEvent extends JemView
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
 
-        $this->print_link = Route::_(JemHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
-        $this->pdf_link = Route::_(JemHelperRoute::getRoute($item->slug).'&format=raw&layout=pdf');
+        $this->print_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getRoute($item->slug).'&print=1&tmpl=component'));
+        $this->pdf_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getRoute($item->slug).'&format=raw&layout=pdf'));
 
         // Get images
         $detailImage = !empty($item->fullimage) ? $item->fullimage : $item->datimage;

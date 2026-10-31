@@ -155,14 +155,14 @@ class JemViewMyevents extends JemView
 
             if ($task == 'archive') {
                 $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_(JemHelperRoute::getMyEventsRoute() . '&task=archive'));
-                $print_link = Route::_(JemHelperRoute::getMyEventsRoute() . '&task=archive&print=1&tmpl=component');
-                $pdf_link = Route::_(JemHelperRoute::getMyEventsRoute() . '&task=archive&format=raw&layout=pdf');
+                $print_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getMyEventsRoute() . '&task=archive&print=1&tmpl=component'));
+                $pdf_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getMyEventsRoute() . '&task=archive&format=raw&layout=pdf'));
                 $pagetitle .= ' - ' . Text::_('COM_JEM_ARCHIVE');
                 $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
                 $archive_link = Route::_('index.php?option=com_jem&view=myevents');
             } else {
-                $print_link = Route::_(JemHelperRoute::getMyEventsRoute() . '&print=1&tmpl=component');
-                $pdf_link = Route::_(JemHelperRoute::getMyEventsRoute() . '&format=raw&layout=pdf');
+                $print_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getMyEventsRoute() . '&print=1&tmpl=component'));
+                $pdf_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getMyEventsRoute() . '&format=raw&layout=pdf'));
                 $archive_link = $uri->toString();
             }
 

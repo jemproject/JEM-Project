@@ -72,13 +72,13 @@ class JemViewCategories extends JemView
 
         if ($task == 'archive') {
             $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive'));
-            $print_link = Route::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive&print=1&tmpl=component');
+            $print_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=categories&task=archive&print=1&tmpl=component'));
             $pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
             $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
             $archive_link = Route::_('index.php?option=com_jem&view=categories');
             $params->set('page_heading', $pageheading);
         } else {
-            $print_link = Route::_('index.php?option=com_jem&view=categories&id='.$id.'&print=1&tmpl=component');
+            $print_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=categories&print=1&tmpl=component'));
             $archive_link = $uri->toString();
         }
 

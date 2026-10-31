@@ -108,8 +108,8 @@ class JemViewAnnualcalendar extends JemView
 
         $partMode = $displayMode === 'agenda' ? '&mode=agenda' : '';
 
-        $print_link = Route::_($url_base . $partItemid . $partDate . $partMode . ($task == 'archive' ? '&task=archive' : '') . '&print=1');
-        $pdf_link = Route::_($url_base . $partItemid . $partDate . $partMode . ($task == 'archive' ? '&task=archive' : '') . '&format=raw&layout=pdf');
+        $print_link = Route::_(JemOutput::prepareExportLink($url_base . $partItemid . $partDate . $partMode . ($task == 'archive' ? '&task=archive' : '') . '&print=1'));
+        $pdf_link = Route::_(JemOutput::prepareExportLink($url_base . $partItemid . $partDate . $partMode . ($task == 'archive' ? '&task=archive' : '') . '&format=raw&layout=pdf'));
         $ical_link = $partDate;
         $archive_link = Route::_($url_base . $partItemid . $partDate . $partMode);
 

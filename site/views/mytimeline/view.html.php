@@ -75,12 +75,12 @@ class JemViewMytimeline extends JemView
             if ($task === 'archive') {
                 $pagetitle .= ' - ' . Text::_('COM_JEM_ARCHIVE');
                 $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
-                $print_link = Route::_('index.php?option=com_jem&view=mytimeline&task=archive&print=1&tmpl=component');
-                $pdf_link = Route::_('index.php?option=com_jem&view=mytimeline&task=archive&format=raw&layout=pdf');
+                $print_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=mytimeline&task=archive&print=1&tmpl=component'));
+                $pdf_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=mytimeline&task=archive&format=raw&layout=pdf'));
                 $archive_link = Route::_('index.php?option=com_jem&view=mytimeline');
             } else {
-                $print_link = Route::_('index.php?option=com_jem&view=mytimeline&print=1&tmpl=component');
-                $pdf_link = Route::_('index.php?option=com_jem&view=mytimeline&format=raw&layout=pdf');
+                $print_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=mytimeline&print=1&tmpl=component'));
+                $pdf_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=mytimeline&format=raw&layout=pdf'));
                 $archive_link = Route::_('index.php?option=com_jem&view=mytimeline&task=archive');
             }
 

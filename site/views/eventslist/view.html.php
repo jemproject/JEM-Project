@@ -148,7 +148,7 @@ class JemViewEventslist extends JemView
                     'index.php?option=com_jem&view=eventslist&task=archive',
                 ),
             );
-            $print_link = JemOutput::buildPrintLink($uri->toString(), true);
+            $print_link = JemOutput::buildPrintLink(JemOutput::prepareExportLink($uri->toString(), true), true);
             $pagetitle .= ' - ' . Text::_('COM_JEM_ARCHIVE');
             $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
             $archive_link = Route::_(
@@ -156,7 +156,7 @@ class JemViewEventslist extends JemView
             );
             $params->set('page_heading', $pageheading);
         } else {
-            $print_link = JemOutput::buildPrintLink($uri->toString());
+            $print_link = JemOutput::buildPrintLink(JemOutput::prepareExportLink($uri->toString(), true));
             $archive_link = $uri->toString();
         }
 

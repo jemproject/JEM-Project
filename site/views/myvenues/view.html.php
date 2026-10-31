@@ -137,8 +137,8 @@ class JemViewMyvenues extends JemView
             }
 
             // ($task == 'archive') useless
-            $print_link = Route::_(JemHelperRoute::getMyVenuesRoute() . '&print=1&tmpl=component');
-            $pdf_link = Route::_(JemHelperRoute::getMyVenuesRoute() . '&format=raw&layout=pdf');
+            $print_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getMyVenuesRoute() . '&print=1&tmpl=component'));
+            $pdf_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getMyVenuesRoute() . '&format=raw&layout=pdf'));
 
             $params->set('page_heading', $pageheading);
 

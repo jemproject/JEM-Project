@@ -23,7 +23,7 @@ final class FrontendPrintLinkTest extends TestCase
         require_once JEM_TEST_ROOT . '/tests/Support/print_link_environment.php';
         $source = file_get_contents(JEM_TEST_ROOT . '/site/classes/output.class.php');
         $methods = '';
-        foreach (['buildPrintLink', 'printbutton', 'escapeLinkAttribute', 'escapeHtmlAttribute', 'tooltip'] as $name) {
+        foreach (['prepareExportLink', 'buildPrintLink', 'printbutton', 'escapeLinkAttribute', 'escapeHtmlAttribute', 'tooltip'] as $name) {
             if ($name === 'buildPrintLink' && !str_contains($source, 'function buildPrintLink(')) {
                 continue; // Let the new regression fail clearly on the original implementation.
             }

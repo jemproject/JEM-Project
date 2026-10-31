@@ -157,7 +157,7 @@ class JemViewWeekcal extends JemView
             }
         }
 
-        $print_link = Route::_($url_base . $partDate . $partArchive . '&print=1&tmpl=component');
+        $print_link = Route::_(JemOutput::prepareExportLink($url_base . $partDate . $partArchive . '&print=1&tmpl=component'));
 
         // init calendar
         $cal = new activeCalendarWeek($year,1,1);

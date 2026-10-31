@@ -160,7 +160,7 @@ class JemViewCategory extends JemView
             $partMode = in_array($requestedMode, array('calendar', 'agenda'), true) ? '&mode=' . $requestedMode : '';
             $url_base .= $partMode;
             $navigationBase = $url_base . $partArchive . ($print ? '&print=1&tmpl=component' : '');
-            $print_link = Route::_(JemOutput::buildPrintLink($url_base . $partDate, $task === 'archive'));
+            $print_link = Route::_(JemOutput::prepareExportLink(JemOutput::buildPrintLink($url_base . $partDate, $task === 'archive')));
             $archive_link = Route::_($url_base . $partDate);
 
             // init calendar
@@ -331,11 +331,11 @@ class JemViewCategory extends JemView
 
             if ($task == 'archive') {
                 $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_(JemHelperRoute::getCategoryRoute($category->slug).'&task=archive'));
-                $print_link = Route::_(JemHelperRoute::getCategoryRoute($category->id) .'&task=archive&print=1&tmpl=component');
+                $print_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getCategoryRoute($category->id) .'&task=archive&print=1&tmpl=component'));
                 $pagetitle   .= ' - '.Text::_('COM_JEM_ARCHIVE');
                 $pageheading .= ' - '.Text::_('COM_JEM_ARCHIVE');
             } else {
-                $print_link = Route::_(JemHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
+                $print_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component'));
             }
             $archive_link = Route::_(JemHelperRoute::getCategoryRoute($category->id));
 

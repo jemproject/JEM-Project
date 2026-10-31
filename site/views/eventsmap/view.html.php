@@ -260,7 +260,7 @@ class JemViewEventsMap extends JemView
         $pagetitle      = $params->get('page_title', Text::_('COM_JEM_EVENTSMAP_PAGETITLE'));
         $pageheading    = $params->get('page_heading', $pagetitle);
         $pageclass_sfx  = $params->get('pageclass_sfx');
-        $print_link = JemOutput::buildPrintLink($uri->toString());
+        $print_link = JemOutput::buildPrintLink(JemOutput::prepareExportLink($uri->toString(), true));
 
         $params->set('page_heading', $pageheading);
 

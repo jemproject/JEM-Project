@@ -120,13 +120,13 @@ class JemViewCalendar extends JemView
         }
         if ($task == 'archive') {
             $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_($url_base . $partItemid . $partDate . '&task=archive'));
-            $print_link = Route::_($url_base . $partItemid. $partDate . '&task=archive&print=1&tmpl=component');
+            $print_link = Route::_(JemOutput::prepareExportLink($url_base . $partItemid. $partDate . '&task=archive&print=1&tmpl=component'));
             $pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
             $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
             $archive_link = Route::_($url_base . $partItemid . $partDate);
             $params->set('page_heading', $pageheading);
         } else {
-            $print_link = Route::_($url_base . $partItemid. $partDate . '&print=1&tmpl=component');
+            $print_link = Route::_(JemOutput::prepareExportLink($url_base . $partItemid. $partDate . '&print=1&tmpl=component'));
             $archive_link = Route::_($url_base . $partItemid . $partDate);
         }
 
@@ -153,7 +153,7 @@ class JemViewCalendar extends JemView
         $partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
         $url_base = 'index.php?option=com_jem&view=calendar';
 
-        $print_link = Route::_($url_base . $partItemid . $partDate . ($task == 'archive' ? '&task=archive' : '') . '&print=1&tmpl=component');
+        $print_link = Route::_(JemOutput::prepareExportLink($url_base . $partItemid . $partDate . ($task == 'archive' ? '&task=archive' : '') . '&print=1&tmpl=component'));
         $ical_link = $partDate;
         //http://localhost/jl500rc3/index.php/jem/calendar?format=raw&layout=ics
 

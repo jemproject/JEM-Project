@@ -131,8 +131,8 @@ class JemViewAttendeeregistrations extends JemView
             $filterQuery['Itemid'] = $this->itemid;
         }
 
-        $this->print_link = Route::_('index.php?option=com_jem&view=attendeeregistrations&print=1&tmpl=component');
-        $this->pdf_link = Route::_('index.php?' . http_build_query($filterQuery), false);
+        $this->print_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=attendeeregistrations&print=1&tmpl=component'));
+        $this->pdf_link = Route::_(JemOutput::prepareExportLink('index.php?' . http_build_query($filterQuery)), false);
         $this->pageclass_sfx = htmlspecialchars((string) $params->get('pageclass_sfx', ''), ENT_COMPAT, 'UTF-8');
         $this->columns = $this->getColumns($params);
 

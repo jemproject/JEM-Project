@@ -23,6 +23,18 @@ final class Input
 {
     public int $print = 0;
 
+    /** @param string $key Input name. @return bool No additional filters in these fixtures. */
+    public function exists(string $key): bool
+    {
+        return false;
+    }
+
+    /** @param string $key Input name. @param string $default Fallback. @return string Default task. */
+    public function getCmd(string $key, string $default = ''): string
+    {
+        return $default;
+    }
+
     /** @param string $key Input key. @param mixed $default Fallback. @param string $type Filter. @return int Print flag. */
     public function get(string $key, mixed $default = '', string $type = 'int'): int
     {

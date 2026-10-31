@@ -201,7 +201,7 @@ class JemViewVenuesMap extends JemView
         $pagetitle = Text::_('COM_JEM_VENUESMAP_PAGETITLE');
         $pageheading = $pagetitle;
         $pageclass_sfx = '';
-        $print_link = Route::_('index.php?option=com_jem&view=venuesmap&print=1&tmpl=component');
+        $print_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=venuesmap&print=1&tmpl=component'));
 
         // Check to see which parameters should take priority
         if ($useMenuItemParams) {
