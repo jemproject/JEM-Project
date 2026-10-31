@@ -80,19 +80,17 @@ class ActiveCalendarWeek extends JEMCalendar {
     It generates as many rows as set in $numberOfWeeks
     ********************************************************************************
     */
-    function showWeeksByID($weekID=1, $numberOfWeeks=1) {
-        $xday=1;
-        $from = ($weekID-2) * 7;
-        $to   = ($weekID+1) * 7;
-        for ($day = $from; $day < $to; $day++) {
-            $tmp=parent::getWeekNum($day);
-            if ($tmp==$weekID) {
-                $xday=$day;
-                break;
-            }
-        }
-        if ($this->startOnSun) $xday=$xday-1;
-        $this->__construct($this->actyear, $this->actmonth, $xday, $this->GMT);
+    /**
+     * Render weeks using the constructor year as the ISO week-numbering year.
+     *
+     * @param int $weekID ISO week, normalized by PHP when it overflows.
+     * @param int $numberOfWeeks Number of displayed week rows.
+     * @return string Calendar markup.
+     */
+    public function showWeeksByID($weekID = 1, $numberOfWeeks = 1)
+    {
+        $firstDay = $this->getFirstDayTimeOfWeek($weekID);
+        $this->__construct((int) date('Y', $firstDay), (int) date('n', $firstDay), (int) date('j', $firstDay), $this->GMT);
         return $this->showWeeks($numberOfWeeks);
     }
 
@@ -101,20 +99,20 @@ class ActiveCalendarWeek extends JEMCalendar {
     PUBLIC getFirstDayTime() -> returns the first day of given week as unixtime
     ********************************************************************************
     */
-    function getFirstDayTimeOfWeek($weekID = 1) {
-        $unixdate = false;
-        /* There should be an inverse function but for now trying some days is ok */
-        $from = ($weekID-2) * 7;
-        $to   = ($weekID+1) * 7;
-        for ($day = $from; $day < $to; $day++) {
-            $tmp = parent::getWeekNum($day);
-            if ($tmp == $weekID) {
-                $xday = ($this->startOnSun) ? $day - 1 : $day;
-                $unixdate = $this->mkActiveTime(0, 0, 1, $this->actmonth, $xday, $this->actyear);
-                break;
-            }
+    /**
+     * Resolve ISO Monday (or the preceding Sunday) without retaining clock time.
+     *
+     * @param int $weekID ISO week in the constructor's year.
+     * @return int Date-only timestamp at 00:00:01 in the calendar timezone.
+     */
+    public function getFirstDayTimeOfWeek($weekID = 1)
+    {
+        $firstDay = (new \DateTimeImmutable('today'))->setISODate((int) $this->actyear, (int) $weekID, 1);
+        if ($this->startOnSun) {
+            $firstDay = $firstDay->modify('-1 day');
         }
-        return $unixdate;
+        // Preserve the calendar's date-only timestamp and optional ADOdb conversion.
+        return $this->mkActiveTime(0, 0, 1, (int) $firstDay->format('n'), (int) $firstDay->format('j'), (int) $firstDay->format('Y'));
     }
 
     /*

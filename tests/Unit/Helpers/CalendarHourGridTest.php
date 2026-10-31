@@ -122,6 +122,22 @@ namespace {
     #[PreserveGlobalState(false)]
     final class CalendarHourGridTest extends TestCase
     {
+        /**
+         * Count event anchors by class token, allowing category/venue filter classes.
+         *
+         * @param string $html Rendered timetable.
+         * @param string $class Expected event class.
+         * @return int Matching event links.
+         */
+        private static function countEventLinks(string $html, string $class): int
+        {
+            $document = new \DOMDocument();
+            $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+            $xpath = new \DOMXPath($document);
+
+            return $xpath->query('//a[contains(concat(" ", normalize-space(@class), " "), " ' . $class . ' ")]')->length;
+        }
+
         protected function setUp(): void
         {
             require_once JEM_TEST_ROOT . '/site/helpers/calendaragenda.php';
@@ -215,8 +231,8 @@ namespace {
             $html = JemCalendarHourGridHelper::render([$event], '2026-11-05', 3, 9);
             self::assertSame(1, substr_count($html, 'class="jem-hourgrid-axis-plot"'));
             self::assertSame(1, substr_count($html, 'class="jem-hourgrid-axis-all-day"'));
-            self::assertSame(2, substr_count($html, 'class="jem-hourgrid-event"'));
-            self::assertSame(1, substr_count($html, 'class="jem-hourgrid-all-day-event"'));
+            self::assertSame(2, self::countEventLinks($html, 'jem-hourgrid-event'));
+            self::assertSame(1, self::countEventLinks($html, 'jem-hourgrid-all-day-event'));
             self::assertStringContainsString('09:00 - 12:00', $html);
             self::assertStringContainsString('14:00 - 17:00', $html);
             self::assertStringContainsString('2026-11-06', $html);

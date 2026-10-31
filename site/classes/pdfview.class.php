@@ -402,8 +402,17 @@ class JemPdfView
 
     /**
      * Renders a weekly calendar PDF using a calendar grid.
+     *
+     * @param string $title Document title.
+     * @param array $rows Filtered events.
+     * @param string $filename Download filename.
+     * @param int $year ISO week-numbering year.
+     * @param int $week ISO week number.
+     * @param mixed $params Menu settings.
+     * @param array|null $period Normalized model period; omitted by legacy callers.
+     * @return void
      */
-    public static function renderWeeklyCalendar(string $title, array $rows, string $filename, int $year, int $week, $params = null): void
+    public static function renderWeeklyCalendar(string $title, array $rows, string $filename, int $year, int $week, $params = null, ?array $period = null): void
     {
         if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
             Factory::getApplication()->close();
@@ -430,7 +439,7 @@ class JemPdfView
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(true);
         $pdf->AddPage();
-        $pdf->writeHTML(self::buildWeeklyCalendarHtml($title, $rows, $year, $week, $params, $paperSize), true, false, true, false, '');
+        $pdf->writeHTML(self::buildWeeklyCalendarHtml($title, $rows, $year, $week, $params, $paperSize, $period), true, false, true, false, '');
 
         while (ob_get_level() > 0) {
             ob_end_clean();
@@ -2438,16 +2447,33 @@ class JemPdfView
         return self::buildCalendarGridHtml($title, $monthStart, $monthEnd, $gridStart, $cellCount, $weekdays, $eventsByDate, $specialDaysByDate, $legend, $paperSize, true, $monthStart->format('F Y'), $useCategoryBackground);
     }
 
-    private static function buildWeeklyCalendarHtml(string $title, array $rows, int $year, int $week, $params, string $paperSize): string
+    /**
+     * Build weekly PDF markup for the same civil dates and ISO label as the view.
+     *
+     * @param string $title Heading.
+     * @param array $rows Events.
+     * @param int $year ISO year for legacy callers.
+     * @param int $week ISO week for legacy callers.
+     * @param mixed $params Menu settings.
+     * @param string $paperSize Paper profile.
+     * @param array|null $period Shared model period.
+     * @return string PDF HTML.
+     */
+    private static function buildWeeklyCalendarHtml(string $title, array $rows, int $year, int $week, $params, string $paperSize, ?array $period = null): string
     {
-        $firstWeekDay = self::getCalendarFirstWeekday($params);
-        $weekStart = (new DateTimeImmutable())->setISODate($year, max(1, $week));
-
-        if ($firstWeekDay === 0) {
-            $weekStart = $weekStart->modify('-1 day');
+        $firstWeekDay = $period['first_weekday'] ?? self::getCalendarFirstWeekday($params);
+        $isoStart = $period['iso_start'] ?? (new DateTimeImmutable('today'))->setISODate($year, $week, 1);
+        $weekStart = $period['start'] ?? ($firstWeekDay === 0 ? $isoStart->modify('-1 day') : $isoStart);
+        $weeks = $period['weeks'] ?? max(1, (int) ($params ? $params->get('nrweeks', 1) : 1));
+        $weekEnd = $period['end'] ?? $weekStart->modify('+' . ($weeks * 7 - 1) . ' days');
+        $lastIsoWeek = $isoStart->modify('+' . ($weeks - 1) . ' weeks');
+        $subtitle = Text::sprintf('COM_JEM_WEEKCAL_WEEK_NUMBER', (int) $isoStart->format('W'), (int) $isoStart->format('o'));
+        if ($weeks > 1) {
+            $subtitle = Text::_('COM_JEM_WKCAL_WEEKS') . ' ' . (int) $isoStart->format('W') . '-' . (int) $lastIsoWeek->format('W') . ', ' . $isoStart->format('o');
+            if ($isoStart->format('o') !== $lastIsoWeek->format('o')) {
+                $subtitle = Text::_('COM_JEM_WKCAL_WEEKS') . ' ' . (int) $isoStart->format('W') . ', ' . $isoStart->format('o') . ' - ' . (int) $lastIsoWeek->format('W') . ', ' . $lastIsoWeek->format('o');
+            }
         }
-
-        $weekEnd = $weekStart->modify('+6 days');
         $eventsByDate = self::buildCalendarEventsByDate($rows, $weekStart, $weekEnd);
         $specialDaysByDate = JemHelper::calendarSpecialDays($weekStart->format('Y-m-d'), $weekEnd->format('Y-m-d'));
         $legend = self::buildCalendarCategoryLegend($rows);
@@ -2457,10 +2483,10 @@ class JemPdfView
             : array('MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN');
 
         if (self::getCalendarPdfLayout($params) === 'agenda') {
-            return self::buildCalendarAgendaHtml($title, $weekStart, $weekEnd, $eventsByDate, $specialDaysByDate, $legend, $paperSize, Text::sprintf('COM_JEM_WEEKCAL_WEEK_NUMBER', (int) $weekStart->format('W'), (int) $weekStart->format('o')));
+            return self::buildCalendarAgendaHtml($title, $weekStart, $weekEnd, $eventsByDate, $specialDaysByDate, $legend, $paperSize, $subtitle);
         }
 
-        return self::buildCalendarGridHtml($title, $weekStart, $weekEnd, $weekStart, 7, $weekdays, $eventsByDate, $specialDaysByDate, $legend, $paperSize, false, Text::sprintf('COM_JEM_WEEKCAL_WEEK_NUMBER', (int) $weekStart->format('W'), (int) $weekStart->format('o')), $useCategoryBackground);
+        return self::buildCalendarGridHtml($title, $weekStart, $weekEnd, $weekStart, $weeks * 7, $weekdays, $eventsByDate, $specialDaysByDate, $legend, $paperSize, false, $subtitle, $useCategoryBackground);
     }
 
     private static function buildCalendarAgendaHtml(

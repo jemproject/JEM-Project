@@ -47,15 +47,15 @@ use Joomla\CMS\Factory;
 
     <?php
     if (JemCalendarAgendaHelper::getWeekMode($this->params) === 'timetable') :
-        $firstDate = date('Y-m-d', $this->cal->getFirstDayTimeOfWeek((int) $this->currentweek));
-        $nrWeeks = max(1, (int) $this->params->get('nrweeks', 1));
+        $firstDate = $this->calendarPeriod['start']->format('Y-m-d');
+        $nrWeeks = $this->calendarPeriod['weeks'];
         echo JemCalendarHourGridHelper::renderNavigation(
             'weekcal',
             $firstDate,
             $nrWeeks * 7,
             (int) $this->params->get('firstweekday', 1) === 0
         );
-        $lastDate = (new DateTimeImmutable($firstDate))->modify('+' . (($nrWeeks * 7) - 1) . ' days')->format('Y-m-d');
+        $lastDate = $this->calendarPeriod['end']->format('Y-m-d');
         $displayLegend = (int) $this->params->get('displayLegend', 1);
         $legend = JemCalendarFilterHelper::render((array) $this->rows, $displayLegend, $firstDate, $lastDate);
         if (in_array($displayLegend, array(2, 4, 6), true)) {
@@ -76,9 +76,8 @@ use Joomla\CMS\Factory;
     endif;
 
     if (JemCalendarAgendaHelper::getMode($this->params) === 'agenda') :
-        $agendaWeek = (int) $this->currentweek;
-        $agendaStartDate = date("Y-m-d", $this->cal->getFirstDayTimeOfWeek($agendaWeek));
-        $agendaNrWeeks = max(1, (int) $this->params->get('nrweeks', 1));
+        $agendaStartDate = $this->calendarPeriod['start']->format('Y-m-d');
+        $agendaNrWeeks = $this->calendarPeriod['weeks'];
         echo JemCalendarHourGridHelper::renderNavigation(
             'weekcal',
             $agendaStartDate,
@@ -86,10 +85,8 @@ use Joomla\CMS\Factory;
             (int) $this->params->get('firstweekday', 1) === 0,
             'agenda'
         );
-        $agendaEndDate = (new DateTimeImmutable($agendaStartDate))->modify('+' . (($agendaNrWeeks * 7) - 1) . ' days')->format('Y-m-d');
-        $agendaSubtitle = $agendaNrWeeks > 1
-            ? Text::_('COM_JEM_WKCAL_WEEKS') . ' ' . (int) date('W', strtotime($agendaStartDate)) . '-' . (int) date('W', strtotime($agendaEndDate)) . ', ' . date('o', strtotime($agendaStartDate))
-            : Text::sprintf('COM_JEM_WEEKCAL_WEEK_NUMBER', (int) date('W', strtotime($agendaStartDate)), (int) date('o', strtotime($agendaStartDate)));
+        $agendaEndDate = $this->calendarPeriod['end']->format('Y-m-d');
+        $agendaSubtitle = $this->weekTitle;
         $displayLegend = (int) $this->params->get('displayLegend', 1);
         $legend = JemCalendarFilterHelper::render((array) $this->rows, $displayLegend, $agendaStartDate, $agendaEndDate);
         if (in_array($displayLegend, array(2, 4, 6), true)) {
@@ -116,9 +113,9 @@ use Joomla\CMS\Factory;
     $limit = $this->params->get('daylimit', 10);
     $evbg_usecatcolor = $this->params->get('eventbg_usecatcolor', 0);
     $currentWeek = $this->currentweek;
-    $firstDate = date("Y-m-d", $this->cal->getFirstDayTimeOfWeek($currentWeek));
-    $nrweeks = max(1, (int) $this->params->get('nrweeks', 1));
-    $weekLegendEndDate = (new DateTimeImmutable($firstDate))->modify('+' . (($nrweeks * 7) - 1) . ' days')->format('Y-m-d');
+    $firstDate = $this->calendarPeriod['start']->format('Y-m-d');
+    $nrweeks = $this->calendarPeriod['weeks'];
+    $weekLegendEndDate = $this->calendarPeriod['end']->format('Y-m-d');
     $specialDaysLegendHtml = JemHelper::renderCalendarSpecialDayLegend($firstDate, $weekLegendEndDate, $this->params);
     JemHelper::applyCalendarSpecialDayAttributes($this->cal, $firstDate, $weekLegendEndDate);
     $recurrenceIconRender = $this->params->get('recurrenceIconRender', 0);
