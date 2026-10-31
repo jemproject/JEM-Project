@@ -135,7 +135,11 @@ class JemViewMain extends JemAdminView
     }
 
     /**
-     * Render a control-panel action as a token-protected POST form.
+     * Render a POST action inside the control panel's token-protected form.
+     *
+     * The containing application-form owns the task button and CSRF token.
+     * Confirm sample imports on activation, including keyboard activation,
+     * without introducing an invalid nested form.
      *
      * @param  string  $task   Controller task.
      * @param  string  $image  Path to image.
@@ -147,7 +151,7 @@ class JemViewMain extends JemAdminView
     {
         $lang = Factory::getApplication()->getLanguage();
         $confirmation = $task === 'sampledata.load'
-            ? ' onsubmit="return window.confirm(' . htmlspecialchars(
+            ? ' onclick="return window.confirm(' . htmlspecialchars(
                 json_encode(Text::_('COM_JEM_SAMPLEDATA_CONFIRM'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT),
                 ENT_QUOTES,
                 'UTF-8'
@@ -155,15 +159,12 @@ class JemViewMain extends JemAdminView
             : '';
         ?>
         <div style="float:<?php echo ($lang->isRTL()) ? 'right' : 'left'; ?>;">
-            <form action="index.php?option=com_jem" method="post" class="jem-quickicon-form"<?php echo $confirmation; ?>>
-                <div class="icon">
-                    <button type="submit" name="task" value="<?php echo htmlspecialchars($task, ENT_QUOTES, 'UTF-8'); ?>">
-                        <?php echo HTMLHelper::_('image', 'com_jem/'.$image, $text, NULL, true); ?>
-                        <span><?php echo $text; ?></span>
-                    </button>
-                </div>
-                <?php echo HTMLHelper::_('form.token'); ?>
-            </form>
+            <div class="icon">
+                <button type="submit" name="task" value="<?php echo htmlspecialchars($task, ENT_QUOTES, 'UTF-8'); ?>"<?php echo $confirmation; ?>>
+                    <?php echo HTMLHelper::_('image', 'com_jem/'.$image, $text, NULL, true); ?>
+                    <span><?php echo $text; ?></span>
+                </button>
+            </div>
         </div>
         <?php
     }
