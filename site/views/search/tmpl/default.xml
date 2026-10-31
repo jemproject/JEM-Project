@@ -8,6 +8,15 @@
 
     <fields name="params">
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field name="search_event_scope" type="list" default="published"
+                label="COM_JEM_SEARCH_EVENT_SCOPE"
+                description="COM_JEM_SEARCH_EVENT_SCOPE_DESC"
+                class="form-select w-auto"
+            >
+                <option value="published">COM_JEM_SEARCH_EVENT_SCOPE_PUBLISHED</option>
+                <option value="archived">COM_JEM_SEARCH_EVENT_SCOPE_ARCHIVED</option>
+                <option value="all">COM_JEM_SEARCH_EVENT_SCOPE_ALL</option>
+            </field>
             <field name="show_status_indicators" type="radio" default="0" label="COM_JEM_SHOW_STATUS_INDICATORS" description="COM_JEM_SHOW_STATUS_INDICATORS_DESC" class="btn-group btn-group-yesno">
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
