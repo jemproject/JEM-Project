@@ -165,7 +165,10 @@ class JemPdfView
             ),
             self::buildVenueListRows($rows, false, $mapProvider),
             $filename,
-            $profile
+            $profile,
+            '',
+            '',
+            'COM_JEM_NO_VENUES'
         );
     }
 
@@ -229,7 +232,8 @@ class JemPdfView
             $filename,
             $profile,
             '',
-            self::buildTypeHeaderHtml($type)
+            self::buildTypeHeaderHtml($type),
+            'COM_JEM_NO_VENUES'
         );
     }
 
@@ -465,15 +469,36 @@ class JemPdfView
             ),
             self::buildSpecialDayRows($rows),
             $filename,
-            $profile
+            $profile,
+            '',
+            '',
+            'JGLOBAL_NO_MATCHING_RESULTS'
         );
     }
 
     /**
      * Renders a simple table PDF using the global PDF settings.
+     *
+     * @param string $title Document title.
+     * @param array $headers Column headings.
+     * @param array $rows Prepared table rows.
+     * @param string $filename Download filename.
+     * @param string $profile Paper settings profile.
+     * @param string $filterSummary Plain-text filter summary.
+     * @param string $preTableHtml Prepared HTML before the table.
+     * @param string $emptyMessageKey Translation key for an empty table; defaults to events for existing callers.
+     * @return void
      */
-    public static function renderTable(string $title, array $headers, array $rows, string $filename, string $profile = 'list', string $filterSummary = '', string $preTableHtml = ''): void
-    {
+    public static function renderTable(
+        string $title,
+        array $headers,
+        array $rows,
+        string $filename,
+        string $profile = 'list',
+        string $filterSummary = '',
+        string $preTableHtml = '',
+        string $emptyMessageKey = 'COM_JEM_NO_EVENTS'
+    ): void {
         if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
             Factory::getApplication()->close();
 
@@ -499,7 +524,7 @@ class JemPdfView
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(true);
         $pdf->AddPage();
-        $pdf->writeHTML(self::buildTableHtml($title, $headers, $rows, $paperSize, $filterSummary, $preTableHtml), true, false, true, false, '');
+        $pdf->writeHTML(self::buildTableHtml($title, $headers, $rows, $paperSize, $filterSummary, $preTableHtml, $emptyMessageKey), true, false, true, false, '');
 
         while (ob_get_level() > 0) {
             ob_end_clean();
@@ -2286,8 +2311,27 @@ class JemPdfView
         return '<nobr>' . htmlspecialchars((string) $text, ENT_COMPAT, 'UTF-8') . '</nobr>';
     }
 
-    private static function buildTableHtml(string $title, array $headers, array $rows, string $paperSize, string $filterSummary = '', string $preTableHtml = ''): string
-    {
+    /**
+     * Builds table HTML with an entity-specific, escaped empty-result message.
+     *
+     * @param string $title Document title.
+     * @param array $headers Column headings.
+     * @param array $rows Prepared table rows.
+     * @param string $paperSize Paper size for font scaling.
+     * @param string $filterSummary Plain-text filter summary.
+     * @param string $preTableHtml Prepared HTML before the table.
+     * @param string $emptyMessageKey Translation key for an empty table.
+     * @return string HTML for the PDF renderer.
+     */
+    private static function buildTableHtml(
+        string $title,
+        array $headers,
+        array $rows,
+        string $paperSize,
+        string $filterSummary = '',
+        string $preTableHtml = '',
+        string $emptyMessageKey = 'COM_JEM_NO_EVENTS'
+    ): string {
         $scale = JemPdf::getPosterScale($paperSize);
         $settings = JemHelper::config();
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
@@ -2336,7 +2380,8 @@ class JemPdfView
         $html[] = '</tr></thead><tbody>';
 
         if (!$rows) {
-            $html[] = '<tr><td class="jem-pdf-empty" colspan="' . count($headers) . '">' . Text::_('COM_JEM_NO_EVENTS') . '</td></tr>';
+            $html[] = '<tr><td class="jem-pdf-empty" colspan="' . count($headers) . '">'
+                . htmlspecialchars(Text::_($emptyMessageKey), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</td></tr>';
         }
 
         foreach ($rows as $row) {

@@ -60,7 +60,9 @@ class JemViewAttendeeregistrations extends HtmlView
             self::buildRows($rows, $columns),
             'jem-attendee-registrations.pdf',
             'list',
-            self::buildFilterSummary()
+            self::buildFilterSummary(),
+            '',
+            'COM_JEM_ATTENDEE_REGISTRATIONS_EMPTY'
         );
     }
 
