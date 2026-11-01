@@ -4,6 +4,8 @@ ALTER TABLE `#__jem_attachments` ADD COLUMN `modified_by` INT(11) NOT NULL DEFAU
 
 -- Restore a missing type language column on older or partially upgraded sites.
 ALTER TABLE `#__jem_types` ADD COLUMN `language` CHAR(7) NOT NULL DEFAULT '*' /** CAN FAIL **/;
+-- Types are language-neutral; keep the column for legacy schema/CSV compatibility.
+UPDATE `#__jem_types` SET `language` = '*' WHERE `language` <> '*' OR `language` IS NULL;
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_filename_policy', 'unique');
 
 -- Align legacy 4.4.2/4.5.0 definitions with a clean installation.

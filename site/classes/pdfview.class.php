@@ -3580,7 +3580,7 @@ class JemPdfView
         $badges = array();
 
         foreach ($specialDays as $specialDay) {
-            $title = trim((string) (($specialDay['title'] ?? '') ?: ($specialDay['type'] ?? '')));
+            $title = trim((string) (($specialDay['title'] ?? '') ?: ($specialDay['type_label'] ?? $specialDay['type'] ?? '')));
 
             if ($title === '') {
                 continue;

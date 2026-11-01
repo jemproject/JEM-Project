@@ -52,7 +52,7 @@ class JemMapHelper
             $venueTypeJoin .= ' AND ' . $db->quoteName('vt.access') . ' IN (' . $typeAccess . ')';
         }
 
-        $query->select('DISTINCT v.id, v.venue, v.alias, v.color, v.type_id, v.street, v.postalCode, v.city, v.state, v.url, v.latitude, v.longitude, v.country, v.locdescription, v.locimage, v.created_by, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time, vt.name AS venue_type_name, vt.icon AS venue_type_icon, vt.color AS venue_type_color')
+        $query->select('DISTINCT v.id, v.venue, v.alias, v.color, v.type_id, v.street, v.postalCode, v.city, v.state, v.url, v.latitude, v.longitude, v.country, v.locdescription, v.locimage, v.created_by, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time, vt.name AS venue_type_name, vt.base_language AS venue_type_base_language, vt.translations AS venue_type_translations, vt.icon AS venue_type_icon, vt.color AS venue_type_color')
             ->from($db->quoteName('#__jem_venues', 'v'))
             ->join('LEFT', $db->quoteName('#__jem_types', 'vt') . ' ON ' . $venueTypeJoin)
             ->where($db->quoteName('v.published') . ' = 1')
@@ -105,8 +105,13 @@ class JemMapHelper
 
         $query->order(self::getVenueOrderClause($db, (string) $venueOrder));
         $db->setQuery($query);
+        $venues = $db->loadObjectList() ?: array();
+        require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
+        foreach ($venues as $venue) {
+            \JemOutput::translateType($venue, 'venue_type_');
+        }
 
-        return $db->loadObjectList();
+        return $venues;
     }
 
     private static function getVenueOrderClause($db, string $venueOrder): array
@@ -268,6 +273,8 @@ class JemMapHelper
                 't.icon AS event_type_icon',
                 't.color AS event_type_color',
                 'vt.name AS venue_type_name',
+                'vt.base_language AS venue_type_base_language',
+                'vt.translations AS venue_type_translations',
                 'vt.icon AS venue_type_icon',
                 'vt.color AS venue_type_color',
             ])
@@ -333,7 +340,13 @@ class JemMapHelper
 
         $db->setQuery($query);
 
-        return $db->loadObjectList();
+        $events = $db->loadObjectList() ?: array();
+        require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
+        foreach ($events as $event) {
+            \JemOutput::translateType($event, 'venue_type_');
+        }
+
+        return $events;
     }
 
     /**

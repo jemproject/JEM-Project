@@ -21,15 +21,6 @@ class ModJemTypesHelper
             . ' OR ' . $column . ' IS NULL)';
     }
 
-    protected static function typeLanguageFilter($db, $prefix, $language)
-    {
-        return '('
-            . self::languageFilter($db, $db->quoteName($prefix . 'language'), $language)
-            . ' OR ' . $db->quoteName($prefix . 'base_language') . ' = ' . $db->quote($language)
-            . ' OR ' . $db->quoteName($prefix . 'translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
-            . ')';
-    }
-
     /**
      * Count upcoming and ongoing events for each visible, published event type.
      *
@@ -88,9 +79,6 @@ class ModJemTypesHelper
             ->group('t.id, t.name, t.alias, t.icon, t.color, t.description, t.base_language, t.translation_languages, t.translations')
             ->order($db->quoteName('t.ordering') . ' ASC, ' . $db->quoteName('t.name') . ' ASC');
 
-        if ($filterLanguage) {
-            $query->where(self::typeLanguageFilter($db, 't.', $language));
-        }
 
         if ($params->get('hide_empty', 0)) {
             $query->having('COUNT(DISTINCT CASE WHEN c.id IS NOT NULL THEN a.id END) > 0');
@@ -135,9 +123,6 @@ class ModJemTypesHelper
             ->where($db->quoteName('access') . ' IN (' . $levelsList . ')')
             ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
 
-        if ($filterLanguage) {
-            $typeQuery->where(self::typeLanguageFilter($db, '', $language));
-        }
 
         $db->setQuery($typeQuery);
         $types = $db->loadObjectList();

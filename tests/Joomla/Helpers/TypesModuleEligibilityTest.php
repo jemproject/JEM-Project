@@ -269,7 +269,7 @@ final class TypesModuleEligibilityTest extends TestCase
         self::assertSame(4, (int) $summary[0]->event_count);
     }
 
-    /** @return void Type publication/access/entity/language restrictions still precede listing. */
+    /** @return void All Type languages are eligible; publication/access/entity restrictions remain. */
     public function testUnavailableTypesAreNotExposed(): void
     {
         foreach ([
@@ -283,8 +283,12 @@ final class TypesModuleEligibilityTest extends TestCase
             $this->insert($type['id'] + 100, ['type_id' => $type['id'], 'dates' => '2026-10-30']);
         }
         $params = new Registry(['hide_empty' => 0]);
-        self::assertSame([1, 2], array_map('intval', array_column(ModJemTypesHelper::getTopNByType($params), 'id')));
-        self::assertSame([1, 2], array_map('intval', array_column(ModJemTypesHelper::getTypeSummary($params), 'id')));
+        $top = ModJemTypesHelper::getTopNByType($params);
+        $summary = ModJemTypesHelper::getTypeSummary($params);
+        self::assertSame([1, 2, 6], array_map('intval', array_column($top, 'id')));
+        self::assertSame([1, 2, 6], array_map('intval', array_column($summary, 'id')));
+        self::assertSame([106], array_map('intval', array_column($top[2]->events, 'id')));
+        self::assertSame(1, (int) $summary[2]->event_count);
     }
 }
 

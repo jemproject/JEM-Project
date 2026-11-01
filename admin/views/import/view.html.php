@@ -392,7 +392,7 @@ class JemViewImport extends JemAdminView
             $id = is_array($type) ? (int) ($type['id'] ?? 0) : 0;
 
             if ($name !== '') {
-                $options[] = HTMLHelper::_('select.option', $id > 0 ? $id : $name, $name);
+                $options[] = HTMLHelper::_('select.option', $id > 0 ? $id : $name, is_array($type) ? ($type['label'] ?? $name) : $name);
             }
         }
 

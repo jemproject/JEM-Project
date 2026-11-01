@@ -222,7 +222,7 @@ $renderUrl = function ($url) {
                     </td>
                     <td>
                         <span style="display:inline-block;width:1rem;height:1rem;border:1px solid #adb5bd;border-radius:3px;background:<?php echo $this->escape($type['color']); ?>;" aria-hidden="true"></span>
-                        <?php echo $dayType !== '' ? $this->escape($dayType) : '<span class="text-muted">-</span>'; ?>
+                        <?php echo $dayType !== '' ? $this->escape($type['label'] ?? $dayType) : '<span class="text-muted">-</span>'; ?>
                     </td>
                     <td>
                         <?php echo $renderRule($item); ?>

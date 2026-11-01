@@ -628,8 +628,6 @@ class JemModelEventslist extends ListModel
         $query->join('LEFT', '#__jem_countries AS ct ON ct.iso2 = l.country');
 
         # Type
-        $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
-        $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
         if (!$compactSelect) {
             $query->select(array(
                 'jt.name AS type_name',
@@ -642,7 +640,7 @@ class JemModelEventslist extends ListModel
                 'jt.translations AS type_translations',
             ));
         }
-        $query->join('LEFT', '#__jem_types AS jt ON jt.id = ' . $effectiveTypeId . ' AND jt.entity = 1 AND jt.published = 1 AND ' . $typeLanguageCondition);
+        $query->join('LEFT', '#__jem_types AS jt ON jt.id = ' . $effectiveTypeId . ' AND jt.entity = 1 AND jt.published = 1');
 
         # the rest
         $case_when_e = ' CASE WHEN ';

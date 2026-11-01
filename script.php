@@ -327,11 +327,36 @@ class com_jemInstallerScript
             $this->repairDefaultWeekendRule();
             $this->repair501SchemaFallback();
             $this->repair502SchemaParity();
+            $this->normaliseTypeLanguages();
             $this->repairModuleStatusSettings();
             $this->repairLegacyRecurrenceRoots();
             $this->rebuildEventUtcDates();
             $this->migrateBackendAcl($type === 'update');
         }
+    }
+
+    /**
+     * Retain the legacy language column while making all Type entities language-neutral.
+     *
+     * Runs after schema repair, including reinstalls of the same prerelease version.
+     * Does not alter base languages, translations, identities, publication or access.
+     *
+     * @return void
+     */
+    private function normaliseTypeLanguages()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        if (!in_array($db->replacePrefix('#__jem_types'), $db->getTableList(), true)) {
+            return;
+        }
+
+        $language = $db->quoteName('language');
+        $db->setQuery(
+            $db->getQuery(true)
+                ->update($db->quoteName('#__jem_types'))
+                ->set($language . ' = ' . $db->quote('*'))
+                ->where('(' . $language . ' <> ' . $db->quote('*') . ' OR ' . $language . ' IS NULL)')
+        )->execute();
     }
 
     /**

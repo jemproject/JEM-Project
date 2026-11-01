@@ -42,6 +42,12 @@ final class SearchScopeMenuItem
 
 final class SearchScopeApplication
 {
+    /** @return object Current fixture language, shared with Joomla date services. */
+    public function getLanguage(): object
+    {
+        return Factory::$language;
+    }
+
     public Input $input;
     public ?SearchScopeMenuItem $active = null;
     public Registry $params;

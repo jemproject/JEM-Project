@@ -28,9 +28,9 @@ class JFormFieldSpecialdaytype extends ListField
             $id = (int) ($type['id'] ?? 0);
 
             if ($id > 0) {
-                $options[] = HTMLHelper::_('select.option', $id, $type['name']);
+                $options[] = HTMLHelper::_('select.option', $id, $type['label'] ?? $type['name']);
             } else {
-                $options[] = HTMLHelper::_('select.option', $type['name'], $type['name']);
+                $options[] = HTMLHelper::_('select.option', $type['name'], $type['label'] ?? $type['name']);
             }
         }
 
