@@ -83,7 +83,8 @@ class JemViewCategories extends JemView
         }
 
         if ($isTypeCategoryView && $categoryType) {
-            $typeName    = htmlspecialchars($categoryType->name, ENT_QUOTES, 'UTF-8');
+            // Keep plain text here; the heading template and document renderer escape their output.
+            $typeName    = (string) $categoryType->name;
             $pagetitle   = Text::sprintf('COM_JEM_TYPECATEGORIES_TITLE', $typeName);
             $pageheading = $pagetitle;
             $params->set('page_heading', $pageheading);

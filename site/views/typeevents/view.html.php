@@ -127,10 +127,12 @@ class JemViewTypeevents extends JemView
             array('size' => '1', 'class' => 'form-select'), 'value', 'text', $filter_type);
         $lists['search'] = $search;
 
-        $typeName  = htmlspecialchars($typeObj->name, ENT_QUOTES, 'UTF-8');
+        // Keep plain text here; the heading template and document renderer escape their output.
+        $typeName  = (string) $typeObj->name;
         $pagetitle = Text::sprintf('COM_JEM_TYPEEVENTS_TITLE', $typeName);
 
-        $pathway->addItem($pagetitle);
+        // Match Pathway's ENT_COMPAT decoding; the breadcrumb module escapes the resulting text.
+        $pathway->addItem(htmlspecialchars($pagetitle, ENT_COMPAT, 'UTF-8'));
         $params->set('page_heading', $pagetitle);
 
         if ($app->get('sitename_pagetitles', 0) == 1) {
