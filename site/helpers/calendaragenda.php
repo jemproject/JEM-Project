@@ -207,7 +207,7 @@ class JemCalendarAgendaHelper
 
         foreach ($eventsByDate as $date => $events) {
             $html[] = '<section class="jem-calendar-agenda-day">';
-            $html[] = '<h2><span class="jem-calendar-agenda-day-number">' . (int) date('j', strtotime($date)) . '</span> <span class="jem-calendar-agenda-weekday">' . htmlspecialchars(date('D', strtotime($date)), ENT_COMPAT, 'UTF-8') . '</span></h2>';
+            $html[] = '<h2><span class="jem-calendar-agenda-day-number">' . (int) date('j', strtotime($date)) . '</span> <span class="jem-calendar-agenda-weekday">' . htmlspecialchars(Text::_(strtoupper(date('D', strtotime($date)))), ENT_COMPAT, 'UTF-8') . '</span></h2>';
             $html[] = '<ul class="jem-calendar-agenda-events">';
 
             foreach ($events as $event) {

@@ -2468,6 +2468,7 @@ class JemPdfView
     private static function buildMonthlyCalendarHtml(string $title, array $rows, int $year, int $month, $params, string $paperSize): string
     {
         $monthStart = new DateTimeImmutable(sprintf('%04d-%02d-01', $year, $month));
+        $monthTitle = Text::_(strtoupper($monthStart->format('F'))) . ' ' . $monthStart->format('Y');
         $monthEnd = $monthStart->modify('last day of this month');
         $firstWeekDay = self::getCalendarFirstWeekday($params);
         $weekday = (int) $monthStart->format('w');
@@ -2484,10 +2485,10 @@ class JemPdfView
             : array('MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN');
 
         if (self::getCalendarPdfLayout($params) === 'agenda') {
-            return self::buildCalendarAgendaHtml($title, $monthStart, $monthEnd, $eventsByDate, $specialDaysByDate, $legend, $paperSize, $monthStart->format('F Y'));
+            return self::buildCalendarAgendaHtml($title, $monthStart, $monthEnd, $eventsByDate, $specialDaysByDate, $legend, $paperSize, $monthTitle);
         }
 
-        return self::buildCalendarGridHtml($title, $monthStart, $monthEnd, $gridStart, $cellCount, $weekdays, $eventsByDate, $specialDaysByDate, $legend, $paperSize, true, $monthStart->format('F Y'), $useCategoryBackground);
+        return self::buildCalendarGridHtml($title, $monthStart, $monthEnd, $gridStart, $cellCount, $weekdays, $eventsByDate, $specialDaysByDate, $legend, $paperSize, true, $monthTitle, $useCategoryBackground);
     }
 
     /**
@@ -2606,7 +2607,7 @@ class JemPdfView
                 $html[] = '<tr>';
 
                 if ($index === 0) {
-                    $html[] = '<td width="13%" rowspan="' . count($dayEvents) . '"><span class="jem-pdf-agenda-date">' . (int) $date->format('j') . '</span><br /><span class="jem-pdf-agenda-weekday">' . htmlspecialchars($date->format('D'), ENT_COMPAT, 'UTF-8') . '</span>' . self::buildSpecialDayBadgesHtml($specialDaysByDate[$dateKey] ?? array()) . '</td>';
+                    $html[] = '<td width="13%" rowspan="' . count($dayEvents) . '"><span class="jem-pdf-agenda-date">' . (int) $date->format('j') . '</span><br /><span class="jem-pdf-agenda-weekday">' . htmlspecialchars(Text::_(strtoupper($date->format('D'))), ENT_COMPAT, 'UTF-8') . '</span>' . self::buildSpecialDayBadgesHtml($specialDaysByDate[$dateKey] ?? array()) . '</td>';
                 }
 
                 $html[] = '<td width="11%" class="jem-pdf-agenda-time">' . htmlspecialchars(self::getCalendarEventTime($event), ENT_COMPAT, 'UTF-8') . '</td>';
