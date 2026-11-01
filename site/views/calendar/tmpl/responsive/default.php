@@ -62,7 +62,7 @@ require_once __DIR__ . '/../../../../helpers/calendardaylink.php';
         if (in_array($displayLegend, array(2, 4, 6), true)) {
             echo $legend;
         }
-        echo JemCalendarAgendaHelper::renderAgenda((array) $this->rows, $agendaStartDate, $agendaEndDate, date('F Y', strtotime($agendaStartDate)), true);
+        echo JemCalendarAgendaHelper::renderAgenda((array) $this->rows, $agendaStartDate, $agendaEndDate, Text::_(strtoupper(date('F', strtotime($agendaStartDate)))) . ' ' . date('Y', strtotime($agendaStartDate)), true);
         if (in_array($displayLegend, array(1, 3, 5), true)) {
             echo $legend;
         }
