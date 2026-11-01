@@ -42,9 +42,7 @@ class JemViewVenue extends HtmlView
             $venue = $this->get('Venue');
 
             if (empty($venue)) {
-                $app->close();
-
-                return;
+                throw new \Exception(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 404);
             }
 
             if (!JemFrontendAccess::enforceViewAccess(!empty($venue->user_has_access_venue), $app)) {
@@ -76,9 +74,7 @@ class JemViewVenue extends HtmlView
             $venue = $this->get('Venue');
 
             if (empty($venue)) {
-                Factory::getApplication()->close();
-
-                return;
+                throw new \Exception(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 404);
             }
 
             if (!JemFrontendAccess::enforceViewAccess(!empty($venue->user_has_access_venue), $app)) {
@@ -117,9 +113,7 @@ class JemViewVenue extends HtmlView
             $venue = $this->get('Venue');
 
             if (empty($venue)) {
-                $app->close();
-
-                return;
+                throw new \Exception(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 404);
             }
 
             if (!JemFrontendAccess::enforceViewAccess(!empty($venue->user_has_access_venue), $app)) {

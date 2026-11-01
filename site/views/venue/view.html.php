@@ -70,8 +70,7 @@ class JemViewVenue extends JemView
             $venue = $this->get('Venue');
             // check for data error
             if (empty($venue)) {
-                $app->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
-                return false;
+                throw new \Exception(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 404);
             }
 
             if (empty($venue->user_has_access_venue)) {
@@ -246,8 +245,7 @@ class JemViewVenue extends JemView
 
             // check for data error
             if (empty($venue)) {
-                $app->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
-                return false;
+                throw new \Exception(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 404);
             }
 
             if (empty($venue->user_has_access_venue)) {
