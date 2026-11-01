@@ -107,10 +107,15 @@ class JemViewCategory extends HtmlView
 
             $rows = $model->getItems();
 
-            // initiate new CALENDAR
-            $category = $model->getCategories($catid);
+            // Reuse the authorized category, not the categories of an event with the same ID.
+            $categoryName = trim((string) ($categoryItem->catname ?? ''));
+            $categoryName = preg_replace('~[\x00-\x1F\x7F<>:"/\\\\|?*]+~u', '-', $categoryName) ?? '';
+            if ($categoryName === '') {
+                $categoryName = 'category-' . $catid;
+            }
+
             $vcal     = JemHelper::getCalendarTool();
-            $filename = "events_category_" . $category[0]->catname . "_" . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . ".ics";
+            $filename = 'events_category_' . $categoryName . '_' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '.ics';
 
             if (!empty($rows)) {
                 foreach ($rows as $row) {
