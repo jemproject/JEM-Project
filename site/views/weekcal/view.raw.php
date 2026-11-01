@@ -12,6 +12,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 
+require_once __DIR__ . '/../../helpers/calendaragenda.php';
+
 /**
  * Raw: weekcal
  */
@@ -37,8 +39,12 @@ class JemViewWeekcal extends HtmlView
             $model = $this->getModel();
             $model->setState('list.start', 0);
             $model->setState('list.limit', 0);
-            $rows = $this->get('Items');
             $params = $app->getParams();
+            if (JemCalendarAgendaHelper::getWeekMode($params) === 'timetable') {
+                // The shared hourly projection handles multi-day sessions itself.
+                $model->setState('filter.calendar_multiday', false);
+            }
+            $rows = $this->get('Items');
             $menuitem = $app->getMenu()->getActive();
             $title = (string) $params->get('page_title', $menuitem ? $menuitem->title : Text::_('COM_JEM_WEEKCALENDAR'));
 
