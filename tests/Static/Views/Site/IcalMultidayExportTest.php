@@ -10,6 +10,10 @@ final class IcalMultidayExportTest extends TestCase
     {
         foreach (array('category', 'venue', 'calendar', 'weekcal', 'annualcalendar') as $view) {
             $source = file_get_contents(JEM_TEST_ROOT . '/site/views/' . $view . '/view.raw.php');
+            // A raw view may also contain an earlier PDF branch with its own overrides.
+            $exportStart = strpos($source, "'global_show_ical_icon'");
+            self::assertNotFalse($exportStart, $view);
+            $source = substr($source, $exportStart);
             $initialise = strpos($source, '$model->getState();');
             $override = strpos($source, "\$model->setState('filter.calendar_multiday', false);");
 

@@ -4092,7 +4092,6 @@ class JemHelper
         $timezone_name = JemHelper::getEventTimeZoneName($event);
         $config        = Factory::getConfig();
         $sitename      = $config->get('sitename');
-        $uri           = Uri::getInstance();
 
         // get categories names
         $categories = array();
@@ -4181,8 +4180,14 @@ class JemHelper
             }
         }
 
-        $link = $uri->root() . JemHelperRoute::getEventRoute($event->slug);
-        $link = Route::_($link);
+        // Route the internal link before making it absolute; ICS is not HTML.
+        $link = Route::link(
+            'site',
+            JemHelperRoute::getEventRoute($event->slug),
+            false,
+            Route::TLS_IGNORE,
+            true
+        );
 
         $onlineMeetingUrl = self::getOnlineMeetingUrl($event);
         $onlineMeetingLabel = self::getOnlineMeetingLabel($event);
