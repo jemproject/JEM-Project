@@ -1266,7 +1266,7 @@ class plgJemMailer extends CMSPlugin
      * @access  private
      * @param   string  $recipient  mail recipient
      * @param   string  $subject    mail subject
-     * @param   string  $body       mail body
+     * @param   string  $body       plain-text mail body
      * @return  boolean true on success, false on error
      */
     private function _send($recipient, $subject, $body)
@@ -1288,7 +1288,7 @@ class plgJemMailer extends CMSPlugin
             if ($this->params->get('send_html','0')== 1) {
                 $mail->isHTML(true);
                 $mail->Encoding = 'base64';
-                $body_html = nl2br ($body);
+                $body_html = nl2br(htmlspecialchars($body, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
                 $mail->setBody($body_html);
             } else {
                 $mail->setBody($body);
