@@ -495,7 +495,7 @@ $renderChart = static function ($card) {
 
     <?php if (in_array($filters->metric, array('all', 'events', 'registrations'), true) && !empty($this->statistics->future_events)) : ?>
         <section class="card mt-4 jem-statistics-detail-card">
-            <div class="card-header">
+            <div class="card-header d-block">
                 <h2 class="h4 mb-1"><?php echo Text::_('COM_JEM_STATISTICS_FUTURE_EVENTS'); ?></h2>
                 <p class="text-muted mb-0"><?php echo Text::_('COM_JEM_STATISTICS_FUTURE_EVENTS_DESC'); ?></p>
             </div>
@@ -571,7 +571,7 @@ $renderChart = static function ($card) {
 
     <?php if (in_array($filters->metric, array('all', 'venues'), true) && !empty($this->statistics->venue_infrastructure)) : ?>
         <section class="card mt-4 jem-statistics-detail-card">
-            <div class="card-header">
+            <div class="card-header d-block">
                 <h2 class="h4 mb-1"><?php echo Text::_('COM_JEM_STATISTICS_VENUE_INFRASTRUCTURE'); ?></h2>
                 <p class="text-muted mb-0"><?php echo Text::_('COM_JEM_STATISTICS_VENUE_INFRASTRUCTURE_DESC'); ?></p>
             </div>

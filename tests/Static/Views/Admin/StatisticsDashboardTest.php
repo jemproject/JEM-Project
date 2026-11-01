@@ -6,6 +6,27 @@ use PHPUnit\Framework\TestCase;
 
 final class StatisticsDashboardTest extends TestCase
 {
+    /**
+     * Keep detail introductions below their headings despite Atum flex headers.
+     *
+     * @return void
+     */
+    public function testDetailIntroductionsUseStackedHeaders(): void
+    {
+        $template = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/statistics/tmpl/default.php');
+
+        foreach (['FUTURE_EVENTS', 'VENUE_INFRASTRUCTURE'] as $section) {
+            $key = 'COM_JEM_STATISTICS_' . $section;
+            self::assertMatchesRegularExpression(
+                '~<div class="card-header d-block">\s*'
+                . '<h2 class="h4 mb-1"><\?php echo Text::_\(\x27' . $key . '\x27\); \?></h2>\s*'
+                . '<p class="text-muted mb-0"><\?php echo Text::_\(\x27' . $key . '_DESC\x27\); \?></p>~',
+                $template,
+                $section
+            );
+        }
+    }
+
     public function testDashboardProvidesOperationalFiltersAndAccessibleTimeSeries(): void
     {
         $template = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/statistics/tmpl/default.php');
