@@ -42,22 +42,25 @@ class JemViewDay extends HtmlView
 
         $menuitem = $app->getMenu()->getActive();
         $params = $app->getParams('com_jem');
+        $isDayMenu = $menuitem
+            && ($menuitem->query['option'] ?? '') === 'com_jem'
+            && ($menuitem->query['view'] ?? '') === 'day';
 
-        if ($menuitem
-            && isset($menuitem->query['option'], $menuitem->query['view'])
-            && $menuitem->query['option'] === 'com_jem'
-            && $menuitem->query['view'] === 'day'
-            && method_exists($menuitem, 'getParams')) {
+        if ($isDayMenu && method_exists($menuitem, 'getParams')) {
             foreach ($menuitem->getParams()->toArray() as $key => $value) {
                 $params->set($key, $value);
             }
         }
 
-        $menuLayout = $menuitem && isset($menuitem->query['layout']) ? (string) $menuitem->query['layout'] : '';
+        $menuLayout = $isDayMenu ? (string) ($menuitem->query['layout'] ?? '') : '';
+        $sourceLayout = $app->input->getCmd('day_pdf_layout', '');
+        // Old export URLs use the matching menu; only supported source markers override it.
+        $pdfLayout = in_array($sourceLayout, ['timeline', 'default'], true) ? $sourceLayout : $menuLayout;
+        $isTimelinePdf = $pdfLayout === 'timeline';
         $day = $this->get('Day');
-        $title = $menuLayout === 'timeline' ? Text::_('COM_JEM_DAY_VIEW_TIMELINE_TITLE') : Text::_('COM_JEM_DAY_VIEW');
+        $title = $isTimelinePdf ? Text::_('COM_JEM_DAY_VIEW_TIMELINE_TITLE') : Text::_('COM_JEM_DAY_VIEW');
 
-        if ($menuLayout === 'timeline') {
+        if ($isTimelinePdf) {
             JemPdfView::renderDayTimeline($title, (array) $model->getItems(), 'jem-day-timeline.pdf', (string) $day, $params);
 
             return;
