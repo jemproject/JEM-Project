@@ -1072,7 +1072,7 @@ Text::script('JCANCEL');
 
             <!-- VENUE-GEODATA-->
             <?php
-            $global_show_mapserv = $this->settings->get('global_show_mapserv');
+            $global_show_mapserv = (int) $this->settings->get('global_show_mapserv', 0);
             if ($global_show_mapserv == 2 || $global_show_mapserv == 3 || $global_show_mapserv == 5) : ?>
                 <fieldset class="adminform" id="geodata">
                     <legend><?php echo Text::_('COM_JEM_GEODATA_LEGEND'); ?></legend>
@@ -1126,6 +1126,13 @@ Text::script('JCANCEL');
                     </div>
                 </fieldset>
                 <p>&nbsp;</p>
+            <?php elseif (in_array($global_show_mapserv, [1, 4], true)) : ?>
+                <fieldset class="adminform" id="geodata">
+                    <legend><?php echo Text::_('COM_JEM_GEODATA_LEGEND'); ?></legend>
+                    <ul class="adminformlist">
+                        <li><?php echo $this->form->getLabel('map'); ?><?php echo $this->form->getInput('map'); ?></li>
+                    </ul>
+                </fieldset>
             <?php endif; ?>
             <fieldset>
                 <legend><?php echo Text::_('COM_JEM_EDITVENUE_DESCRIPTION_LEGEND'); ?></legend>

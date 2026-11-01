@@ -23,12 +23,36 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
  */
 class JemModelEditvenue extends JemModelVenue
 {
+    /**
+     * Save a frontend venue without overwriting a map preference hidden by global settings.
+     *
+     * @param array $data Validated form data; the controller checks create/edit permission.
+     * @return bool True on success, false on access, loading or validation failure.
+     */
     public function save($data)
     {
         if (!JemFrontendAccess::canAssignViewLevel(JemFactory::getUser(), $data['access'] ?? null)) {
             $this->setError(Text::_('COM_JEM_FRONTEND_ACCESS_INVALID'));
 
             return false;
+        }
+
+        $mapService = (int) JemHelper::globalattribs()->get('global_show_mapserv', 0);
+        if (!in_array($mapService, [1, 2, 3, 4, 5], true)) {
+            // A hidden/forged form value must not control an unavailable preference.
+            // Copies have a new record ID and follow the same default as new venues.
+            $data['map'] = 0;
+            $venueId = (int) ($data['id'] ?? 0);
+            if ($venueId > 0) {
+                $table = $this->getTable();
+                if (!$table->load($venueId)) {
+                    $this->setError(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'));
+
+                    return false;
+                }
+
+                $data['map'] = (int) $table->map;
+            }
         }
 
         return parent::save($data);
