@@ -53,9 +53,7 @@ class JemControllerAttendeeregistrations extends BaseController
             && $user->authorise('jem.attendees.manage', 'com_jem');
 
         if (!$fullControl && !$canManage) {
-            $app->enqueueMessage(Text::_('COM_JEM_ATTENDEE_REGISTRATIONS_NO_ACCESS'), 'warning');
-            $app->redirect(Route::_('index.php', false));
-            $app->close();
+            throw new \Exception(Text::_('COM_JEM_ATTENDEE_REGISTRATIONS_NO_ACCESS'), 403);
         }
     }
 
