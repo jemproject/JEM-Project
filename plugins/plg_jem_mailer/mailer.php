@@ -1627,6 +1627,13 @@ class plgJemMailer extends CMSPlugin
         }
     }
 
+    /**
+     * Append venue details without creating an incomplete HTML alternative.
+     *
+     * @param object $message Notification with plain-text and optional HTML bodies.
+     * @param array  $values  Template values containing the venue configuration.
+     * @return object Notification with venue details added where needed.
+     */
     private function _appendVenueConfiguration($message, array $values)
     {
         $configuration = trim((string) ($values['venue_configuration'] ?? ''));
@@ -1637,7 +1644,11 @@ class plgJemMailer extends CMSPlugin
         if (strpos((string) $message->body, $configuration) === false) {
             $message->body = rtrim((string) $message->body) . "\n\n" . $label . ': ' . $configuration;
         }
-        if (strpos((string) $message->htmlbody, htmlspecialchars($configuration, ENT_QUOTES, 'UTF-8')) === false) {
+        // Without an HTML template, _send converts the complete plain-text body.
+        if (
+            (string) $message->htmlbody !== ''
+            && strpos((string) $message->htmlbody, htmlspecialchars($configuration, ENT_QUOTES, 'UTF-8')) === false
+        ) {
             $message->htmlbody = rtrim((string) $message->htmlbody)
                 . '<p><strong>' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . ':</strong> '
                 . htmlspecialchars($configuration, ENT_QUOTES, 'UTF-8') . '</p>';
@@ -1819,7 +1830,9 @@ class plgJemMailer extends CMSPlugin
             if ($this->params->get('send_html','0')== 1) {
                 $mail->isHTML(true);
                 $mail->Encoding = 'base64';
-                $body_html = $htmlbody !== '' ? $htmlbody : nl2br($body);
+                $body_html = $htmlbody !== ''
+                    ? $htmlbody
+                    : nl2br(htmlspecialchars($body, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
                 $mail->setBody($body_html);
                 $mail->AltBody = $body;
             } else {
