@@ -2460,44 +2460,30 @@ static public function lightbox() {
         return $type;
     }
 
+    /**
+     * Resolve a Type label without changing its identity or language availability.
+     *
+     * @param object $type   Type record, possibly using aliased property names.
+     * @param string $prefix Prefix of the selected Type columns.
+     * @param string $field  Translatable field (name or description).
+     * @return string Current-language text, or the original text when unavailable.
+     */
     static public function getTypeTranslationValue($type, $prefix, $field)
     {
-        $translationsProperty = $prefix . 'translations';
-        $languagesProperty = $prefix . 'translation_languages';
-        $baseLanguageProperty = $prefix . 'base_language';
-        $fallbackProperty = $prefix . $field;
+        $original = trim((string) ($type->{$prefix . $field} ?? ''));
+        $baseLanguage = trim((string) ($type->{$prefix . 'base_language'} ?? ''));
+        $language = Factory::getApplication()->getLanguage()->getTag();
 
-        $translations = json_decode((string) ($type->{$translationsProperty} ?? ''), true);
-        if (!is_array($translations)) {
-            $translations = array();
+        if ($language === $baseLanguage) {
+            return $original;
         }
 
-        $currentLanguage = Factory::getApplication()->getLanguage()->getTag();
-        $defaultLanguage = (string) ComponentHelper::getParams('com_languages')->get('site', '');
-        $baseLanguage = trim((string) ($type->{$baseLanguageProperty} ?? ''));
-        $savedLanguages = array_filter(array_map('trim', explode(',', (string) ($type->{$languagesProperty} ?? ''))));
-        $fallbackValue = trim((string) ($type->{$fallbackProperty} ?? ''));
+        $translations = json_decode((string) ($type->{$prefix . 'translations'} ?? ''), true);
+        $translation = is_array($translations) ? ($translations[$language] ?? null) : null;
+        $value = is_array($translation) ? ($translation[$field] ?? '') : '';
+        $value = is_string($value) ? trim($value) : '';
 
-        $fallbackOrder = array($currentLanguage, $defaultLanguage, 'en-GB');
-        $fallbackOrder = array_merge($fallbackOrder, $savedLanguages, array_keys($translations));
-
-        foreach ($fallbackOrder as $language) {
-            $language = trim((string) $language);
-            if ($fallbackValue !== '' && $baseLanguage !== '' && $language === $baseLanguage) {
-                return $fallbackValue;
-            }
-
-            if ($language === '' || empty($translations[$language]) || !is_array($translations[$language])) {
-                continue;
-            }
-
-            $value = trim((string) ($translations[$language][$field] ?? ''));
-            if ($value !== '') {
-                return $value;
-            }
-        }
-
-        return $fallbackValue;
+        return $value !== '' ? $value : $original;
     }
 
     /**

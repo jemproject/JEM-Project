@@ -46,7 +46,7 @@ $dayTypePreviewData = array();
 foreach ((array) ($this->dayTypes ?? array()) as $typeName => $type) {
     $typeId = (int) ($type['id'] ?? 0);
     $preview = array(
-        'name' => $type['name'] ?? $typeName,
+        'name' => $type['label'] ?? $type['name'] ?? $typeName,
         'color' => $type['color'] ?? '#d1d5db',
         'block_events' => !empty($type['block_events']),
     );

@@ -91,13 +91,6 @@
                default="1"
         />
 
-        <field name="language"
-               type="contentlanguage"
-               label="JFIELD_LANGUAGE_LABEL"
-               description="JFIELD_LANGUAGE_DESC"
-               default="*"
-        />
-
         <field name="ordering"
                type="hidden"
                default="0"

@@ -375,11 +375,6 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
                     </div>
 
                     <div class="mb-3">
-                        <?php echo $this->form->getLabel('language'); ?>
-                        <?php echo $this->form->getInput('language'); ?>
-                    </div>
-
-                    <div class="mb-3">
                         <?php echo $this->form->getLabel('alias'); ?>
                         <?php echo $this->form->getInput('alias'); ?>
                     </div>

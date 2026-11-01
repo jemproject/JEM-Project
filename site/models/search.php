@@ -623,7 +623,7 @@ class JemModelSearch extends BaseDatabaseModel
         $needsCategory = $filter_category > 1;
 
         $query = $this->_db->getQuery(true)
-            ->select('DISTINCT t.id AS value, t.name AS text')
+            ->select('DISTINCT t.id AS value, t.name, t.base_language, t.translations')
             ->from($this->_db->quoteName('#__jem_types') . ' AS t')
             ->where('t.entity = 1')
             ->where('t.published = 1')
@@ -651,7 +651,13 @@ class JemModelSearch extends BaseDatabaseModel
 
         $query->order('t.ordering ASC, t.name ASC');
         $this->_db->setQuery($query);
-        return $this->_db->loadObjectList();
+        $types = $this->_db->loadObjectList() ?: array();
+        require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
+        foreach ($types as $type) {
+            $type->text = JemOutput::getTypeTranslationValue($type, '', 'name');
+        }
+
+        return $types;
     }
 
     /**

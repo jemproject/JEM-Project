@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_diagnostic_reports` (
 
 -- Restore a missing type language column before later update statements use it.
 ALTER TABLE `#__jem_types` ADD COLUMN `language` CHAR(7) NOT NULL DEFAULT '*' /** CAN FAIL **/;
+-- Types are language-neutral; keep the column for legacy schema/CSV compatibility.
+UPDATE `#__jem_types` SET `language` = '*' WHERE `language` <> '*' OR `language` IS NULL;
 
 -- Event programmes can exceed the old 5120-character parameter limit. Existing JSON is preserved.
 ALTER TABLE `#__jem_events` MODIFY `attribs` MEDIUMTEXT NULL DEFAULT NULL;

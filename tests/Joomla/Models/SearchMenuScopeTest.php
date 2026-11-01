@@ -36,7 +36,14 @@ final class SearchMenuScopeTest extends TestCase
                 }
             }
         });
-        require_once JEM_TEST_ROOT . '/site/models/search.php';
+        // Load checkout methods, isolating only installed-path dependency loading.
+        require_once JEM_TEST_ROOT . '/tests/Support/type_language_environment.php';
+        eval('use Joomla\\CMS\\Factory; class JemOutput {'
+            . \JemProject\Tests\TypeLanguage\methods('site/classes/output.class.php', ['getTypeTranslationValue']) . '}');
+        $search = file_get_contents(JEM_TEST_ROOT . '/site/models/search.php');
+        $search = str_replace('__DIR__', var_export(JEM_TEST_ROOT . '/site/models', true), $search);
+        $search = preg_replace('/^ *require_once .*output\\.class\\.php.*;\\R/m', '', $search);
+        eval(substr($search, 5));
         require_once JEM_TEST_ROOT . '/tests/Support/search_scope_environment.php';
 
         // Use the actual publication-window helper; isolate unrelated hierarchy/age dependencies.
@@ -56,10 +63,11 @@ final class SearchMenuScopeTest extends TestCase
         $this->app = new SearchScopeApplication();
         Factory::$application = $this->app;
         Factory::$language = new class {
+            public string $tag = 'en-GB';
             /** @return string Language tag used by Joomla's date factory. */
             public function getTag(): string
             {
-                return 'en-GB';
+                return $this->tag;
             }
         };
         $this->model = (new ReflectionClass(SearchScopeModel::class))->newInstanceWithoutConstructor();
@@ -73,7 +81,7 @@ final class SearchMenuScopeTest extends TestCase
             'CREATE TABLE t_jem_events (id INTEGER, published INTEGER, locid INTEGER, type_id INTEGER, access INTEGER, publish_up TEXT, publish_down TEXT, parent_event_id INTEGER, show_in_calendar INTEGER, dates TEXT)',
             'CREATE TABLE t_jem_venues (id INTEGER, venue TEXT, city TEXT, country TEXT, published INTEGER)',
             'CREATE TABLE t_jem_countries (iso2 TEXT, name TEXT, continent TEXT, published INTEGER)',
-            'CREATE TABLE t_jem_types (id INTEGER, name TEXT, entity INTEGER, published INTEGER, access INTEGER, ordering INTEGER)',
+            'CREATE TABLE t_jem_types (id INTEGER, name TEXT, entity INTEGER, published INTEGER, access INTEGER, ordering INTEGER, base_language TEXT, translations TEXT)',
             'CREATE TABLE t_jem_cats_event_relations (itemid INTEGER, catid INTEGER)',
         ] as $sql) {
             $this->db->setQuery($sql)->execute();
@@ -103,6 +111,21 @@ final class SearchMenuScopeTest extends TestCase
                 $this->db->insertObject('#__jem_' . $table, $row);
             }
         }
+    }
+
+    /** @return void Type option IDs retain their scope while labels use exact translation or original text. */
+    public function testTypeOptionsTranslateWithoutChangingIds(): void
+    {
+        $this->configure('published');
+        Factory::$language->tag = 'es-ES';
+        $translations = json_encode(['es-ES' => ['name' => 'Tipo traducido']]);
+        $this->db->setQuery('UPDATE t_jem_types SET base_language = ' . $this->db->quote('en-GB')
+            . ', translations = ' . $this->db->quote($translations) . ' WHERE id = 1')->execute();
+        $types = $this->model->getEventTypeOptions();
+        self::assertSame([1, 2, 3], array_map('intval', array_column($types, 'value')));
+        self::assertSame(['Tipo traducido', 'Type 2', 'Type 3'], array_column($types, 'text'));
+        Factory::$language->tag = 'fr-FR';
+        self::assertSame(['Type 1', 'Type 2', 'Type 3'], array_column($this->model->getEventTypeOptions(), 'text'));
     }
 
     /** @param mixed $scope Stored setting. @param array $request Visitor input. @return void */

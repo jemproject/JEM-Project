@@ -2743,7 +2743,7 @@ class JemModelEvent extends JemModelAdmin
         foreach ($blockedDays as $date => $specialDays) {
             $labels = array();
             foreach ($specialDays as $specialDay) {
-                $labels[] = trim((string) ($specialDay['title'] ?: $specialDay['type']));
+                $labels[] = trim((string) ($specialDay['title'] ?: ($specialDay['type_label'] ?? $specialDay['type'])));
             }
             $labels = array_values(array_unique(array_filter($labels)));
             $messages[] = $date . ($labels ? ' (' . implode(', ', $labels) . ')' : '');

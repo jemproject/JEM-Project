@@ -165,8 +165,6 @@ class JemModelVenueslist extends ListModel
 
         # Type
         $levelsList = implode(',', array_map('intval', $levels));
-        $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
-        $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
         $query->select(array(
             'jt.name AS type_name',
             'jt.icon AS type_icon',
@@ -177,7 +175,7 @@ class JemModelVenueslist extends ListModel
             'jt.translation_languages AS type_translation_languages',
             'jt.translations AS type_translations',
         ));
-        $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 3 AND jt.published = 1 AND jt.access IN (' . $levelsList . ') AND ' . $typeLanguageCondition);
+        $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 3 AND jt.published = 1 AND jt.access IN (' . $levelsList . ')');
 
         ###################
         ## FILTER-SEARCH ##

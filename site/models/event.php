@@ -138,13 +138,11 @@ class JemModelEvent extends ItemModel
 
                 # Type
                 $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias, jt.description AS type_description, jt.base_language AS type_base_language, jt.translation_languages AS type_translation_languages, jt.translations AS type_translations');
-                $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
-                $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
-                $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1 AND ' . $typeLanguageCondition);
+                $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1');
 
                 # Venue Type
                 $query->select('jtv.name AS venue_type_name, jtv.icon AS venue_type_icon, jtv.color AS venue_type_color, jtv.alias AS venue_type_alias, jtv.description AS venue_type_description, jtv.base_language AS venue_type_base_language, jtv.translation_languages AS venue_type_translation_languages, jtv.translations AS venue_type_translations');
-                $query->join('LEFT', '#__jem_types AS jtv ON jtv.id = l.type_id AND jtv.entity = 3 AND jtv.published = 1 AND ' . $typeLanguageCondition);
+                $query->join('LEFT', '#__jem_types AS jtv ON jtv.id = l.type_id AND jtv.entity = 3 AND jtv.published = 1');
 
                 if (JemHelper::isContactComponentEnabled()) {
                     # Get contact id
@@ -698,13 +696,11 @@ class JemModelEvent extends ItemModel
 
             # Type
             $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias, jt.description AS type_description, jt.base_language AS type_base_language, jt.translation_languages AS type_translation_languages, jt.translations AS type_translations');
-            $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
-            $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
-            $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.published = 1 AND ' . $typeLanguageCondition);
+            $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.published = 1');
 
             # Venue Type
             $query->select('jtv.name AS venue_type_name, jtv.icon AS venue_type_icon, jtv.color AS venue_type_color, jtv.alias AS venue_type_alias, jtv.description AS venue_type_description, jtv.base_language AS venue_type_base_language, jtv.translation_languages AS venue_type_translation_languages, jtv.translations AS venue_type_translations');
-            $query->join('LEFT', '#__jem_types AS jtv ON jtv.id = l.type_id AND jtv.entity = 3 AND jtv.published = 1 AND ' . $typeLanguageCondition);
+            $query->join('LEFT', '#__jem_types AS jtv ON jtv.id = l.type_id AND jtv.entity = 3 AND jtv.published = 1');
 
             if (JemHelper::isContactComponentEnabled()) {
                 # Get contact id
@@ -927,10 +923,8 @@ class JemModelEvent extends ItemModel
         $query->from('#__jem_categories as c');
         $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
 
-        $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
-        $typeLanguageCondition = '(ct.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR ct.base_language <> ' . $db->quote('') . ' OR ct.translation_languages IS NOT NULL)';
         $query->select(array('ct.icon AS type_icon', 'ct.color AS type_color'));
-        $query->join('LEFT', '#__jem_types AS ct ON ct.id = c.type_id AND ct.entity = 2 AND ct.published = 1 AND ct.access IN (' . implode(',', array_map('intval', $levels)) . ') AND ' . $typeLanguageCondition);
+        $query->join('LEFT', '#__jem_types AS ct ON ct.id = c.type_id AND ct.entity = 2 AND ct.published = 1 AND ct.access IN (' . implode(',', array_map('intval', $levels)) . ')');
 
         $query->select(array('a.id AS multi'));
         $query->join('LEFT','#__jem_events AS a ON a.id = rel.itemid');

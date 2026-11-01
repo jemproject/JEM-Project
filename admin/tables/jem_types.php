@@ -28,6 +28,7 @@ class jem_types extends Table
     public $published      = 1;
     public $ordering       = 0;
     public $access         = 1;
+    // Compatibility column only: a Type is shared by all content languages.
     public $language       = '*';
     public $checked_out    = null;
     public $checked_out_time = null;
@@ -44,6 +45,11 @@ class jem_types extends Table
 
     public function bind($array, $ignore = '')
     {
+        // Retain the original text's language when editing or importing an existing Type.
+        if (!empty($this->id) && trim((string) $this->base_language) !== '') {
+            $array['base_language'] = $this->base_language;
+        }
+        $array['language'] = '*';
         if (isset($array['attribs']) && is_array($array['attribs'])) {
             $registry = new Registry;
             $registry->loadArray($array['attribs']);
@@ -63,6 +69,7 @@ class jem_types extends Table
 
     public function check()
     {
+        $this->language = '*';
         $this->name = trim((string) $this->name);
 
         if (!trim($this->name)) {

@@ -289,6 +289,7 @@ class JemControllerSettings extends BaseController
                     ->set($db->quoteName('alias') . ' = ' . $db->quote($alias))
                     ->set($db->quoteName('color') . ' = ' . $db->quote($color))
                     ->set($db->quoteName('entity') . ' = 4')
+                    ->set($db->quoteName('language') . ' = ' . $db->quote('*'))
                     ->set($db->quoteName('published') . ' = 1')
                     ->set($db->quoteName('ordering') . ' = ' . (int) $ordering)
                     ->set($db->quoteName('attribs') . ' = ' . $db->quote((string) $attribs))

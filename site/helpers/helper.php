@@ -649,11 +649,8 @@ class JemHelper
         $eventLevels = self::mergeLockedViewLevels($levels, $settings->access_level_locked_events ?? '["1"]');
         $catLevels   = self::mergeLockedViewLevels($levels, $settings->access_level_locked_categories ?? '["1"]');
         $typeLevels  = implode(',', array_unique($levels));
-        $language    = $app->getLanguage()->getTag();
 
         $effectiveType = 'COALESCE(NULLIF(ve.type_id, 0), vp.type_id)';
-        $typeLanguage = '(vet.language IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
-            . ' OR vet.base_language <> ' . $db->quote('') . ' OR vet.translation_languages IS NOT NULL)';
 
         $conditions = array(
             've.locid = ' . $venueAlias . '.id',
@@ -674,7 +671,7 @@ class JemHelper
             . ' INNER JOIN #__jem_cats_event_relations AS vrel ON vrel.itemid = ve.id'
             . ' INNER JOIN #__jem_categories AS vc ON vc.id = vrel.catid'
             . ' LEFT JOIN #__jem_types AS vet ON vet.id = ' . $effectiveType
-            . ' AND vet.entity = 1 AND vet.published = 1 AND ' . $typeLanguage
+            . ' AND vet.entity = 1 AND vet.published = 1'
             . ' WHERE ' . implode(' AND ', $conditions);
 
         return ($hasEvents ? 'EXISTS' : 'NOT EXISTS') . ' (' . $subquery . ')';
@@ -1989,16 +1986,17 @@ class JemHelper
      */
     static public function calendarSpecialDayTypes()
     {
-        static $types;
+        static $cache = array();
+        $language = Factory::getApplication()->getLanguage()->getTag();
 
-        if (is_array($types)) {
-            return $types;
+        if (isset($cache[$language])) {
+            return $cache[$language];
         }
 
         $types = self::loadCalendarSpecialDayTypesFromTable();
 
         if ($types) {
-            return $types;
+            return $cache[$language] = $types;
         }
 
         $default = "Weekend | #d1d5db | 0\nPublic holiday | #e5e7eb | 0";
@@ -2040,7 +2038,7 @@ class JemHelper
             $types['Weekend'] = array('id' => 0, 'name' => 'Weekend', 'icon' => '', 'color' => '#d1d5db', 'block_events' => false, 'priority' => 0);
         }
 
-        return $types;
+        return $cache[$language] = $types;
     }
 
     /**
@@ -2111,6 +2109,8 @@ class JemHelper
             ->select(array(
                 $db->quoteName('id'),
                 $db->quoteName('name'),
+                $db->quoteName('base_language'),
+                $db->quoteName('translations'),
                 $db->quoteName('icon'),
                 $db->quoteName('color'),
                 $db->quoteName('ordering'),
@@ -2121,6 +2121,8 @@ class JemHelper
             ->where($db->quoteName('published') . ' = 1')
             ->where($db->quoteName('access') . ' IN (' . implode(',', array_map('intval', Factory::getApplication()->getIdentity()->getAuthorisedViewLevels())) . ')')
             ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+
+        require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
 
         try {
             $db->setQuery($query);
@@ -2147,6 +2149,8 @@ class JemHelper
             $types[$name] = array(
                 'id' => (int) $row->id,
                 'name' => $name,
+                // Keep legacy keys and stored names stable; only the label is translated.
+                'label' => JemOutput::getTypeTranslationValue($row, '', 'name'),
                 'icon' => trim((string) ($row->icon ?? '')),
                 'color' => $color,
                 'block_events' => (int) $attribs->get('block_events', 0) === 1,
@@ -2239,6 +2243,7 @@ class JemHelper
                 'date' => $dateKey,
                 'title' => (string) $row->title,
                 'type' => $type['name'],
+                'type_label' => $type['label'] ?? $type['name'],
                 'icon' => (string) ($type['icon'] ?? ''),
                 'color' => $type['color'],
                 'block_events' => (bool) $type['block_events'],
@@ -2429,7 +2434,7 @@ class JemHelper
             $color = !empty($specialDay['color']) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $specialDay['color'])
                 ? strtolower((string) $specialDay['color'])
                 : '';
-            $title = trim((string) ($specialDay['title'] ?: $type));
+            $title = trim((string) ($specialDay['title'] ?: ($specialDay['type_label'] ?? $type)));
 
             if ($title !== '' && !in_array($title, $labels, true)) {
                 $labels[] = $title;
@@ -2487,7 +2492,7 @@ class JemHelper
         $badges = array();
 
         foreach ($specialDays as $specialDay) {
-            $title = trim((string) ($specialDay['title'] ?: ($specialDay['type'] ?? '')));
+            $title = trim((string) ($specialDay['title'] ?: ($specialDay['type_label'] ?? $specialDay['type'] ?? '')));
 
             if ($title === '') {
                 continue;
@@ -2566,7 +2571,8 @@ class JemHelper
                 if (!isset($legend[$legendKey])) {
                     $legend[$legendKey] = array(
                         'color' => $color,
-                        'type' => $type,
+                        'type' => $specialDay['type_label'] ?? $type,
+                        'type_name' => $type,
                         'filter_class' => self::calendarSpecialDayTypeClass($type),
                         'first_id' => (int) ($specialDay['id'] ?? 0),
                         'first_order' => (int) ($specialDay['rule_order'] ?? 0),

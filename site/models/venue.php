@@ -205,8 +205,6 @@ class JemModelVenue extends JemModelEventslist
         ));
         $query->join('LEFT', $db->quoteName('#__jem_age_levels', 'val') . ' ON val.id = v.age_level_id');
 
-        $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
-        $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
         $query->select(array(
             'jt.id AS type_id',
             'jt.name AS type_name',
@@ -218,7 +216,7 @@ class JemModelVenue extends JemModelEventslist
             'jt.translation_languages AS type_translation_languages',
             'jt.translations AS type_translations',
         ));
-        $query->join('LEFT', $db->quoteName('#__jem_types', 'jt') . ' ON jt.id = v.type_id AND jt.entity = 3 AND jt.published = 1 AND jt.access IN (' . $levelsList . ') AND ' . $typeLanguageCondition);
+        $query->join('LEFT', $db->quoteName('#__jem_types', 'jt') . ' ON jt.id = v.type_id AND jt.entity = 3 AND jt.published = 1 AND jt.access IN (' . $levelsList . ')');
 
         $case_when_a  = ' CASE WHEN ';
         $case_when_a .= " v.access IN (" . $levelsList . ")";

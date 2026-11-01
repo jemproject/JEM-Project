@@ -62,19 +62,13 @@ class JemModelTypeevents extends JemModelEventslist
         $user     = JemFactory::getUser();
         $levels   = $user->getAuthorisedViewLevels();
         $levelsList = implode(',', array_map('intval', $levels)) ?: '0';
-        $language = $app->getLanguage()->getTag();
         $db       = Factory::getContainer()->get('DatabaseDriver');
         $query    = $db->getQuery(true)
             ->select($db->quoteName(array('id', 'name', 'alias', 'icon', 'color', 'description', 'base_language', 'translation_languages', 'translations', 'language', 'access')))
             ->select('CASE WHEN ' . $db->quoteName('access') . ' IN (' . $levelsList . ') THEN 1 ELSE 0 END AS ' . $db->quoteName('user_has_access_type'))
             ->from($db->quoteName('#__jem_types'))
             ->where($db->quoteName('entity') . ' = 1')
-            ->where($db->quoteName('published') . ' = 1')
-            ->where('('
-                . $db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
-                . ' OR ' . $db->quoteName('base_language') . ' = ' . $db->quote($language)
-                . ' OR ' . $db->quoteName('translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
-                . ')');
+            ->where($db->quoteName('published') . ' = 1');
 
         $query->where($db->quoteName('id') . ' = ' . $typeId);
 

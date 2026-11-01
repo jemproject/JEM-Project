@@ -107,7 +107,7 @@ class JFormFieldJemtype extends FormField
 
         $db    = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select($db->quoteName(array('id', 'name', 'icon', 'color')))
+            ->select($db->quoteName(array('id', 'name', 'icon', 'color', 'base_language', 'translations')))
             ->from($db->quoteName('#__jem_types'))
             ->where($db->quoteName('entity') . ' = ' . $entity)
             ->where($db->quoteName('published') . ' = 1')
@@ -115,7 +115,13 @@ class JFormFieldJemtype extends FormField
 
         $db->setQuery($query);
 
-        return $db->loadObjectList() ?: array();
+        $types = $db->loadObjectList() ?: array();
+        require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
+        foreach ($types as $type) {
+            JemOutput::translateType($type);
+        }
+
+        return $types;
     }
 
     /**

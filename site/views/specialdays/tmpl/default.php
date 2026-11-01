@@ -184,7 +184,7 @@ $renderLocation = function ($item) {
                     <?php foreach ($this->dayTypes as $type) : ?>
                         <?php $typeValue = !empty($type['id']) ? (string) (int) $type['id'] : (string) $type['name']; ?>
                         <option value="<?php echo $this->escape($typeValue); ?>"<?php echo (string) $this->state->get('filter.day_type') === $typeValue ? ' selected="selected"' : ''; ?>>
-                            <?php echo $this->escape($type['name']); ?>
+                            <?php echo $this->escape($type['label'] ?? $type['name']); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -236,7 +236,7 @@ $renderLocation = function ($item) {
                         </td>
                         <td>
                             <span style="display:inline-block;width:1rem;height:1rem;border:1px solid #adb5bd;border-radius:3px;background:<?php echo $this->escape($type['color']); ?>;" aria-hidden="true"></span>
-                            <?php echo $dayType !== '' ? $this->escape($dayType) : '<span class="text-muted">-</span>'; ?>
+                            <?php echo $dayType !== '' ? $this->escape($type['label'] ?? $dayType) : '<span class="text-muted">-</span>'; ?>
                         </td>
                         <td>
                             <?php echo $renderRule($item); ?>
