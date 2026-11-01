@@ -567,7 +567,9 @@ static public function lightbox() {
     }
 
     /**
-     * Builds a PDF link from the current request.
+     * Builds a PDF link, preserving the source Day layout before selecting the raw PDF layout.
+     *
+     * @return string Export URL without modifying the shared request URI.
      */
     static protected function buildCurrentPdfLink()
     {
@@ -575,6 +577,22 @@ static public function lightbox() {
         // edit/add return URLs rendered after the PDF button.
         $uri = clone Uri::getInstance();
         $query = $uri->getQuery(true);
+        $app = Factory::getApplication();
+        $input = $app->input;
+
+        // Resolved input also covers SEF routes whose layout is absent from the visible query.
+        if ($input->getCmd('option', '') === 'com_jem' && $input->getCmd('view', '') === 'day') {
+            $menuitem = $app->getMenu()->getActive();
+            $isDayMenu = $menuitem
+                && ($menuitem->query['option'] ?? '') === 'com_jem'
+                && ($menuitem->query['view'] ?? '') === 'day';
+            $menuLayout = $isDayMenu ? (string) ($menuitem->query['layout'] ?? 'default') : 'default';
+            $sourceLayout = $input->getCmd('layout', $menuLayout);
+
+            // An explicit ordinary layout must override an active Timeline menu, too.
+            $query['day_pdf_layout'] = $sourceLayout === 'timeline' ? 'timeline' : 'default';
+        }
+
         $query['format'] = 'raw';
         $query['layout'] = 'pdf';
         unset($query['print'], $query['tmpl']);
