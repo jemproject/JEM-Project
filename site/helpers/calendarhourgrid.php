@@ -13,6 +13,7 @@ use Joomla\CMS\Language\Text;
 
 require_once __DIR__ . '/../classes/dayschedule.class.php';
 require_once __DIR__ . '/calendarfilter.php';
+require_once __DIR__ . '/calendardaylink.php';
 
 /**
  * Read-only hourly projection shared by the Day and Week calendar views.
@@ -39,6 +40,12 @@ final class JemCalendarHourGridHelper
         $itemId = Factory::getApplication()->input->getInt('Itemid', 0);
         $context = $itemId > 0 ? '&Itemid=' . $itemId : '';
         $input = Factory::getApplication()->input;
+        if ($view === 'day') {
+            $scope = JemCalendarDayLink::context($input);
+            $context .= $scope ? '&' . http_build_query($scope, '', '&', PHP_QUERY_RFC3986) : '';
+            // A source calendar layout is not a valid Day template.
+            $context .= '&layout=default';
+        }
         if ($input->getCmd('task', '') === 'archive') {
             $context .= '&task=archive';
         }
@@ -252,6 +259,7 @@ final class JemCalendarHourGridHelper
                         . ($topCategoryId > 0 ? '&topcat=' . $topCategoryId : '')
                         . ($itemId > 0 ? '&Itemid=' . $itemId : '')
                         . ($input->getCmd('task', '') === 'archive' ? '&task=archive' : '');
+                    $dayUrl = JemCalendarDayLink::build($dayUrl, $itemId, $input->getCmd('task', ''));
                     $html[] = '<a class="jem-hourgrid-day-link" href="' . self::escape(Route::_($dayUrl, false))
                         . '" aria-label="' . $fullDate . '" title="' . $fullDate . '">'
                         . '<span class="jem-hourgrid-day-short">' . self::escape(JemOutput::formatdate($date, 'D j')) . '</span>'

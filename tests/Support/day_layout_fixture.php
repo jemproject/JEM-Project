@@ -26,6 +26,8 @@ final class DayLayoutInput
         return $key === 'task' ? self::$task : $default;
     }
     public function getString($key, $default = '') { return $default; }
+    /** @param string $key Input. @param mixed $default Fallback. @param string $type Filter. @return mixed Value. */
+    public function get($key, $default = null, $type = 'cmd') { return $default; }
     /** @param string $key Input. @param bool $default Fallback. @return bool Flag. */
     public function getBool(string $key, bool $default = false): bool
     {

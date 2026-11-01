@@ -303,6 +303,22 @@ class JemNomenuRules implements RulesInterface
             return;
         }
 
+
+        // A Day URL beneath a calendar menu must retain that menu's filter configuration.
+        if (($query['view'] ?? '') === 'day' && isset($query['Itemid'], $query['id'])) {
+            $item = $this->router->menu->getItem($query['Itemid']);
+            if ($item && ($item->query['option'] ?? '') === 'com_jem'
+                && (in_array($item->query['view'] ?? '', array('calendar', 'weekcal', 'annualcalendar'), true)
+                    || (in_array($item->query['view'] ?? '', array('category', 'venue'), true)
+                        && ($item->query['layout'] ?? '') === 'calendar'))) {
+                $segments[] = 'day';
+                $segments[] = $query['id'];
+                unset($query['view'], $query['id']);
+
+                return;
+            }
+        }
+
         if(isset($query['view'],$query['id'])){
             $segments[] =$query['view'];
             $segments[] =$query['id'];

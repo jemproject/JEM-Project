@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 require_once __DIR__ . '/../classes/listlimit.class.php';
 require_once __DIR__ . '/../classes/listorder.class.php';
+require_once __DIR__ . '/../helpers/calendardaylink.php';
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -148,6 +149,13 @@ class JemModelDay extends JemModelEventslist
         $jemsettings       = JemHelper::config();
         $itemid            = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
         $params            = $app->getParams();
+        $sourceMenu = $app->getMenu()->getActive();
+        $sourceView = JemCalendarDayLink::sourceView((array) ($sourceMenu->query ?? array()));
+        $this->setState('filter.calendar_startdayonly', $sourceView !== '' && (bool) $params->get('show_only_start', false));
+        $scope = JemCalendarDayLink::context($app->input);
+        $this->setState('filter.calendar_excluded_categories', $scope['calcats'] ?? '');
+        $this->setState('filter.calendar_excluded_venues', $scope['calvenues'] ?? '');
+        $this->setState('filter.calendar_hide_all', !empty($scope['calhide']));
         $task              = $app->input->getCmd('task', '');
         $requestVenueId    = $app->input->getInt('locid', 0);
         $requestCategoryId = $app->input->getInt('catid', 0);
@@ -257,6 +265,9 @@ class JemModelDay extends JemModelEventslist
                 $this->setState('filter.category_id.include', false);
         }
 
+        // Keep Day's menu policy identical to the source calendar (including featured/subcategories).
+        $this->applyMenuEventFilters($params);
+
         // maybe top category is given by calendar view
         $top_category = $app->input->getInt('topcat', 0);
         if ($top_category > 0) { // accept 'root'
@@ -331,6 +342,19 @@ class JemModelDay extends JemModelEventslist
             $this->setState('filter.req_catid', $requestCategoryId);
         }
 
+        // Category calendars select the category itself, not Day's optional descendants.
+        if ($sourceView === 'category' && $requestCategoryId > 0) {
+            $this->setState('filter.req_catid', null);
+            $this->setState('filter.filter_catid', $requestCategoryId);
+        }
+        // Venue calendars include the complete physical site in 5.1.
+        if ($sourceView === 'venue' && $requestVenueId > 0) {
+            $this->setState('filter.req_venid', null);
+            $this->setState('filter.filter_locid', null);
+            $this->setState('filter.venue_id', $this->getVenueTreeIds($requestVenueId));
+            $this->setState('filter.venue_id.include', true);
+        }
+
         # groupby
         $this->setState('filter.groupby', array('a.id'));
     }
@@ -364,10 +388,12 @@ class JemModelDay extends JemModelEventslist
         $db = $this->_db;
         $query = parent::getListQuery();
         $query->clear('select');
+        $this->applyDayScope($query);
         $query->clear('order');
         $query->clear('group');
 
-        $eventEnd = 'IF(a.enddates >= a.dates, a.enddates, a.dates)';
+        $eventEnd = $this->getState('filter.calendar_startdayonly', false)
+            ? 'a.dates' : 'IF(a.enddates >= a.dates, a.enddates, a.dates)';
 
         if ($direction === 'previous') {
             $candidateDate = 'LEAST(' . $eventEnd . ', DATE_SUB(' . $db->quote($date) . ', INTERVAL 1 DAY))';
@@ -395,9 +421,9 @@ class JemModelDay extends JemModelEventslist
         // Create a new query object.
         $query = parent::getListQuery();
 
-        $requestVenueId = $this->getState('filter.req_venid');
-        if ($requestVenueId){
-            $query->where(' a.locid = '.$this->_db->quote($requestVenueId));
+        $this->applyDayScope($query);
+        if ($this->getState('filter.calendar_startdayonly', false)) {
+            $query->where('a.dates >= ' . $this->_db->quote($this->_date));
         }
 
         // Select events that overlap the configured day/timeline range.
@@ -407,6 +433,74 @@ class JemModelDay extends JemModelEventslist
         );
 
         return $query;
+    }
+
+    /**
+     * Narrow the shared ACL-filtered query to the venue and visible legend items.
+     *
+     * @param object $query Joomla query, modified in place.
+     * @return void
+     */
+    private function applyDayScope($query): void
+    {
+        $venue = (int) $this->getState('filter.req_venid');
+        if ($venue > 0) {
+            $query->where('a.locid = ' . $venue);
+        }
+        if ($this->getState('filter.calendar_hide_all', false)) {
+            $query->where('1 = 0');
+        }
+        $categories = $this->getState('filter.calendar_excluded_categories', '');
+        if ($categories !== '') {
+            $query->where('NOT EXISTS (SELECT 1 FROM #__jem_cats_event_relations AS hidden_category'
+                . ' WHERE hidden_category.itemid = a.id AND hidden_category.catid IN (' . $categories . '))');
+        }
+        $venues = $this->getState('filter.calendar_excluded_venues', '');
+        if ($venues !== '') {
+            $query->where('a.locid NOT IN (' . $venues . ')');
+        }
+    }
+
+    /**
+     * Separate cached day results/totals when dates or legend restrictions differ.
+     *
+     * @param string $id Existing cache suffix.
+     * @return string Parent cache key with the additional Day scope.
+     */
+    protected function getStoreId($id = '')
+    {
+        $id .= ':' . $this->_date . ':' . $this->getDayEnd();
+        foreach (array('calendar_excluded_categories', 'calendar_excluded_venues', 'calendar_hide_all', 'filter_catid') as $key) {
+            $id .= ':' . serialize($this->getState('filter.' . $key));
+        }
+
+        return parent::getStoreId($id);
+    }
+
+    /**
+     * Match the source venue calendar's descendants, including cycle protection.
+     *
+     * @param int $rootId Physical site's venue ID.
+     * @return array Root and descendant IDs; shared query still applies ACL.
+     */
+    protected function getVenueTreeIds($rootId)
+    {
+        $ids = array((int) $rootId);
+        $pending = $ids;
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        while ($pending && count($ids) < 1000) {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('id'))
+                ->from($db->quoteName('#__jem_venues'))
+                ->where($db->quoteName('parent_venue_id') . ' IN (' . implode(',', array_map('intval', $pending)) . ')');
+            $db->setQuery($query);
+            $children = array_values(array_diff(array_map('intval', $db->loadColumn() ?: array()), $ids));
+            $ids = array_merge($ids, $children);
+            $pending = $children;
+        }
+
+        return array_values(array_unique(array_filter($ids)));
     }
 }
 ?>

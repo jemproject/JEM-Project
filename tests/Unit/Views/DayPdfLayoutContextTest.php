@@ -83,6 +83,7 @@ final class DayPdfLayoutContextTest extends TestCase
             'option' => 'com_jem', 'view' => 'day', 'id' => '20261101',
             'timeline_days_to_show' => $days, 'jem_timeline_layout' => 'details',
             'filter_search' => 'A&B + #', 'filter_order' => 'a.title',
+            'calcats' => '2,3', 'calvenues' => '9', 'jemcal' => 1,
             'filter_order_Dir' => 'DESC', 'locid' => 7, 'catid' => 4,
             'Itemid' => 101, 'print' => 1, 'tmpl' => 'component',
             // A stale/injected marker must never override the actual source layout.
@@ -105,7 +106,7 @@ final class DayPdfLayoutContextTest extends TestCase
         self::assertArrayNotHasKey('print', $query);
         self::assertArrayNotHasKey('tmpl', $query);
         foreach (['id', 'timeline_days_to_show', 'jem_timeline_layout', 'filter_search',
-            'filter_order', 'filter_order_Dir', 'locid', 'catid', 'Itemid'] as $key) {
+            'filter_order', 'filter_order_Dir', 'locid', 'catid', 'Itemid', 'calcats', 'calvenues', 'jemcal'] as $key) {
             self::assertSame((string) $input[$key], $query[$key]);
         }
 

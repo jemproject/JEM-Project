@@ -17,6 +17,7 @@ final class CalendarArchiveContextTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         require_once JEM_TEST_ROOT . '/tests/Support/annual_calendar_environment.php';
+        require_once JEM_TEST_ROOT . '/site/helpers/calendardaylink.php';
     }
 
     /** @param string $file Relative path. @param string $start First statement. @param string $end End marker. @return string Production fragment. */
@@ -29,6 +30,55 @@ final class CalendarArchiveContextTest extends TestCase
         self::assertNotFalse($last);
 
         return substr($source, $first, $last - $first);
+    }
+
+
+    /**
+     * Execute each overflow URL expression: archive and entity scope must survive both layouts.
+     *
+     * @return void
+     */
+    public function testOverflowLinksRetainArchiveAndScope(): void
+    {
+        foreach (['calendar' => 'default', 'weekcal' => 'default', 'category' => 'calendar', 'venue' => 'calendar'] as $view => $layout) {
+            foreach (['', 'responsive/'] as $prefix) {
+                $path = 'site/views/' . $view . '/tmpl/' . $prefix . $layout . '.php';
+                $source = file_get_contents(JEM_TEST_ROOT . '/' . $path);
+                self::assertSame(1, preg_match('/\\$(url|var1a)\\s*=\\s*Route::_\\([^\\n]+view=day[^\\n]+;/', $source, $match), $path);
+                foreach (['', 'archive', 'event.remove'] as $task) {
+                    \JemProject\Tests\AnnualCalendar\Factory::$app = new \JemProject\Tests\AnnualCalendar\Application(['Itemid' => 101], 1);
+                    $fixture = new class ($task) {
+                        public string $param_topcat = '&topcat=7';
+                        public int $catid = 8;
+                        public int $locid = 9;
+                        /** @param string $task Source view task. */
+                        public function __construct(public string $task)
+                        {
+                        }
+                    };
+                    $code = $match[0];
+                    $run = function () use ($code): string {
+                        $year = '2027';
+                        $month = '01';
+                        $day = '15';
+                        eval('use JemProject\\Tests\\AnnualCalendar\\Route; use JemProject\\Tests\\AnnualCalendar\\Factory;' . $code);
+                        return $url ?? $var1a;
+                    };
+                    parse_str(parse_url(html_entity_decode($run->call($fixture)), PHP_URL_QUERY), $query);
+                    self::assertSame('20270115', $query['id'], $path);
+                    self::assertSame('101', $query['Itemid'] ?? null, $path);
+                    self::assertSame('default', $query['layout'] ?? null, $path);
+                    self::assertSame('0', $query['limitstart'] ?? null, $path);
+                    self::assertSame($task === 'archive' ? 'archive' : null, $query['task'] ?? null, $path);
+                    [$key, $value] = match ($view) {
+                        'category' => ['catid', '8'],
+                        'venue' => ['locid', '9'],
+                        default => ['topcat', '7'],
+                    };
+                    self::assertSame($value, $query[$key], $path);
+                }
+            }
+        }
     }
 
     /** @return void HTML Annual Calendar must not overwrite the model's archive publication state. */

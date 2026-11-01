@@ -35,6 +35,36 @@ final class DayMenuRoutingTest extends TestCase
         require_once JEM_TEST_ROOT . '/site/router.php';
     }
 
+
+    /** @return void Calendar Day navigation keeps the source menu instead of selecting another Day menu. */
+    public function testCalendarSourcesKeepTheirMenuAndScope(): void
+    {
+        foreach (['calendar', 'weekcal', 'annualcalendar', 'category', 'venue'] as $source) {
+            foreach ([false, true] as $strict) {
+                PluginHelper::$strictRouting = $strict;
+                $menu = $this->menu('default');
+                $menu->items[101]->query = ['option' => 'com_jem', 'view' => $source, 'layout' => 'calendar', 'id' => 7];
+                $menu->activeId = 101;
+                $originalParams = $menu->getActive()->params->toArray();
+                $router = new JemRouter(new DayRouterApplication(), $menu);
+                $query = ['option' => 'com_jem', 'view' => 'day', 'id' => '20270115', 'Itemid' => 101,
+                    'layout' => 'default', 'task' => 'archive', 'catid' => 7, 'locid' => 9,
+                    'limit' => 10, 'limitstart' => 10];
+                $query = $router->preprocess($query);
+                self::assertSame(101, $query['Itemid'], $source);
+                $segments = $router->build($query);
+                self::assertSame(101, $query['Itemid'] ?? null, $source);
+                $parsed = array_merge($router->parse($segments), $query);
+                self::assertSame('day', $parsed['view']);
+                self::assertSame('20270115', $parsed['id']);
+                self::assertSame('default', $parsed['layout']);
+                self::assertSame('archive', $parsed['task']);
+                self::assertSame(10, $parsed['limitstart']);
+                self::assertSame($originalParams, $menu->getActive()->params->toArray());
+            }
+        }
+    }
+
     private function menu(string $layout, bool $legacyDate = false): DayRouterMenu
     {
         $items = [];

@@ -14,6 +14,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\Registry\Registry;
 
+require_once __DIR__ . '/../../../../helpers/calendardaylink.php';
+
 require_once JPATH_SITE . '/components/com_jem/classes/dayschedule.class.php';
 
 if (!isset($this->params) || !($this->params instanceof Registry)) {
@@ -410,6 +412,9 @@ $itemId = $input->getInt('Itemid', 0);
 $catId = $input->getInt('catid', 0);
 $locId = $input->getInt('locid', 0);
 $extraLinkParts = array();
+foreach (JemCalendarDayLink::context($input) as $key => $value) {
+    $extraLinkParts[] = $key . '=' . rawurlencode((string) $value);
+}
 if ($input->getCmd('task', '') === 'archive') {
     $extraLinkParts[] = 'task=archive';
 }
@@ -1409,6 +1414,9 @@ document.addEventListener('keydown', function (event) {
             <input type="hidden" name="option" value="com_jem">
             <input type="hidden" name="view" value="day">
             <input type="hidden" name="layout" value="timeline">
+            <?php foreach (JemCalendarDayLink::context($input) as $key => $value) : ?>
+                <input type="hidden" name="<?php echo $key; ?>" value="<?php echo htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); ?>">
+            <?php endforeach; ?>
             <?php if ($input->getCmd('task', '') === 'archive') : ?>
                 <input type="hidden" name="task" value="archive">
             <?php endif; ?>

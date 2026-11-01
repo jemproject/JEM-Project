@@ -70,6 +70,10 @@ final class ExportFilterContextTest extends TestCase
             ['yearID' => 2026, 'monthID' => 10, 'weekID' => 44, 'mode' => 'agenda'],
             ['yearID' => '2026', 'monthID' => '10', 'weekID' => '44', 'mode' => 'agenda'],
         ];
+        yield 'calendar legend' => [
+            ['calcats' => '2,3', 'calvenues' => '9', 'calhide' => 1, 'jemcal' => 1],
+            ['calcats' => '2,3', 'calvenues' => '9', 'calhide' => '1', 'jemcal' => '1'],
+        ];
         yield 'timeline context' => [
             ['show_archived_events' => 1, 'timeline_days_to_show' => 7, 'jem_timeline_layout' => 'compact'],
             ['show_archived_events' => '1', 'timeline_days_to_show' => '7', 'jem_timeline_layout' => 'compact'],

@@ -15,6 +15,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
+
+require_once __DIR__ . '/../../../helpers/calendardaylink.php';
 ?>
 
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
@@ -128,7 +130,7 @@ use Joomla\CMS\Factory;
         $countperday[$dateKey] = ($countperday[$dateKey] ?? 0) + 1;
 
         if ($countperday[$dateKey] === $limit + 1) {
-             $url  = Route::_('index.php?option=com_jem&view=day&id=' . $year.$month.$day . $this->param_topcat);
+             $url  = Route::_(JemCalendarDayLink::build('index.php?option=com_jem&view=day&id=' . $year.$month.$day . $this->param_topcat, Factory::getApplication()->input->getInt('Itemid', 0), $this->task));
              $text = Text::_('COM_JEM_AND_MORE');
              $link = '<a href="' . $url . '">' . $text . '</a>';
 

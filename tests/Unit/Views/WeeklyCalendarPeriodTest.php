@@ -60,17 +60,20 @@ final class WeeklyCalendarPeriodTest extends TestCase
         }
 
         $html = file_get_contents(JEM_TEST_ROOT . '/site/views/weekcal/view.html.php');
+        require_once JEM_TEST_ROOT . '/site/helpers/calendardaylink.php';
         self::assertStringContainsString('public array $calendarPeriod = [];', $html);
         self::assertStringContainsString("public string \$weekTitle = '';", $html);
         self::assertSame(1, preg_match('/\$model = \$this->getModel\(\);.*?(?=        if \(JemCalendarAgendaHelper)/s', $html, $period));
         self::assertSame(1, preg_match('/\$itemid  = .*?(?=        \$this->rows)/s', $html, $navigation));
         $navigation[0] = str_replace('JemCalendarAgendaHelper::getWeekMode($params)', '$params->get("mode", "calendar")', $navigation[0]);
-        eval('namespace ' . self::NS . '; use \\JemProject\\Tests\\AnnualCalendar\\Route; class HtmlPreparation extends ViewBoundary {'
+        eval('namespace ' . self::NS . '; use \\JemProject\\Tests\\AnnualCalendar\\Route; use \\JemCalendarDayLink; class HtmlPreparation extends ViewBoundary {'
             . 'public function prepare(): void { $params = Factory::$app->params; $jinput = Factory::$app->input; $this->param_topcat = "";'
             . $period[0] . $navigation[0] . '$this->cal = $cal; $this->weekTitle = $weekTitle; $this->period = $period;'
             . '$this->print_link = $print_link; $this->ical_link = $partDate; }}');
 
         $raw = file_get_contents(JEM_TEST_ROOT . '/site/views/weekcal/view.raw.php');
+        $agenda = file_get_contents(JEM_TEST_ROOT . '/site/helpers/calendaragenda.php');
+        eval('namespace ' . self::NS . '; class JemCalendarAgendaHelper {' . self::method($agenda, 'getWeekMode') . '}');
         eval('namespace ' . self::NS . '; class RawView extends ViewBoundary {' . self::method($raw, 'display') . '}');
         $pdf = file_get_contents(JEM_TEST_ROOT . '/site/classes/pdfview.class.php');
         eval('namespace ' . self::NS . '; use \\DateTimeImmutable; class JemPdfView extends PdfBoundary {'

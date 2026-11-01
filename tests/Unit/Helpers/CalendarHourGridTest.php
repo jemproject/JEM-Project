@@ -150,6 +150,9 @@ namespace {
                     public bool $print = false;
                     public array $integers = [];
 
+                    /** @param string $key Key. @param mixed $default Fallback. @param string $type Filter. @return mixed Value. */
+                    public function get($key, $default = null, $type = 'cmd') { return $default; }
+
                     public function getCmd(string $key, string $default = ''): string
                     {
                         return in_array($key, ['mode', 'task'], true) ? $this->$key : $default;
@@ -299,7 +302,8 @@ namespace {
             self::assertStringContainsString('2026-11-06', $html);
             self::assertStringContainsString('COM_JEM_TIMETABLE_ALL_DAY', $html);
             self::assertStringContainsString('/event/3:example', $html);
-            self::assertStringContainsString('class="jem-hourgrid-day-link" href="index.php?option=com_jem&amp;view=day&amp;id=20261107&amp;mode=timetable&amp;topcat=9"', $html);
+            self::assertStringContainsString('class="jem-hourgrid-day-link" href="index.php?option=com_jem&amp;view=day&amp;id=20261107&amp;mode=timetable&amp;topcat=9&amp;layout=default', $html);
+            self::assertStringContainsString('&amp;timeline_days_to_show=1&amp;limitstart=0', $html);
             self::assertStringContainsString('class="jem-hourgrid-day-short">Sat 7', $html);
             self::assertStringContainsString('class="jem-hourgrid-day-mobile">Sat 7 Nov', $html);
             self::assertStringContainsString('jem-hourgrid-weekend', $html);

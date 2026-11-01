@@ -12,6 +12,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
+require_once __DIR__ . '/../../../helpers/calendardaylink.php';
+
 require_once JPATH_SITE . '/components/com_jem/classes/dayschedule.class.php';
 
 JemHelper::loadCss('timetable');
@@ -220,6 +222,9 @@ $itemId = $input->getInt('Itemid', 0);
 $catId = $input->getInt('catid', 0);
 $locId = $input->getInt('locid', 0);
 $extraLinkParts = array();
+foreach (JemCalendarDayLink::context($input) as $key => $value) {
+    $extraLinkParts[] = $key . '=' . rawurlencode((string) $value);
+}
 if ($input->getCmd('task', '') === 'archive') {
     $extraLinkParts[] = 'task=archive';
 }

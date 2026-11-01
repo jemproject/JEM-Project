@@ -229,11 +229,6 @@ class ModelBoundary
         $this->setState('list.start', $start);
     }
 
-    /** @param Params $params Settings. @return void No contact data in these fixtures. */
-    protected function applyMenuContactFilters(Params $params): void
-    {
-    }
-
     /** @param string $task Context. @return void Fixed guest publication boundary; ACL is not emulated. */
     protected function _populatePublishState(string $task): void
     {

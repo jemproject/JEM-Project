@@ -1,5 +1,48 @@
 jQuery(document).ready(function ($) {
-    var allHidden = false;
+    var initialScope = new URL(window.location.href).searchParams;
+    var allHidden = initialScope.get('calhide') === '1';
+    var inheritedCategories = (initialScope.get('calcats') || '').split(',').filter(function (id) {
+        return /^[1-9][0-9]*$/.test(id);
+    }).map(function (id) { return 'cat' + id; });
+    var inheritedVenues = (initialScope.get('calvenues') || '').split(',').filter(function (id) {
+        return /^[1-9][0-9]*$/.test(id);
+    }).map(function (id) { return 'venue' + id; });
+
+    // Carry only numeric legend exclusions into links generated for Calendar -> Day.
+    function updateDayLinks(hiddenCategories, hiddenVenues) {
+        function ids(tokens, prefix) {
+            return tokens.map(function (token) {
+                var match = new RegExp('^' + prefix + '([1-9][0-9]*)$').exec(token);
+                return match ? match[1] : null;
+            }).filter(Boolean).filter(function (id, index, values) {
+                return values.indexOf(id) === index;
+            }).join(',');
+        }
+
+        var categories = ids(hiddenCategories, 'cat');
+        var venues = ids(hiddenVenues, 'venue');
+        document.querySelectorAll('#jem a[href], #jem [data-day-link]').forEach(function (element) {
+            var attribute = element.hasAttribute('data-day-link') ? 'data-day-link' : 'href';
+            var value = element.getAttribute(attribute);
+            var url;
+            try {
+                url = new URL(value, document.baseURI);
+            } catch (error) {
+                return;
+            }
+            if (url.origin !== window.location.origin || url.searchParams.get('jemcal') !== '1') {
+                return;
+            }
+            [['calcats', categories], ['calvenues', venues], ['calhide', allHidden ? '1' : '']].forEach(function (entry) {
+                if (entry[1]) {
+                    url.searchParams.set(entry[0], entry[1]);
+                } else {
+                    url.searchParams.delete(entry[0]);
+                }
+            });
+            element.setAttribute(attribute, url.href);
+        });
+    }
 
     function hasToken(value, token) {
         return (' ' + (value || '') + ' ').indexOf(' ' + token + ' ') !== -1;
@@ -14,8 +57,8 @@ jQuery(document).ready(function ($) {
     }
 
     function refreshCalendarFilters() {
-        var hiddenCategories = [];
-        var hiddenVenues = [];
+        var hiddenCategories = inheritedCategories.slice();
+        var hiddenVenues = inheritedVenues.slice();
         var hiddenSpecialDayTypes = [];
 
         $('#jlcalendarlegend .eventCat.catoff').each(function () {
@@ -29,6 +72,8 @@ jQuery(document).ready(function ($) {
         $('#jem .eventSpecialDayType.catoff').each(function () {
             hiddenSpecialDayTypes.push($(this).data('filterClass') || $(this).attr('id'));
         });
+
+        updateDayLinks(hiddenCategories, hiddenVenues);
 
         $('#jem .event-filter').each(function () {
             var item = $(this);
@@ -149,6 +194,8 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '#buttonshowall', function (event) {
         event.preventDefault();
         allHidden = false;
+        inheritedCategories = [];
+        inheritedVenues = [];
         updateGlobalButtons(this);
         $('#jlcalendarlegend .eventCat, #jlcalendarlegend .eventVenues, #jem .eventSpecialDayType').removeClass('catoff').attr('aria-pressed', 'true');
         refreshCalendarFilters();

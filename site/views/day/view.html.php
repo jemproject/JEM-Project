@@ -14,6 +14,8 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 
+require_once __DIR__ . '/../../helpers/calendardaylink.php';
+
 require_once __DIR__ . '/../../helpers/calendaragenda.php';
 require_once __DIR__ . '/../../classes/venueboard.class.php';
 
@@ -293,6 +295,12 @@ class JemViewDay extends JemView
 
         // Create the pagination object
         $pagination = $this->get('Pagination');
+        // Joomla builds page URLs from these explicit values, not the current URI.
+        foreach ($this->buildDayLinkQuery($model, $params, (string) $day) as $key => $value) {
+            if ($key !== 'limitstart') {
+                $pagination->setAdditionalUrlParam($key, $value);
+            }
+        }
 
         $this->lists         = $lists;
         $this->rows          = $rows;
@@ -333,6 +341,22 @@ class JemViewDay extends JemView
      * @return string Routed internal print URL; request and model remain unchanged.
      */
     private function buildDayPrintLink($model, $params, string $day): string
+    {
+        $query = $this->buildDayLinkQuery($model, $params, $day);
+        $link = 'index.php?' . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+
+        return Route::_(JemOutput::buildPrintLink($link, ($query['task'] ?? '') === 'archive'));
+    }
+
+    /**
+     * Share the resolved Day context between print and pagination.
+     *
+     * @param JemModelDay $model Model supplying the displayed rows.
+     * @param object $params Effective menu parameters.
+     * @param string $day Resolved date in YYYY-MM-DD format.
+     * @return array Whitelisted URL parameters, without print flags.
+     */
+    private function buildDayLinkQuery($model, $params, string $day): array
     {
         $app = Factory::getApplication();
         $input = $app->input;
@@ -384,9 +408,11 @@ class JemViewDay extends JemView
             $query['jem_timeline_layout'] = in_array($requested, ['details', 'compact'], true) ? $requested : $cardLayout;
         }
 
-        $link = 'index.php?' . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+        if ($input->getCmd('task', '') === 'archive') {
+            $query['task'] = 'archive';
+        }
 
-        return Route::_(JemOutput::buildPrintLink($link, $input->getCmd('task', '') === 'archive'));
+        return $query + JemCalendarDayLink::context($input);
     }
 }
 ?>
