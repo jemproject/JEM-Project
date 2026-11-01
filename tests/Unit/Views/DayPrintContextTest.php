@@ -30,12 +30,25 @@ final class DayPrintContextTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         require_once JEM_TEST_ROOT . '/tests/Support/day_print_environment.php';
+        require_once JEM_TEST_ROOT . '/site/classes/listlimit.class.php';
+        require_once JEM_TEST_ROOT . '/site/classes/listorder.class.php';
+        require_once JEM_TEST_ROOT . '/site/helpers/calendardaylink.php';
         $source = file_get_contents(JEM_TEST_ROOT . '/site/models/day.php');
         $methods = '';
         foreach (['getOffsetDate', 'getDayParams', 'setDate', 'getDay', 'getDayEnd', 'populateState'] as $name) {
             $methods .= self::method($source, $name);
         }
-        eval('namespace ' . self::NS . '; use \\DateTimeImmutable; class DayModel extends ModelBoundary {' . $methods . '}');
+        $policy = file_get_contents(JEM_TEST_ROOT . '/site/models/eventslist.php');
+        foreach (['normaliseParamIds', 'normaliseParamStrings', 'applyMenuEventFilters'] as $name) {
+            $methods .= self::method($policy, $name);
+        }
+        if (str_contains($policy, 'function applyMenuContactFilters(')) {
+            $methods .= self::method($policy, 'applyMenuContactFilters');
+        }
+        // Only the database-backed descendant lookup is simulated, not the menu policy.
+        $methods .= 'public function getListChildCat($id, $reset) { return [$id + 1]; }';
+        $methods .= 'protected function getVenueTreeIds($id) { return [$id, $id + 1]; }';
+        eval('namespace ' . self::NS . '; use \\DateTimeImmutable; use \\JemListOrder; use \\JemCalendarDayLink; class DayModel extends ModelBoundary {' . $methods . '}');
 
         $output = file_get_contents(JEM_TEST_ROOT . '/site/classes/output.class.php');
         eval('namespace ' . self::NS . '; class JemOutput {' . self::method($output, 'buildPrintLink') . '}');
@@ -47,13 +60,94 @@ final class DayPrintContextTest extends TestCase
         self::assertSame(1, preg_match('/\$model->setDate\([^;]+;/', $view, $date));
         self::assertSame(1, preg_match('/\$isTimetableLayout = .*?(?=        \/\/ Get data from model)/s', $view, $limits));
         self::assertSame(1, preg_match('/\$print_link = \$this->buildDayPrintLink\([^;]+;/', $view, $call));
-        eval('namespace ' . self::NS . '; class DayView extends ViewBoundary {'
+        self::assertSame(1, preg_match('/        foreach \(\$this->buildDayLinkQuery.*?(?=        \$this->)/s', $view, $paging));
+        eval('namespace ' . self::NS . '; use \\JemCalendarDayLink; class DayView extends ViewBoundary {'
             . self::method($view, 'buildDayPrintLink')
+            . self::method($view, 'buildDayLinkQuery')
+            . 'public function pageContext($model, $params): array { $day = $model->getDay();'
+            . '$pagination = new class { public array $values = []; public function setAdditionalUrlParam($k, $v) { $this->values[$k] = $v; }};'
+            . $paging[0] . 'return $pagination->values; }'
             . 'public function prepareModel($model, $params): void {'
             . '$requestDate = Factory::$app->input->getCmd("id", ""); $isVenueBoard = $this->getLayout() === "venueboard";'
             . $mode[0] . $date[0] . $limits[0] . '$model->getState(); }'
             . 'public function printLink($model, $params): string { $day = $model->getDay();'
             . $call[0] . 'return $print_link; }}');
+    }
+
+
+    /** @return void Day uses the same predefined menu filters as its calendar source. */
+    public function testDayRetainsCalendarMenuPolicy(): void
+    {
+        Factory::$app = new Application(['view' => 'day', 'id' => '20270115', 'task' => 'archive'], [
+            'onlyfeatured' => 1, 'categoryswitch' => 0, 'categoryswitchcats' => [7],
+            'includesubcategories' => 1, 'timeline_filter_venues' => [9],
+            'timeline_filter_types' => [3], 'timeline_filter_countries' => ['ES'],
+            'calendar_contacts' => [12], 'calendar_contact_category' => 4,
+        ]);
+        $state = (new DayModel())->getState();
+        self::assertSame(1, $state['filter.featured'] ?? null);
+        self::assertSame([7, 8], $state['filter.category_id']);
+        self::assertFalse($state['filter.category_id.include']);
+        self::assertSame([9], $state['filter.venue_id']);
+        self::assertSame([3], $state['filter.type_id']);
+        self::assertSame(['ES'], $state['filter.country_id']);
+        self::assertSame(2, $state['filter.published']);
+        if (str_contains(file_get_contents(JEM_TEST_ROOT . '/site/models/eventslist.php'), 'function applyMenuContactFilters(')) {
+            self::assertSame([12], $state['filter.contact_ids']);
+            self::assertSame(4, $state['filter.contact_category_id']);
+        }
+    }
+
+
+    /** @return void Source calendar scope is retained without affecting ordinary Day menus. */
+    public function testCalendarSourceSpecificScope(): void
+    {
+        foreach (['calendar', 'weekcal', 'annualcalendar', 'category', 'venue', 'day'] as $source) {
+            $app = new Application(['id' => '20270115', 'catid' => 7, 'locid' => 9,
+                'calcats' => '3,3,4 OR 1=1', 'calvenues' => '12', 'calhide' => 1], ['show_only_start' => 1]);
+            $app->menu->query = ['option' => 'com_jem', 'view' => $source, 'layout' => 'calendar'];
+            Factory::$app = $app;
+            $state = (new DayModel())->getState();
+            self::assertSame($source !== 'day', $state['filter.calendar_startdayonly']);
+            self::assertSame('3', $state['filter.calendar_excluded_categories']);
+            self::assertSame('12', $state['filter.calendar_excluded_venues']);
+            self::assertTrue($state['filter.calendar_hide_all']);
+            if ($source === 'category') {
+                self::assertNull($state['filter.req_catid']);
+                self::assertSame(7, $state['filter.filter_catid']);
+            }
+            if ($source === 'venue' && str_contains(file_get_contents(JEM_TEST_ROOT . '/site/models/day.php'), 'function getVenueTreeIds(')) {
+                self::assertNull($state['filter.req_venid']);
+                self::assertNull($state['filter.filter_locid']);
+                self::assertSame([9, 10], $state['filter.venue_id']);
+            }
+        }
+    }
+
+    /** @return void Pagination changes the slice, not the scope; print retains the same exclusions. */
+    public function testPaginationAndPrintKeepLegendScope(): void
+    {
+        $app = new Application(['id' => '20270115', 'Itemid' => 101, 'task' => 'archive',
+            'locid' => 9, 'topcat' => 7, 'calcats' => '2,3', 'calvenues' => '12',
+            'jemcal' => 1, 'filter_search' => 'Music', 'filter_type' => 1, 'limit' => 10, 'limitstart' => 10], []);
+        $app->menu->query = ['option' => 'com_jem', 'view' => 'calendar'];
+        Factory::$app = $app;
+        $model = new DayModel();
+        $view = new DayView('default');
+        $view->prepareModel($model, $app->params);
+        $query = $view->pageContext($model, $app->params);
+        foreach (['id' => '20270115', 'Itemid' => 101, 'task' => 'archive', 'locid' => 9,
+            'topcat' => 7, 'calcats' => '2,3', 'calvenues' => '12', 'jemcal' => 1,
+            'filter_search' => 'Music', 'filter_type' => 1, 'limit' => 10] as $key => $value) {
+            self::assertSame($value, $query[$key], $key);
+        }
+        self::assertArrayNotHasKey('limitstart', $query);
+        self::assertArrayNotHasKey('print', $query);
+        self::assertArrayNotHasKey('tmpl', $query);
+        parse_str(parse_url(html_entity_decode($view->printLink($model, $app->params)), PHP_URL_QUERY), $print);
+        self::assertSame('2,3', $print['calcats']);
+        self::assertSame('12', $print['calvenues']);
+        self::assertSame('10', $print['limitstart']);
     }
 
     /** @return void Reset routing observations and the Joomla-local date. */

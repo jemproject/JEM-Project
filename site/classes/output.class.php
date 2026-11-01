@@ -429,6 +429,7 @@ static public function lightbox() {
             'filter_custom' => 'array',
             'locid' => 'int', 'catid' => 'int', 'topcat' => 'int',
             'locids' => 'string', 'catids' => 'string', 'pub' => 'string',
+            'calcats' => 'string', 'calvenues' => 'string', 'calhide' => 'int', 'jemcal' => 'int',
             'yearID' => 'int', 'monthID' => 'int', 'weekID' => 'int',
             'show_archived_events' => 'int', 'timeline_days_to_show' => 'int',
             'mode' => 'cmd', 'jem_timeline_layout' => 'cmd',

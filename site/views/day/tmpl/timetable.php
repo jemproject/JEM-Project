@@ -12,6 +12,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
+require_once __DIR__ . '/../../../helpers/calendardaylink.php';
+
 JemHelper::loadCss('timetable');
 
 $getCategoryColor = static function ($row) {
@@ -203,6 +205,9 @@ $itemId = $input->getInt('Itemid', 0);
 $catId = $input->getInt('catid', 0);
 $locId = $input->getInt('locid', 0);
 $extraLinkParts = array();
+foreach (JemCalendarDayLink::context($input) as $key => $value) {
+    $extraLinkParts[] = $key . '=' . rawurlencode((string) $value);
+}
 if ($input->getCmd('task', '') === 'archive') {
     $extraLinkParts[] = 'task=archive';
 }

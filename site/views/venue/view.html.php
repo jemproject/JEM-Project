@@ -16,6 +16,8 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\String\StringHelper;
 
+require_once __DIR__ . '/../../helpers/calendardaylink.php';
+
 /**
  * Venue-View
  */
@@ -184,7 +186,7 @@ class JemViewVenue extends JemView
             }
             $cal->enableMonthNav($navigationBase);
             $cal->setFirstWeekDay($params->get('firstweekday',1));
-            $cal->enableDayLinks('index.php?option=com_jem&view=day' . $partLocid . $partItemid . $partArchive);
+            $cal->enableDayLinks(JemCalendarDayLink::build('index.php?option=com_jem&view=day' . $partLocid . $partItemid . $partArchive, (int) $itemid, $task));
 
             // map variables
             $this->rows          = $rows;

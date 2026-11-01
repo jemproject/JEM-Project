@@ -12,6 +12,8 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
+require_once __DIR__ . '/../../../helpers/calendardaylink.php';
+
 $displayLegend = (int) $this->params->get('displayLegend', 1);
 $firstWeekDay = (int) $this->params->get('firstweekday', 1);
 $markerLimit = max(1, (int) $this->params->get('annual_marker_limit', 4));
@@ -30,7 +32,7 @@ $dayLinkArchived .= $this->task === 'archive' ? '&task=archive' : '';
 $createDayLink = static function (DateTimeImmutable $date) use ($dayLinkTarget, $dayLinkItemid, $dayLinkArchived) {
     $layout = in_array($dayLinkTarget, array('timetable', 'timeline'), true) ? '&layout=' . $dayLinkTarget : '';
 
-    return Route::_('index.php?option=com_jem&view=day' . $layout . '&id=' . $date->format('Ymd') . $dayLinkItemid . $dayLinkArchived);
+    return Route::_(JemCalendarDayLink::build('index.php?option=com_jem&view=day' . $layout . '&id=' . $date->format('Ymd') . $dayLinkItemid . $dayLinkArchived, 0, ''));
 };
 $specialDaysByDate = JemHelper::calendarSpecialDays($this->periodStart->format('Y-m-d'), $this->periodEnd->format('Y-m-d'));
 

@@ -14,6 +14,8 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
+require_once __DIR__ . '/../../helpers/calendardaylink.php';
+
 require_once __DIR__ . '/../../helpers/calendaragenda.php';
 
 /**
@@ -163,7 +165,7 @@ class JemViewWeekcal extends JemView
         $cal = new activeCalendarWeek($year,1,1);
         $cal->enableWeekNum(Text::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
         $cal->setFirstWeekDay($params->get('firstweekday', 1));
-        $cal->enableDayLinks('index.php?option=com_jem&view=day' . $this->param_topcat . $partItemid . $partArchive);
+        $cal->enableDayLinks(JemCalendarDayLink::build('index.php?option=com_jem&view=day' . $this->param_topcat . $partItemid . $partArchive, (int) $itemid, $task));
         $cal->setWeekNavigation(
             $this->escape($weekTitle),
             Route::_($navigationBase . '&yearID=' . $previousWeek->format('o') . '&weekID=' . (int) $previousWeek->format('W')),

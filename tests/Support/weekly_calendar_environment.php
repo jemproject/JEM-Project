@@ -41,6 +41,16 @@ final class Application
     }
 }
 
+/** Export snapshot boundary; these fixtures test periods/navigation, not snapshot persistence. */
+final class JemOutput
+{
+    /** @param string $link Export URL. @return string URL for period assertions. */
+    public static function prepareExportLink(string $link): string
+    {
+        return $link;
+    }
+}
+
 final class Factory
 {
     public static Application $app;
