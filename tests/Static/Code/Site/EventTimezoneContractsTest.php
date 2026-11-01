@@ -125,9 +125,13 @@ final class EventTimezoneContractsTest extends TestCase
     public function testDirectAttachmentDownloadsRespectEventPublicationWindow(): void
     {
         $attachments = $this->read('/site/classes/attachment.class.php');
+        $event = $this->read('/site/models/event.php');
 
+        // Event attachments use the event page decision, which includes the publication window.
         self::assertStringContainsString("preg_match('/^event(\\d+)\$/i'", $attachments);
-        self::assertMatchesRegularExpression('/JemHelper::isEventPublishedNow\(\$[a-zA-Z_][a-zA-Z0-9_]*\)/', $attachments);
+        self::assertStringContainsString('self::canViewEvent((int) $matches[1])', $attachments);
+        self::assertStringContainsString("\$event->params->get('access-view')", $attachments);
+        self::assertMatchesRegularExpression('/JemHelper::isEventPublishedNow\(\$data\)/', $event);
     }
 
     public function testCalendarDefaultsUseJoomlaTimezone(): void
