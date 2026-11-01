@@ -40,7 +40,7 @@ class JemViewEvent extends HtmlView
             $row = $this->get('Item');
 
             if (empty($row)) {
-                return;
+                throw new \Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
             }
 
             if (!JemFrontendAccess::enforceViewAccess((bool) $row->params->get('access-view'), $app)) {
@@ -78,9 +78,7 @@ class JemViewEvent extends HtmlView
         $row = $this->get('Item');
 
         if (empty($row)) {
-            Factory::getApplication()->close();
-
-            return;
+            throw new \Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
         }
 
         if (!JemFrontendAccess::enforceViewAccess((bool) $row->params->get('access-view'), Factory::getApplication())) {
