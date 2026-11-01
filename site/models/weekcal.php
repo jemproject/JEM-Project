@@ -169,7 +169,12 @@ class JemModelWeekcal extends JemModelEventslist
     }
 
     /**
-     * create multi-day events
+     * Expand only event days intersecting the displayed weekly period.
+     *
+     * Preserve the original first-day row until final filtering and retain legacy day sorting.
+     *
+     * @param array $items Selected event rows.
+     * @return array Visible event days in the existing calendar order.
      */
     protected function calendarMultiday($items)
     {
@@ -180,14 +185,26 @@ class JemModelWeekcal extends JemModelEventslist
         $app          = Factory::getApplication();
         $params       = $app->getParams();
         $startdayonly = $this->getState('filter.calendar_startdayonly');
+
+        // Use one effective period for expansion, programme projection and final filtering.
+        $startdate = $this->getState('filter.date.from');
+        $enddate   = $this->getState('filter.date.to');
+        if (empty($startdate) || empty($enddate)) {
+            $period = $this->getCalendarPeriod();
+            $startdate = $period['start']->format('Y-m-d');
+            $enddate = $period['end']->format('Y-m-d');
+        }
         $items = $this->projectCalendarSchedules(
             $items,
-            (string) $this->getState('filter.date.from', ''),
-            (string) $this->getState('filter.date.to', ''),
+            (string) $startdate,
+            (string) $enddate,
             (bool) $startdayonly
         );
 
         if (!$startdayonly) {
+            $rangeStartDate = new DateTimeImmutable($startdate);
+            $rangeEndDate = new DateTimeImmutable($enddate);
+
             foreach ($items as $i => $item)
             {
                 if (!is_null($item->enddates) && ($item->enddates != $item->dates)) {
@@ -198,10 +215,15 @@ class JemModelWeekcal extends JemModelEventslist
                     $item->multiname = $item->title;
                     $item->sort = 'zlast';
 
-                    for ($counter = 0; $counter <= $item->datesdiff-1; $counter++)
+                    // Keep absolute offsets so a clipped first/last visible day retains its true role.
+                    $sourceDate = new DateTimeImmutable($item->dates);
+                    $firstOffset = max(1, (int) $sourceDate->diff($rangeStartDate)->format('%r%a'));
+                    $lastOffset = min((int) $item->datesdiff, (int) $sourceDate->diff($rangeEndDate)->format('%r%a'));
+
+                    for ($counter = $firstOffset - 1; $counter < $lastOffset; $counter++)
                     {
                         # next day:
-                        $nextday = (new DateTimeImmutable($item->dates))->modify('+' . ($counter + 1) . ' days');
+                        $nextday = $sourceDate->modify('+' . ($counter + 1) . ' days');
 
                         # generate days of current multi-day selection
                         $multi[$counter] = clone $item;
@@ -237,14 +259,6 @@ class JemModelWeekcal extends JemModelEventslist
         }
 
         # Remove items out of date range
-        $startdate = $this->getState('filter.date.from');
-        $enddate   = $this->getState('filter.date.to');
-        if (empty($startdate) || empty($enddate)) {
-            $period = $this->getCalendarPeriod();
-            $startdate = $period['start']->format('Y-m-d');
-            $enddate = $period['end']->format('Y-m-d');
-        }
-
         foreach ($items as $index => $item) {
             $date = $item->dates;
 

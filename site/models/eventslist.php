@@ -2075,7 +2075,12 @@ class JemModelEventslist extends ListModel
     }
 
     /**
-     * create multi-day events
+     * Expand additional event days within any supplied calendar bounds.
+     *
+     * Keep the original row, legacy day metadata and ordering; absent bounds remain open.
+     *
+     * @param array $items Selected event rows.
+     * @return array Event rows and their visible additional days.
      */
     protected function calendarMultiday($items)
     {
@@ -2093,6 +2098,9 @@ class JemModelEventslist extends ListModel
         }
 
         if (!$startdayonly) {
+            $rangeStartDate = $rangeStart !== '' ? new DateTimeImmutable($rangeStart) : null;
+            $rangeEndDate = $rangeEnd !== '' ? new DateTimeImmutable($rangeEnd) : null;
+
             foreach ($items as $item)
             {
                 if (!is_null($item->enddates) && ($item->enddates != $item->dates)) {
@@ -2118,7 +2126,13 @@ class JemModelEventslist extends ListModel
                     $item->multiname = $item->title;
                     $item->sort = 'zlast';
 
-                    for ($counter = 0; $counter <= $datesdiff - 1; $counter++)
+                    // Skip off-screen offsets before doing date arithmetic or cloning rows.
+                    $firstOffset = $rangeStartDate === null
+                        ? 1 : max(1, (int) $startDate->diff($rangeStartDate)->format('%r%a'));
+                    $lastOffset = $rangeEndDate === null
+                        ? $datesdiff : min($datesdiff, (int) $startDate->diff($rangeEndDate)->format('%r%a'));
+
+                    for ($counter = $firstOffset - 1; $counter < $lastOffset; $counter++)
                     {
                         # next day:
                         $nextday = $startDate->modify('+' . ($counter + 1) . ' days')->format('Y-m-d');
