@@ -78,8 +78,8 @@ class JemViewMyvenues extends JemView
             $novenues = (!$venues) ? 1 : 0;
 
             // get variables
-            $filter_order     = $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 'l.venue', 'cmd');
-            $filter_order_Dir = $app->getUserStateFromRequest('com_jem.myvenues.filter_order_Dir', 'filter_order_Dir', '', 'word');
+            $filter_order = $this->getModel()->getState('list.ordering', 'l.venue');
+            $filter_order_Dir = $this->getModel()->getState('list.direction', 'ASC');
             // $filter_state  = $app->getUserStateFromRequest('com_jem.myvenues.filter_state', 'filter_state',     '*', 'word');
             $filter           = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', 0, 'int');
             $search           = $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');

@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 require_once __DIR__ . '/../classes/listlimit.class.php';
+require_once __DIR__ . '/../classes/listorder.class.php';
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -250,11 +251,13 @@ class JemModelMyvenues extends BaseDatabaseModel
     {
         $app = Factory::getApplication();
 
-        $filter_order     = $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 'l.venue', 'cmd');
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.myvenues.filter_order_Dir', 'filter_order_Dir', '', 'word');
-
-        $filter_order     = InputFilter::getInstance()->clean($filter_order, 'cmd');
-        $filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
+        [$filter_order, $filter_order_Dir] = JemListOrder::resolve(
+            $app, 'com_jem.myvenues',
+            ['l.venue', 'l.city', 'l.state', 'l.country', 'l.id', 'l.ordering', 'l.published'],
+            'l.venue'
+        );
+        $this->setState('list.ordering', $filter_order);
+        $this->setState('list.direction', $filter_order_Dir);
 
         if ($filter_order != '') {
             $orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir . ', l.venue ASC';

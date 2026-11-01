@@ -269,13 +269,8 @@ class JemViewVenue extends JemView
                                             && $menuitem->query['id']     == $venue->id);
 
             // get search & user-state variables
-            $filter_order = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
-            $filter_order_DirDefault = 'ASC';
-            // Reverse default order for dates in archive mode
-            if($task == 'archive' && $filter_order == 'a.dates') {
-                $filter_order_DirDefault = 'DESC';
-            }
-            $filter_order_Dir = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
+            $filter_order = $this->getModel()->getState('list.ordering', 'a.dates');
+            $filter_order_Dir = $this->getModel()->getState('list.direction', 'ASC');
             $filter_type      = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
             $search           = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_search', 'filter_search', '', 'string');
             $search_month     = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_month', 'filter_month', '', 'string');

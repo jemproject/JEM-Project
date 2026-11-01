@@ -89,8 +89,8 @@ class JemViewMyattendances extends JemView
             $showcountry = (int) $params->get('showcountry', 0);
 
             // get variables
-            $filter_order = $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 'a.dates', 'cmd');
-            $filter_order_Dir = $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', '', 'word');
+            $filter_order = $this->getModel()->getState('list.ordering', 'a.dates');
+            $filter_order_Dir = $this->getModel()->getState('list.direction', 'ASC');
 //         $filter_state     = $app->getUserStateFromRequest('com_jem.myattendances.filter_state',     'filter_state',     '*',      'word');
             $filter = $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', 0, 'int');
             $search = $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');

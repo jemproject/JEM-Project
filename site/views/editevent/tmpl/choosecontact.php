@@ -210,7 +210,7 @@ if (!empty($filterBorder)) {
                 <th style="width: 7px" class="sectiontableheader"><input type="checkbox" name="checkall-toggle" onclick="if (window.Joomla) { Joomla.checkAll(this); }" /></th>
                 <th style="width: 7px" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
                 <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-                <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'JCATEGORY', 'c.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+                <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'JCATEGORY', 'cat.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
                 <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
                 <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'con.country', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
             </tr>

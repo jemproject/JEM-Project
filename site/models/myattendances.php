@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 require_once __DIR__ . '/../classes/listlimit.class.php';
+require_once __DIR__ . '/../classes/listorder.class.php';
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
@@ -171,17 +172,13 @@ class JemModelMyattendances extends BaseDatabaseModel
         $app  = Factory::getApplication();
         $task = $app->input->getCmd('task', '');
 
-        $filter_order = $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 'a.dates', 'cmd');
-        $filter_order = InputFilter::getInstance()->clean($filter_order, 'cmd');
-
-        // Reverse default order for dates in archive mode
-        $filter_order_DirDefault = 'ASC';
-        if (($task == 'archive') && ($filter_order == 'a.dates')) {
-            $filter_order_DirDefault = 'DESC';
-        }
-
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-        $filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
+        [$filter_order, $filter_order_Dir] = JemListOrder::resolve(
+            $app, 'com_jem.myattendances',
+            JemListOrder::eventFields() + ['r.status' => 'r.status', 'r.waiting' => 'r.waiting', 'r.places' => 'r.places'],
+            'a.dates', 'ASC', $task === 'archive'
+        );
+        $this->setState('list.ordering', $filter_order);
+        $this->setState('list.direction', $filter_order_Dir);
 
         $default_order_Dir    = ($task == 'archive') ? 'DESC' : 'ASC';
 
