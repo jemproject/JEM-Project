@@ -2168,7 +2168,7 @@ static public function lightbox() {
         $output = '';
         if ($includeMicrodata) {
             $output .= '<meta itemprop="eventStatus" content="' . htmlspecialchars($eventStatusOption['schema'], ENT_QUOTES, 'UTF-8') . '" />';
-            $eventUrl = !empty($event->slug) ? Route::_(JemHelperRoute::getEventRoute($event->slug)) : '';
+            $eventUrl = !empty($event->slug) ? Route::_(JemHelperRoute::getEventRoute($event->slug), false) : '';
             $output .= '<span itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>';
             if ($eventUrl) {
                 $output .= '<link itemprop="url" href="' . htmlspecialchars($eventUrl, ENT_QUOTES, 'UTF-8') . '" />';
