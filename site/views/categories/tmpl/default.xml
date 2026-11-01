@@ -97,12 +97,6 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="cat_num" type="text"
-                size="2"
-                default="4"
-                label="COM_JEM_CAT_DISPLAY"
-                description="COM_JEM_CAT_DISPLAY_DESC" class="form-control w-auto"
-            />
             <field name="detcat_nr" type="text"
                 size="1"
                 default="3"

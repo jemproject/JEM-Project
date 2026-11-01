@@ -19,19 +19,27 @@ final class ListLimitTestDatabase extends \Joomla\Database\Sqlite\SqliteDriver
 final class ListLimitTestApplication
 {
     public Input $input;
+    public Registry $params;
     public array $session = [];
 
     /** @return void Initialize the synthetic request. */
     public function __construct()
     {
         $this->input = new Input([]);
+        $this->params = new Registry();
     }
 
     /** @return Input Current input. */
     public function getInput(): Input { return $this->input; }
 
     /** @param string|null $component Component. @return Registry Menu parameters. */
-    public function getParams(?string $component = null): Registry { return new Registry(); }
+    public function getParams(?string $component = null): Registry { return $this->params; }
+
+    /** @param string $option Component name. @return object No component services needed by the fixture. */
+    public function bootComponent(string $option): object
+    {
+        return new stdClass();
+    }
 
     /** @param string $key Setting. @param mixed $default Fallback. @return mixed */
     public function get(string $key, mixed $default = null): mixed

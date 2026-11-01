@@ -153,8 +153,9 @@ final class FrontendListLimitTest extends TestCase
         $html = (new Pagination(30, 0, 10))->getLimitBox();
         preg_match_all('/<option value="([0-9]+)"/', $html, $options);
         self::assertSame(JemListLimit::OPTIONS, array_map('intval', $options[1]));
-        $custom = JemListLimit::getLimitBox(new Pagination(30, 0, 4), 4);
-        self::assertStringContainsString('value="4" selected="selected"', $custom);
+        $custom = JemListLimit::getLimitBox(new Pagination(30, 0, 10), 4);
+        self::assertStringContainsString('value="10" selected="selected"', $custom);
+        self::assertStringNotContainsString('value="4"', $custom);
         $all = JemListLimit::getLimitBox(new Pagination(30, 0, 0), 4);
         self::assertStringContainsString('value="0" selected="selected"', $all);
     }
