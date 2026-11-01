@@ -73,6 +73,16 @@ final class IcalendarTimezoneExportTest extends TestCase
             {
                 return 'site';
             }
+            /** @return bool No language-filter plugin is booted in this fixture. */
+            public function getLanguageFilter(): bool
+            {
+                return false;
+            }
+            /** @param string $key Setting. @param mixed $default Fallback. @return mixed Fixture setting. */
+            public function get($key, $default = null)
+            {
+                return Factory::$config->get($key, $default);
+            }
         };
         $config = (new ReflectionClass(JemConfig::class))->newInstanceWithoutConstructor();
         (new ReflectionProperty(JemConfig::class, '_data'))->setValue($config, new Registry([
@@ -80,13 +90,88 @@ final class IcalendarTimezoneExportTest extends TestCase
         ]));
         (new ReflectionProperty(JemConfig::class, 'instance'))->setValue(null, $config);
         (new ReflectionProperty(\Joomla\CMS\Component\ComponentHelper::class, 'components'))->setValue(null, [
-            'com_jem' => new \Joomla\CMS\Component\ComponentRecord(['params' => '{}']),
+            'com_jem' => new \Joomla\CMS\Component\ComponentRecord(['id' => 42, 'params' => '{}']),
         ]);
         $_SERVER['HTTP_HOST'] = 'ics.test';
         $_SERVER['SCRIPT_NAME'] = '/index.php';
         $_SERVER['REQUEST_URI'] = '/';
         // Ensure the machine's timezone cannot accidentally make the tests pass.
         date_default_timezone_set('Pacific/Honolulu');
+        IcalRoutingEnvironment::configure();
+    }
+
+
+    /** @return iterable Root/subdirectory, SEF, explicit menu and HTTP/HTTPS combinations. */
+    public static function routeCases(): iterable
+    {
+        foreach (['', '/joomla'] as $base) {
+            foreach ([false, true] as $sef) {
+                foreach ([false, true] as $linked) {
+                    foreach (['http', 'https'] as $scheme) {
+                        yield json_encode([$base, $sef, $linked, $scheme]) => [$base, $sef, $linked, $scheme];
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Serialize actual VEVENT URLs/descriptions through the native site router.
+     *
+     * @param string $base Installation path.
+     * @param bool $sef SEF routing switch.
+     * @param bool $linked Event menu available.
+     * @param string $scheme Request scheme, which must not be changed by export.
+     * @return void
+     */
+    #[DataProvider('routeCases')]
+    public function testEventLinksFollowSiteRouting(string $base, bool $sef, bool $linked, string $scheme): void
+    {
+        foreach (['event', 'eventslist', 'calendar', 'annualcalendar', 'weekcal', 'category', 'venue'] as $view) {
+            IcalRoutingEnvironment::configure($base, $sef, $linked, $scheme, $view);
+            $events = [
+                $this->event(),
+                $this->event(['id' => 131, 'slug' => '131:second-event']),
+            ];
+            // Single-event and multi-event exports use the same helper.
+            foreach ([[$events[0]], $events] as $selection) {
+                $ics = $this->export($selection, 1);
+                preg_match_all('/^URL:(.+)\r$/m', $ics, $urls);
+                self::assertCount(count($selection), $urls[1]);
+                self::assertSame(count($selection), substr_count($ics, 'BEGIN:VEVENT'));
+                foreach ($selection as $index => $event) {
+                    $relative = \Joomla\CMS\Router\Route::link(
+                        'site', JemHelperRoute::getEventRoute($event->slug), false
+                    );
+                    $expected = $scheme . '://ics.test' . $relative;
+                    self::assertSame($expected, $urls[1][$index]);
+                    self::assertStringStartsWith($scheme . '://ics.test' . $base . '/', $expected);
+                    self::assertStringContainsString('COM_JEM_ICS_EVENT_LINK: ' . $expected, $ics);
+                    self::assertStringNotContainsString('&amp;', $urls[1][$index]);
+                    self::assertStringNotContainsString('format=raw', $urls[1][$index]);
+                    self::assertStringNotContainsString('layout=ics', $urls[1][$index]);
+                    if ($sef) {
+                        self::assertStringNotContainsString('option=com_jem', $urls[1][$index]);
+                    } else {
+                        self::assertStringContainsString('&view=event', $urls[1][$index]);
+                    }
+                }
+            }
+        }
+    }
+
+    /** @return void HTML suffix and language query must not turn the link into another ICS download. */
+    public function testHtmlSuffixAndLanguageQueryArePreserved(): void
+    {
+        IcalRoutingEnvironment::configure('/joomla', true, true, 'https', 'calendar', true);
+        JemHelperRoute::$query .= '&lang=es';
+        $ics = $this->export([$this->event()], 1);
+        $relative = \Joomla\CMS\Router\Route::link('site', JemHelperRoute::getEventRoute('130:dst-test'), false);
+        self::assertStringContainsString('URL:https://ics.test' . $relative . "\r\n", $ics);
+        self::assertStringContainsString('.html', $relative);
+        self::assertStringContainsString('lang=es', $relative);
+        self::assertStringNotContainsString('.raw', $relative);
+        self::assertStringNotContainsString('layout=ics', $relative);
     }
 
     private function event(array $overrides = []): object
