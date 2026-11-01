@@ -440,8 +440,21 @@ class JemPdfView
         $pdf->SetAutoPageBreak(!$singlePageTarget, $singlePageTarget ? 0 : $margins['bottom']);
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(true);
-        $pdf->AddPage();
-        $pdf->writeHTML(self::buildWeeklyCalendarHtml($title, $rows, $year, $week, $params, $paperSize, $period), true, false, true, false, '');
+        require_once __DIR__ . '/../helpers/calendaragenda.php';
+        if (JemCalendarAgendaHelper::getWeekMode($params) === 'timetable') {
+            require_once __DIR__ . '/pdfweektimetable.class.php';
+            if ($period === null) {
+                $firstWeekDay = self::getCalendarFirstWeekday($params);
+                $isoStart = (new DateTimeImmutable('today', new DateTimeZone(JemHelper::getJoomlaTimeZoneName())))->setISODate($year, $week, 1);
+                $start = $firstWeekDay === 0 ? $isoStart->modify('-1 day') : $isoStart;
+                $weeks = max(1, (int) ($params ? $params->get('nrweeks', 1) : 1));
+                $period = array('start' => $start, 'end' => $start->modify('+' . ($weeks * 7 - 1) . ' days'));
+            }
+            JemPdfWeekTimetable::render($pdf, $title, $rows, $period, self::getPdfFontFamily($settings, 'pdf_body_font_family'));
+        } else {
+            $pdf->AddPage();
+            $pdf->writeHTML(self::buildWeeklyCalendarHtml($title, $rows, $year, $week, $params, $paperSize, $period), true, false, true, false, '');
+        }
 
         while (ob_get_level() > 0) {
             ob_end_clean();

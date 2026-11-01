@@ -97,10 +97,18 @@ final class JemCalendarHourGridHelper
             . '"><span class="fa fa-angle-right" aria-hidden="true"></span></a></nav>';
     }
 
-    public static function render(array $events, string $firstDay, int $days, int $topCategoryId = 0): string
+    /**
+     * Project visible sessions and allocate overlap lanes without changing source events.
+     *
+     * @param array $events Filtered source events, not pre-expanded multi-day copies.
+     * @param string $firstDay First visible local calendar date.
+     * @param int $days Number of visible dates.
+     * @return array Columns and hour bounds, or an empty array for an invalid period.
+     */
+    public static function prepare(array $events, string $firstDay, int $days): array
     {
         if (!JemHelper::isValidCalendarDate($firstDay) || $days < 1) {
-            return '';
+            return array();
         }
 
         $calendar = new DateTimeImmutable($firstDay, new DateTimeZone(JemHelper::getJoomlaTimeZoneName()));
@@ -161,7 +169,30 @@ final class JemCalendarHourGridHelper
 
         $firstHour = max(0, $firstHour);
         $lastHour = min(24, $lastHour);
+        return array('columns' => $columns, 'first_hour' => $firstHour, 'last_hour' => $lastHour);
+    }
+
+    /**
+     * Render the frontend hourly grid from the shared read-only projection.
+     *
+     * @param array $events Filtered source events.
+     * @param string $firstDay First visible local date.
+     * @param int $days Visible day count.
+     * @param int $topCategoryId Category context for day links.
+     * @return string Frontend grid HTML.
+     */
+    public static function render(array $events, string $firstDay, int $days, int $topCategoryId = 0): string
+    {
+        $grid = self::prepare($events, $firstDay, $days);
+        if (!$grid) {
+            return '';
+        }
+
+        $columns = $grid['columns'];
+        $firstHour = $grid['first_hour'];
+        $lastHour = $grid['last_hour'];
         $hours = max(1, $lastHour - $firstHour);
+        $calendar = new DateTimeImmutable($firstDay, new DateTimeZone(JemHelper::getJoomlaTimeZoneName()));
         $html = array('<div class="jem-hourgrid' . ($days === 1 ? ' jem-hourgrid-single-day' : '')
             . '" style="--jem-hourgrid-hours:' . $hours . '">');
         $lastDate = $calendar->modify('+' . ($days - 1) . ' days')->format('Y-m-d');
