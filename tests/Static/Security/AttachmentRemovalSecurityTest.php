@@ -43,9 +43,26 @@ final class AttachmentRemovalSecurityTest extends TestCase
 
         self::assertStringContainsString("preg_match('/^event(\\d+)$/i'", $attachment);
         self::assertStringContainsString("preg_match('/^venue(\\d+)$/i'", $attachment);
-        self::assertStringContainsString("array('id', 'created_by', 'access', 'published'", $attachment);
-        self::assertStringContainsString('in_array((int) $item->access', $attachment);
-        self::assertStringContainsString("\$user->can('publish', \$type", $attachment);
+        self::assertStringContainsString("array('id', 'created_by', 'access', 'published', 'parent_venue_id')", $attachment);
+        self::assertStringContainsString('in_array((int) $venue->access', $attachment);
+        self::assertStringContainsString("\$user->can('publish', 'venue'", $attachment);
+    }
+
+    public function testFrontendEventDownloadsUseTheEventPageDecision(): void
+    {
+        $attachment = $this->read('site/classes/attachment.class.php');
+        $event = $this->read('site/models/event.php');
+
+        // Categories, parent events and parent venues are checked by the event model (BH016-BH018).
+        self::assertStringContainsString("new JemModelEvent(array('ignore_request' => true))", $attachment);
+        self::assertStringContainsString("'/components/com_jem/models/event.php'", $attachment);
+        self::assertStringContainsString('$model->getItem($eventId)', $attachment);
+        self::assertStringContainsString("\$event->params->get('access-view')", $attachment);
+        self::assertStringContainsString('$model->canViewVenueAncestors((int) $venue->parent_venue_id', $attachment);
+
+        self::assertStringContainsString('public function canViewVenueAncestors(', $event);
+        self::assertStringContainsString('canViewEventAncestors((int) $data->parent_event_id', $event);
+        self::assertStringContainsString("\$data->params->set('access-view', \$access_view && !empty(\$data->categories)", $event);
     }
 
     private function read(string $relativePath): string

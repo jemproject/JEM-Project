@@ -496,47 +496,19 @@ class JemAttachment
             throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
         }
 
-        // A direct frontend download must not bypass the parent event/venue ACL.
+        // A direct frontend download must not bypass the visibility of the
+        // event or venue page the attachment belongs to.
         if (!Factory::getApplication()->isClient('administrator')) {
             if (preg_match('/^event(\d+)$/i', (string) $res->object, $matches)) {
-                $type = 'event';
-                $itemId = (int) $matches[1];
-                $table = '#__jem_events';
-                $fields = array('id', 'created_by', 'access', 'published', 'publish_up', 'publish_down');
-            } elseif (preg_match('/^venue(\d+)$/i', (string) $res->object, $matches)) {
-                $type = 'venue';
-                $itemId = (int) $matches[1];
-                $table = '#__jem_venues';
-                $fields = array('id', 'created_by', 'access', 'published');
-            } else {
-                $type = '';
-            }
-
-            if ($type !== '') {
-                $query = $db->getQuery(true)
-                    ->select($db->quoteName($fields))
-                    ->from($db->quoteName($table))
-                    ->where($db->quoteName('id') . ' = ' . $itemId);
-                $db->setQuery($query);
-                $item = $db->loadObject();
-
-                if (!$item) {
+                if (!self::canViewEvent((int) $matches[1])) {
                     throw new Exception(Text::_('COM_JEM_FILE_NOT_FOUND'), 404);
                 }
-
-                if (!in_array((int) $item->access, array_map('intval', $levels), true)) {
-                    throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
+            } elseif (preg_match('/^venue(\d+)$/i', (string) $res->object, $matches)) {
+                if (!self::canViewVenue((int) $matches[1], $user, $levels)) {
+                    throw new Exception(Text::_('COM_JEM_FILE_NOT_FOUND'), 404);
                 }
-
-                $canPreview = $user->can('edit', $type, $itemId, (int) $item->created_by)
-                    || $user->can('publish', $type, $itemId, (int) $item->created_by);
-                $isVisible = ($type === 'event')
-                    ? (JemHelper::isEventPublishedNow($item) || (int) $item->published === 2)
-                    : ((int) $item->published === 1);
-
-                if (!$isVisible && !$canPreview) {
-                    throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
-                }
+            } else {
+                throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
             }
         }
 
@@ -550,6 +522,111 @@ class JemAttachment
         }
 
         return $path;
+    }
+
+    /**
+     * Load the frontend event model, which decides whether an event page
+     * may be shown (categories, venue, type, parent events, parent venues,
+     * age restrictions and publishing state).
+     *
+     * @return JemModelEvent|null  null if the frontend model is not available
+     */
+    static protected function getEventViewModel()
+    {
+        if (!class_exists('JemModelEvent', false)) {
+            require_once JPATH_SITE . '/components/com_jem/models/event.php';
+        }
+
+        // The backend event model has the same class name; never use it here.
+        $reflection = new ReflectionClass('JemModelEvent');
+        $expected   = Path::clean(JPATH_SITE . '/components/com_jem/models/event.php');
+
+        if (Path::clean((string) $reflection->getFileName()) !== $expected) {
+            return null;
+        }
+
+        return new JemModelEvent(array('ignore_request' => true));
+    }
+
+    /**
+     * Check whether the current user can view the event page.
+     *
+     * @param  int $eventId
+     * @return boolean
+     */
+    static protected function canViewEvent($eventId)
+    {
+        static $results = array();
+
+        $eventId = (int) $eventId;
+        $key     = (int) JemFactory::getUser()->get('id') . ':' . $eventId;
+
+        if (isset($results[$key])) {
+            return $results[$key];
+        }
+
+        $model = $eventId > 0 ? self::getEventViewModel() : null;
+
+        if (!$model) {
+            return $results[$key] = false;
+        }
+
+        // The model reports a missing or hidden event as a page message;
+        // a download check must not leave that message for the next page.
+        $app   = Factory::getApplication();
+        $queue = $app->getMessageQueue(true);
+
+        try {
+            $model->setState('event.id', $eventId);
+            $event = $model->getItem($eventId);
+        } catch (\Exception $e) {
+            $event = false;
+        }
+
+        $app->getMessageQueue(true);
+        foreach ($queue as $message) {
+            $app->enqueueMessage($message['message'], $message['type']);
+        }
+
+        return $results[$key] = !empty($event) && (bool) $event->params->get('access-view');
+    }
+
+    /**
+     * Check whether the current user can view the venue page.
+     *
+     * @param  int   $venueId
+     * @param  User  $user
+     * @param  array $levels
+     * @return boolean
+     */
+    static protected function canViewVenue($venueId, $user, array $levels)
+    {
+        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'created_by', 'access', 'published', 'parent_venue_id')))
+            ->from($db->quoteName('#__jem_venues'))
+            ->where($db->quoteName('id') . ' = ' . (int) $venueId);
+        $db->setQuery($query);
+        $venue = $db->loadObject();
+
+        if (!$venue || !in_array((int) $venue->access, array_map('intval', $levels), true)) {
+            return false;
+        }
+
+        $canPreview = $user->can('edit', 'venue', (int) $venue->id, (int) $venue->created_by)
+            || $user->can('publish', 'venue', (int) $venue->id, (int) $venue->created_by);
+
+        if ((int) $venue->published !== 1 && !$canPreview) {
+            return false;
+        }
+
+        if (empty($venue->parent_venue_id)) {
+            return true;
+        }
+
+        $model = self::getEventViewModel();
+
+        return $model && $model->canViewVenueAncestors((int) $venue->parent_venue_id, $user, $levels);
     }
 
     /**

@@ -13,7 +13,7 @@ use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
+use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 /**
  * Event-Model
@@ -473,8 +473,9 @@ class JemModelEvent extends ItemModel
 
     /**
      * Verify visibility of every venue ancestor used by an event.
+     * Public because direct attachment downloads apply the same rule.
      */
-    protected function canViewVenueAncestors($parentId, $user, array $levels)
+    public function canViewVenueAncestors($parentId, $user, array $levels)
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $seen = array();
