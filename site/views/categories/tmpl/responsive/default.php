@@ -109,7 +109,7 @@ $categoriesFilterAction = $categoriesMenuItemId > 0
                 </div>
                 <div class="jem_fright">
                     <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
-                    <?php echo \JemListLimit::getLimitBox($this->pagination, $this->params->get('cat_num', 4)); ?>
+                    <?php echo $this->pagination->getLimitBox(); ?>
                 </div>
             </div>
             <input type="hidden" name="option" value="com_jem" />

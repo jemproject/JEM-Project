@@ -153,13 +153,11 @@ class JemModelCategories extends BaseDatabaseModel
         $this->_showemptysubcats = (bool)$params->get('showemptychilds', 1);
         $this->_search           = trim($app->input->getString('filter_search', ''));
 
-        //get the number of events from database
+        // Use the shared frontend page size; legacy menu cat_num values are ignored.
         [$limit, $limitstart] = \JemListLimit::resolve(
             $app,
             'com_jem.categories.' . $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0),
-            $params->get('cat_num', 4),
-            true,
-            true
+            JemHelper::config()->display_num
         );
 
         $this->setState('limit', $limit);

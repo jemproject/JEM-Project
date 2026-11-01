@@ -87,40 +87,16 @@ final class JemListLimit
     }
 
     /**
-     * Render the category selector, including its custom menu page size when needed.
+     * Keep legacy template overrides compatible with the standard Joomla selector.
      *
-     * @param object $pagination Joomla pagination instance.
-     * @param mixed $default Trusted menu configuration, never visitor input.
-     * @return string Selector HTML with a visible option matching the configured default.
+     * @param object $pagination Joomla pagination instance with validated model state.
+     * @param mixed $default Ignored legacy menu default; retained for existing callers.
+     * @return string Standard selector HTML, including Joomla's View All selection.
+     * @deprecated Call $pagination->getLimitBox() directly.
      */
     public static function getLimitBox($pagination, $default): string
     {
-        $default = self::unsignedInteger($default) ?? 10;
-        if (in_array($default, self::OPTIONS, true)) {
-            return $pagination->getLimitBox();
-        }
-
-        $sizes = array_merge(self::OPTIONS, [$default]);
-        sort($sizes, SORT_NUMERIC);
-        $sizes = array_merge(array_filter($sizes), [0]);
-        $options = [];
-        foreach ($sizes as $size) {
-            $options[] = \Joomla\CMS\HTML\HTMLHelper::_(
-                'select.option',
-                $size,
-                $size === 0 ? \Joomla\CMS\Language\Text::_('JALL') : (string) $size
-            );
-        }
-
-        return \Joomla\CMS\HTML\HTMLHelper::_(
-            'select.genericlist',
-            $options,
-            $pagination->prefix . 'limit',
-            'class="form-select" onchange="this.form.submit()"',
-            'value',
-            'text',
-            $pagination->viewall ? 0 : $pagination->limit
-        );
+        return $pagination->getLimitBox();
     }
 
     /**

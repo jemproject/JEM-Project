@@ -62,7 +62,6 @@ site/views/calendar/tmpl/default.xml|timeline_filter_types
 site/views/calendar/tmpl/default.xml|timeline_filter_venues
 site/views/calendar/tmpl/default.xml|top_category
 site/views/calendar/tmpl/default.xml|usefeaturedborder
-site/views/categories/tmpl/default.xml|cat_num
 site/views/categories/tmpl/default.xml|detcat_nr
 site/views/categories/tmpl/default.xml|footertext
 site/views/categories/tmpl/default.xml|id
