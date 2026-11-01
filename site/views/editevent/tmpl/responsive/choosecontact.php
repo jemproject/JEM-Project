@@ -193,7 +193,7 @@ if (!empty($filterBorder)) {
                 <div style="width: 40px; text-align: center;"><input type="checkbox" name="checkall-toggle" onclick="if (window.Joomla) { Joomla.checkAll(this); }" /></div>
                 <div style="width: 35px;">#</div>
                 <div style="flex: 2; padding-left:10px;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
-                <div style="flex: 1.2;"><?php echo HTMLHelper::_('grid.sort', 'JCATEGORY', 'c.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
+                <div style="flex: 1.2;"><?php echo HTMLHelper::_('grid.sort', 'JCATEGORY', 'cat.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
                 <div style="flex: 1;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
                 <div style="flex: 1;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'con.country', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
             </div>

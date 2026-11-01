@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 require_once __DIR__ . '/../classes/listlimit.class.php';
+require_once __DIR__ . '/../classes/listorder.class.php';
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -79,13 +80,14 @@ class JemModelVenue extends JemModelEventslist
         $filtertype = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter.filter_type', $filtertype);
 
-        # filter_order
-        $orderCol = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+        [$orderCol, $listOrder] = JemListOrder::resolve(
+            $app, 'com_jem.venue.' . $itemid, JemListOrder::eventFields(),
+            'a.dates', 'ASC', $task === 'archive'
+        );
         $this->setState('filter.filter_ordering', $orderCol);
-
-        # filter_direction
-        $listOrder = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
         $this->setState('filter.filter_direction', $listOrder);
+        $this->setState('list.ordering', $orderCol);
+        $this->setState('list.direction', $listOrder);
 
         # show open date events
         # (there is no menu item option yet so show all events)

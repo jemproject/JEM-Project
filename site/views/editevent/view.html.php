@@ -366,8 +366,6 @@ class JemViewEditevent extends JemView
         //    $db          = Factory::getContainer()->get('DatabaseDriver');
         $document    = $app->getDocument();
 
-        $filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
         $filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
         $filter_state     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_state', 'filter_state', '*', 'word');
         $search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
@@ -380,8 +378,8 @@ class JemViewEditevent extends JemView
         $lists['state'] = HTMLHelper::_('grid.state', $filter_state);
 
         // table ordering
-        $lists['order_Dir'] = $filter_order_Dir;
-        $lists['order']     = $filter_order;
+        $lists['order_Dir'] = $this->getModel()->getState('list.direction', 'ASC');
+        $lists['order'] = $this->getModel()->getState('list.ordering');
 
         $document->setTitle(Text::_('COM_JEM_SELECT_VENUE'));
         JemHelper::loadCss('jem');
@@ -416,8 +414,6 @@ class JemViewEditevent extends JemView
         //    $db          = Factory::getContainer()->get('DatabaseDriver');
         $document    = $app->getDocument();
 
-        $filter_order     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.name', 'cmd');
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
         $filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
         $search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
 
@@ -432,8 +428,8 @@ class JemViewEditevent extends JemView
         $pagination = $this->get('ContactsPagination');
 
         // table ordering
-        $lists['order_Dir'] = $filter_order_Dir;
-        $lists['order']     = $filter_order;
+        $lists['order_Dir'] = $this->getModel()->getState('list.direction', 'ASC');
+        $lists['order'] = $this->getModel()->getState('list.ordering');
 
         //Build search filter
         $filters = array();

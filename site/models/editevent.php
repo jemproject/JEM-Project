@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 require_once __DIR__ . '/../classes/listlimit.class.php';
+require_once __DIR__ . '/../classes/listorder.class.php';
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -395,11 +396,13 @@ class JemModelEditevent extends JemModelEvent
         $params           = JemHelper::globalattribs();
         $levels           = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
 
-        $filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
-
-        $filter_order     = InputFilter::getinstance()->clean($filter_order, 'cmd');
-        $filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');
+        [$filter_order, $filter_order_Dir] = JemListOrder::resolve(
+            $app, 'com_jem.selectvenue',
+            ['l.venue', 'l.city', 'l.state', 'l.country', 'l.id', 'l.ordering'],
+            'l.venue'
+        );
+        $this->setState('list.ordering', $filter_order);
+        $this->setState('list.direction', $filter_order_Dir);
 
         $filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
         $search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
@@ -538,11 +541,15 @@ class JemModelEditevent extends JemModelEvent
         $jemsettings      = JemHelper::config();
         $levels           = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
 
-        $filter_order     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.ordering', 'cmd');
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
-
-        $filter_order     = InputFilter::getinstance()->clean($filter_order, 'cmd');
-        $filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');
+        [$filter_order, $filter_order_Dir] = JemListOrder::resolve(
+            $app, 'com_jem.selectcontact',
+            ['con.name' => 'con.name', 'con.suburb' => 'con.suburb', 'con.country' => 'con.country',
+                'con.state' => 'con.state', 'con.id' => 'con.id', 'con.ordering' => 'con.ordering',
+                'cat.title' => 'cat.title', 'c.title' => 'cat.title', 'category_title' => 'cat.title'],
+            'con.ordering'
+        );
+        $this->setState('list.ordering', $filter_order);
+        $this->setState('list.direction', $filter_order_Dir);
 
         $filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
         $search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');

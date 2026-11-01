@@ -182,14 +182,8 @@ class JemViewDay extends JemView
         }
 
         // get variables
-        $filter_order     = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', '', 'word');
         $filter_type      = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
         $search           = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-
-        // table ordering
-        $lists['order_Dir'] = $filter_order_Dir;
-        $lists['order']     = $filter_order;
 
         // Ensure menu date parameters are applied before loading events.
         $model = $this->getModel();
@@ -211,6 +205,8 @@ class JemViewDay extends JemView
 
         // Get data from model
         $rows = $this->get('Items');
+        $lists['order_Dir'] = $model->getState('list.direction', 'ASC');
+        $lists['order'] = $model->getState('list.ordering', 'a.dates');
         $day  = $this->get('Day');
         $venueBoardAssignments = $isVenueBoard && $venueBoard['mode'] === 'spaces'
             ? $this->getVenueBoardAssignments($rows ?: array()) : array();

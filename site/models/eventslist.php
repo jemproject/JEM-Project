@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 require_once __DIR__ . '/../classes/listlimit.class.php';
+require_once __DIR__ . '/../classes/listorder.class.php';
 
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
@@ -631,9 +632,7 @@ class JemModelEventslist extends ListModel
             'word'
         );
 
-        if (!in_array($filter_order, $this->filter_fields, true)) {
-            $filter_order = 'a.dates';
-        }
+        $filter_order = JemListOrder::field($filter_order, JemListOrder::eventFields(), 'a.dates');
 
         $filter_order_Dir = JemEventslistMenuPolicy::orderDirection(
             $filter_order_Dir,
@@ -643,6 +642,9 @@ class JemModelEventslist extends ListModel
         if ($isArchive && $filter_order === 'a.dates') {
             $filter_order_Dir = 'DESC';
         }
+
+        $app->setUserState($orderContext . '.filter_order', $filter_order);
+        $app->setUserState($orderContext . '.filter_order_Dir', $filter_order_Dir);
 
         $orderby = JemEventslistMenuPolicy::buildOrderBy(
             $filter_order,

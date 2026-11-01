@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 require_once __DIR__ . '/../classes/listlimit.class.php';
+require_once __DIR__ . '/../classes/listorder.class.php';
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -284,12 +285,12 @@ class JemModelMyevents extends BaseDatabaseModel
         $app  = Factory::getApplication();
         $task = $app->input->getCmd('task', '');
 
-        $filter_order      = $app->getUserStateFromRequest('com_jem.myevents.filter_order', 'filter_order', 'a.dates', 'cmd');
-        $filter_order_Dir  = $app->getUserStateFromRequest('com_jem.myevents.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+        [$filter_order, $filter_order_Dir] = JemListOrder::resolve(
+            $app, 'com_jem.myevents', JemListOrder::eventFields(), 'a.dates'
+        );
+        $this->setState('list.ordering', $filter_order);
+        $this->setState('list.direction', $filter_order_Dir);
         $default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
-
-        $filter_order      = InputFilter::getInstance()->clean($filter_order, 'cmd');
-        $filter_order_Dir  = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 
         if ($filter_order == 'a.dates') {
             $orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir
