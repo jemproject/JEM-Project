@@ -728,7 +728,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                     if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
                         ?><a target="_blank" href="<?php echo JemOutput::escapeHtmlAttribute($this->item->url); ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
                     elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
-                        ?><a href="<?php echo $this->escape(Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug))); ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
+                        ?><a href="<?php echo $this->escape(Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug), false)); ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
                     else :
                         echo $this->escape($this->item->venue);
                     endif;

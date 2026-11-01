@@ -63,7 +63,9 @@ final class XssEscapingGuardTest extends TestCase
         );
         self::assertStringContainsString('return self::escapeHtmlAttribute(Route::_((string) $link));', $contents);
         self::assertStringContainsString("HTMLHelper::_('link', self::escapeLinkAttribute(\$url)", $contents);
-        self::assertStringContainsString("self::escapeLinkAttribute(\$print_link . '&tmpl=component')", $contents);
+        // Print parameters are assembled before the final HTML attribute escaping.
+        self::assertStringContainsString('$print_link = self::buildPrintLink((string) $print_link);', $contents);
+        self::assertStringContainsString("self::escapeLinkAttribute(\$print_link)", $contents);
         self::assertStringContainsString("HTMLHelper::_('link', self::escapeLinkAttribute(\$pdf_link)", $contents);
         self::assertStringContainsString("HTMLHelper::_('link', self::escapeLinkAttribute(\$today_link)", $contents);
         self::assertDoesNotMatchRegularExpression("/HTMLHelper::_\\('link',\\s*Route::_\\(/", $contents);

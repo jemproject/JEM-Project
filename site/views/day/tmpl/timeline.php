@@ -1565,7 +1565,7 @@ document.addEventListener('keydown', function (event) {
                                 }
                                 $detailsDescription = trim(preg_replace('/\s+/', ' ', strip_tags((string) ($row->introtext ?? ''))));
                                 ?>
-                                <div class="jem-day-timeline-card jem-day-timeline-all-day-card is-clickable" data-href="<?php echo $this->escape($eventUrl); ?>" role="link" tabindex="0" style="--jem-timeline-accent: <?php echo $this->escape($accentColor); ?>; --jem-timeline-card-background: <?php echo $this->escape($cardBackgroundColor); ?>; --jem-timeline-card-color: <?php echo $this->escape($cardTextColor); ?>; --jem-timeline-card-link-color: <?php echo $this->escape($cardLinkColor); ?>;">
+                                <div class="jem-day-timeline-card jem-day-timeline-all-day-card is-clickable" data-href="<?php echo $eventUrl; ?>" role="link" tabindex="0" style="--jem-timeline-accent: <?php echo $this->escape($accentColor); ?>; --jem-timeline-card-background: <?php echo $this->escape($cardBackgroundColor); ?>; --jem-timeline-card-color: <?php echo $this->escape($cardTextColor); ?>; --jem-timeline-card-link-color: <?php echo $this->escape($cardLinkColor); ?>;">
                                     <div class="jem-day-timeline-card-inner<?php echo $hasMedia ? ' has-media' : ''; ?><?php echo $hasLeadingMedia ? ' has-leading-media' : ''; ?><?php echo $hasTrailingMedia ? ' has-venue-media' : ''; ?>">
                                         <?php if ($hasLeadingMedia) : ?>
                                             <div class="jem-day-timeline-media jem-day-timeline-leading-media">
@@ -1798,7 +1798,7 @@ document.addEventListener('keydown', function (event) {
                             <?php endif; ?>
                         </div>
                         <span class="jem-day-timeline-point" aria-hidden="true"></span>
-                        <div class="jem-day-timeline-card is-clickable" data-href="<?php echo $this->escape($eventUrl); ?>" role="link" tabindex="0">
+                        <div class="jem-day-timeline-card is-clickable" data-href="<?php echo $eventUrl; ?>" role="link" tabindex="0">
                             <div class="jem-day-timeline-card-inner<?php echo $hasMedia ? ' has-media' : ''; ?><?php echo $hasLeadingMedia ? ' has-leading-media' : ''; ?><?php echo $hasTrailingMedia ? ' has-venue-media' : ''; ?>">
                                 <?php if ($hasLeadingMedia) : ?>
                                     <div class="jem-day-timeline-media jem-day-timeline-leading-media">

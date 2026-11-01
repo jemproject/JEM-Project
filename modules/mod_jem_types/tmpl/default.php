@@ -24,7 +24,7 @@ $mode = $params->get('display_mode', 'summary');
         <ul class="mod-jem-types__list list-unstyled">
             <?php foreach ($data as $type) : ?>
                 <?php
-                $link  = Route::_(JemHelperRoute::getTypeeventsRoute($type->id));
+                $link  = Route::_(JemHelperRoute::getTypeeventsRoute($type->id), false);
                 $name  = htmlspecialchars($type->name, ENT_QUOTES, 'UTF-8');
                 $tooltip = JemOutput::typeDescriptionSummary(isset($type->description) ? $type->description : '');
                 $title = $tooltip !== '' ? ' title="' . htmlspecialchars($tooltip, ENT_QUOTES, 'UTF-8') . '"' : '';
@@ -53,7 +53,7 @@ $mode = $params->get('display_mode', 'summary');
     <?php else : ?>
         <?php foreach ($data as $type) : ?>
             <?php
-            $typeLink = Route::_(JemHelperRoute::getTypeeventsRoute($type->id));
+            $typeLink = Route::_(JemHelperRoute::getTypeeventsRoute($type->id), false);
             $typeName = htmlspecialchars($type->name, ENT_QUOTES, 'UTF-8');
             $tooltip = JemOutput::typeDescriptionSummary(isset($type->description) ? $type->description : '');
             $title = $tooltip !== '' ? ' title="' . htmlspecialchars($tooltip, ENT_QUOTES, 'UTF-8') . '"' : '';
@@ -74,7 +74,7 @@ $mode = $params->get('display_mode', 'summary');
                     <ul class="mod-jem-types__events list-unstyled">
                         <?php foreach ($type->events as $event) : ?>
                             <li class="mod-jem-types__event">
-                                <a href="<?php echo htmlspecialchars(Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($event->slug), $params)), ENT_QUOTES, 'UTF-8'); ?>">
+                                <a href="<?php echo htmlspecialchars(Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($event->slug), $params), false), ENT_QUOTES, 'UTF-8'); ?>">
                                     <?php echo htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8'); ?>
                                 </a>
                                 <small class="mod-jem-types__date text-muted ms-1">

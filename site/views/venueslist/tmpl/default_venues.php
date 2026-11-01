@@ -198,7 +198,7 @@ if (!function_exists('jem_venueslist_default_type_badge')) {
         }
         $inner .= $name;
 
-        $link = htmlspecialchars(Route::_(JemHelperRoute::getTypevenuesRoute((int) $row->type_id)), ENT_QUOTES, 'UTF-8');
+        $link = htmlspecialchars(Route::_(JemHelperRoute::getTypevenuesRoute((int) $row->type_id), false), ENT_QUOTES, 'UTF-8');
 
         return '<a href="' . $link . '" class="jem-type-badge"' . $style . '>' . $inner . '</a>';
     }

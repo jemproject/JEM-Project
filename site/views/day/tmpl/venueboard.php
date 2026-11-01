@@ -73,7 +73,7 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($this->day);
                     $location = $column['location'];
                     $name = $location ? (string) ($location->name ?? '') : Text::_($mode === 'spaces' ? 'COM_JEM_VENUEBOARD_OTHER_EVENTS' : 'COM_JEM_TIMETABLE_NO_VENUE');
                     $venueUrl = $mode === 'venues' && $location
-                        ? Route::_(JemHelperRoute::getVenueRoute((int) $location->id . (!empty($location->alias) ? ':' . $location->alias : '')))
+                        ? Route::_(JemHelperRoute::getVenueRoute((int) $location->id . (!empty($location->alias) ? ':' . $location->alias : '')), false)
                         : '';
                     ?>
                     <section class="jem-venueboard-column">
@@ -90,7 +90,7 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($this->day);
                             <?php endif; ?>
                             <?php foreach ($column['events'] as $event) : ?>
                                 <?php
-                                $eventUrl = Route::_(JemHelperRoute::getEventRoute($event->slug));
+                                $eventUrl = Route::_(JemHelperRoute::getEventRoute($event->slug), false);
                                 $time = $event->day_schedule['all_day'] ? Text::_('COM_JEM_TIMETABLE_ALL_DAY') : $event->day_schedule['label'];
                                 $intro = trim(preg_replace('/\s+/u', ' ', strip_tags(html_entity_decode((string) ($event->introtext ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8'))));
                                 if (mb_strlen($intro) > 140) {

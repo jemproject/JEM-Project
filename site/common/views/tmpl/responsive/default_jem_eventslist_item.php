@@ -32,7 +32,7 @@ $escape = static function ($value): string {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 };
 
-$eventRoute = Route::_(JemHelperRoute::getEventRoute($row->slug));
+$eventRoute = Route::_(JemHelperRoute::getEventRoute($row->slug), false);
 $eventAccess = empty($row->user_has_access_event)
     ? '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>'
     : '';
@@ -149,7 +149,7 @@ $detailsClickable = (int) $jemsettings->showdetails === 1
                     <div class="jem-event-info" title="<?php echo $escape(Text::_('COM_JEM_TABLE_LOCATION') . ': ' . $row->venue); ?>">
                         <?php echo $showIconsInEventData ? '<i class="fa fa-map-marker" aria-hidden="true"></i>' : ''; ?>
                         <?php if ((int) $jemsettings->showlinkvenue === 1) : ?>
-                            <a href="<?php echo $escape(Route::_(JemHelperRoute::getVenueRoute($row->venueslug))); ?>"><span><?php echo $escape($row->venue); ?></span></a>
+                            <a href="<?php echo $escape(Route::_(JemHelperRoute::getVenueRoute($row->venueslug), false)); ?>"><span><?php echo $escape($row->venue); ?></span></a>
                         <?php else : ?>
                             <span><?php echo $escape($row->venue); ?></span>
                         <?php endif; ?>
