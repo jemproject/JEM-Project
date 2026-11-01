@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="14" y="12" width="68" height="72" rx="6" stroke="rgb(114,149,177)" stroke-width="4.5"/>
-        <path d="M27 30H45M27 48H45M27 66H45" stroke="rgb(114,149,177)" stroke-width="4.5"/>
-        <path d="M57 30H70M57 48H70M57 66H70" stroke="rgb(249,159,0)" stroke-width="4.5"/>
-        <circle cx="54" cy="30" r="3.5" fill="white" stroke="rgb(249,159,0)" stroke-width="3"/>
-        <circle cx="73" cy="48" r="3.5" fill="white" stroke="rgb(249,159,0)" stroke-width="3"/>
-        <circle cx="54" cy="66" r="3.5" fill="white" stroke="rgb(249,159,0)" stroke-width="3"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
+    <g>
+        <path d="M82,18L82,78C82,81.311 79.311,84 76,84L20,84C16.689,84 14,81.311 14,78L14,18C14,14.689 16.689,12 20,12L76,12C79.311,12 82,14.689 82,18Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+        <path d="M27,30L45,30M27,48L45,48M27,66L45,66" style="fill:none;fill-rule:nonzero;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+        <path d="M54,30L68.986,30M51.76,48L68.574,48M54,66L68.986,66" style="fill:none;fill-rule:nonzero;stroke:rgb(249,159,0);stroke-width:4.5px;"/>
+        <circle cx="54.5" cy="30" r="5" style="fill:rgb(249,159,0);"/>
+        <circle cx="66.246" cy="48" r="5" style="fill:rgb(249,159,0);"/>
+        <circle cx="54.5" cy="66" r="5" style="fill:rgb(249,159,0);"/>
     </g>
 </svg>

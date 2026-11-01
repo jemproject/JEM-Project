@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="12" y="16" width="72" height="64" rx="6" stroke="rgb(114,149,177)" stroke-width="4.5"/>
-        <path d="M12 34H84" stroke="rgb(114,149,177)" stroke-width="4.5"/>
-        <path d="M29 16V34M51 16V34" stroke="rgb(249,159,0)" stroke-width="4.5"/>
-        <rect x="25" y="48" width="20" height="18" rx="3" stroke="rgb(249,159,0)" stroke-width="4"/>
-        <path d="M56 50H72M56 58H68M56 66H72" stroke="rgb(114,149,177)" stroke-width="4"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
+    <g>
+        <path d="M84,22L84,74C84,77.311 81.311,80 78,80L18,80C14.689,80 12,77.311 12,74L12,22C12,18.689 14.689,16 18,16L78,16C81.311,16 84,18.689 84,22Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+        <path d="M12,34L84,34" style="fill:none;fill-rule:nonzero;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+        <path d="M28.959,18.273L28.959,31.744M51,18.273L51,31.744" style="fill:none;fill-rule:nonzero;stroke:rgb(249,159,0);stroke-width:4.5px;stroke-linecap:butt;"/>
+        <path d="M45,51L45,63C45,64.656 43.656,66 42,66L28,66C26.344,66 25,64.656 25,63L25,51C25,49.344 26.344,48 28,48L42,48C43.656,48 45,49.344 45,51Z" style="fill:none;stroke:rgb(249,159,0);stroke-width:4px;"/>
+        <path d="M56,50L72,50M56,58L68,58M56,66L72,66" style="fill:none;fill-rule:nonzero;stroke:rgb(114,149,177);stroke-width:4px;"/>
     </g>
 </svg>
