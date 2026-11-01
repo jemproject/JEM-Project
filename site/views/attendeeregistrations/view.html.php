@@ -37,10 +37,7 @@ class JemViewAttendeeregistrations extends JemView
                 && $user->authorise('jem.attendees.manage', 'com_jem'));
 
         if (!$canManageAttendees) {
-            $app->enqueueMessage(Text::_('COM_JEM_ATTENDEE_REGISTRATIONS_NO_ACCESS'), 'warning');
-            $app->redirect(Route::_('index.php', false));
-
-            return;
+            throw new \Exception(Text::_('COM_JEM_ATTENDEE_REGISTRATIONS_NO_ACCESS'), 403);
         }
 
         $document = $app->getDocument();
