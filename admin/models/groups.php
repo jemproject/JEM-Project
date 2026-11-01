@@ -64,8 +64,37 @@ class JemModelGroups extends ListModel
 
         // List state information.
         parent::populateState('a.name', 'asc');
+        $this->normaliseListOrdering();
 
         $this->syncLegacyFilterState($app);
+    }
+
+    /**
+     * Normalize ordering independently of Search Tools filter identifiers.
+     *
+     * Read state directly to avoid populateState recursion. Normalize before
+     * cache/form use, and again at the query boundary for direct state callers.
+     *
+     * @return array{string, string} SQL column and ASC/DESC direction.
+     */
+    private function normaliseListOrdering(): array
+    {
+        $columns = [
+            'id' => 'a.id', 'a.id' => 'a.id',
+            'name' => 'a.name', 'a.name' => 'a.name',
+            'published' => 'a.published', 'a.published' => 'a.published',
+        ];
+        $ordering = $this->state->get('list.ordering');
+        $direction = $this->state->get('list.direction');
+        $ordering = is_string($ordering) ? trim($ordering) : '';
+        $ordering = $columns[$ordering] ?? 'a.name';
+        $direction = is_string($direction) && strtoupper(trim($direction)) === 'DESC' ? 'DESC' : 'ASC';
+
+        $this->setState('list.ordering', $ordering);
+        $this->setState('list.direction', $direction);
+        $this->setState('list.fullordering', $ordering . ' ' . $direction);
+
+        return [$ordering, $direction];
     }
 
     /**
@@ -163,13 +192,12 @@ class JemModelGroups extends ListModel
         // $query->group('a.id');
 
         // Add the list ordering clause.
-        $orderCol  = $this->state->get('list.ordering');
-        $orderDirn = $this->state->get('list.direction');
-        //if ($orderCol == 'a.ordering' || $orderCol == 'category_title') {
-        //    $orderCol = 'c.title '.$orderDirn.', a.ordering';
-        //}
+        [$orderCol, $orderDirn] = $this->normaliseListOrdering();
         $query->order($db->escape($orderCol.' '.$orderDirn));
-        //echo nl2br(str_replace('#__','jos_',$query));
+        if ($orderCol !== 'a.id') {
+            $query->order('a.id ASC');
+        }
+
         return $query;
     }
 

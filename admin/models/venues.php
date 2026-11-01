@@ -41,7 +41,7 @@ class JemModelVenues extends ListModel
                     'author', 'u.name',
                     'access', 'a.access', 'access_level',
                     'assignedevents',
-                    'search', 'published', 'search_type', 'venue_type_id',
+                    'search', 'published', 'a.published', 'search_type', 'venue_type_id',
             );
         }
 
@@ -81,6 +81,7 @@ class JemModelVenues extends ListModel
         $this->setState('params', $params);
 
         parent::populateState('a.venue', 'asc');
+        $this->normaliseListOrdering();
 
         $this->syncLegacyFilterState($app);
     }
@@ -105,6 +106,47 @@ class JemModelVenues extends ListModel
         $id .= ':' . $this->getState('filter.access');
 
         return parent::getStoreId($id);
+    }
+
+    /**
+     * Normalize ordering independently of Search Tools filter identifiers.
+     *
+     * Read state directly to avoid populateState recursion. Normalize before
+     * cache/form use, and again at the query boundary for direct state callers.
+     *
+     * @return array{string, string} SQL column and ASC/DESC direction.
+     */
+    private function normaliseListOrdering(): array
+    {
+        $columns = [
+            'id' => 'a.id', 'a.id' => 'a.id',
+            'venue' => 'a.venue', 'a.venue' => 'a.venue',
+            'alias' => 'a.alias', 'a.alias' => 'a.alias',
+            'state' => 'a.state', 'a.state' => 'a.state',
+            'country' => 'a.country', 'a.country' => 'a.country',
+            'url' => 'a.url', 'a.url' => 'a.url',
+            'street' => 'a.street', 'a.street' => 'a.street',
+            'postalCode' => 'a.postalCode', 'a.postalCode' => 'a.postalCode',
+            'city' => 'a.city', 'a.city' => 'a.city',
+            'ordering' => 'a.ordering', 'a.ordering' => 'a.ordering',
+            'created' => 'a.created', 'a.created' => 'a.created',
+            'access' => 'a.access', 'a.access' => 'a.access',
+            'published' => 'a.published', 'a.published' => 'a.published',
+            'author' => 'u.name', 'u.name' => 'u.name',
+            'access_level' => 'access_level',
+            'assignedevents' => 'assignedevents',
+        ];
+        $ordering = $this->state->get('list.ordering');
+        $direction = $this->state->get('list.direction');
+        $ordering = is_string($ordering) ? trim($ordering) : '';
+        $ordering = $columns[$ordering] ?? 'a.venue';
+        $direction = is_string($direction) && strtoupper(trim($direction)) === 'DESC' ? 'DESC' : 'ASC';
+
+        $this->setState('list.ordering', $ordering);
+        $this->setState('list.direction', $direction);
+        $this->setState('list.fullordering', $ordering . ' ' . $direction);
+
+        return [$ordering, $direction];
     }
 
     /**
@@ -245,10 +287,13 @@ class JemModelVenues extends ListModel
         }
 
         // Add the list ordering clause.
-        $orderCol    = $this->state->get('list.ordering');
-        $orderDirn    = $this->state->get('list.direction');
+        [$orderCol, $orderDirn] = $this->normaliseListOrdering();
 
         $query->order($db->escape($orderCol.' '.$orderDirn));
+
+        if ($orderCol !== 'a.id') {
+            $query->order('a.id ASC');
+        }
 
         return $query;
     }
