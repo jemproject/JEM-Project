@@ -906,8 +906,8 @@ class JemPdfView
 
     private static function buildDayTimelineRow($row, bool $showEventImage, string $eventImagePosition, bool $showVenueImage, string $venueImagePosition, int $eventImageWidth, int $eventImageHeight, int $venueImageWidth, int $venueImageHeight, bool $showCategory, string $categoryDisplay, bool $showVenue, bool $showType, bool $showIntro, int $introLimit, bool $showReadmore, string $readmoreStyle, string $eventBackgroundMode, string $customEventBackground, string $cardLayout, bool $isAlternateDay): string
     {
-        $start = JemOutput::formattime($row->times ?? '', '', false);
-        $end = JemOutput::formattime($row->endtimes ?? '', '', false);
+        $start = (string) JemOutput::formattime($row->times ?? '', '', false);
+        $end = (string) JemOutput::formattime($row->endtimes ?? '', '', false);
         $categories = (array) ($row->categories ?? array());
         $accent = self::getTimelinePdfAccentColor($row, $eventBackgroundMode, $customEventBackground);
 
@@ -2982,8 +2982,8 @@ class JemPdfView
 
     private static function getCalendarEventTime($row): string
     {
-        $start = JemOutput::formattime($row->times ?? '', '', false);
-        $end = JemOutput::formattime($row->endtimes ?? '', '', false);
+        $start = (string) JemOutput::formattime($row->times ?? '', '', false);
+        $end = (string) JemOutput::formattime($row->endtimes ?? '', '', false);
 
         return trim($start . ($start !== '' && $end !== '' ? ' - ' : '') . $end);
     }
