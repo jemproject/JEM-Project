@@ -90,7 +90,11 @@ final class FrontendCategoryEditorSecurityTest extends TestCase
         self::assertStringContainsString('canAssignAccess', $model);
         self::assertStringContainsString('canEditState', $model);
         self::assertStringContainsString("JemImageProfilePolicy::CATEGORY", $model);
-        self::assertStringContainsString('JemImage::uploadProfileImage', $model);
+        self::assertStringContainsString('JemImageFilenamePolicy::uploadProfile(', $model);
+        $policy = $this->read('site/classes/imagefilenamepolicy.class.php');
+        self::assertStringContainsString('JemImage::check($file, $settings, $profile)', $policy);
+        self::assertStringContainsString('JemImage::uploadProfileImage(', $policy);
+        self::assertStringContainsString('JemImage::finishReplacement($backup, false)', $policy);
         self::assertStringContainsString("array('jpg', 'jpeg', 'png', 'gif', 'webp')", $model);
         self::assertStringContainsString('$db->transactionStart()', $model);
         self::assertStringContainsString('$db->transactionRollback()', $model);

@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
@@ -63,7 +64,7 @@ class JemViewMain extends JemAdminView
                 HTMLHelper::_('script', 'com_jem/jed-review.js', ['version' => 'auto', 'relative' => true], ['defer' => true]);
             } catch (Throwable $exception) {
                 // A community invitation must never prevent access to the dashboard.
-                \Joomla\CMS\Log\Log::add('JED invitation preference could not be loaded.', \Joomla\CMS\Log\Log::WARNING, 'com_jem');
+                Log::add('JED invitation preference could not be loaded.', Log::WARNING, 'com_jem');
             }
         }
 

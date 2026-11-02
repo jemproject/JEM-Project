@@ -103,7 +103,13 @@ final class JemSchemaTest extends JoomlaTestCase
             static fn ($item): bool => in_array($item->queryType, array('ADD_COLUMN', 'ADD_INDEX'), true)
         ));
 
-        self::assertCount(25, $items501, 'Joomla must parse every statement in 5.0.1.sql separately.');
+        // Configuration inserts have grown; count the shipped statement starts
+        // independently while keeping the exact DDL expectations below.
+        $sql501 = file_get_contents(JEM_TEST_ROOT . '/admin/sql/updates/mysql/5.0.1.sql');
+        self::assertIsString($sql501);
+        $statementCount = preg_match_all('/^(?:INSERT|UPDATE|ALTER|CREATE)\b/im', $sql501);
+        self::assertGreaterThan(0, $statementCount);
+        self::assertCount($statementCount, $items501, 'Joomla must parse every statement in 5.0.1.sql separately.');
         self::assertCount(19, $recognised, 'Joomla must recognise all 5.0.1 table and index changes.');
         self::assertCount(16, array_filter($recognised, static fn ($item): bool => $item->queryType === 'ADD_COLUMN'));
         self::assertCount(3, array_filter($recognised, static fn ($item): bool => $item->queryType === 'ADD_INDEX'));

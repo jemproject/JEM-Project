@@ -64,8 +64,9 @@ final class JedReviewContractsTest extends TestCase
             $svg = file_get_contents(JEM_TEST_ROOT . '/media/images/icon-48-' . $name . '.svg');
             self::assertNotFalse(simplexml_load_string($svg));
             self::assertStringContainsString('viewBox="0 0 96 96"', $svg);
-            self::assertStringContainsString('#7295b1', $svg);
-            self::assertStringContainsString('#f69d00', $svg);
+            // SVG optimizers may serialize the same palette as RGB instead of hex.
+            self::assertMatchesRegularExpression('/#7295b1|rgb\\(114,\\s*149,\\s*177\\)/i', $svg);
+            self::assertMatchesRegularExpression('/#f69d00|rgb\\(246,\\s*157,\\s*0\\)/i', $svg);
         }
     }
 }

@@ -90,6 +90,11 @@ final class ExternalCallAllowlistTest extends TestCase
             foreach ($matches[1] as $host) {
                 $host = $this->normaliseHost($host);
 
+                // Fixed JED navigation link, not a server request or tracking endpoint.
+                if ($relative === 'admin/helpers/jedreview.php' && $host === 'extensions.joomla.org') {
+                    self::assertStringContainsString("public const URL = 'https://extensions.joomla.org/extension/jem/';", $contents);
+                    continue;
+                }
                 if ($host !== '' && !isset($allowed[$host])) {
                     $findings[] = $relative . ':' . $host;
                 }

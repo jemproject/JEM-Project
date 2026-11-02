@@ -41,6 +41,16 @@ final class ObfuscationPatternsTest extends TestCase
 
             foreach ($patterns as $label => $pattern) {
                 if (preg_match($pattern, $contents) === 1) {
+                    // Reviewed data decoder for telephone anti-scraping. No executable
+                    // payload: validate the target, then render a tel link and plain text.
+                    if ($relative === 'media/js/contact-protection.js' && $label === 'atob') {
+                        self::assertSame(1, preg_match_all($pattern, $contents));
+                        self::assertStringContainsString('JSON.parse(', $contents);
+                        self::assertStringContainsString("link.href = 'tel:' + payload.target", $contents);
+                        self::assertStringContainsString('link.textContent = payload.label', $contents);
+                        self::assertStringNotContainsString('innerHTML', $contents);
+                        continue;
+                    }
                     $findings[] = $relative . ':' . $label;
                 }
             }

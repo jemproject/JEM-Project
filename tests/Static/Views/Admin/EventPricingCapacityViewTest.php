@@ -110,7 +110,8 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringContainsString('data-role="configuration-overview"', $edit);
         $imageEditor = file_get_contents(JEM_TEST_ROOT . '/admin/layouts/image/editor.php');
         self::assertStringContainsString("getField('image_metadata')", $imageEditor);
-        self::assertStringContainsString('renderSlot($selectField)', $imageEditor);
+        self::assertStringContainsString("renderSlot(\$selectField, 'alt')", $imageEditor);
+        self::assertStringContainsString("renderSlot(\$selectField, 'details')", $imageEditor);
         self::assertStringContainsString("'image.editor'", $edit);
         self::assertStringContainsString('.jem-admin-image-tab .jem-image-upload-layout', $css);
         self::assertStringContainsString('grid-template-columns: 1fr;', $css);

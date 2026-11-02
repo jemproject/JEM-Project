@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingdefaults.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingdiagnostics.class.php';
@@ -609,11 +610,11 @@ class JemControllerHousekeeping extends BaseController
         try {
             $completed = $model->truncateAllData($deleteAttachmentFiles, $deleteImageFiles);
         } catch (JemHousekeepingResetPreflightException $error) {
-            JemHelper::addLogEntry('JEM data reset refused before deletion: ' . $error->getPrevious()->getMessage(), __METHOD__, \Joomla\CMS\Log\Log::ERROR);
+            JemHelper::addLogEntry('JEM data reset refused before deletion: ' . $error->getPrevious()->getMessage(), __METHOD__, Log::ERROR);
             $this->setRedirect($link, Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_PREFLIGHT_FAILED'), 'error');
             return;
         } catch (\Throwable $error) {
-            JemHelper::addLogEntry('Error resetting JEM data: ' . $error->getMessage(), __METHOD__, \Joomla\CMS\Log\Log::ERROR);
+            JemHelper::addLogEntry('Error resetting JEM data: ' . $error->getMessage(), __METHOD__, Log::ERROR);
             $completed = false;
         }
 

@@ -64,8 +64,15 @@ final class FilePermissionGuardTest extends TestCase
         self::assertStringContainsString("JemHelperBackend::canManage('jem.tools.manage')", $contents);
         self::assertStringContainsString('$allowedFolders = array(\'events\', \'venues\', \'categories\')', $contents);
         self::assertStringContainsString('Path::clean($directories[$task])', $contents);
-        self::assertStringContainsString('JemImage::sanitize($base_Dir, $file[\'name\'])', $contents);
-        self::assertStringContainsString('strpos(strtolower($filepath), $baseCheck) !== 0', $contents);
+        // Uploads now delegate filename validation and collision policy. Keep the
+        // boundary checks here and exercise hostile filenames in ImageFilenamePolicyTest.
+        self::assertStringContainsString('JemImageFilenamePolicy::uploadProfile(', $contents);
+        self::assertStringContainsString("is_uploaded_file(\$file['tmp_name'])", $contents);
+        self::assertStringContainsString('if ($filename === false)', $contents);
+        $policy = $this->phpWithoutComments('site/classes/imagefilenamepolicy.class.php');
+        self::assertStringContainsString('self::resolve($folder, (string) $file[\'name\']', $policy);
+        self::assertStringContainsString('JemImage::sanitize($folder, $uploadedName)', $policy);
+        self::assertStringContainsString('self::originalName($uploadedName, $requestedStem)', $policy);
         self::assertStringContainsString('InputFilter::getInstance()->clean($image, \'path\')', $contents);
         self::assertStringContainsString('strpos(strtolower($fullPath), $baseCheck) !== 0', $contents);
     }

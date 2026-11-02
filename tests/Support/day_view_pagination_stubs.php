@@ -211,6 +211,12 @@ namespace {
                     return $key === 'id' ? '20261011' : $default;
                 }
 
+                /** @param string $key Input name. @param mixed $default Fallback. @param string $filter Joomla filter. @return mixed Empty-request value. */
+                public function get(string $key, mixed $default = null, string $filter = 'cmd'): mixed
+                {
+                    return $default;
+                }
+
                 public function getInt(string $key, int $default = 0): int
                 {
                     return $default;
@@ -365,7 +371,18 @@ namespace {
                 return '2026-10-11';
             }
             if ($property === 'Pagination') {
-                return (object) [];
+                return new class {
+                    public array $additionalUrlParams = [];
+
+                    /** @param string $key URL key. @param mixed $value URL value. @return mixed Previous value. */
+                    public function setAdditionalUrlParam(string $key, mixed $value = null): mixed
+                    {
+                        $previous = $this->additionalUrlParams[$key] ?? null;
+                        $this->additionalUrlParams[$key] = $value;
+
+                        return $previous;
+                    }
+                };
             }
 
             throw new \LogicException('Unexpected view request: ' . $property);

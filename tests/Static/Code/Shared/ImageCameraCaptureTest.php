@@ -258,19 +258,20 @@ final class ImageCameraCaptureTest extends TestCase
             $template = $this->read($path);
 
             self::assertStringContainsString('class="jem-image-upload-label"', $template);
-            self::assertStringContainsString("renderSlot('locimage')", $template);
+            self::assertStringContainsString("renderSlot('locimage', 'alt')", $template);
+            self::assertStringContainsString("renderSlot('locimage', 'details')", $template);
             self::assertStringContainsString('jem-image-action-button', $template);
             self::assertStringContainsString('JemImageCamera::resolutionControl(', $template);
             self::assertStringContainsString('jem-image-actions--last', $template);
             self::assertGreaterThan(
                 strpos($template, 'jem-image-preview-stage'),
-                strpos($template, "renderSlot('locimage')"),
+                strpos($template, "renderSlot('locimage', 'details')"),
                 $path . ' must place metadata at the bottom of the image panel'
             );
-            self::assertLessThan(
-                strpos($template, 'jem-image-preview-stage'),
+            self::assertGreaterThan(
+                strpos($template, "renderSlot('locimage', 'details')"),
                 strpos($template, 'jem-image-actions--last'),
-                $path . ' must keep Clear in the field column before the preview'
+                $path . ' must keep Clear after the metadata cards'
             );
         }
 

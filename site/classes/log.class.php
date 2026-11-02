@@ -8,6 +8,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Log\LogEntry;
 use Joomla\CMS\Uri\Uri;
@@ -143,7 +144,7 @@ class JemLog
                 return;
             }
 
-            $layoutPath = \Joomla\CMS\Helper\ModuleHelper::getLayoutPath($type, $layout);
+            $layoutPath = ModuleHelper::getLayoutPath($type, $layout);
             self::$eventslistModuleContext = array(
                 'consumer' => 'module',
                 'module_id' => (int) ($module->id ?? 0),

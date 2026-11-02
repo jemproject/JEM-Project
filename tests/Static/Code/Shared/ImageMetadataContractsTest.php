@@ -14,7 +14,8 @@ final class ImageMetadataContractsTest extends TestCase
         self::assertStringContainsString('.jem-category-overview-panel:has(.jem-image-figure)', $css);
         self::assertStringContainsString('.jem-venue-overview-panel:has(.jem-image-figure)', $css);
         self::assertMatchesRegularExpression('/\\.jem-image-credit--footer\\s*\\{[^}]*width: 100%;/s', $css);
-        self::assertStringContainsString('padding-inline-end: calc(3rem + 5px)', $css);
+        // Section credits now occupy their own full-width row, not the button overlay.
+        self::assertMatchesRegularExpression('/\\.jem-image-credit--footer\\s*\\{[^}]*grid-column: 1 \/ -1;[^}]*box-sizing: border-box;/s', $css);
     }
 
     public function testCreditLabelFlowsThroughAllRenderersAndReset(): void

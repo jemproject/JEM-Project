@@ -168,7 +168,9 @@ final class EventVenueHierarchyContractsTest extends TestCase
         self::assertStringContainsString("setState('filter.venue_id', \$this->getVenueTreeIds", $venueCalendar);
         self::assertStringContainsString('parent_venue_id', $venueCalendar);
         self::assertGreaterThanOrEqual(2, substr_count($venueCalendar, 'applyCalendarDateState()'));
-        self::assertStringContainsString("date('Y-m-d', (int) \$this->_date)", $venueCalendar);
+        self::assertStringContainsString('getCalendarMonthDate($this->_date, true)', $venueCalendar);
+        self::assertStringContainsString("modify('first day of this month')->format('Y-m-01')", $venueCalendar);
+        self::assertStringContainsString("modify('last day of this month')->format('Y-m-d')", $venueCalendar);
 
         $search = $this->read('site/models/search.php');
         self::assertStringContainsString('getEventParentVisibilityWhere', $search);
