@@ -24,6 +24,34 @@ final class JemReminderService
         $this->notifications = new JemNotificationService($this->db);
     }
 
+    /**
+     * Keep distinct positive integer IDs without converting nested form values to ID 1.
+     *
+     * @param mixed $values Submitted reminder IDs, or a single scalar ID.
+     *
+     * @return int[] Valid IDs in selection order; empty and malformed values are ignored.
+     */
+    public static function normaliseDefinitionIds($values): array
+    {
+        if (!is_array($values) && !is_int($values) && !is_string($values)) {
+            return array();
+        }
+
+        $ids = array();
+        foreach ((array) $values as $value) {
+            if (!is_int($value) && !is_string($value)) {
+                continue;
+            }
+
+            $id = filter_var($value, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1)));
+            if ($id !== false) {
+                $ids[] = $id;
+            }
+        }
+
+        return array_values(array_unique($ids));
+    }
+
     public function getDefinitions($publishedOnly = false)
     {
         $query = $this->db->getQuery(true)
@@ -506,7 +534,7 @@ final class JemReminderService
 
     private function loadSelectionDefinitions(array $ids, $eventId)
     {
-        $ids = array_values(array_filter(array_unique(array_map('intval', $ids))));
+        $ids = self::normaliseDefinitionIds($ids);
         if (!$ids) {
             return array();
         }

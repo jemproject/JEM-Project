@@ -12,6 +12,8 @@ use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
+require_once JPATH_SITE . '/components/com_jem/classes/reminderservice.class.php';
+
 class JFormFieldReminderDefinitions extends ListField
 {
     protected $type = 'ReminderDefinitions';
@@ -21,7 +23,7 @@ class JFormFieldReminderDefinitions extends ListField
         $options = array();
         try {
             $db = Factory::getContainer()->get('DatabaseDriver');
-            $selectedIds = array_values(array_filter(array_unique(array_map('intval', (array) $this->value))));
+            $selectedIds = JemReminderService::normaliseDefinitionIds($this->value);
             $selectedSourceIds = array();
             $selectedCodes = array();
             if ($selectedIds) {
@@ -74,7 +76,8 @@ class JFormFieldReminderDefinitions extends ListField
 
     protected function getInput()
     {
+        // Joomla already adds [] to the name of a multiple field.
         return '<input type="hidden" name="' . htmlspecialchars($this->name, ENT_COMPAT, 'UTF-8')
-            . '[]" value="">' . parent::getInput();
+            . '" value="">' . parent::getInput();
     }
 }

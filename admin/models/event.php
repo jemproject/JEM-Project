@@ -29,6 +29,7 @@ require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php'
 require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/reminderservice.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrencevalidator.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrenceexclusions.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/venueaccess.class.php';
@@ -702,7 +703,7 @@ class JemModelEvent extends JemModelAdmin
         $reminderSelectionSubmitted = array_key_exists('reminder_ids', $data)
             || array_key_exists('event_reminders_enabled', $data);
         $eventRemindersEnabled = !empty($data['event_reminders_enabled']);
-        $reminderIds = array_values(array_filter(array_map('intval', (array) ($data['reminder_ids'] ?? array()))));
+        $reminderIds = JemReminderService::normaliseDefinitionIds($data['reminder_ids'] ?? array());
         if (!$eventRemindersEnabled) {
             $reminderIds = array();
         }
