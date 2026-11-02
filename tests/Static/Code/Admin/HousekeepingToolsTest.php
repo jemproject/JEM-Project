@@ -159,7 +159,7 @@ final class HousekeepingToolsTest extends TestCase
         self::assertStringContainsString("' text-danger fw-bold'", $component);
         self::assertStringContainsString("(int) \$inventory['active'] + (int) \$inventory['archived'] + (int) \$inventory['trashed']", $component);
         self::assertStringContainsString("isset(\$inventory['active'], \$inventory['archived'], \$inventory['trashed'])", $component);
-        self::assertStringContainsString('<td colspan="8"', $component);
+        self::assertStringContainsString('<td colspan="9"', $component);
         $header = substr($layout, 0, $start);
         self::assertStringContainsString('<p class="mb-0 mt-2">', $header);
         self::assertSame(4, substr_count($header, '&ndash;'));

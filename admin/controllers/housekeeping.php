@@ -532,6 +532,50 @@ class JemControllerHousekeeping extends BaseController
     }
 
     /**
+     * Removes the registrations of deleted events after the preview, keeping their
+     * history. Unlike "Trigger autoarchive", no event is archived, trashed or deleted.
+     */
+    public function purgeOrphanRegistrations(): void
+    {
+        JemHelper::requirePostToken();
+        $this->allowHousekeeping();
+
+        $app = Factory::getApplication();
+        if (!$app->getIdentity()->authorise('core.admin')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+        if (!JemHelper::consumeActionNonce('housekeeping.purgeOrphanRegistrations', $app->input->post->getString('registrations_nonce', ''))) {
+            throw new \RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+        }
+
+        $url = 'index.php?option=com_jem&view=housekeeping&tool=registrations';
+        $selected = array_filter(array_map('intval', (array) $app->input->post->get('events', array(), 'array')));
+        if (!$selected) {
+            $this->setRedirect($url, Text::_('COM_JEM_HOUSEKEEPING_REGISTRATIONS_NONE_SELECTED'), 'warning');
+            return;
+        }
+
+        try {
+            $result = $this->getModel('housekeeping')->purgeOrphanRegistrations($selected, (int) $app->getIdentity()->id);
+        } catch (\Throwable $error) {
+            JemHelper::addLogEntry('Error removing registrations of deleted events: ' . $error->getMessage(), __METHOD__, Log::ERROR);
+            $this->setRedirect($url, Text::_('COM_JEM_HOUSEKEEPING_REGISTRATIONS_FAILED'), 'error');
+            return;
+        }
+
+        $this->setRedirect(
+            $url,
+            Text::sprintf(
+                'COM_JEM_HOUSEKEEPING_REGISTRATIONS_DONE',
+                (int) $result['registrations'],
+                (int) $result['events'],
+                (int) $result['skipped']
+            ),
+            $result['skipped'] ? 'warning' : 'message'
+        );
+    }
+
+    /**
      * Regenerates event, venue and category thumbnails using current image settings.
      */
     public function resizethumbs() {

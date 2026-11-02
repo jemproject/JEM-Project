@@ -169,6 +169,7 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                                     <th scope="col" class="text-end" data-jem-sort="number"><?php echo Text::_('JARCHIVED'); ?></th>
                                     <th scope="col" class="text-end" data-jem-sort="number"><?php echo Text::_('JTRASHED'); ?></th>
                                     <th scope="col" class="text-end" data-jem-sort="number"><?php echo Text::_('COM_JEM_ATTACHMENT_ORPHANED'); ?></th>
+                                    <th scope="col" class="text-end" data-jem-sort="number"><?php echo Text::_('COM_JEM_TOOLS_MISSING_FILE'); ?></th>
                                     <th scope="col" class="text-end" data-jem-sort="number"><?php echo Text::_('COM_JEM_TOOLS_COUNT'); ?></th>
                                 </tr>
                             </thead>
@@ -180,22 +181,27 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                                     'types' => 'COM_JEM_TYPES',
                                     'special_days' => 'COM_JEM_SPECIAL_DAYS',
                                     'attachments' => 'COM_JEM_ATTACHMENTS',
+                                    'registrations' => 'COM_JEM_TOOLS_REGISTRATIONS',
                                 ) as $kind => $label) : ?>
                                     <?php $inventory = $this->diagnosticReport['inventory'][$kind] ?? null; ?>
+                                    <?php $stored = $kind === 'attachments' || $kind === 'registrations'; ?>
+                                    <?php $findingsUrl = 'index.php?option=com_jem&view=housekeeping&tool=diagnostics&report=' . (int) $this->diagnosticStored['id'] . '&severity='; ?>
                                     <tr data-jem-sort-id="<?php echo (int) ($inventory['last_id'] ?? 0); ?>">
                                         <th scope="row">
                                             <?php echo Text::_($label); ?>
                                         </th>
                                         <?php if ($inventory === null) : ?>
-                                            <td colspan="8" class="text-end text-muted"><?php echo Text::_('COM_JEM_TOOLS_RERUN_INVENTORY'); ?></td>
+                                            <td colspan="9" class="text-end text-muted"><?php echo Text::_('COM_JEM_TOOLS_RERUN_INVENTORY'); ?></td>
                                         <?php else : ?>
                                             <td class="text-nowrap">
-                                                <span class="<?php echo $kind === 'attachments' ? 'icon-file text-secondary' : 'icon-publish text-success'; ?> me-1" aria-hidden="true"></span>
-                                                <?php echo Text::_($kind === 'attachments' ? 'COM_JEM_TOOLS_STORED' : 'COM_JEM_PUBLISHED'); ?>
+                                                <span class="<?php echo $stored ? 'icon-file text-secondary' : 'icon-publish text-success'; ?> me-1" aria-hidden="true"></span>
+                                                <?php echo Text::_($stored ? 'COM_JEM_TOOLS_STORED' : 'COM_JEM_PUBLISHED'); ?>
                                             </td>
                                             <td class="text-end">
                                                 <?php if (!array_key_exists('last_id', $inventory)) : ?>
                                                     <?php echo Text::_('COM_JEM_TOOLS_RERUN_INVENTORY'); ?>
+                                                <?php elseif ($kind === 'registrations' && (int) $inventory['last_id'] > 0) : ?>
+                                                    #<?php echo (int) $inventory['last_id']; ?>
                                                 <?php elseif ((int) $inventory['last_id'] > 0) : ?>
                                                     <?php $editTasks = array('events' => 'event', 'categories' => 'category', 'venues' => 'venue', 'types' => 'type', 'special_days' => 'specialday', 'attachments' => 'attachment'); ?>
                                                     <a href="<?php echo $escape(Route::_('index.php?option=com_jem&task=' . $editTasks[$kind] . '.edit&id=' . (int) $inventory['last_id'], false)); ?>">#<?php echo (int) $inventory['last_id']; ?></a>
@@ -208,10 +214,21 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                                             <td class="text-end"><?php echo isset($inventory['archived']) ? (int) $inventory['archived'] : '&mdash;'; ?></td>
                                             <td class="text-end"><?php echo isset($inventory['trashed']) ? (int) $inventory['trashed'] : '&mdash;'; ?></td>
                                             <td class="text-end<?php echo $kind === 'attachments' && !empty($inventory['orphaned']) ? ' text-danger fw-bold' : ''; ?>">
-                                                <?php echo $kind === 'attachments' && isset($inventory['orphaned']) ? (int) $inventory['orphaned'] : '&mdash;'; ?>
+                                                <?php if ($kind === 'registrations' && !empty($inventory['orphaned'])) : ?>
+                                                    <a class="text-warning fw-bold" href="<?php echo $escape(Route::_($findingsUrl . 'warning#jem-diagnostic-results', false)); ?>"><?php echo (int) $inventory['orphaned']; ?></a>
+                                                <?php else : ?>
+                                                    <?php echo $stored && isset($inventory['orphaned']) ? (int) $inventory['orphaned'] : '&mdash;'; ?>
+                                                <?php endif; ?>
                                             </td>
                                             <td class="text-end">
-                                                <?php echo $kind === 'attachments'
+                                                <?php if (!empty($inventory['missing'])) : ?>
+                                                    <a class="text-warning fw-bold" href="<?php echo $escape(Route::_($findingsUrl . 'warning#jem-diagnostic-results', false)); ?>"><?php echo (int) $inventory['missing']; ?></a>
+                                                <?php else : ?>
+                                                    <?php echo isset($inventory['missing']) ? (int) $inventory['missing'] : '&mdash;'; ?>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="text-end">
+                                                <?php echo $stored
                                                     ? (int) $inventory['total']
                                                     : (isset($inventory['active'], $inventory['archived'], $inventory['trashed'])
                                                         ? (int) $inventory['active'] + (int) $inventory['archived'] + (int) $inventory['trashed']

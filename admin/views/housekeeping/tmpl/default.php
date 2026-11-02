@@ -202,6 +202,13 @@ $profileLabels = static function (array $profiles) {
                     </a></div></td>
                     <td><h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_FILES'); ?></h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_FILES_TOOL_DESC'); ?></td>
                 </tr>
+                <!-- REVIEW REGISTRATIONS OF DELETED EVENTS -->
+                <tr>
+                    <td><div class="linkicon"><a href="<?php echo Route::_('index.php?option=com_jem&view=housekeeping&tool=registrations'); ?>">
+                        <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleancatseventrels.svg', Text::_('COM_JEM_HOUSEKEEPING_REGISTRATIONS'), null, true); ?>
+                    </a></div></td>
+                    <td><h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_REGISTRATIONS'); ?></h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_REGISTRATIONS_TOOL_DESC'); ?></td>
+                </tr>
                 <!-- CLEAN EVENT IMG -->
                 <tr>
                     <td>

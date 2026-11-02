@@ -1064,6 +1064,157 @@ class JemModelHousekeeping extends BaseDatabaseModel
         return $types[$area];
     }
 
+    /**
+     * JEM records and event links whose image file is missing. Read only.
+     * Uses the same path rules as "Regenerate thumbnails" (per-record image folders).
+     *
+     * @return array List of: entity (event|venue|category|link), id, event_id, title, file.
+     */
+    public function getMissingImageReferences(): array
+    {
+        $missing = array();
+        foreach ($this->getImageProfileAssignments(JemHelper::config()) as $assignment) {
+            $invalid = !empty($assignment['invalid_reference']);
+            if (!$invalid && is_file($assignment['source'])) {
+                continue;
+            }
+            $file = $invalid ? (string) $assignment['reference'] : self::siteRelative((string) $assignment['source']);
+            foreach ($assignment['uses'] as $use) {
+                $missing[] = array(
+                    'entity' => (string) $use['entity'],
+                    'id' => (int) $use['id'],
+                    'event_id' => 0,
+                    'title' => (string) $use['title'],
+                    'file' => $file,
+                );
+            }
+        }
+
+        $query = $this->_db->getQuery(true)
+            ->select($this->_db->quoteName(array('id', 'event_id', 'title', 'params')))
+            ->from($this->_db->quoteName('#__jem_links'))
+            ->where($this->_db->quoteName('params') . ' LIKE ' . $this->_db->quote('%"image"%'));
+        $this->_db->setQuery($query);
+        foreach ((array) $this->_db->loadObjectList() as $link) {
+            $params = json_decode((string) $link->params, true);
+            $image = is_array($params) ? trim((string) ($params['image'] ?? '')) : '';
+            $fragment = strpos($image, '#joomlaImage://');
+            if ($fragment !== false) {
+                $image = substr($image, 0, $fragment);
+            }
+            $image = ltrim(rawurldecode(str_replace('\\', '/', $image)), '/');
+            // External images cannot be checked here.
+            if ($image === '' || preg_match('#^[a-z][a-z0-9+.-]*:#i', $image) || str_starts_with((string) $params['image'], '//')) {
+                continue;
+            }
+            if (!self::containedExistingFile(JPATH_SITE, $image)) {
+                $missing[] = array(
+                    'entity' => 'link',
+                    'id' => (int) $link->id,
+                    'event_id' => (int) $link->event_id,
+                    'title' => (string) $link->title,
+                    'file' => $image,
+                );
+            }
+        }
+
+        return $missing;
+    }
+
+    private static function siteRelative(string $path): string
+    {
+        $path = str_replace('\\', '/', $path);
+        $site = rtrim(str_replace('\\', '/', JPATH_SITE), '/') . '/';
+
+        return str_starts_with($path, $site) ? substr($path, strlen($site)) : basename($path);
+    }
+
+    /**
+     * Registrations whose event no longer exists. Read only.
+     *
+     * @return array Event ID => number of registrations.
+     */
+    public function getOrphanRegistrations(): array
+    {
+        $query = $this->_db->getQuery(true)
+            ->select($this->_db->quoteName('r.event'))
+            ->select('COUNT(*) AS ' . $this->_db->quoteName('total'))
+            ->from($this->_db->quoteName('#__jem_register', 'r'))
+            ->join('LEFT', $this->_db->quoteName('#__jem_events', 'e') . ' ON ' . $this->_db->quoteName('e.id') . ' = ' . $this->_db->quoteName('r.event'))
+            ->where($this->_db->quoteName('e.id') . ' IS NULL')
+            ->group($this->_db->quoteName('r.event'))
+            ->order($this->_db->quoteName('r.event') . ' ASC');
+        $this->_db->setQuery($query);
+
+        $orphans = array();
+        foreach ((array) $this->_db->loadObjectList() as $row) {
+            $orphans[(int) $row->event] = (int) $row->total;
+        }
+
+        return $orphans;
+    }
+
+    /**
+     * Registration detail rows (price lines, capacity allocations) whose registration
+     * no longer exists. Read only and informational.
+     *
+     * @return array Table name => number of rows.
+     */
+    public function getOrphanRegistrationDetails(): array
+    {
+        $details = array();
+        foreach (array('#__jem_register_items', '#__jem_register_capacity_allocations') as $table) {
+            $query = $this->_db->getQuery(true)
+                ->select('COUNT(*)')
+                ->from($this->_db->quoteName($table, 'c'))
+                ->join('LEFT', $this->_db->quoteName('#__jem_register', 'r') . ' ON ' . $this->_db->quoteName('r.id') . ' = ' . $this->_db->quoteName('c.register_id'))
+                ->where($this->_db->quoteName('r.id') . ' IS NULL');
+            try {
+                $details[$table] = (int) $this->_db->setQuery($query)->loadResult();
+            } catch (\Throwable $error) {
+                // Older schemas do not have these tables.
+            }
+        }
+
+        return $details;
+    }
+
+    /**
+     * Remove the registrations of deleted events, as the automatic cleanup does, without
+     * changing any event. JemRegistrationService keeps the history of every removed row.
+     * Event IDs that are no longer orphaned are skipped.
+     *
+     * @return array events, registrations, skipped
+     */
+    public function purgeOrphanRegistrations(array $eventIds, int $actorId): array
+    {
+        $orphans = $this->getOrphanRegistrations();
+        $service = new JemRegistrationService($this->_db);
+        $result = array('events' => 0, 'registrations' => 0, 'skipped' => 0);
+
+        foreach (array_unique(array_map('intval', $eventIds)) as $eventId) {
+            if (!isset($orphans[$eventId])) {
+                $result['skipped']++;
+                continue;
+            }
+            $result['registrations'] += (int) $service->purgeForEvent($eventId, array(
+                'actorId'    => $actorId,
+                'source'     => 'admin.housekeeping',
+                'reasonCode' => 'legacy_orphan_cleanup',
+            ));
+            $result['events']++;
+        }
+
+        JemHelper::addLogEntry(sprintf(
+            'Housekeeping removed %d registration(s) of %d deleted event(s), %d skipped.',
+            $result['registrations'],
+            $result['events'],
+            $result['skipped']
+        ), __METHOD__, Log::INFO);
+
+        return $result;
+    }
+
     /** Compare names as the hosting filesystem does, while retaining original paths for deletion. */
     private static function unassignedImages(array $available, array $assigned): array
     {

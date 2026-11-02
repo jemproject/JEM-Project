@@ -20,6 +20,9 @@ require_once __DIR__ . '/housekeepingoverrides.class.php';
  */
 final class JemHousekeepingDiagnostics
 {
+    /** Missing-file findings listed one by one; the rest are counted in one line. */
+    private const FILE_LINES_LIMIT = 50;
+
     private DatabaseDriver $db;
 
     private array $frontendSource = array();
@@ -51,15 +54,15 @@ final class JemHousekeepingDiagnostics
             'inventory' => array(
                 'events' => array(
                     'total' => 0, 'active' => 0, 'public' => 0, 'private' => 0,
-                    'archived' => 0, 'trashed' => 0, 'last_id' => 0,
+                    'archived' => 0, 'trashed' => 0, 'last_id' => 0, 'missing' => 0,
                 ),
                 'categories' => array(
                     'total' => 0, 'active' => 0, 'public' => 0, 'private' => 0,
-                    'archived' => 0, 'trashed' => 0, 'last_id' => 0,
+                    'archived' => 0, 'trashed' => 0, 'last_id' => 0, 'missing' => 0,
                 ),
                 'venues' => array(
                     'total' => 0, 'active' => 0, 'public' => 0, 'private' => 0,
-                    'archived' => 0, 'trashed' => 0, 'last_id' => 0,
+                    'archived' => 0, 'trashed' => 0, 'last_id' => 0, 'missing' => 0,
                 ),
                 'types' => array(
                     'total' => 0, 'active' => 0, 'archived' => 0, 'trashed' => 0, 'last_id' => 0,
@@ -68,7 +71,8 @@ final class JemHousekeepingDiagnostics
                     'total' => 0, 'active' => 0, 'public' => 0, 'private' => 0,
                     'archived' => 0, 'trashed' => 0, 'last_id' => 0,
                 ),
-                'attachments' => array('total' => 0, 'orphaned' => 0, 'last_id' => 0),
+                'attachments' => array('total' => 0, 'orphaned' => 0, 'missing' => 0, 'last_id' => 0),
+                'registrations' => array('total' => 0, 'orphaned' => 0, 'last_id' => 0),
             ),
             'module_items' => array(),
             'plugin_items' => array(),
@@ -97,6 +101,8 @@ final class JemHousekeepingDiagnostics
                 'special_days' => 'checkSpecialDaysInventory',
                 'overrides' => 'checkOverrides',
                 'frontend' => 'checkFrontendReadiness',
+                'files' => 'checkFiles',
+                'registrations' => 'checkRegistrations',
             ) as $area => $method) {
                 try {
                     if ($area === 'menus' || $area === 'content') {
@@ -1161,6 +1167,130 @@ final class JemHousekeepingDiagnostics
                 $report['inventory'][$kind]['active'] = (int) ($counts['active'] ?? 0);
                 $report['inventory'][$kind]['archived'] = (int) ($counts['archived'] ?? 0);
                 $report['inventory'][$kind]['trashed'] = (int) ($counts['trashed'] ?? 0);
+            }
+        }
+    }
+
+    /**
+     * Records that refer to an image or attachment file that does not exist. Read only;
+     * the report carries record IDs and file paths only.
+     */
+    private function checkFiles(array &$report): void
+    {
+        require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/housekeeping.php';
+        require_once __DIR__ . '/housekeepingfiles.class.php';
+
+        $missing = (new JemModelHousekeeping())->getMissingImageReferences();
+
+        $base = (new JemHousekeepingFiles($this->db))->attachmentBase();
+        if ($base !== '') {
+            $query = $this->db->getQuery(true)
+                ->select($this->db->quoteName(array('id', 'object', 'file')))
+                ->from($this->db->quoteName('#__jem_attachments'));
+            $this->db->setQuery($query);
+            foreach ((array) $this->db->loadObjectList() as $attachment) {
+                $relative = (string) $attachment->object . '/' . (string) $attachment->file;
+                $path = $base . '/' . $relative;
+                if ((string) $attachment->file === '' || str_contains($relative, '..') || !is_file($path)) {
+                    $missing[] = array(
+                        'entity' => 'attachment',
+                        'id' => (int) $attachment->id,
+                        'event_id' => 0,
+                        'title' => (string) $attachment->object,
+                        'file' => $relative,
+                    );
+                }
+            }
+        }
+
+        $kinds = array(
+            'event' => array('events', 'index.php?option=com_jem&task=event.edit&id=', 'COM_JEM_TOOLS_OPEN_EVENT', 'COM_JEM_TOOLS_SUBJECT_EVENT'),
+            'link' => array('events', 'index.php?option=com_jem&task=event.edit&id=', 'COM_JEM_TOOLS_OPEN_EVENT', 'COM_JEM_TOOLS_SUBJECT_EVENT'),
+            'venue' => array('venues', 'index.php?option=com_jem&task=venue.edit&id=', 'COM_JEM_TOOLS_OPEN_VENUE', 'COM_JEM_TOOLS_SUBJECT_VENUE'),
+            'category' => array('categories', 'index.php?option=com_jem&task=category.edit&id=', 'COM_JEM_TOOLS_OPEN_CATEGORY', 'COM_JEM_TOOLS_SUBJECT_CATEGORY'),
+            'attachment' => array('attachments', 'index.php?option=com_jem&task=attachment.edit&id=', 'COM_JEM_TOOLS_OPEN_ATTACHMENT', 'COM_JEM_TOOLS_SUBJECT_ATTACHMENT'),
+        );
+        foreach ($missing as $index => $item) {
+            list($inventory, $url, $label, $subject) = $kinds[$item['entity']];
+            $report['inventory'][$inventory]['missing'] = (int) ($report['inventory'][$inventory]['missing'] ?? 0) + 1;
+            if ($index >= self::FILE_LINES_LIMIT) {
+                continue;
+            }
+            // Event links are fixed in their event.
+            $target = $item['entity'] === 'link' ? $item['event_id'] : $item['id'];
+            $code = 'COM_JEM_TOOLS_FILE_MISSING_' . strtoupper($item['entity']);
+            $this->add(
+                $report,
+                'warning',
+                Text::sprintf($code, $item['title'], $item['id'], $item['file'], $item['event_id']),
+                Text::_($item['entity'] === 'attachment' ? 'COM_JEM_TOOLS_RECOMMEND_ATTACHMENT_FILE_MISSING' : 'COM_JEM_TOOLS_RECOMMEND_FILE_MISSING'),
+                $url . (int) $target,
+                $label,
+                Text::sprintf($subject, $target),
+                $code
+            );
+        }
+        if (count($missing) > self::FILE_LINES_LIMIT) {
+            $this->add(
+                $report,
+                'warning',
+                Text::sprintf('COM_JEM_TOOLS_FILE_MISSING_MORE', count($missing) - self::FILE_LINES_LIMIT),
+                '',
+                '',
+                '',
+                'JEM',
+                'COM_JEM_TOOLS_FILE_MISSING_MORE'
+            );
+        }
+    }
+
+    /**
+     * Registrations whose event no longer exists, and registration details without a
+     * registration. Read only: registrations hold personal data, so the report carries
+     * IDs and counts only, never names or e-mail addresses.
+     */
+    private function checkRegistrations(array &$report): void
+    {
+        require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/housekeeping.php';
+
+        $query = $this->db->getQuery(true)
+            ->select('COUNT(*) AS ' . $this->db->quoteName('total'))
+            ->select('COALESCE(MAX(' . $this->db->quoteName('id') . '), 0) AS ' . $this->db->quoteName('last_id'))
+            ->from($this->db->quoteName('#__jem_register'));
+        $this->db->setQuery($query);
+        $counts = (array) $this->db->loadAssoc();
+        $report['inventory']['registrations']['total'] = (int) ($counts['total'] ?? 0);
+        $report['inventory']['registrations']['last_id'] = (int) ($counts['last_id'] ?? 0);
+
+        $model = new JemModelHousekeeping();
+        $orphans = $model->getOrphanRegistrations();
+        if ($orphans) {
+            $rows = array_sum($orphans);
+            $report['inventory']['registrations']['orphaned'] = $rows;
+            $this->add(
+                $report,
+                'warning',
+                Text::sprintf('COM_JEM_TOOLS_REGISTRATIONS_EVENT_MISSING', $rows, count($orphans), implode(', ', array_slice(array_keys($orphans), 0, 10))),
+                Text::_('COM_JEM_TOOLS_RECOMMEND_REGISTRATIONS_EVENT_MISSING'),
+                'index.php?option=com_jem&view=housekeeping&tool=registrations',
+                'COM_JEM_TOOLS_OPEN_REGISTRATION_CLEANUP',
+                'JEM',
+                'COM_JEM_TOOLS_REGISTRATIONS_EVENT_MISSING'
+            );
+        }
+
+        foreach ($model->getOrphanRegistrationDetails() as $table => $total) {
+            if ($total > 0) {
+                $this->add(
+                    $report,
+                    'warning',
+                    Text::sprintf('COM_JEM_TOOLS_REGISTRATION_DETAILS_ORPHANED', $total, $table),
+                    Text::_('COM_JEM_TOOLS_RECOMMEND_REGISTRATION_DETAILS_ORPHANED'),
+                    '',
+                    '',
+                    'JEM',
+                    'COM_JEM_TOOLS_REGISTRATION_DETAILS_ORPHANED'
+                );
             }
         }
     }

@@ -108,6 +108,14 @@ class JemViewHousekeeping extends JemAdminView
             $this->filesRun = is_array($run) && ($run['area'] ?? '') === $this->filesArea ? (array) $run['lines'] : array();
             $app->setUserState('com_jem.housekeeping.files_run', null);
             $this->setLayout('files');
+        } elseif ($this->tool === 'registrations') {
+            $model = $this->getModel();
+            $this->registrationOrphans = $model->getOrphanRegistrations();
+            $this->registrationDetails = $model->getOrphanRegistrationDetails();
+            $this->registrationPurgeAllowed = $app->getIdentity()->authorise('core.admin');
+            $this->registrationNonce = $this->registrationPurgeAllowed && $this->registrationOrphans
+                ? JemHelper::issueActionNonce('housekeeping.purgeOrphanRegistrations') : '';
+            $this->setLayout('registrations');
         } elseif ($this->tool === 'images') {
             $this->imageRun = $app->getUserState('com_jem.housekeeping.image_run', null);
             $this->setLayout('images');
