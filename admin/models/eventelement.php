@@ -59,28 +59,29 @@ class JemModelEventelement extends BaseDatabaseModel
     }
 
     /**
-     * Method to get categories item data
+     * Get event selector rows with their current categories.
      *
      * @access public
-     * @return array
+     * @return array|false|null
      */
     public function getData()
     {
-        // Lets load the content if it doesn't already exist
-        if (empty($this->_data))
-        {
+        // An empty array is a loaded result; non-array fetch failures may be retried.
+        if (!is_array($this->_data)) {
             $query = $this->_buildQuery();
             $this->_data = $this->_getList($query, $this->getState('limitstart'), $this->getState('limit'));
 
             if (is_array($this->_data)) {
-                foreach ($this->_data as $item) {
+                foreach ($this->_data as $i => $item) {
                     $item->categories = $this->getCategories($item->id);
 
-                    //remove events without categories (users have no access to them)
+                    // Omit rows whose second category lookup no longer returns any categories.
                     if (empty($item->categories)) {
                         unset($this->_data[$i]);
                     }
                 }
+
+                $this->_data = array_values($this->_data);
             }
         }
 
