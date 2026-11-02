@@ -52,12 +52,12 @@ abstract class ModJemWideHelper
         # -2: trashed
 
         $type = (int)$params->get('type');
-        $offset_hours = (int)$params->get('offset_hours', 0);
+        $offset_hours = $params->get('offset_hours', 0);
         $max_title_length = (int)$params->get('cuttitle', '25');
 
         # all upcoming or unfinished events
         if (($type == 0) || ($type == 1)) {
-            $offset_minutes = $offset_hours * 60;
+            $offset_minutes = JemHelper::normaliseHourOffsetMinutes($offset_hours);
 
             $model->setState('filter.published',1);
             $model->setState('filter.orderby',array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));

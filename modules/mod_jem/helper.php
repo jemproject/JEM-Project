@@ -81,7 +81,7 @@ abstract class ModJemHelper
             $model->setState('filter.published',1);
             $model->setState('filter.orderby',array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
-            $offset_minutes = 60 * $params->get('offset_hours', 0);
+            $offset_minutes = JemHelper::normaliseHourOffsetMinutes($params->get('offset_hours', 0));
 
             $cal_from = '(' . JemHelper::getEventDateTimeWhere('start', '>', $offset_minutes);
             $cal_from .= ($type == 1)

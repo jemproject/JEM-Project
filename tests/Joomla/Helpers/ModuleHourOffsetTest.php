@@ -17,6 +17,71 @@ final class ModuleHourOffsetTest extends TestCase
     private string $serverTimezone;
 
     /**
+     * Provide valid decimal inputs and malformed persisted module parameters.
+     *
+     * @return iterable Configured hours and expected whole minutes.
+     */
+    public static function configuredOffsets(): iterable
+    {
+        foreach ([
+            [0, 0], ['', 0], ['  ', 0], [null, 0], ['abc', 0],
+            ['1.5', 90], ['1,5', 90], [-1.5, -90], [' -1,5 ', -90],
+            ['+2', 120], ['.5', 30], [',5', 30], ['1.15', 69],
+            ['0.01', 1], ['-0.01', -1], ['2abc', 0], ['1,2,3', 0],
+            ['1e309', 0], [INF, 0], [NAN, 0], [[], 0], [true, 0],
+            [new stdClass(), 0], [PHP_INT_MAX, 0], ['999999999999999999999999999999', 0],
+        ] as $index => $case) {
+            yield 'input ' . $index => $case;
+        }
+    }
+
+    /**
+     * Exercise production parsing without PHP warnings, implicit casts or overflow.
+     *
+     * @param mixed $hours Configured input.
+     * @param int $expected Whole-minute result.
+     * @return void
+     */
+    #[DataProvider('configuredOffsets')]
+    public function testConfiguredOffsetParsing($hours, int $expected): void
+    {
+        self::assertSame($expected, JemHelper::normaliseHourOffsetMinutes($hours));
+    }
+
+    /**
+     * Verify fractional hours around midnight, DST, and invalid legacy input.
+     *
+     * @return iterable Reference instant, raw input and expected local date.
+     */
+    public static function fractionalDates(): iterable
+    {
+        yield ['2026-10-29 22:45:00', '1,5', '2026-10-30'];
+        yield ['2026-10-29 22:45:00', '1.5', '2026-10-30'];
+        yield ['2026-10-29 01:15:00', '-1,5', '2026-10-28'];
+        yield ['2026-03-29 00:15:00', '-0.5', '2026-03-28'];
+        yield ['2026-03-29 01:45:00', '22', '2026-03-30'];
+        yield ['2026-10-25 00:15:00', '24.5', '2026-10-25'];
+        yield ['2026-10-29 22:45:00', 'abc', '2026-10-29'];
+        yield ['2026-10-29 22:45:00', '2abc', '2026-10-29'];
+        yield ['2026-10-29 22:45:00', [], '2026-10-29'];
+    }
+
+    /**
+     * Execute the real date helper, preserving the supplied clock and Joomla timezone.
+     *
+     * @param string $reference Local reference time.
+     * @param mixed $hours Configured input.
+     * @param string $expected Local calendar date.
+     * @return void
+     */
+    #[DataProvider('fractionalDates')]
+    public function testFractionalToday(string $reference, $hours, string $expected): void
+    {
+        $clock = new DateTimeImmutable($reference, new DateTimeZone('Europe/Madrid'));
+        self::assertSame($expected, JemHelper::getJoomlaDateWithHourOffset($hours, $clock));
+    }
+
+    /**
      * Load source through a read-only installation mapping, without booting an installed site.
      *
      * @return void
