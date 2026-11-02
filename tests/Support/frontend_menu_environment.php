@@ -51,6 +51,16 @@ final class Route
     }
 }
 
+/** Export URL policy is tested separately; keep breadcrumb fixture dependencies isolated. */
+final class JemOutput
+{
+    /** @param string $url Internal export URL. @return string Unchanged URL. */
+    public static function prepareExportLink(string $url): string
+    {
+        return $url;
+    }
+}
+
 /** Pathway boundary mirroring Joomla's behavior for absent entries. */
 final class Pathway
 {

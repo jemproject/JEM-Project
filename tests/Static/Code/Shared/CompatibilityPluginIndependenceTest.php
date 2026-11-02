@@ -50,6 +50,12 @@ final class CompatibilityPluginIndependenceTest extends TestCase
         foreach ($this->runtimePhpFiles() as $path) {
             $code = (string) file_get_contents($path);
 
+            // Fully qualified PHPDoc types are documentation, not runtime calls.
+            $code = implode('', array_map(static function ($token): string {
+                return is_array($token)
+                    ? (in_array($token[0], [T_COMMENT, T_DOC_COMMENT], true) ? '' : $token[1])
+                    : $token;
+            }, token_get_all($code)));
             if (preg_match('/\\\\Joomla\\\\(?:CMS|Filesystem|Registry|Utilities|String|DI|Event|Component)\\\\/', $code) === 1) {
                 $offenders[] = $this->relativePath($path);
             }

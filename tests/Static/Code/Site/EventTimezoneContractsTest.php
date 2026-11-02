@@ -278,6 +278,6 @@ final class EventTimezoneContractsTest extends TestCase
         $path = JEM_TEST_ROOT . $relativePath;
         self::assertFileExists($path);
 
-        return (string) file_get_contents($path);
+        return str_replace("\r\n", "\n", (string) file_get_contents($path));
     }
 }

@@ -33,7 +33,7 @@ final class Joomla6CompatibilityTest extends TestCase
                 'changelog' => 'https://www.joomlaeventmanager.net/project/changelog-jem#jem4-tab',
                 'note_link' => '[JEM 4.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem4-tab)',
             ),
-            '5.0.1' => array(
+            '5.0.2' => array(
                 'platform' => '^(5\.[4-9].*|6\..*)$',
                 'changelog' => 'https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab',
                 'note_link' => '[JEM 5.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab)',
@@ -58,13 +58,13 @@ final class Joomla6CompatibilityTest extends TestCase
         self::assertSame('8.3', (string) $updates->update[2]->php_minimum);
     }
 
-    public function testBetaReleaseNotesAreStoredInTheComponentAndPackageManifests(): void
+    public function testReleaseNotesAreStoredInTheComponentAndPackageManifests(): void
     {
         foreach (array('/jem.xml', '/package/pkg_jem.xml') as $relativePath) {
             $manifest = simplexml_load_file(JEM_TEST_ROOT . $relativePath);
 
             self::assertNotFalse($manifest);
-            self::assertSame('5.0.2rc2', (string) $manifest->version);
+            self::assertSame('5.0.2', (string) $manifest->version);
             self::assertCount(38, explode(';', (string) $manifest->notes));
             self::assertStringContainsString('guided, non-overwriting migration', (string) $manifest->notes);
             self::assertStringContainsString('Issue #2242', (string) $manifest->notes);

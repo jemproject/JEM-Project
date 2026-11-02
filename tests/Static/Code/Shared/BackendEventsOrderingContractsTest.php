@@ -43,9 +43,14 @@ final class BackendEventsOrderingContractsTest extends TestCase
         self::assertNotFalse($manifest);
         self::assertSame(1, preg_match('/^(\d+\.\d+\.\d+)/', (string) $manifest->version, $matches));
 
-        $update = (string) file_get_contents(
-            JEM_TEST_ROOT . '/admin/sql/updates/mysql/' . $matches[1] . '.sql'
-        );
+        // Defaults introduced in 5.0.1 need not be reinserted in every later SQL.
+        // Check the complete applicable migration chain, not only the last file.
+        $update = '';
+        foreach (glob(JEM_TEST_ROOT . '/admin/sql/updates/mysql/*.sql') as $file) {
+            if (version_compare(basename($file, '.sql'), $matches[1], '<=')) {
+                $update .= file_get_contents($file);
+            }
+        }
 
         foreach (array($install, $update) as $sql) {
             self::assertStringContainsString("('backend_events_order', 'a.dates')", $sql);
