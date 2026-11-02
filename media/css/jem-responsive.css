@@ -127,6 +127,7 @@ body.com_jem.body-overlayed {
 
 #jem .jem-event-state-badge--postponed,
 #jem .jem-event-state-badge--preorder,
+#jem .jem-event-state-badge--last-places,
 #jem .jem-event-state-badge--waitinglist {
     background: #b55b00;
 }

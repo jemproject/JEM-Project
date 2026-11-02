@@ -40,6 +40,7 @@ $eventStatusOptions = array(
 
 $ticketAvailabilityOptions = array(
     'instock'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_INSTOCK', 'icon' => 'fa fa-check-circle', 'class' => 'bg-success'),
+    'limited'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_LAST_PLACES', 'icon' => 'fa fa-hourglass-half', 'class' => 'bg-warning text-dark'),
     'preorder' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'icon' => 'fa fa-hourglass-half', 'class' => 'bg-warning text-dark'),
     'soldout'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'icon' => 'fa fa-times-circle', 'class' => 'bg-danger'),
 );

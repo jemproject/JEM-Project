@@ -39,6 +39,7 @@ $eventStatusOptions = array(
 );
 $ticketAvailabilityOptions = array(
     'instock'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_INSTOCK', 'class' => 'jem-event-state-badge--available'),
+    'limited'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_LAST_PLACES', 'class' => 'jem-event-state-badge--last-places'),
     'preorder' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'class' => 'jem-event-state-badge--preorder'),
     'soldout'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'class' => 'jem-event-state-badge--soldout'),
     'waitinglist' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_WAITINGLIST', 'class' => 'jem-event-state-badge--waitinglist'),

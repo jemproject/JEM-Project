@@ -272,6 +272,7 @@
             filter="cmd"
         >
             <option value="instock">COM_JEM_EVENT_AVAILABILITY_INSTOCK</option>
+            <option value="limited">COM_JEM_EVENT_AVAILABILITY_LAST_PLACES</option>
             <option value="preorder">COM_JEM_EVENT_AVAILABILITY_PREORDER</option>
             <option value="soldout">COM_JEM_EVENT_AVAILABILITY_SOLDOUT</option>
         </field>

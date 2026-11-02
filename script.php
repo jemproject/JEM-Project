@@ -446,6 +446,7 @@ class com_jemInstallerScript
             'module_status_ribbon_position' => 'diagonal_ascending',
             'module_status_ribbon_scale' => '100',
             'module_status_ribbon_side_margin' => '0',
+            'module_status_last_places_mode' => 'places',
             'module_status_last_places_threshold' => '10',
             'module_status_new_days' => '7',
             'module_status_active_cancelled' => '1',

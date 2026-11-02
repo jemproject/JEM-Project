@@ -226,6 +226,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_r
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_ribbon_position', 'diagonal_ascending');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_ribbon_scale', '100');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_ribbon_side_margin', '0');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_last_places_mode', 'places');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_last_places_threshold', '10');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_new_days', '7');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_active_cancelled', '1');

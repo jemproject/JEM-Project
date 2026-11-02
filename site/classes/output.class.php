@@ -25,6 +25,7 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/administrator/components/com_jem/helpers/html/jemhtml.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/map.php');
 require_once __DIR__ . '/venuemappolicy.class.php';
+require_once __DIR__ . '/ticketavailability.class.php';
 
 // HTMLHelper::addIncludePath(JPATH_SITE . '/administrator/components/com_jem/helpers/html');
 
@@ -1782,28 +1783,22 @@ static public function lightbox() {
         return $output;
     }
 
-    static public function getEffectiveTicketAvailability($event)
+    /**
+     * Resolve the public availability label without changing registration eligibility.
+     *
+     * @param object $event Event and confirmed registration totals.
+     * @param object|null $settings Shared last-places settings; defaults to JEM configuration.
+     * @param int|null $now Timestamp used to evaluate the registration window.
+     *
+     * @return string Effective manual or calculated availability state.
+     */
+    static public function getEffectiveTicketAvailability($event, $settings = null, $now = null)
     {
-        $validAvailabilities = array('instock', 'preorder', 'soldout');
-        $ticketAvailability = !empty($event->ticket_availability) && in_array($event->ticket_availability, $validAvailabilities, true) ? $event->ticket_availability : 'instock';
-
-        if ($ticketAvailability !== 'instock') {
-            return $ticketAvailability;
-        }
-
-        $maxplaces = isset($event->maxplaces) ? (int) $event->maxplaces : 0;
-        if ($maxplaces <= 0) {
-            return 'instock';
-        }
-
-        $booked = isset($event->booked) ? (int) $event->booked : (isset($event->regCount) ? (int) $event->regCount : 0);
-        $reserved = isset($event->reservedplaces) ? (int) $event->reservedplaces : (isset($event->reserved) ? (int) $event->reserved : 0);
-
-        if (($booked + $reserved) >= $maxplaces) {
-            return !empty($event->waitinglist) ? 'waitinglist' : 'soldout';
-        }
-
-        return 'instock';
+        return JemTicketAvailability::resolve(
+            $event,
+            $settings ?: JemHelper::config(),
+            JemHelper::isEventRegistrationOpen($event, $now)
+        );
     }
 
     /**
@@ -1895,42 +1890,21 @@ static public function lightbox() {
 
         if ($hasActiveAvailabilityStatus) {
             $registrationOpen = JemHelper::isEventRegistrationOpen($event, $now);
-            $ticketAvailability = strtolower(trim((string) ($event->ticket_availability ?? 'instock')));
+            $storedAvailability = (string) ($event->ticket_availability ?? 'instock');
+            $ticketAvailability = self::getEffectiveTicketAvailability($event, $settings, $now);
 
-            if ($ticketAvailability === 'soldout'
-                && self::isModuleStatusActive($settings, 'soldout')) {
-                return self::getModuleStatusPresentation('soldout');
-            }
-
-            if ($ticketAvailability === 'preorder'
-                && self::isModuleStatusActive($settings, 'preorder')) {
-                return self::getModuleStatusPresentation('preorder');
-            }
-
-            if ($registrationOpen) {
-                $maxPlaces = max(0, (int) ($event->maxplaces ?? 0));
-                $registeredPlaces = max(0, (int) ($event->regCount ?? $event->booked ?? 0));
-                $reservedPlaces = max(0, (int) ($event->reservedplaces ?? $event->reserved ?? 0));
-                $availablePlaces = $maxPlaces > 0
-                    ? max(0, $maxPlaces - $registeredPlaces - $reservedPlaces)
-                    : null;
-
-                if ($availablePlaces === 0) {
-                    if (!empty($event->waitinglist)
-                        && self::isModuleStatusActive($settings, 'waitinglist')) {
-                        return self::getModuleStatusPresentation('waitinglist');
-                    }
-
-                    if (self::isModuleStatusActive($settings, 'soldout')) {
-                        return self::getModuleStatusPresentation('soldout');
-                    }
+            // Explicit labels also support externally managed availability. Automatic
+            // module warnings remain restricted to the open registration window.
+            if ($registrationOpen || in_array($storedAvailability, array('limited', 'preorder', 'soldout'), true)) {
+                if ($ticketAvailability === 'waitinglist' && !self::isModuleStatusActive($settings, 'waitinglist')) {
+                    $ticketAvailability = 'soldout';
                 }
-
-                $lastPlacesThreshold = max(1, (int) ($settings->module_status_last_places_threshold ?? 10));
-                if (self::isModuleStatusActive($settings, 'last_places')
-                    && $availablePlaces !== null
-                    && $availablePlaces < $lastPlacesThreshold) {
+                if ($ticketAvailability === 'limited' && self::isModuleStatusActive($settings, 'last_places')) {
                     return self::getModuleStatusPresentation('last_places');
+                }
+                if (in_array($ticketAvailability, array('preorder', 'soldout', 'waitinglist'), true)
+                    && self::isModuleStatusActive($settings, $ticketAvailability)) {
+                    return self::getModuleStatusPresentation($ticketAvailability);
                 }
             }
         }
@@ -2317,6 +2291,7 @@ static public function lightbox() {
         );
         $ticketAvailabilityOptions = array(
             'instock'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_INSTOCK', 'class' => 'jem-event-state-badge--available'),
+            'limited'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_LAST_PLACES', 'class' => 'jem-event-state-badge--last-places'),
             'preorder' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'class' => 'jem-event-state-badge--preorder'),
             'soldout'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'class' => 'jem-event-state-badge--soldout'),
             'waitinglist' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_WAITINGLIST', 'class' => 'jem-event-state-badge--waitinglist'),

@@ -220,7 +220,7 @@ class JemTableEvent extends Table
             $this->event_status = 'scheduled';
         }
 
-        $validTicketAvailabilities = array('instock', 'preorder', 'soldout');
+        $validTicketAvailabilities = array('instock', 'limited', 'preorder', 'soldout');
         if (empty($this->ticket_availability) || !in_array($this->ticket_availability, $validTicketAvailabilities, true)) {
             $this->ticket_availability = 'instock';
         }

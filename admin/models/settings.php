@@ -22,6 +22,7 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/imagefolderpolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/imageprofilepolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/ticketavailability.class.php';
 
 /**
  * JEM Component Settings Model
@@ -251,10 +252,9 @@ class JemModelSettings extends AdminModel
             200,
             max(50, (int) ($data['module_status_ribbon_scale'] ?? 100))
         );
-        $data['module_status_last_places_threshold'] = min(
-            9999,
-            max(1, (int) ($data['module_status_last_places_threshold'] ?? 10))
-        );
+        $lastPlacesRule = JemTicketAvailability::rule((object) $data);
+        $data['module_status_last_places_mode'] = $lastPlacesRule['mode'];
+        $data['module_status_last_places_threshold'] = $lastPlacesRule['threshold'];
         $data['module_status_new_days'] = min(365, max(1, (int) ($data['module_status_new_days'] ?? 7)));
 
         $moduleStatusColorFields = array(
