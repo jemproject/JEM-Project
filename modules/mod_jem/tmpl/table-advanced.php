@@ -93,7 +93,7 @@ function renderOrderedRow($order, $colT, $colD, $colV) {
                                         <?php echo $item->venue; ?>
                                     <?php endif; ?>
                                 <?php else : ?>
-                                    <i class="fas fa-minus" title="<?php echo Text::_('MOD_JEM_NO_LINK'); ?>"></i>
+                                    <i class="fas fa-minus" title="<?php echo htmlspecialchars(Text::_('MOD_JEM_NO_TITLE_OR_VENUE'), ENT_QUOTES, 'UTF-8'); ?>"></i>
                                 <?php endif; ?>
                                 <?php echo JemOutput::moduleEventStatusBadge($item); ?>
                         </span>
@@ -102,7 +102,7 @@ function renderOrderedRow($order, $colT, $colD, $colV) {
                         <?php if($highlight_featured && $item->featured): ?>
 							<span class="event-title highlight_featured">
                         <?php else : ?>
-                            <i class="fas fa-minus" title="<?php echo Text::_('MOD_JEM_NO_LINK'); ?>"></i>
+                            <span class="event-title">
                         <?php endif; ?>
                         <?php echo $item->dates; ?>
                         </span>
