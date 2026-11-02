@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Access\Rules;
+use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
@@ -2025,7 +2026,7 @@ SQL;
             }
         }
 
-        $changed = false;
+        $changed = $fromGranular && $this->migrateVenueUseAcl($rules);
 
         foreach ($groupIds as $groupId) {
             $legacyManager = $preserveLegacyManage
@@ -2079,6 +2080,46 @@ SQL;
                 : 'COM_JEM_INSTALL_BACKEND_ACL_INITIALISED'),
             'notice'
         );
+    }
+
+    /**
+     * Preserve venue selection for event editors on first entry to 5.1 from granular ACL versions.
+     *
+     * Existing component/root decisions, including inherited denials, remain authoritative.
+     * Resource-specific venue rules are not modified. Process parents first so newly
+     * granted permissions are inherited instead of duplicated on descendant groups.
+     *
+     * @param Rules $rules Component rules to update in memory; the caller persists them once.
+     *
+     * @return bool Whether an unset venue-use permission was initialised.
+     */
+    private function migrateVenueUseAcl(Rules $rules): bool
+    {
+        // Detach from Joomla's cached rules: do not change effective ACL before a successful store.
+        $effectiveRules = new Rules((string) Access::getAssetRules('com_jem', true, true));
+        $groups = UserGroupsHelper::getInstance()->getAll();
+        uasort($groups, static fn ($left, $right): int => (int) $left->lft <=> (int) $right->lft);
+        $changed = false;
+
+        foreach ($groups as $group) {
+            if ($effectiveRules->allow('jem.venues.use', $group->path) !== null) {
+                continue;
+            }
+
+            if (!$effectiveRules->allow('jem.events.create', $group->path)
+                && !$effectiveRules->allow('jem.events.edit', $group->path)
+                && !$effectiveRules->allow('jem.events.edit.own', $group->path)
+            ) {
+                continue;
+            }
+
+            $grant = [(int) $group->id => true];
+            $rules->mergeAction('jem.venues.use', $grant);
+            $effectiveRules->mergeAction('jem.venues.use', $grant);
+            $changed = true;
+        }
+
+        return $changed;
     }
 
     /**
