@@ -195,6 +195,13 @@ $profileLabels = static function (array $profiles) {
                     <td><h3><?php echo Text::_('COM_JEM_TOOLS_RESTORE'); ?></h3><?php echo Text::_('COM_JEM_TOOLS_RESTORE_DESC'); ?></td>
                 </tr>
                 <?php endif; ?>
+                <!-- REVIEW UNUSED FILES BEFORE DELETING -->
+                <tr>
+                    <td><div class="linkicon"><a href="<?php echo Route::_('index.php?option=com_jem&view=housekeeping&tool=files'); ?>">
+                        <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleanattachmentfiles.svg', Text::_('COM_JEM_HOUSEKEEPING_FILES'), null, true); ?>
+                    </a></div></td>
+                    <td><h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_FILES'); ?></h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_FILES_TOOL_DESC'); ?></td>
+                </tr>
                 <!-- CLEAN EVENT IMG -->
                 <tr>
                     <td>

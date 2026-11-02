@@ -16,6 +16,7 @@ use Joomla\CMS\Pagination\Pagination;
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingdiagnostics.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingreports.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingdefaults.class.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingfiles.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/log.class.php';
 
 /**
@@ -85,6 +86,28 @@ class JemViewHousekeeping extends JemAdminView
             $this->restoreRun = $app->getUserState('com_jem.housekeeping.restore_run', null);
             $this->restoreNonce = JemHelper::issueActionNonce('housekeeping.applyDefaults');
             $this->setLayout('restore');
+        } elseif ($this->tool === 'files') {
+            $files = new JemHousekeepingFiles(null, $this->getModel());
+            $areas = JemHousekeepingFiles::areas();
+            $this->filesArea = $app->input->getCmd('area', 'events');
+            if (!in_array($this->filesArea, $areas, true)) {
+                $this->filesArea = 'events';
+            }
+            $this->filesCounts = array();
+            $this->filesCandidates = array();
+            foreach ($areas as $area) {
+                $list = $files->candidates($area);
+                $this->filesCounts[$area] = count($list);
+                if ($area === $this->filesArea) {
+                    $this->filesCandidates = $list;
+                }
+            }
+            $this->filesBatchLimit = JemHousekeepingFiles::BATCH_LIMIT;
+            $this->filesNonce = $this->filesCandidates ? JemHelper::issueActionNonce('housekeeping.deleteUnusedFiles') : '';
+            $run = $app->getUserState('com_jem.housekeeping.files_run', null);
+            $this->filesRun = is_array($run) && ($run['area'] ?? '') === $this->filesArea ? (array) $run['lines'] : array();
+            $app->setUserState('com_jem.housekeeping.files_run', null);
+            $this->setLayout('files');
         } elseif ($this->tool === 'images') {
             $this->imageRun = $app->getUserState('com_jem.housekeeping.image_run', null);
             $this->setLayout('images');

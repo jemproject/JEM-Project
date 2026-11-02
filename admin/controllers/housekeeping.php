@@ -16,6 +16,7 @@ use Joomla\CMS\Log\Log;
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingdefaults.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingdiagnostics.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingreports.class.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingfiles.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/log.class.php';
 
 /**
@@ -482,6 +483,52 @@ class JemControllerHousekeeping extends BaseController
         $type = $result->failed ? 'warning' : 'message';
 
         $this->setRedirect($link, $msg, $type);
+    }
+
+    /**
+     * Deletes explicitly selected unused image or attachment files after the
+     * "Unused files" preview. The one-click cleanup tasks above stay available.
+     */
+    public function deleteUnusedFiles(): void
+    {
+        JemHelper::requirePostToken();
+        $this->allowHousekeeping();
+
+        $app = Factory::getApplication();
+        $area = $app->input->post->getCmd('area', '');
+        if (!in_array($area, JemHousekeepingFiles::areas(), true)) {
+            throw new \RuntimeException(Text::_('JERROR_LAYOUT_PAGE_NOT_FOUND'), 404);
+        }
+        if (!JemHelper::consumeActionNonce('housekeeping.deleteUnusedFiles', $app->input->post->getString('files_nonce', ''))) {
+            throw new \RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+        }
+
+        $url = 'index.php?option=com_jem&view=housekeeping&tool=files&area=' . $area;
+        $selected = $app->input->post->get('files', array(), 'array');
+        if (!$selected) {
+            $this->setRedirect($url, Text::_('COM_JEM_HOUSEKEEPING_FILES_NONE_SELECTED'), 'warning');
+            return;
+        }
+
+        try {
+            $result = (new JemHousekeepingFiles(null, $this->getModel('housekeeping')))->delete($area, (array) $selected);
+        } catch (\InvalidArgumentException $error) {
+            $this->setRedirect($url, Text::_('COM_JEM_HOUSEKEEPING_FILES_INVALID_SELECTION'), 'warning');
+            return;
+        }
+
+        $app->setUserState('com_jem.housekeeping.files_run', array('area' => $area, 'lines' => $result['lines']));
+        $this->setRedirect(
+            $url,
+            Text::sprintf(
+                'COM_JEM_HOUSEKEEPING_FILES_DELETED',
+                (int) $result['deleted'],
+                (int) $result['folders'],
+                (int) $result['skipped'],
+                (int) $result['failed']
+            ),
+            $result['failed'] || $result['skipped'] ? 'warning' : 'message'
+        );
     }
 
     /**

@@ -1038,6 +1038,32 @@ class JemModelHousekeeping extends BaseDatabaseModel
         return $images;
     }
 
+    /**
+     * Unused images of one area (events, venues, categories), relative to its folder.
+     * Used by the Housekeeping "Unused files" preview; same rule as delete().
+     */
+    public function getUnusedImagePaths(string $area): array
+    {
+        return $this->getImages($this->typeForArea($area));
+    }
+
+    /** Images that JEM records or event links use, relative to the area folder. */
+    public function getUsedImagePaths(string $area): array
+    {
+        return array_map(static fn($path): string => ltrim(str_replace('\\', '/', (string) $path), '/'),
+            (array) $this->getAssigned($this->typeForArea($area)));
+    }
+
+    private function typeForArea(string $area): int
+    {
+        $types = array('events' => self::EVENTS, 'venues' => self::VENUES, 'categories' => self::CATEGORIES);
+        if (!isset($types[$area])) {
+            throw new InvalidArgumentException('Unknown image area.');
+        }
+
+        return $types[$area];
+    }
+
     /** Compare names as the hosting filesystem does, while retaining original paths for deletion. */
     private static function unassignedImages(array $available, array $assigned): array
     {
