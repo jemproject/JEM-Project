@@ -197,13 +197,34 @@ namespace {
         /**
          * Record module wiring; real date arithmetic is tested separately with Joomla's helper.
          *
-         * @param int $hours Configured signed hours.
+         * @param mixed $hours Configured signed decimal hours.
          * @return string Controlled target date for the SQL fixture.
          */
-        public static function getJoomlaDateWithHourOffset(int $hours): string
+        public static function getJoomlaDateWithHourOffset($hours): string
         {
             self::$hourOffsets[] = $hours;
             return self::$hourOffsetDate;
+        }
+
+
+        /**
+         * Execute the checkout's real parser while keeping module dependencies isolated.
+         *
+         * @param mixed $hours Raw module parameter.
+         * @return int Parsed whole minutes.
+         */
+        public static function normaliseHourOffsetMinutes($hours): int
+        {
+            static $parser;
+            if ($parser === null) {
+                $source = file_get_contents(JEM_TEST_ROOT . '/site/helpers/helper.php');
+                if (!preg_match('/public static function normaliseHourOffsetMinutes\\(.*?\\n    }/s', $source, $match)) {
+                    throw new \RuntimeException('Production offset parser not found.');
+                }
+                $parser = eval('return new class { ' . $match[0] . ' };');
+            }
+
+            return $parser::normaliseHourOffsetMinutes($hours);
         }
 
         public static function getJoomlaDate(): string

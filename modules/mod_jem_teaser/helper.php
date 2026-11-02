@@ -62,7 +62,7 @@ abstract class ModJemTeaserHelper
         #  4: featured               - ? (same as upcoming yet)
         #  5: open date              - no limit
         $type = (int)$params->get('type');
-        $offset_hours = (int)$params->get('offset_hours', 0);
+        $offset_hours = $params->get('offset_hours', 0);
         $max_title_length = (int)$params->get('cuttitle', '25');
         $max_desc_length  = (int)$params->get('descriptionlength', 300);
 
@@ -80,7 +80,7 @@ abstract class ModJemTeaserHelper
 
         # all upcoming or unfinished events
         if (($type == 0) || ($type == 1)) {
-            $offset_minutes = $offset_hours * 60;
+            $offset_minutes = JemHelper::normaliseHourOffsetMinutes($offset_hours);
 
             $model->setState('filter.published', 1);
             $model->setState('filter.orderby', array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));
@@ -109,7 +109,7 @@ abstract class ModJemTeaserHelper
 
         # featured
         elseif ($type == 4) {
-            $offset_minutes = $offset_hours * 60;
+            $offset_minutes = JemHelper::normaliseHourOffsetMinutes($offset_hours);
 
             $model->setState('filter.featured', 1);
             $model->setState('filter.orderby', array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));

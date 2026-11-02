@@ -389,24 +389,57 @@ class JemHelper
     }
 
     /**
+     * Convert a configured hour offset to signed, rounded whole minutes.
+     *
+     * Accept decimal points or commas, not numeric prefixes or exponent strings.
+     * Invalid input uses zero. Reserve timestamp headroom when converting minutes
+     * to seconds so malformed extreme values cannot overflow date arithmetic.
+     *
+     * @param mixed $hours Configured signed decimal hours.
+     * @return int Safe offset in whole minutes.
+     */
+    public static function normaliseHourOffsetMinutes($hours): int
+    {
+        if (is_string($hours)) {
+            $hours = str_replace(',', '.', trim($hours));
+
+            if (!preg_match('/^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)$/D', $hours)) {
+                return 0;
+            }
+        } elseif (!is_int($hours) && !is_float($hours)) {
+            return 0;
+        }
+
+        $minutes = round((float) $hours * 60);
+
+        if (!is_finite($minutes) || abs($minutes) >= intdiv(PHP_INT_MAX, 120)) {
+            return 0;
+        }
+
+        return (int) $minutes;
+    }
+
+    /**
      * Return the Joomla-local date reached after an offset in elapsed hours.
      *
      * UTC arithmetic preserves the offset across daylight-saving transitions.
      * This selects a whole calendar day, not events running at the target instant.
      *
-     * @param int                     $offsetHours Signed number of elapsed hours.
+     * @param mixed                   $offsetHours Signed decimal hours, rounded to minutes; invalid uses zero.
      * @param \DateTimeInterface|null $now         Reference instant; null uses the current time.
      * @return string Local calendar date in YYYY-MM-DD format.
      */
-    public static function getJoomlaDateWithHourOffset(int $offsetHours = 0, ?\DateTimeInterface $now = null): string
+    public static function getJoomlaDateWithHourOffset($offsetHours = 0, ?\DateTimeInterface $now = null): string
     {
         $utc = new \DateTimeZone('UTC');
         $instant = $now === null
             ? new \DateTimeImmutable('now', $utc)
             : \DateTimeImmutable::createFromInterface($now)->setTimezone($utc);
 
-        if ($offsetHours !== 0) {
-            $instant = $instant->modify(sprintf('%+d hours', $offsetHours));
+        $offsetMinutes = self::normaliseHourOffsetMinutes($offsetHours);
+
+        if ($offsetMinutes !== 0) {
+            $instant = $instant->modify(sprintf('%+d minutes', $offsetMinutes));
         }
 
         return $instant->setTimezone(new \DateTimeZone(self::getJoomlaTimeZoneName()))->format('Y-m-d');
