@@ -485,7 +485,7 @@ class JFormFieldMailerprofiles extends FormField
 .jem-mailer-col-action{width:22%}
 .jem-mailer-col-specific{width:11%}
 .jem-mailer-col-common{width:11.33%}
-.jem-mailer-matrix-table thead th{background:#e7edf5;color:#17324f;font-weight:700;border-bottom:2px solid #8fa2b8;text-align:center;vertical-align:middle}
+.jem-mailer-matrix-table thead th{background:var(--tertiary-bg,#e7edf5);color:var(--body-color,#17324f);font-weight:700;border-bottom:2px solid #8fa2b8;text-align:center;vertical-align:middle}
 .jem-mailer-matrix-table th,.jem-mailer-matrix-table td{text-align:center;vertical-align:middle}
 .jem-mailer-matrix-table th{overflow-wrap:anywhere}
 .jem-mailer-matrix-table tbody th{font-weight:600}
