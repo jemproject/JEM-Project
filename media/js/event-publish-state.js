@@ -4,6 +4,7 @@
     function initialise() {
         const categories = document.getElementById('jform_cats');
         const state = document.getElementById('jform_published');
+        const featured = document.getElementById('jform_featured');
 
         if (!categories || !state || !window.Joomla || typeof window.Joomla.getOptions !== 'function') {
             return;
@@ -19,6 +20,13 @@
 
             if (!canPublish) {
                 state.value = '0';
+            }
+
+            if (featured) {
+                featured.disabled = !canPublish;
+                if (!canPublish) {
+                    featured.value = '0';
+                }
             }
         }
 
