@@ -322,8 +322,10 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
     ));
     $addressParts = array_filter(array(
         trim((string) $this->item->street),
+        trim((string) $this->item->district),
         implode(' ', $locality),
         trim((string) $this->item->state),
+        trim((string) $this->item->region),
         trim((string) $this->item->country),
     ));
 
@@ -344,6 +346,10 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             $html .= '<span>' . $this->escape($this->item->street) . '</span>';
         }
 
+        if (!empty($this->item->district)) {
+            $html .= '<span>' . $this->escape($this->item->district) . '</span>';
+        }
+
         if ($locality) {
             $html .= '<span class="jem-venue-compact-locality">';
 
@@ -360,6 +366,10 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
 
         if (!empty($this->item->state)) {
             $html .= '<span>' . $this->escape($this->item->state) . '</span>';
+        }
+
+        if (!empty($this->item->region)) {
+            $html .= '<span>' . $this->escape($this->item->region) . '</span>';
         }
 
         if (trim((string) $this->item->country) !== '') {
@@ -1274,6 +1284,13 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                         </dd>
                                     <?php endif; ?>
 
+                                    <?php if ($this->item->district) : ?>
+                                        <dt class="venue_district hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_DISTRICT'); ?>"><?php echo Text::_('COM_JEM_DISTRICT'); ?>:</dt>
+                                        <dd class="venue_district">
+                                            <?php echo $this->escape($this->item->district); ?>
+                                        </dd>
+                                    <?php endif; ?>
+
                                     <?php if ($this->item->postalCode) : ?>
                                         <dt class="venue_postalCode hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_ZIP'); ?>"><?php echo Text::_('COM_JEM_ZIP'); ?>:</dt>
                                         <dd class="venue_postalCode">
@@ -1292,6 +1309,13 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                         <dt class="venue_state hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STATE'); ?>"><?php echo Text::_('COM_JEM_STATE'); ?>:</dt>
                                         <dd class="venue_state">
                                             <?php echo $this->escape($this->item->state); ?>
+                                        </dd>
+                                    <?php endif; ?>
+
+                                    <?php if ($this->item->region) : ?>
+                                        <dt class="venue_region hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_REGION'); ?>"><?php echo Text::_('COM_JEM_REGION'); ?>:</dt>
+                                        <dd class="venue_region">
+                                            <?php echo $this->escape($this->item->region); ?>
                                         </dd>
                                     <?php endif; ?>
 

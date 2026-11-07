@@ -330,7 +330,7 @@ class JemPdfView
     /**
      * Renders an event-first Events Map PDF.
      */
-    public static function renderEventsMapList(string $title, array $rows, string $filename, string $mapProvider = 'osm', ?int $mapZoom = null): void
+    public static function renderEventsMapList(string $title, array $rows, string $filename, string $mapProvider = 'osm', ?int $mapZoom = null, array $locationColumns = []): void
     {
         $mapWidth = 260.0;
 
@@ -345,23 +345,23 @@ class JemPdfView
 
         $mapPreviewHtml = self::buildVenueMapPreviewHtml(self::buildEventsMapPreviewRows($rows), $mapProvider, $mapWidth, $mapZoom);
 
-        self::renderTable(
-            $title,
-            array(
-                Text::_('COM_JEM_DATE'),
-                Text::_('COM_JEM_EVENT'),
-                Text::_('COM_JEM_VENUE'),
-                Text::_('COM_JEM_CITY'),
-                Text::_('COM_JEM_STATE'),
-                Text::_('COM_JEM_COUNTRY'),
-                Text::_('COM_JEM_MAP'),
-            ),
-            self::buildEventsMapRows($rows, $mapProvider),
-            $filename,
-            'map',
-            '',
-            $mapPreviewHtml
-        );
+        $headers = [
+            Text::_('COM_JEM_DATE'), Text::_('COM_JEM_EVENT'), Text::_('COM_JEM_VENUE'),
+            Text::_('COM_JEM_CITY'), Text::_('COM_JEM_STATE'), Text::_('COM_JEM_COUNTRY'), Text::_('COM_JEM_MAP'),
+        ];
+        $tableRows = self::buildEventsMapRows($rows, $mapProvider);
+        foreach ([3 => 'city', 4 => 'county', 5 => 'country'] as $index => $column) {
+            if (isset($locationColumns[$column]) && !$locationColumns[$column]) {
+                unset($headers[$index]);
+                foreach ($tableRows as &$row) {
+                    unset($row[$index]);
+                }
+                unset($row);
+            }
+        }
+        $tableRows = array_map('array_values', $tableRows);
+
+        self::renderTable($title, array_values($headers), $tableRows, $filename, 'map', '', $mapPreviewHtml, 'COM_JEM_NO_EVENTS', [count($headers) - 1]);
     }
 
     /**
@@ -510,7 +510,8 @@ class JemPdfView
         string $profile = 'list',
         string $filterSummary = '',
         string $preTableHtml = '',
-        string $emptyMessageKey = 'COM_JEM_NO_EVENTS'
+        string $emptyMessageKey = 'COM_JEM_NO_EVENTS',
+        array $centeredColumns = []
     ): void {
         if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
             Factory::getApplication()->close();
@@ -537,7 +538,7 @@ class JemPdfView
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(true);
         $pdf->AddPage();
-        $pdf->writeHTML(self::buildTableHtml($title, $headers, $rows, $paperSize, $filterSummary, $preTableHtml, $emptyMessageKey), true, false, true, false, '');
+        $pdf->writeHTML(self::buildTableHtml($title, $headers, $rows, $paperSize, $filterSummary, $preTableHtml, $emptyMessageKey, $centeredColumns), true, false, true, false, '');
 
         while (ob_get_level() > 0) {
             ob_end_clean();
@@ -612,9 +613,11 @@ class JemPdfView
         $rowsHtml = array();
         $rowsHtml[] = self::buildPdfSummaryRow(Text::_('COM_JEM_TITLE'), htmlspecialchars($venueName, ENT_COMPAT, 'UTF-8') . self::buildPdfTypedEntityBadge($venue, 'type_', 'venue'));
         $rowsHtml[] = !empty($venue->street) ? self::buildPdfSummaryRow(Text::_('COM_JEM_STREET'), htmlspecialchars((string) $venue->street, ENT_COMPAT, 'UTF-8')) : '';
+        $rowsHtml[] = !empty($venue->district) ? self::buildPdfSummaryRow(Text::_('COM_JEM_DISTRICT'), htmlspecialchars((string) $venue->district, ENT_COMPAT, 'UTF-8')) : '';
         $rowsHtml[] = !empty($venue->postalCode) ? self::buildPdfSummaryRow(Text::_('COM_JEM_ZIP'), htmlspecialchars((string) $venue->postalCode, ENT_COMPAT, 'UTF-8')) : '';
         $rowsHtml[] = !empty($venue->city) ? self::buildPdfSummaryRow(Text::_('COM_JEM_CITY'), htmlspecialchars((string) $venue->city, ENT_COMPAT, 'UTF-8')) : '';
         $rowsHtml[] = !empty($venue->state) ? self::buildPdfSummaryRow(Text::_('COM_JEM_STATE'), htmlspecialchars((string) $venue->state, ENT_COMPAT, 'UTF-8')) : '';
+        $rowsHtml[] = !empty($venue->region) ? self::buildPdfSummaryRow(Text::_('COM_JEM_REGION'), htmlspecialchars((string) $venue->region, ENT_COMPAT, 'UTF-8')) : '';
         $rowsHtml[] = !empty($venue->country) ? self::buildPdfSummaryRow(Text::_('COM_JEM_COUNTRY'), htmlspecialchars((string) $venue->country, ENT_COMPAT, 'UTF-8')) : '';
 
         if ($showMapLink) {
@@ -2343,7 +2346,8 @@ class JemPdfView
         string $paperSize,
         string $filterSummary = '',
         string $preTableHtml = '',
-        string $emptyMessageKey = 'COM_JEM_NO_EVENTS'
+        string $emptyMessageKey = 'COM_JEM_NO_EVENTS',
+        array $centeredColumns = []
     ): string {
         $scale = JemPdf::getPosterScale($paperSize);
         $settings = JemHelper::config();
@@ -2387,7 +2391,8 @@ class JemPdfView
 
         foreach ($headers as $index => $header) {
             $width = isset($columnWidths[$index]) ? ' width="' . $columnWidths[$index] . '%"' : '';
-            $html[] = '<th' . $width . '>' . self::buildPdfHeaderLabel($header) . '</th>';
+            $alignment = in_array($index, $centeredColumns, true) ? ' align="center" style="text-align:center;"' : '';
+            $html[] = '<th' . $width . $alignment . '>' . self::buildPdfHeaderLabel($header) . '</th>';
         }
 
         $html[] = '</tr></thead><tbody>';
@@ -2402,11 +2407,12 @@ class JemPdfView
 
             foreach ($row as $index => $cell) {
                 $width = isset($columnWidths[$index]) ? ' width="' . $columnWidths[$index] . '%"' : '';
+                $alignment = in_array($index, $centeredColumns, true) ? ' align="center" style="text-align:center;"' : '';
 
                 if (is_array($cell) && isset($cell['html'])) {
-                    $html[] = '<td' . $width . '>' . (string) $cell['html'] . '</td>';
+                    $html[] = '<td' . $width . $alignment . '>' . (string) $cell['html'] . '</td>';
                 } else {
-                    $html[] = '<td' . $width . '>' . nl2br(htmlspecialchars(self::htmlToPlainText((string) $cell), ENT_COMPAT, 'UTF-8')) . '</td>';
+                    $html[] = '<td' . $width . $alignment . '>' . nl2br(htmlspecialchars(self::htmlToPlainText((string) $cell), ENT_COMPAT, 'UTF-8')) . '</td>';
                 }
             }
 

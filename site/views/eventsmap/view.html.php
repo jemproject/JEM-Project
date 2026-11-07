@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 require_once JPATH_SITE . '/components/com_jem/helpers/countries.php';
+require_once JPATH_SITE . '/components/com_jem/helpers/mapdate.php';
 if (is_file(JPATH_SITE . '/components/com_jem/helpers/map.php')) {
     require_once JPATH_SITE . '/components/com_jem/helpers/map.php';
 }
@@ -19,7 +20,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Date\Date;
+use Joomla\Component\Jem\Site\Helper\JemMapDateHelper;
 use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
 
@@ -114,68 +115,19 @@ class JemViewEventsMap extends JemView
         }
 
         if ($showDateFilter) {
-            $filterMode = $app->input->get('jem_map_filter_mode', $dateFilterDefault, 'string');
-            $filterDate = $app->input->get('jem_map_filter_date', '', 'string');
-
-            if ($filterMode == 'date' && $filterDate === null) {
-                $filterMode = 'all';
-            }
-
-            // Get the current date
-            $now = Factory::getDate();
-
-            switch ($filterMode) {
-                case 'date':
-                    // Filter for a single, specific date selected by the user.
-                    $selectedDate = $app->input->get('jem_map_filter_date', '', 'string');
-                    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $selectedDate)) {
-                        $dt = Date::createFromFormat('Y-m-d', $selectedDate);
-                        if ($dt && $dt->format('Y-m-d') === $selectedDate) {
-                            $filterStartDate = $selectedDate;
-                            $filterEndDate   = $selectedDate;
-                        }
-                    }
-                    break;
-
-                case 'today':
-                    // Shows events from today onwards, ending today.
-                    $filterStartDate = $now->format('Y-m-d');
-                    $filterEndDate   = $now->format('Y-m-d');
-                    break;
-
-                case 'tomorrow':
-                    // Shows events for tomorrow.
-                    $tomorrow        = $now->modify('+1 day');
-                    $filterStartDate = $tomorrow->format('Y-m-d');
-                    $filterEndDate   = $tomorrow->format('Y-m-d');
-                    break;
-
-                case 'week':
-                    // Shows events from today until the end of the current week (Sunday).
-                    $filterStartDate = $now->format('Y-m-d');
-                    $endOfWeek       = $now->modify('Sunday this week');
-                    $filterEndDate   = $endOfWeek->format('Y-m-d');
-                    break;
-
-                case 'month':
-                    // Shows events from today until the last day of the current month.
-                    $filterStartDate = $now->format('Y-m-d');
-                    $endOfMonth      = $now->modify('last day of this month');
-                    $filterEndDate   = $endOfMonth->format('Y-m-d');
-                    break;
-
-                case 'year':
-                    // Shows events from today until the last day of the current year (Dec 31).
-                    $filterStartDate = $now->format('Y-m-d');
-                    $endOfYear       = $now->setDate((int) $now->format('Y'), 12, 31);
-                    $filterEndDate   = $endOfYear->format('Y-m-d');
-                    break;
-
-                case 'all':
-                default:
-                    // Shows all venues with or without events.
-                    break;
-            }
+            $period = JemMapDateHelper::resolve(
+                $app->input->getString('jem_map_filter_mode', (string) $params->get('date_filter_default', 'all')),
+                $app->input->getString('jem_map_filter_date', ''),
+                new \DateTimeImmutable('now', new \DateTimeZone($app->get('offset', 'UTC'))),
+                (int) \JemHelper::config()->weekdaystart,
+                $app->input->getInt('jem_map_filter_step', 0),
+                $app->input->getInt('jem_map_filter_jump_step', 0)
+            );
+            $filterMode = $period['mode'];
+            $filterDate = $period['date'];
+            $filterStartDate = $period['start'];
+            $filterEndDate = $period['end'];
+            $selectedDate = $filterDate;
         }
 
         $categories = $showCategoryFilter ? JemMapHelper::getCategories($params) : [];
@@ -203,13 +155,16 @@ class JemViewEventsMap extends JemView
                 return (string) $country->country;
             }, $countries);
 
-            if ($showCountryFilter && !in_array($selectedCountry, $validCountries, true)) {
-                $selectedCountry = '';
+            if (!in_array($selectedCountry, $validCountries, true)) {
+                // Keep configured countries selected even when they have no mapped venues.
+                $countries[] = (object) ['country' => $selectedCountry,
+                    'country_name' => JemHelperCountries::getCountryName($selectedCountry) ?: $selectedCountry];
             }
         }
 
         // Fetch active events with venues that have valid coordinates.
-        $events = JemMapHelper::getEvents($params, $filterStartDate, $filterEndDate, $selectedCategoryId, $selectedCountry);
+        $locationFilters = JemMapHelper::getEventLocationFilters($params, $app->input, $selectedCountry);
+        $events = JemMapHelper::getEvents($params, $filterStartDate, $filterEndDate, $selectedCategoryId, $selectedCountry, $locationFilters['county'], $locationFilters['city'], $locationFilters['region']);
 
         // Get auto center map
         if ($params->get('map_auto_center', 1)) {
@@ -312,6 +267,7 @@ class JemViewEventsMap extends JemView
         $this->countries     = $countries;
         $this->selectedCategoryId = $selectedCategoryId;
         $this->selectedCountry = $selectedCountry;
+        $this->locationFilters = $locationFilters;
         $this->filterMode    = $filterMode;
         $this->filterDate    = $filterDate;
         $this->selectedDate  = $selectedDate;

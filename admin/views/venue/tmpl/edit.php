@@ -432,7 +432,8 @@ Text::script('JCANCEL');
                 postalCode: getAddressPart(address, ['postcode']),
                 city: city,
                 district: getAddressPart(address, ['city_district', 'borough', 'suburb', 'quarter']),
-                state: getAddressPart(address, ['state', 'region']),
+                region: getAddressPart(address, ['state', 'region']),
+                state: getAddressPart(address, ['county', 'state_district']),
                 countryCode: address.country_code ? address.country_code.toUpperCase() : ''
             };
         }
@@ -443,6 +444,7 @@ Text::script('JCANCEL');
             setFieldValue('jform_city', osmAddress.city);
             setFieldValue('jform_district', osmAddress.district);
             setFieldValue('jform_state', osmAddress.state);
+            setFieldValue('jform_region', osmAddress.region);
             setCountryFieldValue(osmAddress.countryCode);
         }
 
@@ -865,7 +867,8 @@ Text::script('JCANCEL');
         var geoFields = {
             tmp_form_postalCode: "postal_code",
             tmp_form_city: "locality",
-            tmp_form_state: "administrative_area_level_1",
+            tmp_form_region: "administrative_area_level_1",
+            tmp_form_state: "administrative_area_level_2",
             tmp_form_street: "street_address",
             tmp_form_route: "route",
             tmp_form_streetnumber: "street_number",
@@ -996,6 +999,7 @@ Text::script('JCANCEL');
             document.getElementById("jform_postalCode").value = document.getElementById("tmp_form_postalCode").value;
             document.getElementById("jform_city").value = document.getElementById("tmp_form_city").value;
             document.getElementById("jform_state").value = document.getElementById("tmp_form_state").value;
+            document.getElementById("jform_region").value = document.getElementById("tmp_form_region").value;
             setCountryFieldValue(document.getElementById("tmp_form_country").value);
         });
 
@@ -1070,10 +1074,11 @@ Text::script('JCANCEL');
                             <h3 class="h5" id="jem-venue-address-title"><?php echo Text::_('COM_JEM_ADDRESS'); ?></h3>
                             <ul class="adminformlist">
                                 <li><div class="label-form"><?php echo $this->form->renderfield('street'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('district'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('postalCode'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('city'); ?></div></li>
-                                <li><div class="label-form"><?php echo $this->form->renderfield('district'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('state'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('region'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('country'); ?></div></li>
                             </ul>
                         </section>
@@ -1281,6 +1286,9 @@ Text::script('JCANCEL');
                                             <li><label><?php echo Text::_('COM_JEM_CITY'); ?></label>
                                             <div class="geodata-info">
                                                 <input type="text" class="form-control valid" id="tmp_form_city"/></div>
+                                            </li>
+                                            <li><label><?php echo Text::_('COM_JEM_REGION'); ?></label>
+                                                <div class="geodata-info"><input type="text" class="form-control" id="tmp_form_region" /></div>
                                             </li>
                                             <li><label><?php echo Text::_('COM_JEM_STATE'); ?></label>
                                             <div class="geodata-info">

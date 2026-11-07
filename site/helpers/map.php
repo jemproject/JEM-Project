@@ -31,7 +31,7 @@ class JemMapHelper
      *
      * @return  array<object>
      */
-    public static function getVenues($params, $filterStartDate = null, $filterEndDate = null, $selectedCategoryId = 0, $country = '', $city = '', $venueOrder = '')
+    public static function getVenues($params, $filterStartDate = null, $filterEndDate = null, $selectedCategoryId = 0, $country = '', $city = '', $venueOrder = '', $county = '', $region = '')
     {
         $db       = Factory::getDbo();
         $user     = Factory::getApplication()->getIdentity();
@@ -48,6 +48,7 @@ class JemMapHelper
         $catUsed  = !empty($catids);
         $country  = trim((string) $country);
         $city     = trim((string) $city);
+        $county   = trim((string) $county);
 
         $typeAccess = self::accessList($levels);
         $venueTypeJoin = $db->quoteName('vt.id') . ' = ' . $db->quoteName('v.type_id')
@@ -80,6 +81,13 @@ class JemMapHelper
 
         if ($city !== '') {
             $query->where($db->quoteName('v.city') . ' = ' . $db->quote($city));
+        }
+
+        if ($county !== '') {
+            $query->where($db->quoteName('v.state') . ' = ' . $db->quote($county));
+        }
+        if (trim((string) $region) !== '') {
+            $query->where($db->quoteName('v.region') . ' = ' . $db->quote($region));
         }
 
         if ($dateUsed || $catUsed) {
@@ -193,6 +201,119 @@ class JemMapHelper
     }
 
     /**
+     * Resolve optional map location filters without allowing hidden-filter URL overrides.
+     *
+     * @param object $params  Map menu parameters.
+     * @param object $input   Joomla request input.
+     * @param string $country Effective country, including a hidden menu default.
+     * @param bool $legacyCityDefault Preserve Venues Map's historical country/city visibility.
+     * @return array Selected values, visibility flags and available selector values.
+     */
+    public static function getEventLocationFilters($params, $input, string $country, bool $legacyCityDefault = false): array
+    {
+        $result = [];
+        foreach (['region', 'county', 'city'] as $name) {
+            $show = (bool) $params->get('show_' . $name . '_filter', $name === 'city' && $legacyCityDefault ? 1 : 0);
+            $default = trim((string) $params->get('default_' . $name, ''));
+            $result['show_' . $name] = $show;
+            $result[$name] = $show ? trim($input->getString('jem_map_filter_' . $name, $default)) : $default;
+            $result[$name . '_options'] = [];
+        }
+        if ($result['show_region'] || $result['show_county'] || $result['show_city']) {
+            foreach (self::getEventLocations($country) as $location) {
+                $region = (string) ($location->region ?? '');
+                $county = (string) $location->state;
+                $city = (string) $location->city;
+                if (trim($region) !== '') {
+                    $result['region_options'][] = $region;
+                }
+                if ($result['region'] !== '' && $region !== $result['region']) {
+                    continue;
+                }
+                if (trim($county) !== '') {
+                    $result['county_options'][] = $county;
+                }
+                if (trim($city) !== '' && ($result['county'] === '' || $county === $result['county'])) {
+                    $result['city_options'][] = $city;
+                }
+            }
+            foreach (['region', 'county', 'city'] as $name) {
+                // Keep an explicit configured/requested restriction visible even when it has no matches.
+                if ($result[$name] !== '') {
+                    $result[$name . '_options'][] = $result[$name];
+                }
+                $result[$name . '_options'] = array_values(array_unique($result[$name . '_options']));
+                natcasesort($result[$name . '_options']);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Resolve identical location/category restrictions for HTML, print and PDF.
+     *
+     * Hidden defaults cannot be overridden by URL parameters. A selected location
+     * with no visible venues remains a restriction instead of widening the results.
+     *
+     * @param object $params Venues Map menu options.
+     * @param object $input Joomla request input.
+     * @return array Effective selections, selector values and visibility flags.
+     */
+    public static function getVenueMapFilters($params, $input): array
+    {
+        $showCountry = (bool) $params->get('show_country_filter', 1);
+        $country = trim((string) $params->get('default_country', ''));
+        $country = $country === '0' ? '' : $country;
+        if ($showCountry) {
+            $country = trim($input->getString('jem_map_filter_country', $country));
+        }
+        $country = $country === '0' ? '' : $country;
+        $result = self::getEventLocationFilters($params, $input, $country, $showCountry);
+        $result['country'] = $country;
+        $result['show_country'] = $showCountry;
+        $result['countries'] = self::getVenueCountries();
+        if ($country !== '' && !in_array($country, array_column($result['countries'], 'country'), true)) {
+            $result['countries'][] = (object) ['country' => $country];
+        }
+        $result['show_category'] = (bool) $params->get('show_category_filter', 0);
+        $result['categories'] = $result['show_category'] ? self::getCategories($params) : [];
+        $category = $result['show_category'] ? $input->getInt('jem_map_filter_catid', 0) : 0;
+        $validCategories = array_map('intval', array_column($result['categories'], 'id'));
+        $result['category'] = in_array($category, $validCategories, true) ? $category : 0;
+
+        return $result;
+    }
+
+    /**
+     * Fetch geographic choices only from published, accessible mapped venues.
+     *
+     * @param string $country Optional country restriction.
+     * @return array<object> Distinct county/city pairs.
+     */
+    public static function getEventLocations(string $country = ''): array
+    {
+        $db = Factory::getDbo();
+        $levels = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
+        $settings = \JemHelper::config();
+        $access = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
+        $ids = \JemHelper::getVisibleVenueHierarchyIds(self::levelsFromList($access));
+        $query = $db->getQuery(true)
+            ->select('DISTINCT ' . $db->quoteName('region') . ', ' . $db->quoteName('state') . ', ' . $db->quoteName('city'))
+            ->from($db->quoteName('#__jem_venues'))
+            ->where($db->quoteName('published') . ' = 1')
+            ->where($db->quoteName('id') . ' IN (' . ($ids ? implode(',', $ids) : '0') . ')')
+            ->where(["latitude IS NOT NULL", "latitude <> ''", "longitude IS NOT NULL", "longitude <> ''"]);
+        if ($access !== '') {
+            $query->where($db->quoteName('access') . ' IN (' . $access . ')');
+        }
+        if ($country !== '') {
+            $query->where($db->quoteName('country') . ' = ' . $db->quote($country));
+        }
+        $db->setQuery($query);
+        return $db->loadObjectList() ?: [];
+    }
+
+    /**
      * Fetch cities for a country that has published venues with valid coordinates.
      *
      * @return  array<object>
@@ -241,7 +362,7 @@ class JemMapHelper
      *
      * @return  array<object>
      */
-    public static function getEvents($params, $filterStartDate = null, $filterEndDate = null, $selectedCategoryId = 0, $country = '')
+    public static function getEvents($params, $filterStartDate = null, $filterEndDate = null, $selectedCategoryId = 0, $country = '', $county = '', $city = '', $region = '')
     {
         $db       = Factory::getDbo();
         $user     = Factory::getApplication()->getIdentity();
@@ -366,6 +487,13 @@ class JemMapHelper
 
         if ($country !== '') {
             $query->where($db->quoteName('v.country') . ' = ' . $db->quote($country));
+        }
+
+        foreach (['region' => $region, 'state' => $county, 'city' => $city] as $column => $value) {
+            $value = trim((string) $value);
+            if ($value !== '') {
+                $query->where($db->quoteName('v.' . $column) . ' = ' . $db->quote($value));
+            }
         }
 
         self::applyDateRange($query, 'e', $filterStartDate, $filterEndDate);

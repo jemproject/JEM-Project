@@ -556,7 +556,8 @@ class JemHelperCountries
                 $options = array();
 
                 foreach ($countries as $country) {
-                    $options[] = HTMLHelper::_('select.option', $country->value, Text::_($country->text), $value_tag, $text_tag);
+                    $options[] = HTMLHelper::_('select.option', $country->value,
+                        Text::_($country->text), $value_tag, $text_tag);
                 }
 
                 return $options;
@@ -569,7 +570,8 @@ class JemHelperCountries
         $options = array();
         foreach ($countries as $country) {
             $name = explode(',', $country['name']);
-            $options[] = HTMLHelper::_('select.option', $country['iso2'], Text::_($name[0]), $value_tag, $text_tag);
+            $options[] = HTMLHelper::_('select.option', $country['iso2'],
+                Text::_($name[0]), $value_tag, $text_tag);
         }
         return $options;
     }
@@ -1139,13 +1141,17 @@ class JemHelperCountries
             return '';
         }
 
-        $html = '<img src="' . $src . '" alt="' . self::getCountryName($countrycode) . '" ';
+        $label = (string) self::getCountryName($countrycode);
+        $escapedLabel = htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
+        $html = '<img src="' . htmlspecialchars($src, ENT_QUOTES, 'UTF-8') . '" alt="' . $escapedLabel . '" ';
         if (function_exists('transliterator_transliterate')) {
-            $countryName = transliterator_transliterate('Any-Latin; Latin-ASCII', self::getCountryName($countrycode));
+            $countryName = transliterator_transliterate('Any-Latin; Latin-ASCII', $label);
         } else {
-            $countryName = iconv('UTF-8', 'ASCII//TRANSLIT', self::getCountryName($countrycode));
+            $countryName = iconv('UTF-8', 'ASCII//TRANSLIT', $label);
         }
-        $html .= 'title="' . self::getCountryName($countrycode) . '" class="venue_country_flag ' . str_replace(' ', '_', str_replace(['(', ')'], '', strtolower($countryName))) . '_flag" ' . $attributes . ' />';
+        $className = str_replace(' ', '_', str_replace(['(', ')'], '', strtolower((string) $countryName)));
+        $html .= 'title="' . $escapedLabel . '" class="venue_country_flag '
+            . htmlspecialchars($className, ENT_QUOTES, 'UTF-8') . '_flag" ' . $attributes . ' />';
         return $html;
     }
 

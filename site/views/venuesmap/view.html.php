@@ -91,18 +91,15 @@ class JemViewVenuesMap extends JemView
         $mylocMarker = JemMapHelper::resolveMarkerUrl($params->get('mylocation_markerfile', 'media/com_jem/images/marker-blue.webp'), 'media/com_jem/images/marker-blue.webp');
         $height             = $params->get('height', '500px');
         $zoom               = (int) $params->get('map_zoom', 4);
-        $showCountryFilter  = (int) $params->get('show_country_filter', 1);
-        $showCategoryFilter = (int) $params->get('show_category_filter', 0);
-        $defaultCountry     = trim((string) $params->get('default_country', ''));
-        if ($defaultCountry === '0') {
-            $defaultCountry = '';
-        }
-        $selectedCountry    = $showCountryFilter ? trim($app->input->getString('jem_map_filter_country', $defaultCountry)) : $defaultCountry;
-        $selectedCity       = $showCountryFilter ? trim($app->input->getString('jem_map_filter_city', '')) : '';
-        $selectedCategoryId = $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0;
+        $locationFilters = JemMapHelper::getVenueMapFilters($params, $app->input);
+        $showCountryFilter = $locationFilters['show_country'];
+        $showCategoryFilter = $locationFilters['show_category'];
+        $selectedCountry = $locationFilters['country'];
+        $selectedCity = $locationFilters['city'];
+        $selectedCategoryId = $locationFilters['category'];
         $venueOrder         = (string) $params->get('venues_order', 'name_asc');
-        $countries          = JemMapHelper::getVenueCountries();
-        $categories         = $showCategoryFilter ? JemMapHelper::getCategories($params) : [];
+        $countries = $locationFilters['countries'];
+        $categories = $locationFilters['categories'];
         foreach ($countries as $country) {
             $countryCode = (string) $country->country;
             $countryName = JemHelperCountries::getCountryName($countryCode);
@@ -111,33 +108,10 @@ class JemViewVenuesMap extends JemView
         usort($countries, static function ($a, $b) {
             return strcasecmp((string) $a->country_name, (string) $b->country_name);
         });
-        $validCountries     = array_map(static function ($country) {
-            return (string) $country->country;
-        }, $countries);
-        $validCategoryIds   = array_map(static function ($category) {
-            return (int) $category->id;
-        }, $categories);
-
-        if ($selectedCountry !== '' && !in_array($selectedCountry, $validCountries, true)) {
-            $selectedCountry = '';
-            $selectedCity = '';
-        }
-
-        $cities = JemMapHelper::getVenueCities($selectedCountry);
-        $validCities = array_map(static function ($city) {
-            return (string) $city->city;
-        }, $cities);
-
-        if ($selectedCity !== '' && !in_array($selectedCity, $validCities, true)) {
-            $selectedCity = '';
-        }
-
-        if ($selectedCategoryId > 0 && !in_array($selectedCategoryId, $validCategoryIds, true)) {
-            $selectedCategoryId = 0;
-        }
+        $cities = array_map(static fn ($city) => (object) ['city' => $city], $locationFilters['city_options']);
 
         $categoryStartDate = $selectedCategoryId > 0 ? Factory::getDate()->format('Y-m-d') : null;
-        $venueslist = JemMapHelper::getVenues($params, $categoryStartDate, null, $selectedCategoryId, $selectedCountry, $selectedCity, $venueOrder);
+        $venueslist = JemMapHelper::getVenues($params, $categoryStartDate, null, $selectedCategoryId, $selectedCountry, $selectedCity, $venueOrder, $locationFilters['county'], $locationFilters['region']);
 
         // Pagination over the filtered venueslist
         $listLimit   = max(1, (int) $params->get('venues_list_limit', $app->get('list_limit', 20)));
@@ -151,6 +125,8 @@ class JemViewVenuesMap extends JemView
         // Preserve active filters in pagination links
         $pagination->setAdditionalUrlParam('jem_map_filter_country', $selectedCountry);
         $pagination->setAdditionalUrlParam('jem_map_filter_city', $selectedCity);
+        $pagination->setAdditionalUrlParam('jem_map_filter_county', $locationFilters['county']);
+        $pagination->setAdditionalUrlParam('jem_map_filter_region', $locationFilters['region']);
         if ($selectedCategoryId > 0) {
             $pagination->setAdditionalUrlParam('jem_map_filter_catid', $selectedCategoryId);
         }
@@ -264,6 +240,7 @@ class JemViewVenuesMap extends JemView
         $this->categories = $categories;
         $this->selectedCountry = $selectedCountry;
         $this->selectedCity = $selectedCity;
+        $this->locationFilters = $locationFilters;
         $this->selectedCategoryId = $selectedCategoryId;
 
         parent::display($tpl);

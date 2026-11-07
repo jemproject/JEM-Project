@@ -40,11 +40,12 @@ final class ExportFilterContextTest extends TestCase
             ['filter_search' => 'Música & Rock+Jazz #1', 'filter_type' => '1'],
         ];
         yield 'zero search' => [['filter_search' => '0'], ['filter_search' => '0']];
+        yield 'map month navigation' => [['jem_map_filter_jump_step' => -1], ['jem_map_filter_jump_step' => '-1']];
         yield 'map filters' => [
             ['jem_map_filter_mode' => 'date', 'jem_map_filter_date' => '2026-10-31',
-                'jem_map_filter_country' => 'ES', 'jem_map_filter_city' => 'Madrid', 'jem_map_filter_catid' => 4],
+                'jem_map_filter_country' => 'ES', 'jem_map_filter_county' => 'Community of Madrid', 'jem_map_filter_city' => 'Madrid', 'jem_map_filter_catid' => 4],
             ['jem_map_filter_mode' => 'date', 'jem_map_filter_date' => '2026-10-31',
-                'jem_map_filter_country' => 'ES', 'jem_map_filter_city' => 'Madrid', 'jem_map_filter_catid' => '4'],
+                'jem_map_filter_country' => 'ES', 'jem_map_filter_county' => 'Community of Madrid', 'jem_map_filter_city' => 'Madrid', 'jem_map_filter_catid' => '4'],
         ];
         yield 'clear search' => [['filter_search' => ''], ['filter_search' => '']];
         yield 'category type' => [['filter_typeid' => 8], ['filter_typeid' => '8']];

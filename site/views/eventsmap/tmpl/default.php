@@ -21,6 +21,7 @@ use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 $app         = Factory::getApplication();
 $document    = $app->getDocument();
 $wa          = $document->getWebAssetManager();
+$wa->registerAndUseScript('jem.eventsmap.filters', 'media/com_jem/js/eventsmap-filters.js', ['version' => 'auto'], ['defer' => true]);
 $jemsettings  = JemHelper::config();
 $map_id        = 'leafletmap-' . uniqid();
 $showDateFilter = (int) $this->showDateFilter;
@@ -30,6 +31,11 @@ $categories    = $this->categories ?? [];
 $countries     = $this->countries ?? [];
 $selectedCategoryId = (int) ($this->selectedCategoryId ?? 0);
 $selectedCountry = (string) ($this->selectedCountry ?? '');
+$locationFilters = $this->locationFilters ?? [];
+$tableColumns = [];
+foreach (['country', 'county', 'city'] as $column) {
+    $tableColumns[$column] = (bool) $this->params->get('show_table_' . $column, 1);
+}
 $filterMode    = $this->filterMode;
 $filterDate    = $this->filterDate;
 $isDateMode    = $filterDate !== null;
@@ -87,7 +93,9 @@ $fullScreenMap = (int)  $this->params->get('full_screen_map', '1');
 $showDirectionsLink = (int) $this->params->get('show_directions_link', '1');
 $showFullMapLink = (int) $this->params->get('show_full_map_link', '1');
 $showEventsTable = (int) $this->params->get('show_events_table', '1');
-$showControls  = !empty($showDateFilter) || !empty($showCategoryFilter) || !empty($showCountryFilter) || (int) $this->params->get('show_my_location', '0');
+$showControls  = !empty($showDateFilter) || !empty($showCategoryFilter) || !empty($showCountryFilter)
+    || !empty($locationFilters['show_region']) || !empty($locationFilters['show_county']) || !empty($locationFilters['show_city'])
+    || (int) $this->params->get('show_my_location', '0');
 $mapType       = (string) $this->params->get('map_type', 'political');
 $settings      = JemHelper::globalattribs();
 $googleApiKey  = trim((string) $settings->get('global_googleapi', ''));
@@ -269,6 +277,105 @@ foreach ((array) $events as $event) {
             <?php if ($eventsMapMenuItemId > 0) : ?>
                 <input type="hidden" name="Itemid" value="<?php echo $eventsMapMenuItemId; ?>">
             <?php endif; ?>
+            <div class="jem-map-period-filters d-flex flex-wrap align-items-center gap-2">
+            <?php if (!empty($showDateFilter)): ?>
+            <?php
+            $options = [
+                'all'      => 'COM_JEM_EVENTS_MAP_ALL',
+                'today'    => 'COM_JEM_EVENTS_MAP_TODAY',
+                'date'     => 'COM_JEM_EVENTS_MAP_DAY',
+                'week'     => 'COM_JEM_EVENTS_MAP_WEEK',
+                'month'    => 'COM_JEM_EVENTS_MAP_MONTH',
+                'year'     => 'COM_JEM_EVENTS_MAP_YEAR',
+                'calendar' => 'COM_JEM_EVENTS_MAP_DATE'
+            ];
+
+            foreach ($options as $value => $label) {
+                $isActive = $filterMode === $value;
+                $isDateField = $value === 'calendar';
+                ?>
+                <?php if ($isDateField) { ?>
+                    <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
+                        <span class="btn btn-outline-primary btn-sm">
+                            <?= Text::_($label) ?>
+                        </span>
+                        <?php
+                        $periodUnit = in_array($filterMode, ['week', 'month', 'year'], true)
+                            ? strtoupper($filterMode) : 'DAY';
+                        $jumpUnit = ['DAY' => 'WEEK', 'WEEK' => 'MONTH', 'MONTH' => 'YEAR'][$periodUnit] ?? null;
+                        ?>
+                        <?php if ($jumpUnit !== null) : ?>
+                        <button type="submit" name="jem_map_filter_jump_step" value="-1"
+                                class="btn btn-outline-primary btn-sm" <?= $filterMode === 'all' ? 'disabled' : '' ?>
+                                title="<?= Text::_('COM_JEM_EVENTS_MAP_PREVIOUS_' . $jumpUnit) ?>"
+                                aria-label="<?= Text::_('COM_JEM_EVENTS_MAP_PREVIOUS_' . $jumpUnit) ?>">
+                            <span class="icon-angle-double-left" aria-hidden="true"></span>
+                        </button>
+                        <?php endif; ?>
+                        <button type="submit" name="jem_map_filter_step" value="-1"
+                                class="btn btn-outline-primary btn-sm" <?= $filterMode === 'all' ? 'disabled' : '' ?>
+                                title="<?= Text::_('COM_JEM_EVENTS_MAP_PREVIOUS_' . $periodUnit) ?>"
+                                aria-label="<?= Text::_('COM_JEM_EVENTS_MAP_PREVIOUS_' . $periodUnit) ?>">
+                            <span class="icon-angle-left" aria-hidden="true"></span>
+                        </button>
+                        <input type="date" name="jem_map_filter_date" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
+                               aria-label="<?= Text::_('COM_JEM_EVENTS_MAP_DATE') ?>"
+                               min="0001-01-01" max="9999-12-31" class="form-control form-control-sm" style="width: auto;">
+                        <button type="submit" name="jem_map_filter_step" value="1"
+                                class="btn btn-outline-primary btn-sm" <?= $filterMode === 'all' ? 'disabled' : '' ?>
+                                title="<?= Text::_('COM_JEM_EVENTS_MAP_NEXT_' . $periodUnit) ?>"
+                                aria-label="<?= Text::_('COM_JEM_EVENTS_MAP_NEXT_' . $periodUnit) ?>">
+                            <span class="icon-angle-right" aria-hidden="true"></span>
+                        </button>
+                        <?php if ($jumpUnit !== null) : ?>
+                        <button type="submit" name="jem_map_filter_jump_step" value="1"
+                                class="btn btn-outline-primary btn-sm" <?= $filterMode === 'all' ? 'disabled' : '' ?>
+                                title="<?= Text::_('COM_JEM_EVENTS_MAP_NEXT_' . $jumpUnit) ?>"
+                                aria-label="<?= Text::_('COM_JEM_EVENTS_MAP_NEXT_' . $jumpUnit) ?>">
+                            <span class="icon-angle-double-right" aria-hidden="true"></span>
+                        </button>
+                        <?php endif; ?>
+                    </div>
+                <?php } else { ?>
+                    <input type="radio" class="btn-check auto-submit" name="jem_map_filter_mode" value="<?= $value ?>"
+                           id="filter-<?= $value ?>" <?= ($value == $filterMode) ? 'checked' : '' ?>>
+                    <label class="btn btn-outline-primary btn-sm"  for="filter-<?= $value ?>">
+                        <?= Text::_($label) ?>
+                    </label>
+                <?php } ?>
+            <?php } ?>
+
+            <button type="submit" class="btn btn-primary btn-sm">
+                <?= Text::_('COM_JEM_EVENTS_MAP_APPLY') ?>
+            </button>
+            <?php endif; ?>
+
+            <?php if($this->params->get('show_my_location','0')) { ?>
+                <!-- Location button -->
+                <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
+                    <i class="icon-location"></i> <?= Text::_('COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION') ?>
+                </button>
+            <?php } ?>
+            </div>
+            <?php if ($showCategoryFilter || $showCountryFilter || !empty($locationFilters['show_region']) || !empty($locationFilters['show_county']) || !empty($locationFilters['show_city'])) : ?>
+            <div class="jem-map-location-filters d-flex flex-wrap align-items-center gap-2 w-100">
+            <?php if (!empty($showCategoryFilter)): ?>
+                <label for="jem-map-filter-category-<?= $map_id ?>" class="visually-hidden">
+                    <?= Text::_('COM_JEM_EVENTS_MAP_CATEGORY_FILTER') ?>
+                </label>
+                <select name="jem_map_filter_catid"
+                        id="jem-map-filter-category-<?= $map_id ?>"
+                        class="form-select form-select-sm auto-submit"
+                        style="width: auto;">
+                    <option value="0"><?= Text::_('COM_JEM_EVENTS_MAP_ALL_CATEGORIES') ?></option>
+                    <?php foreach ($categories as $category): ?>
+                        <option value="<?= (int) $category->id ?>" <?= ((int) $category->id === $selectedCategoryId) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8') ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            <?php endif; ?>
+
             <?php if (!empty($showCountryFilter)): ?>
                 <label for="jem-map-filter-country-<?= $map_id ?>" class="visually-hidden">
                     <?= Text::_('COM_JEM_EVENTS_MAP_COUNTRY_FILTER') ?>
@@ -290,69 +397,27 @@ foreach ((array) $events as $event) {
                 </select>
             <?php endif; ?>
 
-            <?php if (!empty($showDateFilter)): ?>
-            <?php
-            $options = [
-                'all'      => 'COM_JEM_EVENTS_MAP_ALL',
-                'today'    => 'COM_JEM_EVENTS_MAP_TODAY',
-                'tomorrow' => 'COM_JEM_EVENTS_MAP_TOMORROW',
-                'week'     => 'COM_JEM_EVENTS_MAP_WEEK',
-                'month'    => 'COM_JEM_EVENTS_MAP_MONTH',
-                'year'     => 'COM_JEM_EVENTS_MAP_YEAR',
-                'date'     => 'COM_JEM_EVENTS_MAP_DATE'
-            ];
-
-            foreach ($options as $value => $label) {
-                $isActive = $filterMode === $value;
-                $isDateField = $value === 'date';
-                ?>
-                <?php if ($isDateField) { ?>
-                    <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
-                        <input type="radio" class="btn-check"  name="jem_map_filter_mode" value="<?= $value ?>"
-                               id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
-                        <label class="btn btn-outline-primary btn-sm" for="filter-<?= $value ?>">
-                            <?= Text::_($label) ?>
-                        </label>
-                        <input type="date" name="jem_map_filter_date" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
-                               class="form-control form-control-sm" style="width: auto;">
-                    </div>
-                <?php } else { ?>
-                    <input type="radio" class="btn-check auto-submit" name="jem_map_filter_mode" value="<?= $value ?>"
-                           id="filter-<?= $value ?>" <?= ($value == $filterMode) ? 'checked' : '' ?>>
-                    <label class="btn btn-outline-primary btn-sm"  for="filter-<?= $value ?>">
-                        <?= Text::_($label) ?>
+            <?php foreach (['region', 'county', 'city'] as $locationName) : ?>
+                <?php if (!empty($locationFilters['show_' . $locationName])) : ?>
+                    <label for="jem-map-filter-<?= $locationName ?>-<?= $map_id ?>" class="visually-hidden">
+                        <?= Text::_('COM_JEM_EVENTS_MAP_' . strtoupper($locationName) . '_FILTER') ?>
                     </label>
-                <?php } ?>
-            <?php } ?>
+                    <select name="jem_map_filter_<?= $locationName ?>"
+                            id="jem-map-filter-<?= $locationName ?>-<?= $map_id ?>"
+                            class="form-select form-select-sm auto-submit" style="width: auto; max-width: 100%;">
+                        <option value=""><?= Text::_('COM_JEM_EVENTS_MAP_ALL_' . ($locationName === 'region' ? 'REGIONS' : ($locationName === 'county' ? 'COUNTIES' : 'CITIES'))) ?></option>
+                        <?php foreach ($locationFilters[$locationName . '_options'] as $locationValue) : ?>
+                            <option value="<?= htmlspecialchars($locationValue, ENT_QUOTES, 'UTF-8') ?>"
+                                <?= $locationFilters[$locationName] === $locationValue ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($locationValue, ENT_QUOTES, 'UTF-8') ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                <?php endif; ?>
+            <?php endforeach; ?>
 
-            <button type="submit" class="btn btn-primary btn-sm">
-                <?= Text::_('COM_JEM_EVENTS_MAP_APPLY') ?>
-            </button>
+            </div>
             <?php endif; ?>
-
-            <?php if (!empty($showCategoryFilter)): ?>
-                <label for="jem-map-filter-category-<?= $map_id ?>" class="visually-hidden">
-                    <?= Text::_('COM_JEM_EVENTS_MAP_CATEGORY_FILTER') ?>
-                </label>
-                <select name="jem_map_filter_catid"
-                        id="jem-map-filter-category-<?= $map_id ?>"
-                        class="form-select form-select-sm auto-submit"
-                        style="width: auto;">
-                    <option value="0"><?= Text::_('COM_JEM_EVENTS_MAP_ALL_CATEGORIES') ?></option>
-                    <?php foreach ($categories as $category): ?>
-                        <option value="<?= (int) $category->id ?>" <?= ((int) $category->id === $selectedCategoryId) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8') ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            <?php endif; ?>
-
-            <?php if($this->params->get('show_my_location','0')) { ?>
-                <!-- Location button -->
-                <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
-                    <i class="icon-location"></i> <?= Text::_('COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION') ?>
-                </button>
-            <?php } ?>
             <?php echo HTMLHelper::_('form.token'); ?>
         </form>
 
@@ -381,9 +446,15 @@ foreach ((array) $events as $event) {
                         <th><?php echo Text::_('COM_JEM_DATE'); ?></th>
                         <th><?php echo Text::_('COM_JEM_EVENT'); ?></th>
                         <th><?php echo Text::_('COM_JEM_VENUE'); ?></th>
+                        <?php if ($tableColumns['city']) : ?>
                         <th><?php echo Text::_('COM_JEM_CITY'); ?></th>
+                        <?php endif; ?>
+                        <?php if ($tableColumns['county']) : ?>
                         <th><?php echo Text::_('COM_JEM_STATE'); ?></th>
+                        <?php endif; ?>
+                        <?php if ($tableColumns['country']) : ?>
                         <th class="jem-eventsmap-country"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
+                        <?php endif; ?>
                         <th><?php echo Text::_('COM_JEM_MAP'); ?></th>
                     </tr>
                 </thead>
@@ -411,9 +482,15 @@ foreach ((array) $events as $event) {
                                     <?php echo htmlspecialchars((string) ($event->venue ?? ''), ENT_QUOTES, 'UTF-8'); ?>
                                 <?php endif; ?>
                             </td>
+                        <?php if ($tableColumns['city']) : ?>
                             <td><?php echo htmlspecialchars((string) ($event->city ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+                        <?php endif; ?>
+                        <?php if ($tableColumns['county']) : ?>
                             <td><?php echo htmlspecialchars((string) ($event->state ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+                        <?php endif; ?>
+                        <?php if ($tableColumns['country']) : ?>
                             <td class="jem-eventsmap-country"><?php echo htmlspecialchars((string) ($event->country ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+                        <?php endif; ?>
                             <td>
                                 <a href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
                                     <?php echo Text::_('COM_JEM_MAP'); ?>
@@ -423,7 +500,7 @@ foreach ((array) $events as $event) {
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="7"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></td>
+                        <td colspan="<?= 4 + count(array_filter($tableColumns)) ?>"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></td>
                     </tr>
                 <?php endif; ?>
                 </tbody>
@@ -445,39 +522,7 @@ foreach ((array) $events as $event) {
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.auto-submit').forEach(function(radio) {
-            radio.addEventListener('change', function() {
-                if (this.matches('select') || this.checked) {
-                    this.closest('form').submit();
-                }
-            });
-        });
-    });
     document.addEventListener('DOMContentLoaded', function () {
-        <?php if (!empty($showDateFilter)): ?>
-        (function () {
-            var form = document.querySelector('.jem-date-filter');
-            if (!form) return;
-            var rAll = form.querySelector('input[name="jem_map_filter_mode"][value="all"]');
-            var rDate = form.querySelector('input[name="jem_map_filter_mode"][value="date"]');
-            var dateInput = form.querySelector('input[name="jem_map_filter_date"]');
-            function sync() {
-                var useDate = rDate && rDate.checked;
-                if (dateInput) {
-                    dateInput.disabled = !useDate;
-                    dateInput.required = useDate;
-                }
-            }
-            if (rAll) {
-                rAll.addEventListener('change', sync);
-            }
-            if (rDate) {
-                rDate.addEventListener('change', sync);
-            }
-            sync();
-        })();
-        <?php endif; ?>
 
         var mapElement = document.getElementById('<?= $map_id ?>');
         if (!mapElement) {

@@ -1484,7 +1484,7 @@ div#jem.jem_venue .jem-venue-overview-panel {
     box-sizing: border-box;
     display: grid;
     gap: 1.5rem;
-    grid-template-columns: minmax(0, 1fr) minmax(8rem, max-content);
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
     margin: 0 0 1.35rem;
     padding: 1rem 1.1rem;
 }
@@ -1518,10 +1518,23 @@ div#jem.jem_venue .jem-venue-overview-details dd {
 div#jem.jem_venue .jem-venue-overview-media {
     align-self: center;
     justify-self: end;
+    min-width: 0;
+    max-width: 100%;
+}
+
+div#jem.jem_venue .jem-venue-overview-panel:not(:has(> .jem-venue-overview-media)) {
+    grid-template-columns: minmax(0, 1fr);
 }
 
 div#jem.jem_venue .jem-venue-overview-media .flyerimage {
     margin: 0;
+}
+
+/* Match the venue template's stacked-image breakpoint. */
+@media (max-width: 60rem) {
+    div#jem.jem_venue .jem-venue-overview-panel {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
 
 div#jem.jem_venue .jem-venue-section-separator {

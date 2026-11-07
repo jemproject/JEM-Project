@@ -388,7 +388,8 @@ Text::script('JCANCEL');
                 postalCode: getAddressPart(address, ['postcode']),
                 city: city,
                 district: getAddressPart(address, ['city_district', 'borough', 'suburb', 'quarter']),
-                state: getAddressPart(address, ['state', 'region']),
+                region: getAddressPart(address, ['state', 'region']),
+                state: getAddressPart(address, ['county', 'state_district']),
                 countryCode: address.country_code ? address.country_code.toUpperCase() : ''
             };
         }
@@ -399,6 +400,7 @@ Text::script('JCANCEL');
             setFieldValue('jform_city', osmAddress.city);
             setFieldValue('jform_district', osmAddress.district);
             setFieldValue('jform_state', osmAddress.state);
+            setFieldValue('jform_region', osmAddress.region);
             setCountryFieldValue(osmAddress.countryCode);
         }
 
@@ -824,7 +826,8 @@ Text::script('JCANCEL');
         var geoFields = {
             tmp_form_postalCode: "postal_code",
             tmp_form_city: "locality",
-            tmp_form_state: "administrative_area_level_1",
+            tmp_form_region: "administrative_area_level_1",
+            tmp_form_state: "administrative_area_level_2",
             tmp_form_street: "street_address",
             tmp_form_route: "route",
             tmp_form_streetnumber: "street_number",
@@ -950,6 +953,7 @@ Text::script('JCANCEL');
             document.getElementById("jform_postalCode").value = document.getElementById("tmp_form_postalCode").value;
             document.getElementById("jform_city").value = document.getElementById("tmp_form_city").value;
             document.getElementById("jform_state").value = document.getElementById("tmp_form_state").value;
+            document.getElementById("jform_region").value = document.getElementById("tmp_form_region").value;
             document.getElementById("jform_country").value = document.getElementById("tmp_form_country").value;
         });
 
@@ -1065,10 +1069,11 @@ Text::script('JCANCEL');
                 <legend><?php echo Text::_('COM_JEM_ADDRESS'); ?></legend>
                 <ul class="adminformlist">
                     <li><?php echo $this->form->getLabel('street'); ?><?php echo $this->form->getInput('street'); ?></li>
+                    <li><?php echo $this->form->getLabel('district'); ?><?php echo $this->form->getInput('district'); ?></li>
                     <li><?php echo $this->form->getLabel('postalCode'); ?><?php echo $this->form->getInput('postalCode'); ?></li>
                     <li><?php echo $this->form->getLabel('city'); ?><?php echo $this->form->getInput('city'); ?></li>
-                    <li><?php echo $this->form->getLabel('district'); ?><?php echo $this->form->getInput('district'); ?></li>
                     <li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
+                    <li><?php echo $this->form->getLabel('region'); ?><?php echo $this->form->getInput('region'); ?></li>
                     <li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
                     <li<?php echo $showWhenTopLevelVenueAttribute; ?>><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>
                 </ul>
@@ -1133,6 +1138,9 @@ Text::script('JCANCEL');
                             </li>
                             <li><label><?php echo Text::_('COM_JEM_CITY'); ?></label>
                                 <input type="text" class="inputbox" id="tmp_form_city" />
+                            </li>
+                            <li><label><?php echo Text::_('COM_JEM_REGION'); ?></label>
+                                <input type="text" class="inputbox" id="tmp_form_region" />
                             </li>
                             <li><label><?php echo Text::_('COM_JEM_STATE'); ?></label>
                                 <input type="text" class="inputbox" id="tmp_form_state" />

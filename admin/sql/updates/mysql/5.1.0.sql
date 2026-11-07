@@ -1,4 +1,8 @@
 -- JEM 5.1.0: event programmes and nested venue hierarchies.
+-- Preserve legacy address values; the new region level is intentionally empty.
+ALTER TABLE `#__jem_venues` ADD COLUMN `region` VARCHAR(200) NOT NULL DEFAULT '' AFTER `city` /** CAN FAIL **/;
+ALTER TABLE `#__jem_venues` MODIFY `city` VARCHAR(200) NULL DEFAULT NULL;
+ALTER TABLE `#__jem_venues` MODIFY `state` VARCHAR(200) NULL DEFAULT NULL;
 CREATE TABLE IF NOT EXISTS `#__jem_diagnostic_reports` (
     `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `created` datetime NOT NULL,

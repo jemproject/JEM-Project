@@ -48,6 +48,7 @@
 #jem.jem_eventsmap .jem-date-filter .btn-group-sm > .btn,
 #jem.jem_eventsmap .jem-date-filter .btn-group-sm > .form-control,
 #jem.jem_eventsmap .jem-date-filter .btn-group-sm > input[type="date"] {
+    margin-bottom: 0;
     height: 2.2rem;
     min-height: 2.2rem;
 }

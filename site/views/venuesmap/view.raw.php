@@ -40,17 +40,14 @@ class JemViewVenuesMap extends HtmlView
         $settings = JemHelper::globalattribs();
         $showVenueDescription = (int) $params->get('showvenuedescription', 1) === 1
             && (!$settings || !method_exists($settings, 'get') || (int) $settings->get('global_show_locdescription', 1) === 1);
-        $showCountryFilter = (int) $params->get('show_country_filter', 1);
-        $showCategoryFilter = (int) $params->get('show_category_filter', 0);
         $venueOrder = (string) $params->get('venues_order', 'name_asc');
-        $defaultCountry = trim((string) $params->get('default_country', ''));
-        $defaultCountry = $defaultCountry === '0' ? '' : $defaultCountry;
-        $selectedCountry = $showCountryFilter ? trim($app->input->getString('jem_map_filter_country', $defaultCountry)) : $defaultCountry;
-        $selectedCity = $showCountryFilter ? trim($app->input->getString('jem_map_filter_city', '')) : '';
-        $selectedCategoryId = $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0;
+        $filters = JemMapHelper::getVenueMapFilters($params, $app->input);
+        $selectedCountry = $filters['country'];
+        $selectedCity = $filters['city'];
+        $selectedCategoryId = $filters['category'];
         $categoryStartDate = $selectedCategoryId > 0 ? Factory::getDate()->format('Y-m-d') : null;
         $rows = is_callable(array(JemMapHelper::class, 'getVenues'))
-            ? JemMapHelper::getVenues($params, $categoryStartDate, null, $selectedCategoryId, $selectedCountry, $selectedCity, $venueOrder)
+            ? JemMapHelper::getVenues($params, $categoryStartDate, null, $selectedCategoryId, $selectedCountry, $selectedCity, $venueOrder, $filters['county'], $filters['region'])
             : array();
 
         JemPdfView::renderVenueList(Text::_('COM_JEM_VENUES_MAP'), (array) $rows, 'jem-venues-map.pdf', 'map', $mapProvider, $showVenueImage, $showVenueDescription);

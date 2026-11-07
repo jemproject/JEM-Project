@@ -44,6 +44,7 @@ $showCountryFilter = (int) ($this->showCountryFilter ?? 1);
 $showCategoryFilter = (int) ($this->showCategoryFilter ?? 1);
 $selectedCountry = (string) ($this->selectedCountry ?? '');
 $selectedCity = (string) ($this->selectedCity ?? '');
+$locationFilters = $this->locationFilters;
 $selectedCategoryId = (int) ($this->selectedCategoryId ?? 0);
 $activeMenuItem = $app->getMenu()->getActive();
 $venuesMapMenuItemId = (
@@ -684,23 +685,22 @@ foreach (($this->venueslist ?? []) as $venue) {
                 <?php endforeach; ?>
             </select>
 
-            <label for="jem-map-filter-city-<?= $map_id ?>" class="form-label mb-0">
-                <?= Text::_('COM_JEM_CITY') ?>
-            </label>
-            <select name="jem_map_filter_city"
-                    id="jem-map-filter-city-<?= $map_id ?>"
-                    class="form-select form-select-sm auto-submit"
-                    style="width: auto;"
-                    <?= ($selectedCountry === '') ? 'disabled' : '' ?>>
-                <option value=""><?= Text::_('COM_JEM_SELECT_CITY') ?></option>
-                <?php foreach ($cities as $city): ?>
-                    <?php $cityValue = (string) $city->city; ?>
-                    <option value="<?= htmlspecialchars($cityValue, ENT_QUOTES, 'UTF-8') ?>" <?= ($cityValue === $selectedCity) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($cityValue, ENT_QUOTES, 'UTF-8') ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
         <?php endif; ?>
+
+        <?php foreach (['region' => 'COM_JEM_REGION', 'county' => 'COM_JEM_STATE', 'city' => 'COM_JEM_CITY'] as $name => $label) : ?>
+            <?php if ($locationFilters['show_' . $name]) : ?>
+                <label for="jem-map-filter-<?= $name ?>-<?= $map_id ?>" class="form-label mb-0"><?= Text::_($label) ?></label>
+                <select name="jem_map_filter_<?= $name ?>" id="jem-map-filter-<?= $name ?>-<?= $map_id ?>"
+                        class="form-select form-select-sm auto-submit" style="width: auto; max-width: 100%;">
+                    <option value=""><?= Text::_($name === 'region' ? 'COM_JEM_EVENTS_MAP_ALL_REGIONS' : ($name === 'county' ? 'COM_JEM_EVENTS_MAP_ALL_COUNTIES' : 'COM_JEM_EVENTS_MAP_ALL_CITIES')) ?></option>
+                    <?php foreach ($locationFilters[$name . '_options'] as $value) : ?>
+                        <option value="<?= htmlspecialchars($value, ENT_QUOTES, 'UTF-8') ?>" <?= $value === $locationFilters[$name] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($value, ENT_QUOTES, 'UTF-8') ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            <?php endif; ?>
+        <?php endforeach; ?>
 
         <?php if ($showCategoryFilter) : ?>
             <label for="jem-map-filter-category-<?= $map_id ?>" class="form-label mb-0">
@@ -962,15 +962,14 @@ foreach (($this->venueslist ?? []) as $venue) {
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.auto-submit').forEach(function(control) {
+        document.querySelectorAll('#jem .jem-date-filter .auto-submit').forEach(function(control) {
             control.addEventListener('change', function() {
-                if (control.name === 'jem_map_filter_country') {
-                    var city = document.getElementById('jem-map-filter-city-<?= $map_id ?>');
-                    if (city) {
-                        city.value = '';
-                        city.disabled = control.value === '';
-                    }
-                }
+                var children = control.name === 'jem_map_filter_country' ? ['region', 'county', 'city']
+                    : (control.name === 'jem_map_filter_region' ? ['county', 'city'] : (control.name === 'jem_map_filter_county' ? ['city'] : []));
+                children.forEach(function(name) {
+                    var child = control.form.querySelector('[name="jem_map_filter_' + name + '"]');
+                    if (child) child.value = '';
+                });
 
                 control.closest('form').submit();
             });

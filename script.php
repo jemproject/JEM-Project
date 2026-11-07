@@ -2226,6 +2226,7 @@ SQL;
                 'series_order'  => "INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `series_id`",
             ),
             '#__jem_venues' => array(
+                'region'   => "VARCHAR(200) NOT NULL DEFAULT '' AFTER `city`",
                 'district' => "VARCHAR(100) NOT NULL DEFAULT '' AFTER `city`",
                 'level'    => "VARCHAR(100) NOT NULL DEFAULT '' AFTER `district`",
                 'capacity' => "INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `level`",
@@ -2259,6 +2260,18 @@ SQL;
                         . ' ADD COLUMN ' . $db->quoteName($column) . ' ' . $definition
                     );
                     $db->execute();
+                }
+            }
+        }
+
+        $venueTable = $db->replacePrefix('#__jem_venues');
+        if (in_array($venueTable, $existingTables, true)) {
+            $venueColumns = $db->getTableColumns($venueTable, false);
+            foreach (['city', 'state'] as $field) {
+                if (preg_match('/^varchar\((\d+)\)$/i', $venueColumns[$field]->Type ?? '', $match)
+                    && (int) $match[1] < 200) {
+                    $db->setQuery('ALTER TABLE ' . $db->quoteName($venueTable) . ' MODIFY '
+                        . $db->quoteName($field) . ' VARCHAR(200) NULL DEFAULT NULL')->execute();
                 }
             }
         }

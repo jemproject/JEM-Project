@@ -105,6 +105,7 @@
             label="COM_JEM_VENUE_PHYSICAL_CAPACITY"
             description="COM_JEM_VENUE_CAPACITY_DESC"
         />
+        <field name="region" type="text" label="COM_JEM_REGION" filter="string" maxlength="200" />
         <field name="state" type="text"
             class="inputbox"
             size="40"

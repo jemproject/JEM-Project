@@ -207,7 +207,7 @@ class JemTableVenue extends Table
         }
 
         $this->city = strip_tags($this->city);
-        if (StringHelper::strlen($this->city) > 50) {
+        if (StringHelper::strlen($this->city) > 200) {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_CITY'));
             return false;
         }
@@ -232,12 +232,17 @@ class JemTableVenue extends Table
         $this->capacity = (int) $this->capacity;
 
         $this->state = strip_tags($this->state);
-        if (StringHelper::strlen($this->state) > 50) {
+        if (StringHelper::strlen($this->state) > 200) {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_STATE'));
             return false;
         }
 
         $this->country = strip_tags($this->country);
+        $this->region = trim(strip_tags((string) ($this->region ?? '')));
+        if (StringHelper::strlen($this->region) > 200) {
+            $this->setError(Text::_('COM_JEM_VENUE_ERROR_REGION'));
+            return false;
+        }
         if (StringHelper::strlen($this->country) > 2) {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_COUNTRY'));
             return false;

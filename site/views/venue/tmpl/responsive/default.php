@@ -275,6 +275,13 @@ $venueShowEvents = (int) $this->params->get('venue_show_events', 1) === 1
           </dd>
           <?php endif; ?>
 
+          <?php if ($this->venue->district) : ?>
+          <dt class="venue_district hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_DISTRICT'); ?>"><?php echo Text::_('COM_JEM_DISTRICT'); ?>:</dt>
+          <dd class="venue_district">
+            <?php echo $this->escape($this->venue->district); ?>
+          </dd>
+          <?php endif; ?>
+
           <?php if ($this->venue->postalCode) : ?>
           <dt class="venue_postalCode hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_ZIP'); ?>"><?php echo Text::_('COM_JEM_ZIP'); ?>:</dt>
           <dd class="venue_postalCode" itemprop="postalCode">
@@ -289,10 +296,28 @@ $venueShowEvents = (int) $this->params->get('venue_show_events', 1) === 1
           </dd>
           <?php endif; ?>
 
-          <?php if ($this->venue->district) : ?>
-          <dt class="venue_district hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_DISTRICT'); ?>"><?php echo Text::_('COM_JEM_DISTRICT'); ?>:</dt>
-          <dd class="venue_district">
-            <?php echo $this->escape($this->venue->district); ?>
+
+
+
+          <?php if ($this->venue->state) : ?>
+          <dt class="venue_state hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STATE'); ?>"><?php echo Text::_('COM_JEM_STATE'); ?>:</dt>
+          <dd class="venue_state" itemprop="addressRegion">
+            <?php echo $this->escape($this->venue->state); ?>
+          </dd>
+          <?php endif; ?>
+
+          <?php if ($this->venue->region) : ?>
+          <dt class="venue_region hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_REGION'); ?>"><?php echo Text::_('COM_JEM_REGION'); ?>:</dt>
+          <dd class="venue_region">
+            <?php echo $this->escape($this->venue->region); ?>
+          </dd>
+          <?php endif; ?>
+
+          <?php if ($this->venue->country) : ?>
+          <dt class="venue_country hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_COUNTRY'); ?>"><?php echo Text::_('COM_JEM_COUNTRY'); ?>:</dt>
+          <dd class="venue_country">
+            <?php echo $this->venue->countryimg ? $this->venue->countryimg : $this->escape($this->venue->country); ?>
+            <meta itemprop="addressCountry" content="<?php echo $this->escape($this->venue->country); ?>" />
           </dd>
           <?php endif; ?>
 
@@ -307,21 +332,6 @@ $venueShowEvents = (int) $this->params->get('venue_show_events', 1) === 1
           <dt class="venue_capacity hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_VENUE_CAPACITY'); ?>"><?php echo Text::_('COM_JEM_VENUE_CAPACITY'); ?>:</dt>
           <dd class="venue_capacity">
             <?php echo number_format((int) $this->venue->capacity, 0, Text::_('DECIMALS_SEPARATOR'), Text::_('THOUSANDS_SEPARATOR')); ?>
-          </dd>
-          <?php endif; ?>
-
-          <?php if ($this->venue->state) : ?>
-          <dt class="venue_state hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STATE'); ?>"><?php echo Text::_('COM_JEM_STATE'); ?>:</dt>
-          <dd class="venue_state" itemprop="addressRegion">
-            <?php echo $this->escape($this->venue->state); ?>
-          </dd>
-          <?php endif; ?>
-
-          <?php if ($this->venue->country) : ?>
-          <dt class="venue_country hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_COUNTRY'); ?>"><?php echo Text::_('COM_JEM_COUNTRY'); ?>:</dt>
-          <dd class="venue_country">
-            <?php echo $this->venue->countryimg ? $this->venue->countryimg : $this->escape($this->venue->country); ?>
-            <meta itemprop="addressCountry" content="<?php echo $this->escape($this->venue->country); ?>" />
           </dd>
           <?php endif; ?>
 
