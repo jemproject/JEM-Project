@@ -1,0 +1,13 @@
+.jem-cancellation-dialog {
+    width: min(42rem, calc(100% - 2rem));
+    max-height: calc(100% - 2rem);
+    overflow: auto;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color, #aaa);
+    border-radius: .5rem;
+    background: var(--body-bg, #fff);
+    color: var(--body-color, #222);
+}
+.jem-cancellation-dialog::backdrop {
+    background: rgb(0 0 0 / 45%);
+}

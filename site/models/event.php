@@ -15,6 +15,8 @@ use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
+
+require_once dirname(__DIR__) . '/classes/registrationcancellation.class.php';
 /**
  * Event-Model
  */
@@ -32,6 +34,9 @@ class JemModelEvent extends ItemModel
     protected $_registers = null;
 
     protected $_registerid = null;
+
+    /** @var array Committed cancellation results for the controller. */
+    private array $cancellationResults = array();
 
     /**
      * Method to auto-populate the model state.
@@ -1060,7 +1065,7 @@ class JemModelEvent extends ItemModel
         // usercheck
         // -1 if user will not attend, 0 if invened/unknown, 1 if registeredm 2 if on waiting list
         try {
-            $query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment, places'
+            $query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment, places, revision, pricing_mode'
                 . ' FROM #__jem_register'
                 . ' WHERE uid = ' . $this->_db->quote($userid)
                 . ' AND event = ' . $this->_db->quote($eventId);
@@ -1440,15 +1445,21 @@ class JemModelEvent extends ItemModel
      * Saves the registration to the database
      *
      * @access public
-     * @return int register id on success, else false
+     * @param bool $previewCancellation Return a cancellation preview without writing.
+     * @return int|array|false Registration ID, preview, or failure.
      */
-    public function userregister()
+    public function userregister(bool $previewCancellation = false)
     {
         $app = Factory::getApplication('site');
         $user = JemFactory::getUser();
         $jemsettings = JemHelper::config();
 
+        $this->cancellationResults = array();
         $status  = $app->input->getInt('reg_check', 0);
+        if ($previewCancellation && $status !== -1) {
+            $this->setError(Text::_('COM_JEM_CANCELLATION_REVIEW_CHANGED'));
+            return false;
+        }
         //    $noreg   = ($status == -1) ? 'on' : 'off';//$app->input->getString('noreg_check', 'off');
         $comment = $app->input->getString('reg_comment', '');
         $comment = OutputFilter::cleanText($comment);
@@ -1625,6 +1636,13 @@ class JemModelEvent extends ItemModel
         }
         $events = $authorisedEvents;
 
+        if ($isCancellation) {
+            return $this->cancelRegistrationResponse($events, $registrations, $cancelplaces, $previewCancellation);
+        }
+        if ($previewCancellation) {
+            return array('required' => false);
+        }
+
         $pending = array();
         $uip = JemHelper::getStoredIP();
 
@@ -1633,17 +1651,13 @@ class JemModelEvent extends ItemModel
             $eventStatus = $status;
 
 
-            if ($isAreaCapacity && !($status < 0 && !$isCancellation)) {
-                if ($eventStatus > 0) {
-                    try {
-                        $places = JemRegistrationQuantity::sumOptional($capacityAllocations);
-                        JemRegistrationQuantity::assertActiveTotal($places, $e);
-                    } catch (InvalidArgumentException $exception) {
-                        $this->setError(Text::_('COM_JEM_CAPACITY_REGISTRATION_SELECTION_REQUIRED'));
-                        return false;
-                    }
-                } else {
-                    $places = $reg ? (int) $reg->places : 0;
+            if ($isAreaCapacity && $eventStatus > 0) {
+                try {
+                    $places = JemRegistrationQuantity::sumOptional($capacityAllocations);
+                    JemRegistrationQuantity::assertActiveTotal($places, $e);
+                } catch (InvalidArgumentException $exception) {
+                    $this->setError(Text::_('COM_JEM_CAPACITY_REGISTRATION_SELECTION_REQUIRED'));
+                    return false;
                 }
             } else {
                 try {
@@ -1716,6 +1730,93 @@ class JemModelEvent extends ItemModel
         }
 
         return $result;
+    }
+
+    /**
+     * Preview or save the same cancellation quantity for every authorised occurrence.
+     *
+     * @param array $events Authorised occurrence rows.
+     * @param array $registrations Owned registrations indexed by event ID.
+     * @param int $quantity Places to cancel per occurrence.
+     * @param bool $preview Return a confirmation summary without writing.
+     * @return array|int|false Preview, primary registration ID, or failure.
+     */
+    protected function cancelRegistrationResponse(array $events, array $registrations, int $quantity, bool $preview)
+    {
+        $app = Factory::getApplication();
+        $uid = (int) JemFactory::getUser()->get('id');
+        $requestedAreas = (array) $app->input->post->get('cancel_capacity_areas', array(), 'array');
+        $comment = $app->input->getString('reg_comment', '');
+        $comment = OutputFilter::cleanText($comment);
+        $service = new JemRegistrationService($this->_db);
+        $rows = $revisions = $allocations = $summary = $identity = array();
+        try {
+            foreach ($events as $event) {
+                $id = (int) $event->id;
+                $registration = $registrations[$id];
+                $capacity = $service->capacityOptions($id, (int) $registration->id);
+                $reduction = JemRegistrationCancellation::reduce(
+                    $event, $registration, $quantity, $requestedAreas, (array) $capacity->current
+                );
+                $row = (object) array('id' => (int) $registration->id, 'event' => $id, 'uid' => $uid,
+                    'places' => $reduction['places'],
+                    'comment' => $comment);
+                JemRegistrationTransition::applyLogicalStatus($row, $reduction['status']);
+                $rows[] = $row;
+                $revisions[$id] = max(1, (int) ($registration->revision ?? 1));
+                $allocations[$id] = $reduction['allocations'];
+                $areas = array();
+                foreach ($capacity->options as $option) {
+                    $key = $option['key'];
+                    if (!empty($reduction['cancelledAreas'][$key])) {
+                        $areas[] = (string) $option['area_name'] . ': ' . $reduction['cancelledAreas'][$key];
+                    }
+                }
+                $summary[] = array('eventId' => $id,
+                    'label' => Text::sprintf('COM_JEM_CANCELLATION_EVENT', $id) . ' — ' . (string) $event->dates,
+                    'quantity' => $quantity, 'remaining' => $reduction['remaining'], 'areas' => $areas);
+                $identity[$id] = array($registration, $event, $reduction);
+            }
+            ksort($identity);
+            $fingerprint = hash_hmac('sha256', json_encode(array($uid, (int) $this->_registerid, $identity), JSON_THROW_ON_ERROR),
+                (string) $app->get('secret'));
+            if ($preview) {
+                return array('required' => true, 'fingerprint' => $fingerprint, 'events' => $summary,
+                    'message' => Text::sprintf('COM_JEM_CANCELLATION_CONFIRM_MESSAGE',
+                        Text::plural('COM_JEM_CANCELLATION_PLACES', $quantity),
+                        Text::plural('COM_JEM_CANCELLATION_EVENTS', count($summary))));
+            }
+            if ($app->input->post->getInt('jem_cancel_confirm', 0) !== 1
+                || !hash_equals($fingerprint, $app->input->post->getString('jem_cancel_fingerprint', ''))) {
+                throw new RuntimeException('COM_JEM_CANCELLATION_REVIEW_CHANGED');
+            }
+            $this->cancellationResults = $service->saveMany($rows, array(
+                'actorId' => $uid, 'source' => 'site.event.registration_response',
+                'respectPlaces' => true, 'allowWaiting' => false, 'requireExisting' => true,
+                'expectedRevisions' => $revisions, 'capacityAllocationsByEvent' => $allocations,
+            ));
+        } catch (Throwable $exception) {
+            $key = $exception->getMessage();
+            $this->setError(Text::_(str_starts_with($key, 'COM_JEM_') ? $key : 'COM_JEM_CANCELLATION_REVIEW_CHANGED'));
+            return false;
+        }
+        $result = 0;
+        foreach ($this->cancellationResults as $stored) {
+            if (!$result || (int) $stored->after->event === (int) $this->_registerid) {
+                $result = (int) $stored->after->id;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Return committed cancellation results for notifications and waiting lists.
+     *
+     * @return array Results from the last successful cancellation batch.
+     */
+    public function getCancellationResults(): array
+    {
+        return $this->cancellationResults;
     }
 
     /**

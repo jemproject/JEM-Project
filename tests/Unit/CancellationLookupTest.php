@@ -103,7 +103,7 @@ final class CancellationLookupTest extends TestCase
 
     public function testIndividualCancellationStillReachesTheWriter(): void
     {
-        self::assertSame(91, $this->model->userregister());
+        self::assertSame(91, $this->confirmCancellation());
         self::assertCount(1, JemRegistrationService::$writes);
         $rows = JemRegistrationService::$writes[0];
         self::assertCount(1, $rows);
@@ -115,7 +115,7 @@ final class CancellationLookupTest extends TestCase
     public function testPartialSeriesSkipsOnlyUnbookedOccurrences(): void
     {
         $this->enableSeries();
-        self::assertSame(91, $this->model->userregister());
+        self::assertSame(91, $this->confirmCancellation());
         self::assertCount(1, JemRegistrationService::$writes);
         self::assertSame([15, 17], array_column(JemRegistrationService::$writes[0], 'event'));
     }
@@ -188,7 +188,7 @@ final class CancellationLookupTest extends TestCase
     {
         $this->model->visible = false;
         $this->model->realRegistrationLoader = true;
-        self::assertSame(91, $this->model->userregister());
+        self::assertSame(91, $this->confirmCancellation());
         self::assertCount(1, JemRegistrationService::$writes);
     }
 
@@ -213,7 +213,7 @@ final class CancellationLookupTest extends TestCase
         $this->input->values['cancelplaces'] = 1;
         $this->database->events[15]->minbookeduser = 2;
         self::assertFalse($this->model->userregister());
-        self::assertSame('COM_JEM_ERROR_REGISTRATION', $this->model->getError());
+        self::assertSame('COM_JEM_CANCELLATION_QUANTITY_INVALID', $this->model->getError());
         self::assertSame([], JemRegistrationService::$writes);
         $source = (string) file_get_contents(JEM_TEST_ROOT . '/site/models/event.php');
         self::assertStringContainsString("'e.minbookeduser'", $source);
@@ -225,6 +225,15 @@ final class CancellationLookupTest extends TestCase
         self::assertFalse($this->model->userregister());
         self::assertSame('JERROR_ALERTNOAUTHOR', $this->model->getError());
         self::assertSame([], JemRegistrationService::$writes);
+    }
+
+    private function confirmCancellation()
+    {
+        $preview = $this->model->userregister(true);
+        self::assertIsArray($preview);
+        $this->input->values['jem_cancel_confirm'] = 1;
+        $this->input->values['jem_cancel_fingerprint'] = $preview['fingerprint'];
+        return $this->model->userregister();
     }
 
     private function enableSeries(): void

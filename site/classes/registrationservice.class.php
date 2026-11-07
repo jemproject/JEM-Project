@@ -73,7 +73,10 @@ final class JemRegistrationService
      * Event locks are acquired in numeric order so series bookings cannot
      * deadlock each other. Capacity is recalculated while those locks are held.
      *
-     * @return array<object>
+     * @param array $rows Registration rows, one per event.
+     * @param array $options Shared writer options; expectedRevisions and
+     *                       capacityAllocationsByEvent may supply values keyed by event ID.
+     * @return array<object> Committed registration results.
      */
     public function saveMany(array $rows, array $options = array())
     {
@@ -114,6 +117,19 @@ final class JemRegistrationService
                 $before = $this->loadForUpdate($row);
                 $rowOptions = $options;
                 $rowOptions['operationReference'] = $operationReference;
+                $eventId = (int) $row->event;
+                if (isset($options['expectedRevisions'])) {
+                    if (!array_key_exists($eventId, $options['expectedRevisions'])) {
+                        throw new RuntimeException('Missing expected registration revision.');
+                    }
+                    $rowOptions['expectedRevision'] = (int) $options['expectedRevisions'][$eventId];
+                }
+                if (isset($options['capacityAllocationsByEvent'])) {
+                    if (!array_key_exists($eventId, $options['capacityAllocationsByEvent'])) {
+                        throw new RuntimeException('Missing event capacity allocation.');
+                    }
+                    $rowOptions['capacityAllocations'] = $options['capacityAllocationsByEvent'][$eventId];
+                }
                 $results[] = $this->saveLocked($before, $row, $rowOptions);
             }
 

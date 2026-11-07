@@ -387,6 +387,13 @@ class JemViewEvent extends JemView
             $wa->addInlineScript($js);
         }
 
+        $wa->registerScript('jem.registration-cancellation', 'com_jem/registration-cancellation.js', array(), array('defer' => true), array('core'))
+            ->useScript('jem.registration-cancellation');
+        $wa->registerAndUseStyle('jem.registration-cancellation', 'com_jem/registration-cancellation.css');
+        foreach (array('COM_JEM_CANCELLATION_REVIEW_CHANGED', 'COM_JEM_CANCELLATION_FULL', 'COM_JEM_CANCELLATION_REMAINING') as $key) {
+            Text::script($key);
+        }
+
         $this->formhandler = $formhandler;
 
         // generate Metatags

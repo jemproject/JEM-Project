@@ -239,7 +239,7 @@ if ($this->showRegForm && empty($this->print)) :
                             if ($this->item->seriesbooking) {
                                 if ($seriesEvents) {
                                     if ($this->item->singlebooking) {
-                                        echo '<div class="px-3 pt-3"> <input id = "jem_unregister_event_series" type = "checkbox"  name = "reg_check_series"> ' . Text::_('COM_JEM_I_WILL_GO_SERIES_2') . '</input ></div>';
+                                        echo '<div class="px-3 pt-3"> <input data-registration-action="1" id="jem_registration_series_1" type = "checkbox"  name = "reg_check_series"> ' . Text::_('COM_JEM_I_WILL_GO_SERIES_2') . '</input ></div>';
                                     } else {
                                         echo '<div class="px-3 pt-3">' . Text::_('COM_JEM_I_WILL_GO_SERIES_3') . '</div>';
                                     }
@@ -259,7 +259,8 @@ if ($this->showRegForm && empty($this->print)) :
                             <i class="fa fa-times-circle-o fa-lg jem-unregisterbutton" aria-hidden="true"></i>
                             <?php
                             //Option: I don't attend
-                            echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO');
+                            echo ' ' . Text::_(is_object($this->registration) && (int) $this->registration->places > 0
+                            ? 'COM_JEM_CANCELLATION_ACTION' : 'COM_JEM_I_WILL_NOT_GO');
                             if ($this->registereduser !== null || $waitingPlacesUser) {
                                 if ($placesRegisteredUser || $waitingPlacesUser) {
                                     if ($statusRegistrationUser == 1) {
@@ -284,7 +285,7 @@ if ($this->showRegForm && empty($this->print)) :
                                     if ($this->item->seriesbooking) {
                                         if($seriesEvents) {
                                             if ($this->item->singlebooking) {
-                                                echo '<div class="px-3 pt-3"> <input id = "jem_unregister_event_series" type = "checkbox"  name = "reg_check_series"> ' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_2') . '</input ></div>';
+                                                echo '<div class="px-3 pt-3"> <input data-registration-action="-1" id="jem_registration_series_2" type = "checkbox"  name = "reg_check_series"> ' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_2') . '</input ></div>';
                                             } else {
                                                 echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_3') . '</div>';
                                             }
@@ -331,6 +332,7 @@ if ($this->showRegForm && empty($this->print)) :
                 <?php echo ($disabledOptions? 'disabled="disabled"':'');?>
                    value="<?php echo ($placesRegisteredUser ? Text::_('COM_JEM_SEND_REGISTER') : Text::_('COM_JEM_REGISTER')); ?>"  />
 
+            <?php echo $this->loadTemplate('cancellation'); ?>
             <input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />
             <input type="hidden" name="regid" value="<?php echo (is_object($this->registration) ? $this->registration->id : 0); ?>" />
             <input type="hidden" name="task" value="event.userregister"/>

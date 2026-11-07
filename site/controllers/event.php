@@ -582,6 +582,27 @@ class JemControllerEvent extends JemControllerForm
     }
 
     /**
+     * Return an authenticated cancellation summary without changing reservations.
+     *
+     * @return void JSON response followed by application close.
+     */
+    public function cancellationPreview(): void
+    {
+        $app = Factory::getApplication();
+        $app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
+        if (!Session::checkToken('post')) {
+            echo new \Joomla\CMS\Response\JsonResponse(null, Text::_('JINVALID_TOKEN'), true);
+            $app->close();
+            return;
+        }
+        $model = $this->getModel('Event', 'JemModel');
+        $model->setId($app->input->post->getInt('rdid', 0));
+        $preview = $model->userregister(true);
+        echo new \Joomla\CMS\Response\JsonResponse($preview ?: null, $preview === false ? $model->getError() : null, $preview === false);
+        $app->close();
+    }
+
+    /**
      * Saves the registration to the database
      */
     public function userregister() {
@@ -614,20 +635,32 @@ class JemControllerEvent extends JemControllerForm
             return;
         }
 
-        JemHelper::updateWaitingList($id);
+        $cancellations = $model->getCancellationResults();
+        foreach ($cancellations ?: array((object) array('after' => (object) array('event' => $id))) as $result) {
+            JemHelper::updateWaitingList((int) $result->after->event);
+        }
 
         PluginHelper::importPlugin('jem');
         PluginHelper::importPlugin('actionlog', 'jem');
         $dispatcher = JemFactory::getDispatcher();
-        $updatedRegistration = $model->getUserRegistration($id);
-        $transition = JemRegistrationTransition::create(
-            $reg ?: null,
-            $updatedRegistration,
-            (int) Factory::getApplication()->getIdentity()->id,
-            'site.event.registration_response'
-        );
-        JemRegistrationTransition::dispatchStatusMail($dispatcher, $updatedRegistration, $transition, false, true);
-        JemRegistrationTransition::dispatchAudit($dispatcher, array($transition));
+        if ($cancellations) {
+            foreach ($cancellations as $result) {
+                if ($result->transition) {
+                    JemRegistrationTransition::dispatchStatusMail($dispatcher, $result->after, $result->transition, false, true);
+                    JemRegistrationTransition::dispatchAudit($dispatcher, array($result->transition));
+                }
+            }
+        } else {
+            $updatedRegistration = $model->getUserRegistration($id);
+            $transition = JemRegistrationTransition::create(
+                $reg ?: null,
+                $updatedRegistration,
+                (int) Factory::getApplication()->getIdentity()->id,
+                'site.event.registration_response'
+            );
+            JemRegistrationTransition::dispatchStatusMail($dispatcher, $updatedRegistration, $transition, false, true);
+            JemRegistrationTransition::dispatchAudit($dispatcher, array($transition));
+        }
 
         $cache = Factory::getCache('com_jem');
         $cache->clean();

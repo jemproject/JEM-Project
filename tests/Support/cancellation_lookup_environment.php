@@ -51,6 +51,16 @@ namespace Joomla\CMS\MVC\Model {
 namespace Joomla\CMS\Language {
     class Text
     {
+        public static function plural($key, ...$values): string
+        {
+            return $key . implode(',', $values);
+        }
+
+        public static function sprintf($key, ...$values): string
+        {
+            return $key . implode(',', $values);
+        }
+
         public static function _($key): string
         {
             return $key;
@@ -105,6 +115,11 @@ namespace {
 
         public function __construct(public CancellationValues $input)
         {
+        }
+
+        public function get($key, $default = null)
+        {
+            return $key === 'secret' ? 'test-only-cancellation-secret' : $default;
         }
 
         public function getIdentity(): object
@@ -296,6 +311,12 @@ namespace {
     {
         public static array $writes = [];
         public static array $writeOptions = [];
+        public static array $capacities = [];
+
+        public function capacityOptions($eventId, $registerId = 0): object
+        {
+            return (object) ['current' => self::$capacities[$eventId] ?? [], 'options' => []];
+        }
 
         public function __construct($database)
         {
