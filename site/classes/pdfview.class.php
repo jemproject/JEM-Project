@@ -328,7 +328,7 @@ class JemPdfView
     /**
      * Renders an event-first Events Map PDF.
      */
-    public static function renderEventsMapList(string $title, array $rows, string $filename, string $mapProvider = 'osm', ?int $mapZoom = null): void
+    public static function renderEventsMapList(string $title, array $rows, string $filename, string $mapProvider = 'osm', ?int $mapZoom = null, array $locationColumns = []): void
     {
         $mapWidth = 260.0;
 
@@ -343,23 +343,23 @@ class JemPdfView
 
         $mapPreviewHtml = self::buildVenueMapPreviewHtml(self::buildEventsMapPreviewRows($rows), $mapProvider, $mapWidth, $mapZoom);
 
-        self::renderTable(
-            $title,
-            array(
-                Text::_('COM_JEM_DATE'),
-                Text::_('COM_JEM_EVENT'),
-                Text::_('COM_JEM_VENUE'),
-                Text::_('COM_JEM_CITY'),
-                Text::_('COM_JEM_STATE'),
-                Text::_('COM_JEM_COUNTRY'),
-                Text::_('COM_JEM_MAP'),
-            ),
-            self::buildEventsMapRows($rows, $mapProvider),
-            $filename,
-            'map',
-            '',
-            $mapPreviewHtml
-        );
+        $headers = [
+            Text::_('COM_JEM_DATE'), Text::_('COM_JEM_EVENT'), Text::_('COM_JEM_VENUE'),
+            Text::_('COM_JEM_CITY'), Text::_('COM_JEM_STATE'), Text::_('COM_JEM_COUNTRY'), Text::_('COM_JEM_MAP'),
+        ];
+        $tableRows = self::buildEventsMapRows($rows, $mapProvider);
+        foreach ([3 => 'city', 4 => 'county', 5 => 'country'] as $index => $column) {
+            if (isset($locationColumns[$column]) && !$locationColumns[$column]) {
+                unset($headers[$index]);
+                foreach ($tableRows as &$row) {
+                    unset($row[$index]);
+                }
+                unset($row);
+            }
+        }
+        $tableRows = array_map('array_values', $tableRows);
+
+        self::renderTable($title, array_values($headers), $tableRows, $filename, 'map', '', $mapPreviewHtml);
     }
 
     /**

@@ -152,6 +152,34 @@
                    label="COM_JEM_EVENTS_MAP_DEFAULT_COUNTRY"
                    description="COM_JEM_EVENTS_MAP_DEFAULT_COUNTRY_DESC" class="form-select w-auto jem-options-width-auto"
             />
+            <field name="show_county_filter" type="radio" default="0"
+                   label="COM_JEM_EVENTS_MAP_SHOW_COUNTY_FILTER"
+                   description="COM_JEM_EVENTS_MAP_SHOW_COUNTY_FILTER_DESC"
+                   class="inputbox btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="default_county" type="sql" default=""
+                   label="COM_JEM_EVENTS_MAP_DEFAULT_COUNTY"
+                   description="COM_JEM_EVENTS_MAP_DEFAULT_LOCATION_DESC"
+                   query="SELECT DISTINCT state AS value, state AS text FROM #__jem_venues WHERE state &lt;&gt; '' ORDER BY state"
+                   key_field="value" value_field="text"
+                   header="COM_JEM_EVENTS_MAP_ALL_COUNTIES"
+                   class="form-select w-auto jem-options-width-auto" />
+            <field name="show_city_filter" type="radio" default="0"
+                   label="COM_JEM_EVENTS_MAP_SHOW_CITY_FILTER"
+                   description="COM_JEM_EVENTS_MAP_SHOW_CITY_FILTER_DESC"
+                   class="inputbox btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="default_city" type="sql" default=""
+                   label="COM_JEM_EVENTS_MAP_DEFAULT_CITY"
+                   description="COM_JEM_EVENTS_MAP_DEFAULT_LOCATION_DESC"
+                   query="SELECT DISTINCT city AS value, city AS text FROM #__jem_venues WHERE city &lt;&gt; '' ORDER BY city"
+                   key_field="value" value_field="text"
+                   header="COM_JEM_EVENTS_MAP_ALL_CITIES"
+                   class="form-select w-auto jem-options-width-auto" />
             <field name="jem_itemid" type="menuitem"
                    label="COM_JEM_EVENTS_MAP_JEM_ITEMID"
                    description="COM_JEM_EVENTS_MAP_JEM_ITEMID_DESC"
@@ -165,6 +193,27 @@
                    description="COM_JEM_EVENTS_MAP_SHOW_EVENTS_TABLE_DESC"
                    class="inputbox btn-group btn-group-yesno"
             >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_table_country" type="radio" default="1"
+                   label="COM_JEM_EVENTS_MAP_SHOW_TABLE_COUNTRY"
+                   description="COM_JEM_EVENTS_MAP_SHOW_TABLE_LOCATION_DESC"
+                   class="inputbox btn-group btn-group-yesno" showon="show_events_table:1">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_table_county" type="radio" default="1"
+                   label="COM_JEM_EVENTS_MAP_SHOW_TABLE_COUNTY"
+                   description="COM_JEM_EVENTS_MAP_SHOW_TABLE_LOCATION_DESC"
+                   class="inputbox btn-group btn-group-yesno" showon="show_events_table:1">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_table_city" type="radio" default="1"
+                   label="COM_JEM_EVENTS_MAP_SHOW_TABLE_CITY"
+                   description="COM_JEM_EVENTS_MAP_SHOW_TABLE_LOCATION_DESC"
+                   class="inputbox btn-group btn-group-yesno" showon="show_events_table:1">
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>

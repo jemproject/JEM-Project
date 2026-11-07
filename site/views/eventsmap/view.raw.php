@@ -8,8 +8,9 @@
 defined('_JEXEC') or die;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/map.php';
+require_once JPATH_SITE . '/components/com_jem/helpers/mapdate.php';
 
-use Joomla\CMS\Date\Date;
+use Joomla\Component\Jem\Site\Helper\JemMapDateHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -40,7 +41,9 @@ class JemViewEventsMap extends HtmlView
             $filters['start'],
             $filters['end'],
             $filters['category'],
-            $filters['country']
+            $filters['country'],
+            $filters['county'],
+            $filters['city']
         );
         $title = $this->getPdfTitle($app, Text::_('COM_JEM_EVENTS_MAP'));
 
@@ -49,7 +52,12 @@ class JemViewEventsMap extends HtmlView
             (array) $rows,
             'jem-events-map.pdf',
             (string) $params->get('map_provider', 'osm') === 'google' ? 'google' : 'osm',
-            max(0, min(19, (int) $params->get('map_zoom', 4)))
+            max(0, min(19, (int) $params->get('map_zoom', 4))),
+            [
+                'country' => (bool) $params->get('show_table_country', 1),
+                'county' => (bool) $params->get('show_table_county', 1),
+                'city' => (bool) $params->get('show_table_city', 1),
+            ]
         );
     }
 
@@ -73,55 +81,17 @@ class JemViewEventsMap extends HtmlView
         }
 
         if ($showDateFilter) {
-            $filterMode = $app->input->get('jem_map_filter_mode', $params->get('date_filter_default', 'all'), 'string');
-            $filterDate = $app->input->get('jem_map_filter_date', '', 'string');
-            $now = Factory::getDate();
-
-            switch ($filterMode) {
-                case 'date':
-                    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $filterDate)) {
-                        $date = Date::createFromFormat('Y-m-d', $filterDate);
-
-                        if ($date && $date->format('Y-m-d') === $filterDate) {
-                            $filterStartDate = $filterDate;
-                            $filterEndDate = $filterDate;
-                        }
-                    }
-                    break;
-
-                case 'today':
-                    $filterStartDate = $now->format('Y-m-d');
-                    $filterEndDate = $now->format('Y-m-d');
-                    break;
-
-                case 'tomorrow':
-                    $tomorrow = clone $now;
-                    $tomorrow->modify('+1 day');
-                    $filterStartDate = $tomorrow->format('Y-m-d');
-                    $filterEndDate = $tomorrow->format('Y-m-d');
-                    break;
-
-                case 'week':
-                    $endOfWeek = clone $now;
-                    $endOfWeek->modify('Sunday this week');
-                    $filterStartDate = $now->format('Y-m-d');
-                    $filterEndDate = $endOfWeek->format('Y-m-d');
-                    break;
-
-                case 'month':
-                    $endOfMonth = clone $now;
-                    $endOfMonth->modify('last day of this month');
-                    $filterStartDate = $now->format('Y-m-d');
-                    $filterEndDate = $endOfMonth->format('Y-m-d');
-                    break;
-
-                case 'year':
-                    $endOfYear = clone $now;
-                    $endOfYear->setDate((int) $now->format('Y'), 12, 31);
-                    $filterStartDate = $now->format('Y-m-d');
-                    $filterEndDate = $endOfYear->format('Y-m-d');
-                    break;
-            }
+            $period = JemMapDateHelper::resolve(
+                $app->input->getString('jem_map_filter_mode', (string) $params->get('date_filter_default', 'all')),
+                $app->input->getString('jem_map_filter_date', ''),
+                new \DateTimeImmutable('now', new \DateTimeZone($app->get('offset', 'UTC'))),
+                (int) \JemHelper::config()->weekdaystart,
+                $app->input->getInt('jem_map_filter_step', 0)
+            );
+            $filterMode = $period['mode'];
+            $filterDate = $period['date'];
+            $filterStartDate = $period['start'];
+            $filterEndDate = $period['end'];
         }
 
         $selectedCountry = $defaultCountry;
@@ -130,7 +100,11 @@ class JemViewEventsMap extends HtmlView
             $selectedCountry = trim($app->input->getString('jem_map_filter_country', ''));
         }
 
+        $locations = JemMapHelper::getEventLocationFilters($params, $app->input, $selectedCountry);
+
         return array(
+            'county' => $locations['county'],
+            'city' => $locations['city'],
             'start' => $filterStartDate,
             'end' => $filterEndDate,
             'category' => $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0,

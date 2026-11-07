@@ -434,7 +434,9 @@ static public function lightbox() {
             'show_archived_events' => 'int', 'timeline_days_to_show' => 'int',
             'mode' => 'cmd', 'jem_timeline_layout' => 'cmd',
             'jem_map_filter_mode' => 'string', 'jem_map_filter_date' => 'string',
+            'jem_map_filter_step' => 'int',
             'jem_map_filter_country' => 'string', 'jem_map_filter_city' => 'string',
+            'jem_map_filter_county' => 'string',
             'jem_map_filter_catid' => 'int',
         ];
         foreach ($filters as $name => $type) {
