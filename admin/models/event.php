@@ -911,6 +911,8 @@ class JemModelEvent extends JemModelAdmin
                     $customSeriesIsRoot = $this->isCustomSeriesRoot($existingSeriesId, (int) $data['id']);
                     $customSeriesScope = $customSeriesIsRoot ? 'all' : 'occurrence';
                 }
+            } else {
+                $existingEvent = null;
             }
         }
         $customSeriesCreate = $customSeriesRequested && ($new || $existingSeriesId === 0);
@@ -970,8 +972,13 @@ class JemModelEvent extends JemModelAdmin
         if ($backend && !$this->protectBackendEventAclData($data, $cats, $new, $task)) {
             return false;
         }
-        if (!JemVenueAccess::canUse(JemFactory::getUser(), (int) ($data['locid'] ?? 0))) {
-            $this->setError(Text::_('COM_JEM_EVENT_ERROR_VENUE_NOT_ALLOWED'));
+        $requestedVenueId = (int) ($data['locid'] ?? $existingEvent->locid ?? 0);
+        if (!JemVenueAccess::canAssignToEvent(
+            JemFactory::getUser(), $requestedVenueId, $existingEvent, $new || $task === 'save2copy'
+        )) {
+            $error = $requestedVenueId > 0 && !$this->venueExists($requestedVenueId)
+                ? 'COM_JEM_EVENT_ERROR_VENUE_MISSING' : 'COM_JEM_EVENT_ERROR_VENUE_NOT_ALLOWED';
+            $this->setError(Text::_($error));
 
             return false;
         }

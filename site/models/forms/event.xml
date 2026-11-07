@@ -296,7 +296,7 @@
     </fieldset>
 
     <fieldset name="request">
-        <field name="locid" type="modal_venue"
+        <field name="locid" type="modal_venue" clear="true"
             label="COM_JEM_EDITEVENT_FIELD_VENUE"
             description="COM_JEM_EDITEVENT_FIELD_VENUE_DESC"
             size="40"

@@ -27,7 +27,7 @@ class JFormFieldModal_Venue extends ModalSelectField
         $function = 'jSelectVenue_' . preg_replace('/[^A-Za-z0-9_]/', '_', $this->id);
 
         $this->select      = true;
-        $this->clear       = false;
+        $this->clear       = (string) ($this->element['clear'] ?? 'false') === 'true';
         $parentVenueId = $this->getSelectedParentVenueId();
         $baseSelectUrl = rtrim(Uri::root(true), '/') . '/administrator/index.php?option=com_jem&view=venueelement&tmpl=component&function=' . $function;
         $this->urlSelect   = $baseSelectUrl
@@ -110,7 +110,7 @@ class JFormFieldModal_Venue extends ModalSelectField
 
         try {
             if (!JemVenueAccess::canUse(JemFactory::getUser(), (int) $this->value)) {
-                return Text::_('COM_JEM_SELECTVENUE');
+                return Text::_('COM_JEM_VENUE_SELECTION_UNAVAILABLE');
             }
 
             $db    = Factory::getContainer()->get('DatabaseDriver');

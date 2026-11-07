@@ -330,7 +330,7 @@
     <fieldset name="request"
               addfieldpath="/administrator/components/com_jem/models/fields"
     >
-        <field name="locid" type="modal_venue"
+        <field name="locid" type="modal_venue" clear="true"
             label="COM_JEM_VENUE"
             description="COM_JEM_SELECTVENUE_DESC"
             size="40"

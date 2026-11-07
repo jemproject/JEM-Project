@@ -27,7 +27,7 @@ class JFormFieldVenue extends ModalSelectField
         $function = 'jSelectVenue_' . preg_replace('/[^A-Za-z0-9_]/', '_', $this->id);
 
         $this->select      = true;
-        $this->clear       = false;
+        $this->clear       = (string) ($this->element['clear'] ?? 'false') === 'true';
         $this->urlSelect   = rtrim(Uri::root(true), '/') . '/administrator/index.php?option=com_jem&view=venueelement&tmpl=component&function=' . $function;
         $this->titleSelect = 'COM_JEM_SELECT_VENUE';
         $this->iconSelect  = 'icon-location';
@@ -53,7 +53,7 @@ class JFormFieldVenue extends ModalSelectField
         }
 
         if (!JemVenueAccess::canUse(JemFactory::getUser(), (int) $this->value)) {
-            return Text::_('COM_JEM_SELECT_VENUE');
+            return Text::_('COM_JEM_VENUE_SELECTION_UNAVAILABLE');
         }
 
         try {

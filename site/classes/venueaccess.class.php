@@ -36,6 +36,40 @@ final class JemVenueAccess
             && $user->authorise('jem.venues.use', 'com_jem.venue.' . $venueId);
     }
 
+    /**
+     * Check a venue assignment while allowing an unchanged stored association.
+     *
+     * The caller must independently authorise editing the event. The existing
+     * event must come from the database, never from submitted form values.
+     * Copies create a new association and always require venue-use permission.
+     *
+     * @param object $user Acting JEM user.
+     * @param int $venueId Requested venue ID, or zero to clear the association.
+     * @param object|null $storedEvent Successfully loaded event before this save.
+     * @param bool $createsNewEvent Whether this operation creates or copies an event.
+     * @return bool Whether the venue association may be saved.
+     */
+    public static function canAssignToEvent($user, int $venueId, ?object $storedEvent, bool $createsNewEvent): bool
+    {
+        $retainsVenue = !$createsNewEvent && !empty($storedEvent->id)
+            && $venueId > 0 && $venueId === (int) ($storedEvent->locid ?? 0);
+
+        if (!$retainsVenue) {
+            return self::canUse($user, $venueId);
+        }
+
+        if (class_exists('JemAclMigrationStatus', false) && JemAclMigrationStatus::pending()) {
+            return false;
+        }
+
+        if (empty($user->id) || $user->get('guest', 0)) {
+            return false;
+        }
+
+        // Unpublished venues may be retained; physically deleted rows may not.
+        return self::exists($venueId);
+    }
+
     public static function getAuthorisedIds($user, $publishedOnly = true)
     {
         if (class_exists('JemAclMigrationStatus', false) && JemAclMigrationStatus::pending()) {
