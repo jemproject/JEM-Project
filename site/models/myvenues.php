@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once __DIR__ . '/../classes/listlimit.class.php';
 require_once __DIR__ . '/../classes/listorder.class.php';
 
@@ -280,8 +282,8 @@ class JemModelMyvenues extends BaseDatabaseModel
         $user     = JemFactory::getUser();
         $settings = JemHelper::globalattribs();
 
-        $filter   = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', 0, 'int');
-        $search   = $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
+        $filter   = JemFilterInput::state($app, 'com_jem.myvenues.filter', 'filter', 0, 'int');
+        $search   = JemFilterInput::state($app, 'com_jem.myvenues.filter_search', 'filter_search', '', 'string');
         $search   = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         $where = array();

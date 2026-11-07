@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 if (is_file(JPATH_SITE . '/components/com_jem/helpers/map.php')) {
     require_once JPATH_SITE . '/components/com_jem/helpers/map.php';
 }
@@ -45,9 +47,9 @@ class JemViewVenuesMap extends HtmlView
         $venueOrder = (string) $params->get('venues_order', 'name_asc');
         $defaultCountry = trim((string) $params->get('default_country', ''));
         $defaultCountry = $defaultCountry === '0' ? '' : $defaultCountry;
-        $selectedCountry = $showCountryFilter ? trim($app->input->getString('jem_map_filter_country', $defaultCountry)) : $defaultCountry;
-        $selectedCity = $showCountryFilter ? trim($app->input->getString('jem_map_filter_city', '')) : '';
-        $selectedCategoryId = $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0;
+        $selectedCountry = $showCountryFilter ? trim(JemFilterInput::read($app->input, 'jem_map_filter_country', $defaultCountry)) : $defaultCountry;
+        $selectedCity = $showCountryFilter ? trim(JemFilterInput::read($app->input, 'jem_map_filter_city', '')) : '';
+        $selectedCategoryId = $showCategoryFilter ? JemFilterInput::read($app->input, 'jem_map_filter_catid', 0, 'int') : 0;
         $categoryStartDate = $selectedCategoryId > 0 ? Factory::getDate()->format('Y-m-d') : null;
         $rows = is_callable(array(JemMapHelper::class, 'getVenues'))
             ? JemMapHelper::getVenues($params, $categoryStartDate, null, $selectedCategoryId, $selectedCountry, $selectedCity, $venueOrder)

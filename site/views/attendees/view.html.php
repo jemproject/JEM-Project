@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
@@ -74,11 +76,11 @@ class JemViewAttendees extends JemView
         JemHelper::loadCustomTag();
 
         //get vars
-        $filter_order        = $app->getUserStateFromRequest('com_jem.attendees.filter_order', 'filter_order', 'u.username', 'cmd');
-        $filter_order_Dir    = $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir', 'filter_order_Dir', '', 'word');
-        $filter_status        = $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
-        $filter             = $app->getUserStateFromRequest('com_jem.attendees.filter', 'filter', 0, 'int');
-        $search             = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
+        $filter_order        = JemFilterInput::state($app, 'com_jem.attendees.filter_order', 'filter_order', 'u.username', 'cmd');
+        $filter_order_Dir    = JemFilterInput::state($app, 'com_jem.attendees.filter_order_Dir', 'filter_order_Dir', '', 'word');
+        $filter_status        = JemFilterInput::state($app, 'com_jem.attendees.filter_status', 'filter_status', -2, 'int');
+        $filter             = JemFilterInput::state($app, 'com_jem.attendees.filter', 'filter', 0, 'int');
+        $search             = JemFilterInput::state($app, 'com_jem.attendees.filter_search', 'filter_search', '', 'string');
 
         // Get data from the model
         $rows          = $this->get('Data');
@@ -212,7 +214,7 @@ class JemViewAttendees extends JemView
         $filter_order     = 'usr.name';
         $filter_order_Dir = '';
         $filter_type      = '';
-        $search           = $app->getUserStateFromRequest('com_jem.selectusers.filter_search', 'filter_search', '', 'string');
+        $search           = JemFilterInput::state($app, 'com_jem.selectusers.filter_search', 'filter_search', '', 'string');
     //    $limitstart       = $jinput->get('limitstart', '0', 'int');
     //    $limit            = $app->getUserStateFromRequest('com_jem.selectusers.limit', 'limit', $this->jemsettings->display_num, 'int');
     //    $eventId          = !empty($event->id) ? $event->id : 0;

@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once JPATH_SITE . '/components/com_jem/helpers/map.php';
 require_once JPATH_SITE . '/components/com_jem/helpers/mapdate.php';
 
@@ -82,11 +84,11 @@ class JemViewEventsMap extends HtmlView
 
         if ($showDateFilter) {
             $period = JemMapDateHelper::resolve(
-                $app->input->getString('jem_map_filter_mode', (string) $params->get('date_filter_default', 'all')),
-                $app->input->getString('jem_map_filter_date', ''),
+                JemFilterInput::read($app->input, 'jem_map_filter_mode', (string) $params->get('date_filter_default', 'all')),
+                JemFilterInput::read($app->input, 'jem_map_filter_date', ''),
                 new \DateTimeImmutable('now', new \DateTimeZone($app->get('offset', 'UTC'))),
                 (int) \JemHelper::config()->weekdaystart,
-                $app->input->getInt('jem_map_filter_step', 0)
+                JemFilterInput::read($app->input, 'jem_map_filter_step', 0, 'int')
             );
             $filterMode = $period['mode'];
             $filterDate = $period['date'];
@@ -97,7 +99,7 @@ class JemViewEventsMap extends HtmlView
         $selectedCountry = $defaultCountry;
 
         if ($showCountryFilter && $app->input->exists('jem_map_filter_country')) {
-            $selectedCountry = trim($app->input->getString('jem_map_filter_country', ''));
+            $selectedCountry = trim(JemFilterInput::read($app->input, 'jem_map_filter_country', ''));
         }
 
         $locations = JemMapHelper::getEventLocationFilters($params, $app->input, $selectedCountry);
@@ -107,7 +109,7 @@ class JemViewEventsMap extends HtmlView
             'city' => $locations['city'],
             'start' => $filterStartDate,
             'end' => $filterEndDate,
-            'category' => $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0,
+            'category' => $showCategoryFilter ? JemFilterInput::read($app->input, 'jem_map_filter_catid', 0, 'int') : 0,
             'country' => $showCountryFilter ? $selectedCountry : $defaultCountry,
         );
     }

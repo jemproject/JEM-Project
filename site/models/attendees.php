@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once __DIR__ . '/../classes/listlimit.class.php';
 
 use Joomla\CMS\Factory;
@@ -239,8 +241,8 @@ class JemModelAttendees extends BaseDatabaseModel
     {
         $app = Factory::getApplication();
 
-        $filter_order     = $app->getUserStateFromRequest('com_jem.attendees.filter_order',     'filter_order',     'r.uregdate', 'cmd' );
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir', 'filter_order_Dir', 'ASC',        'word' );
+        $filter_order     = JemFilterInput::state($app, 'com_jem.attendees.filter_order',     'filter_order',     'r.uregdate', 'cmd' );
+        $filter_order_Dir = JemFilterInput::state($app, 'com_jem.attendees.filter_order_Dir', 'filter_order_Dir', 'ASC',        'word' );
 
         if ($this->_reguser && ($filter_order == 'u.username')) {
             $filter_order = 'u.name';
@@ -279,9 +281,9 @@ class JemModelAttendees extends BaseDatabaseModel
         $levels = $user->getAuthorisedViewLevels();
         $canManage = $this->canManageAttendees($user);
 
-        $filter         = $app->getUserStateFromRequest('com_jem.attendees.filter',        'filter',         0, 'int');
-        $filter_status  = $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
-        $search         = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
+        $filter         = JemFilterInput::state($app, 'com_jem.attendees.filter',        'filter',         0, 'int');
+        $filter_status  = JemFilterInput::state($app, 'com_jem.attendees.filter_status', 'filter_status', -2, 'int');
+        $search         = JemFilterInput::state($app, 'com_jem.attendees.filter_search', 'filter_search', '', 'string');
         $search         = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         $where = array();
@@ -495,7 +497,7 @@ class JemModelAttendees extends BaseDatabaseModel
         $filter_order     = 'usr.name';
         $filter_order_Dir = '';
         $filter_type      = '1';
-        $search           = $app->getUserStateFromRequest('com_jem.selectusers.filter_search', 'filter_search', '', 'string');
+        $search           = JemFilterInput::state($app, 'com_jem.selectusers.filter_search', 'filter_search', '', 'string');
         $search           = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         // Query

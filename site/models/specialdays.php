@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once __DIR__ . '/../classes/listlimit.class.php';
 
 use Joomla\CMS\Factory;
@@ -43,10 +45,10 @@ class JemModelSpecialdays extends ListModel
             (int) $params->get('annual_start_month', 1)
         );
 
-        $this->setState('filter.search', $this->getUserStateFromRequest($this->context . '.filter_search', 'filter_search'));
-        $this->setState('filter.state', $this->getUserStateFromRequest($this->context . '.filter_state', 'filter_state', '', 'string'));
-        $this->setState('filter.day_type', $this->getUserStateFromRequest($this->context . '.filter_day_type', 'filter_day_type', '', 'string'));
-        $this->setState('filter.year', $app->getUserStateFromRequest($this->context . '.filter_year', 'filter_year', $defaultYear, 'int'));
+        $this->setState('filter.search', JemFilterInput::state($app, $this->context . '.filter_search', 'filter_search', '', 'string', true));
+        $this->setState('filter.state', JemFilterInput::state($app, $this->context . '.filter_state', 'filter_state', '', 'string', true));
+        $this->setState('filter.day_type', JemFilterInput::state($app, $this->context . '.filter_day_type', 'filter_day_type', '', 'string', true));
+        $this->setState('filter.year', JemFilterInput::state($app, $this->context . '.filter_year', 'filter_year', $defaultYear, 'int'));
         $this->setState('params', $params);
 
         $page = \JemListLimit::resolve(

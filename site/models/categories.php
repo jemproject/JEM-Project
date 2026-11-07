@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once __DIR__ . '/../classes/listlimit.class.php';
 
 use Joomla\CMS\Factory;
@@ -143,15 +145,15 @@ class JemModelCategories extends BaseDatabaseModel
         $this->_id = $id;
         list($this->_typeFilterRequested, $this->_typeid) = self::resolveTypeSelection(
             $app->input->exists('typeid'),
-            $app->input->getString('typeid', ''),
+            JemFilterInput::read($app->input, 'typeid', ''),
             $params->get('typeid', null)
         );
-        $this->_filterTypeid = $this->_typeFilterRequested ? 0 : $app->input->getInt('filter_typeid', 0);
+        $this->_filterTypeid = $this->_typeFilterRequested ? 0 : JemFilterInput::read($app->input, 'filter_typeid', 0, 'int');
 
         $this->_showemptycats    = (bool)$params->get('showemptycats', 1);
         $this->_showsubcats      = (bool)$params->get('usecat', 1);
         $this->_showemptysubcats = (bool)$params->get('showemptychilds', 1);
-        $this->_search           = trim($app->input->getString('filter_search', ''));
+        $this->_search           = trim(JemFilterInput::read($app->input, 'filter_search', ''));
 
         // Use the shared frontend page size; legacy menu cat_num values are ignored.
         [$limit, $limitstart] = \JemListLimit::resolve(

@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 require_once JPATH_SITE . '/components/com_jem/helpers/countries.php';
 if (is_file(JPATH_SITE . '/components/com_jem/helpers/map.php')) {
@@ -97,9 +99,9 @@ class JemViewVenuesMap extends JemView
         if ($defaultCountry === '0') {
             $defaultCountry = '';
         }
-        $selectedCountry    = $showCountryFilter ? trim($app->input->getString('jem_map_filter_country', $defaultCountry)) : $defaultCountry;
-        $selectedCity       = $showCountryFilter ? trim($app->input->getString('jem_map_filter_city', '')) : '';
-        $selectedCategoryId = $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0;
+        $selectedCountry    = $showCountryFilter ? trim(JemFilterInput::read($app->input, 'jem_map_filter_country', $defaultCountry)) : $defaultCountry;
+        $selectedCity       = $showCountryFilter ? trim(JemFilterInput::read($app->input, 'jem_map_filter_city', '')) : '';
+        $selectedCategoryId = $showCategoryFilter ? JemFilterInput::read($app->input, 'jem_map_filter_catid', 0, 'int') : 0;
         $venueOrder         = (string) $params->get('venues_order', 'name_asc');
         $countries          = JemMapHelper::getVenueCountries();
         $categories         = $showCategoryFilter ? JemMapHelper::getCategories($params) : [];
@@ -164,11 +166,11 @@ class JemViewVenuesMap extends JemView
         // *******************************************************************************************
 
         // get variables
-        $filter_order     = $app->getUserStateFromRequest('com_jem.venueslist.filter_order', 'filter_order',     'a.city', 'cmd');
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.venueslist.filter_order_Dir', 'filter_order_Dir',    '', 'word');
+        $filter_order     = JemFilterInput::state($app, 'com_jem.venueslist.filter_order', 'filter_order',     'a.city', 'cmd');
+        $filter_order_Dir = JemFilterInput::state($app, 'com_jem.venueslist.filter_order_Dir', 'filter_order_Dir',    '', 'word');
 //         $filter_state     = $app->getUserStateFromRequest('com_jem.venueslist.filter_state', 'filter_state',     '*', 'word');
-        $filter           = $app->getUserStateFromRequest('com_jem.venueslist.filter_type', 'filter_type', '', 'int');
-        $search           = $app->getUserStateFromRequest('com_jem.venueslist.filter_search', 'filter_search', '', 'string');
+        $filter           = JemFilterInput::state($app, 'com_jem.venueslist.filter_type', 'filter_type', '', 'int');
+        $search           = JemFilterInput::state($app, 'com_jem.venueslist.filter_search', 'filter_search', '', 'string');
 
         // search filter
         $filters = array();
