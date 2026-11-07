@@ -257,11 +257,13 @@ class JemViewEditevent extends JemView
         // the selected categories all grant publish permission.
         if (empty($item->id)) {
             $this->form->setFieldAttribute('published', 'disabled', 'true');
+            $this->form->setFieldAttribute('featured', 'disabled', 'true');
         }
 
         // Preserve the existing-event permission check and safe default.
         if (empty($item->params) || !$item->params->get('access-change', false)) {
             $this->form->setFieldAttribute('published', 'default', 0);
+            $this->form->setFieldAttribute('featured', 'disabled', 'true');
 
             if (!empty($item->id)) {
                 $this->form->setFieldAttribute('published', 'readonly', 'true');

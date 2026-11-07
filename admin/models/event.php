@@ -551,6 +551,56 @@ class JemModelEvent extends JemModelAdmin
     }
 
     /**
+     * Enforce frontend publication permission before saving Featured changes.
+     *
+     * Existing records use their stored owner and categories. Removing a denied
+     * field preserves each occurrence's own value and excludes it from series
+     * differences. New events and copies must start unfeatured without permission.
+     *
+     * @param   array   $data        Event data, updated in place.
+     * @param   array   $categories  Validated categories for a new event or copy.
+     * @param   string  $task        Controller task (save2copy creates a new record).
+     *
+     * @return  boolean  False when the existing record cannot be loaded.
+     */
+    protected function protectFrontendFeaturedData(array &$data, array $categories, $task = '')
+    {
+        $eventId = $task === 'save2copy' ? 0 : (int) ($data['id'] ?? 0);
+        if ($eventId > 0 && !array_key_exists('featured', $data)) {
+            return true;
+        }
+
+        $user = JemFactory::getUser();
+        if ($eventId > 0) {
+            $stored = $this->getTable();
+            if (!$stored->load($eventId)) {
+                $this->setError(Text::_('JLIB_APPLICATION_ERROR_RECORD_NOT_FOUND'));
+
+                return false;
+            }
+
+            $categories = $this->getEventCategoryIds($eventId);
+            if (!$user->can('publish', 'event', $eventId, (int) $stored->created_by, $categories)) {
+                unset($data['featured']);
+            }
+        } else {
+            // Match the new-event publication selector: every category must allow it.
+            $canPublish = !empty($categories);
+            foreach ($categories as $categoryId) {
+                if (!$user->can('publish', 'event', 0, (int) $user->id, array((int) $categoryId))) {
+                    $canPublish = false;
+                    break;
+                }
+            }
+            if (!$canPublish) {
+                $data['featured'] = 0;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Method to save the form data.
      *
      * @param  $data array
@@ -645,6 +695,9 @@ class JemModelEvent extends JemModelAdmin
             return false;
         }
         $data['cats']         = $cats;
+        if (!$backend && !$this->protectFrontendFeaturedData($data, $cats, $task)) {
+            return false;
+        }
         $invitedusers         = $data['invited'] ?? '';
         $recurrencenumber     = $jinput->get('recurrence_number', '', 'int');
         $recurrencebyday      = $jinput->get('recurrence_byday', '', 'string');
@@ -1146,6 +1199,10 @@ class JemModelEvent extends JemModelAdmin
 
             // get the fields update
             foreach ($events as $event) {
+                if (!$backend && !$this->protectFrontendFeaturedData($event, $cats)) {
+                    return false;
+                }
+
                 $fieldsupdated = "";
 
                 if (!$this->validateSpecialDayEventDates($event)) {
@@ -1532,6 +1589,9 @@ class JemModelEvent extends JemModelAdmin
                 $eventData['series_id'] = $seriesId;
                 $eventData['series_order'] = $index + 1;
                 $this->applyCustomScheduleRow($eventData, $row);
+                if (!$backend && !$this->protectFrontendFeaturedData($eventData, $categories)) {
+                    throw new RuntimeException($this->getError());
+                }
                 if (!$this->normaliseEventDates($eventData) || !$event->bind($eventData) || !$event->store()) {
                     throw new RuntimeException($event->getError() ?: $this->getError());
                 }
@@ -1589,6 +1649,9 @@ class JemModelEvent extends JemModelAdmin
                 return false;
             }
             $eventData = array_merge($event->getProperties(1), $shared);
+            if (!$backend && !$this->protectFrontendFeaturedData($eventData, $categories)) {
+                return false;
+            }
             if (!$this->normaliseEventDates($eventData) || !$event->bind($eventData) || !$event->store()) {
                 $this->setError($event->getError() ?: $this->getError());
                 return false;
