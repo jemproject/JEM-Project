@@ -53,7 +53,9 @@ final class JemCalendarDayLink
             }
         }
         foreach (array('catids', 'locids', 'pub', 'calcats', 'calvenues') as $key) {
-            $ids = array_filter(explode(',', (string) $input->get($key, '', 'string')), static function ($id) {
+            // Joomla's string filter may return arrays for array-valued input.
+            $value = $input->get($key, '', 'string');
+            $ids = array_filter(explode(',', is_string($value) ? $value : ''), static function ($id) {
                 return ctype_digit($id) && (int) $id > 0;
             });
             $ids = array_values(array_unique(array_map('intval', $ids)));
