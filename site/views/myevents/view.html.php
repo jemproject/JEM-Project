@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
@@ -101,8 +103,8 @@ class JemViewMyevents extends JemView
             $filter_order = $this->getModel()->getState('list.ordering', 'a.dates');
             $filter_order_Dir = $this->getModel()->getState('list.direction', 'ASC');
             // $filter_state     = $app->getUserStateFromRequest('com_jem.myevents.filter_state', 'filter_state',     '*', 'word');
-            $filter = $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', 0, 'int');
-            $search = $app->getUserStateFromRequest('com_jem.myevents.filter_search', 'filter_search', '', 'string');
+            $filter = JemFilterInput::state($app, 'com_jem.myevents.filter', 'filter', 0, 'int');
+            $search = JemFilterInput::state($app, 'com_jem.myevents.filter_search', 'filter_search', '', 'string');
 
             // search filter
             $filters = array();

@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
@@ -119,7 +121,7 @@ class JemViewSearch extends JemView
             //$uri->setVar('filter', $app->input->getString('filter', ''));
             //$filter        = $app->getUserStateFromRequest('com_jem.jem.filter', 'filter', '', 'string');
             $uri->setVar('filter', $lists['filter']);
-            $uri->setVar('filter_type', $app->input->getString('filter_type', ''));
+            $uri->setVar('filter_type', JemFilterInput::read($app->input, 'filter_type', ''));
         } else {
             $uri->delVar('filter');
             $uri->delVar('filter_type');
@@ -266,15 +268,15 @@ class JemViewSearch extends JemView
         $app = Factory::getApplication();
         $task = $this->getModel('search')->getEventSearchScope() === 'archived' ? 'archive' : '';
 
-        $filter_order = $app->input->getCmd('filter_order', 'a.dates');
+        $filter_order = JemFilterInput::read($app->input, 'filter_order', 'a.dates', 'cmd');
         $filter_order_DirDefault = 'ASC';
         // Reverse default order for dates in archive mode
         if ($task == 'archive' && $filter_order == 'a.dates') {
             $filter_order_DirDefault = 'DESC';
         }
-        $filter_order_Dir = $app->input->get('filter_order_Dir', $filter_order_DirDefault);
+        $filter_order_Dir = JemFilterInput::read($app->input, 'filter_order_Dir', $filter_order_DirDefault, 'cmd');
         $filter           = $this->getModel('search')->getSearchFilter('filter_search', '', 'string');
-        $filter_type      = $app->input->getString('filter_type', '');
+        $filter_type      = JemFilterInput::read($app->input, 'filter_type', '');
 
         $sortselects = array();
         $sortselects[] = HTMLHelper::_('select.option', 'title', Text::_('COM_JEM_TABLE_TITLE'));

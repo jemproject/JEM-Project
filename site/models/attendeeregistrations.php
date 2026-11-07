@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once __DIR__ . '/../classes/listlimit.class.php';
 
 use Joomla\CMS\Factory;
@@ -157,9 +159,9 @@ class JemModelAttendeeregistrations extends BaseDatabaseModel
     {
         $app = Factory::getApplication();
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $filter = $app->getUserStateFromRequest('com_jem.attendeeregistrations.filter', 'filter', 0, 'int');
-        $status = $app->getUserStateFromRequest('com_jem.attendeeregistrations.filter_status', 'filter_status', -2, 'int');
-        $search = $app->getUserStateFromRequest('com_jem.attendeeregistrations.filter_search', 'filter_search', '', 'string');
+        $filter = JemFilterInput::state($app, 'com_jem.attendeeregistrations.filter', 'filter', 0, 'int');
+        $status = JemFilterInput::state($app, 'com_jem.attendeeregistrations.filter_status', 'filter_status', -2, 'int');
+        $search = JemFilterInput::state($app, 'com_jem.attendeeregistrations.filter_search', 'filter_search', '', 'string');
         $search = $db->escape(trim(StringHelper::strtolower($search)));
         $where = array();
 
@@ -203,8 +205,8 @@ class JemModelAttendeeregistrations extends BaseDatabaseModel
     protected function buildOrderBy(): string
     {
         $app = Factory::getApplication();
-        $filterOrder = $app->getUserStateFromRequest('com_jem.attendeeregistrations.filter_order', 'filter_order', 'r.uregdate', 'cmd');
-        $filterOrderDir = $app->getUserStateFromRequest('com_jem.attendeeregistrations.filter_order_Dir', 'filter_order_Dir', 'DESC', 'word');
+        $filterOrder = JemFilterInput::state($app, 'com_jem.attendeeregistrations.filter_order', 'filter_order', 'r.uregdate', 'cmd');
+        $filterOrderDir = JemFilterInput::state($app, 'com_jem.attendeeregistrations.filter_order_Dir', 'filter_order_Dir', 'DESC', 'word');
         $filterOrder = InputFilter::getInstance()->clean($filterOrder, 'cmd');
         $filterOrderDir = strtoupper(InputFilter::getInstance()->clean($filterOrderDir, 'word')) === 'ASC' ? 'ASC' : 'DESC';
         $allowed = array(

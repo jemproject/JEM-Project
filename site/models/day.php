@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once __DIR__ . '/../classes/listlimit.class.php';
 require_once __DIR__ . '/../classes/listorder.class.php';
 require_once __DIR__ . '/../helpers/calendardaylink.php';
@@ -157,13 +159,13 @@ class JemModelDay extends JemModelEventslist
         $this->setState('filter.calendar_excluded_venues', $scope['calvenues'] ?? '');
         $this->setState('filter.calendar_hide_all', !empty($scope['calhide']));
         $task              = $app->input->getCmd('task', '');
-        $requestVenueId    = $app->input->getInt('locid', 0);
-        $requestCategoryId = $app->input->getInt('catid', 0);
+        $requestVenueId    = JemFilterInput::read($app->input, 'locid', 0, 'int');
+        $requestCategoryId = JemFilterInput::read($app->input, 'catid', 0, 'int');
         $item              = $app->input->getInt('Itemid', 0);
-        $showArchivedRequest = $app->input->getString('show_archived_events', null);
+        $showArchivedRequest = JemFilterInput::read($app->input, 'show_archived_events', null);
         $showArchivedEvents  = $showArchivedRequest === null
             ? (bool) $params->get('show_archived_events', 0)
-            : (bool) $app->input->getInt('show_archived_events', 0);
+            : (bool) JemFilterInput::read($app->input, 'show_archived_events', 0, 'int');
 
         $this->show_archived_events = $showArchivedEvents;
         $this->setState('filter.show_archived_events', $showArchivedEvents);
@@ -200,7 +202,7 @@ class JemModelDay extends JemModelEventslist
         }
 
         // maybe list of venue ids from calendar module
-        $locids = explode(',', $app->input->getString('locids', ''));
+        $locids = explode(',', JemFilterInput::read($app->input, 'locids', ''));
         foreach ($locids as $id) {
             if ((int)$id > 0) {
                 $venues[] = (int)$id;
@@ -217,7 +219,7 @@ class JemModelDay extends JemModelEventslist
         }
 
         // maybe list of venue ids from calendar module
-        $catids = explode(',', $app->input->getString('catids', ''));
+        $catids = explode(',', JemFilterInput::read($app->input, 'catids', ''));
         foreach ($catids as $id) {
             if ((int)$id > 1) { // don't accept 'root'
                 $cats[] = (int)$id;
@@ -269,7 +271,7 @@ class JemModelDay extends JemModelEventslist
         $this->applyMenuEventFilters($params);
 
         // maybe top category is given by calendar view
-        $top_category = $app->input->getInt('topcat', 0);
+        $top_category = JemFilterInput::read($app->input, 'topcat', 0, 'int');
         if ($top_category > 0) { // accept 'root'
             $children = JemCategories::getChilds($top_category);
             if (count($children)) {
@@ -285,11 +287,11 @@ class JemModelDay extends JemModelEventslist
         $this->setState('list.start', $limitstart);
 
         # Search
-        $search = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+        $search = JemFilterInput::state($app, 'com_jem.day.'.$itemid.'.filter_search', 'filter_search', '', 'string');
         $this->setState('filter.filter_search', $search);
 
         # FilterType
-        $filtertype = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
+        $filtertype = JemFilterInput::state($app, 'com_jem.day.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter.filter_type', $filtertype);
 
         [$orderCol, $listOrder] = JemListOrder::resolve(
@@ -316,7 +318,7 @@ class JemModelDay extends JemModelEventslist
 
         # published
         /// @todo bring given pub together with eventslist's unpub calculation (_populatePublishState())
-        $pub = explode(',', $app->input->getString('pub', ''));
+        $pub = explode(',', JemFilterInput::read($app->input, 'pub', ''));
         $published = array();
         // sanitize remote data
         foreach ($pub as $val) {

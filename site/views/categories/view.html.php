@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
@@ -39,7 +41,7 @@ class JemViewCategories extends JemView
         $isGroupedTypeCategoryView = $isTypeCategoryView && !$categoryType && !$missingTypeId;
         $rows        = $this->get('Data');
         $pagination  = $this->get('Pagination');
-        $filterSearch = $app->input->getString('filter_search', '');
+        $filterSearch = JemFilterInput::read($app->input, 'filter_search', '');
         $filterTypeId = $model->getFilterTypeId();
 
         // Load css

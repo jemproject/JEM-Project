@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
@@ -184,8 +186,8 @@ class JemViewDay extends JemView
         }
 
         // get variables
-        $filter_type      = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
-        $search           = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+        $filter_type      = JemFilterInput::state($app, 'com_jem.day.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
+        $search           = JemFilterInput::state($app, 'com_jem.day.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 
         // Ensure menu date parameters are applied before loading events.
         $model = $this->getModel();
@@ -386,13 +388,13 @@ class JemViewDay extends JemView
             $query['Itemid'] = $itemid;
         }
         foreach (['locid', 'catid', 'topcat'] as $key) {
-            $value = $input->getInt($key, 0);
+            $value = JemFilterInput::read($input, $key, 0, 'int');
             if ($value !== 0) {
                 $query[$key] = $value;
             }
         }
         foreach (['locids', 'catids', 'pub'] as $key) {
-            $value = $input->getString($key, '');
+            $value = JemFilterInput::read($input, $key, '');
             if ($value !== '') {
                 $query[$key] = $value;
             }

@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once __DIR__ . '/../classes/listlimit.class.php';
 require_once __DIR__ . '/../classes/listorder.class.php';
 
@@ -124,10 +126,10 @@ class JemModelEditevent extends JemModelEvent
         $fromId = $app->input->getInt('from_id', 0);
         $this->setState('event.from_id', $fromId);
 
-        $catid = $app->input->getInt('catid', 0);
+        $catid = JemFilterInput::read($app->input, 'catid', 0, 'int');
         $this->setState('event.catid', $catid);
 
-        $locid = $app->input->getInt('locid', 0);
+        $locid = JemFilterInput::read($app->input, 'locid', 0, 'int');
         $this->setState('event.locid', $locid);
 
         $date = $app->input->getCmd('date', '');
@@ -404,8 +406,8 @@ class JemModelEditevent extends JemModelEvent
         $this->setState('list.ordering', $filter_order);
         $this->setState('list.direction', $filter_order_Dir);
 
-        $filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
-        $search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
+        $filter_type      = JemFilterInput::state($app, 'com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
+        $search           = JemFilterInput::state($app, 'com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
         $search           = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         // Query
@@ -551,8 +553,8 @@ class JemModelEditevent extends JemModelEvent
         $this->setState('list.ordering', $filter_order);
         $this->setState('list.direction', $filter_order_Dir);
 
-        $filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
-        $search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
+        $filter_type      = JemFilterInput::state($app, 'com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
+        $search           = JemFilterInput::state($app, 'com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
         $search           = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         // Query
@@ -656,10 +658,10 @@ class JemModelEditevent extends JemModelEvent
         $nullDate         = $db->quote($db->getNullDate());
         $nowDate          = $db->quote(Factory::getDate()->toSql());
         $levels           = array_map('intval', $user->getAuthorisedViewLevels());
-        $filter_order     = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order', 'filter_order', 'a.title', 'cmd');
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
-        $filter_type      = $app->getUserStateFromRequest('com_jem.selectarticle.filter_type', 'filter_type', 0, 'int');
-        $search           = $app->getUserStateFromRequest('com_jem.selectarticle.filter_search', 'filter_search', '', 'string');
+        $filter_order     = JemFilterInput::state($app, 'com_jem.selectarticle.filter_order', 'filter_order', 'a.title', 'cmd');
+        $filter_order_Dir = JemFilterInput::state($app, 'com_jem.selectarticle.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+        $filter_type      = JemFilterInput::state($app, 'com_jem.selectarticle.filter_type', 'filter_type', 0, 'int');
+        $search           = JemFilterInput::state($app, 'com_jem.selectarticle.filter_search', 'filter_search', '', 'string');
         $search           = $db->escape(trim(StringHelper::strtolower($search)));
 
         $filter_order     = InputFilter::getinstance()->clean($filter_order, 'cmd');

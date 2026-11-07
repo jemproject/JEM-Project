@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once __DIR__ . '/../classes/listlimit.class.php';
 
 use Joomla\CMS\Factory;
@@ -76,7 +78,7 @@ class JemModelSearch extends BaseDatabaseModel
         $this->setState('limitstart', $limitstart);
 
         // Get the filter request variables
-        $filter_order = $app->input->getCmd('filter_order', 'a.dates');
+        $filter_order = JemFilterInput::read($app->input, 'filter_order', 'a.dates', 'cmd');
         $this->setState('filter_order', $filter_order);
 
         $filter_order_DirDefault = 'ASC';
@@ -84,7 +86,7 @@ class JemModelSearch extends BaseDatabaseModel
         if ($this->getEventSearchScope() === 'archived' && $filter_order == 'a.dates') {
             $filter_order_DirDefault = 'DESC';
         }
-        $this->setState('filter_order_Dir', $app->input->getCmd('filter_order_Dir', $filter_order_DirDefault));
+        $this->setState('filter_order_Dir', JemFilterInput::read($app->input, 'filter_order_Dir', $filter_order_DirDefault, 'cmd'));
     }
 
     /**
@@ -171,7 +173,7 @@ class JemModelSearch extends BaseDatabaseModel
             return $default;
         }
 
-        return Factory::getApplication()->getUserStateFromRequest('com_jem.search.' . $name, $name, $default, $type);
+        return JemFilterInput::state(Factory::getApplication(), 'com_jem.search.' . $name, $name, $default, $type);
     }
 
     /**

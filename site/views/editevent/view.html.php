@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once JPATH_COMPONENT_SITE . '/classes/imagepublicationpolicy.class.php';
 
 use Joomla\CMS\HTML\HTMLHelper;
@@ -368,9 +370,9 @@ class JemViewEditevent extends JemView
         //    $db          = Factory::getContainer()->get('DatabaseDriver');
         $document    = $app->getDocument();
 
-        $filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
-        $filter_state     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_state', 'filter_state', '*', 'word');
-        $search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
+        $filter_type      = JemFilterInput::state($app, 'com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
+        $filter_state     = JemFilterInput::state($app, 'com_jem.selectvenue.filter_state', 'filter_state', '*', 'word');
+        $search           = JemFilterInput::state($app, 'com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
 
         // Get/Create the model
         $rows       = $this->get('Venues');
@@ -416,8 +418,8 @@ class JemViewEditevent extends JemView
         //    $db          = Factory::getContainer()->get('DatabaseDriver');
         $document    = $app->getDocument();
 
-        $filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
-        $search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
+        $filter_type      = JemFilterInput::state($app, 'com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
+        $search           = JemFilterInput::state($app, 'com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
 
         // Load css
         JemHelper::loadCss('jem');
@@ -466,10 +468,10 @@ class JemViewEditevent extends JemView
         $jemsettings = JemHelper::config();
         $document    = $app->getDocument();
 
-        $filter_order     = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order', 'filter_order', 'a.title', 'cmd');
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
-        $filter_type      = $app->getUserStateFromRequest('com_jem.selectarticle.filter_type', 'filter_type', 0, 'int');
-        $search           = $app->getUserStateFromRequest('com_jem.selectarticle.filter_search', 'filter_search', '', 'string');
+        $filter_order     = JemFilterInput::state($app, 'com_jem.selectarticle.filter_order', 'filter_order', 'a.title', 'cmd');
+        $filter_order_Dir = JemFilterInput::state($app, 'com_jem.selectarticle.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+        $filter_type      = JemFilterInput::state($app, 'com_jem.selectarticle.filter_type', 'filter_type', 0, 'int');
+        $search           = JemFilterInput::state($app, 'com_jem.selectarticle.filter_search', 'filter_search', '', 'string');
 
         JemHelper::loadCss('jem');
         JemHelper::loadCustomCss();

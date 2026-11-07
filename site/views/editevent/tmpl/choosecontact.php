@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -17,14 +19,14 @@ $app = Factory::getApplication();
 $function = $app->input->getCmd('function', 'jSelectContact');
 
 // Logic for pre-selecting checkboxes
-$selectedParam = $app->input->getString('selected', '');
+$selectedParam = JemFilterInput::read($app->input, 'selected', '');
 $currentSelectedIds = array();
 if (!empty($selectedParam)) {
     $currentSelectedIds = array_map('trim', explode(',', $selectedParam));
 }
 
 // Get the current search field to keep it selected in the dropdown
-$filter_type = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
+$filter_type = JemFilterInput::state($app, 'com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
 Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
 $cssSettings = JemHelper::retrieveCss();
 $filterBackground = $cssSettings->get('css_color_bg_filter');

@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once __DIR__ . '/../classes/listlimit.class.php';
 require_once __DIR__ . '/../classes/listorder.class.php';
 
@@ -442,7 +444,7 @@ class JemModelEventslist extends ListModel
         if ($app->input->exists($requestName)) {
             $requested = $multiple
                 ? $this->normaliseParamIds($app->input->get($requestName, array(), 'array'))
-                : max(0, $app->input->getInt($requestName, 0));
+                : max(0, JemFilterInput::read($app->input, $requestName, 0, 'int'));
             $app->setUserState($stateName, $requested);
 
             return $requested;
@@ -546,13 +548,13 @@ class JemModelEventslist extends ListModel
         }
 
         # Search - variables
-        $search     = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_search', 'filter_search', '', 'string');
+        $search     = JemFilterInput::state($app, 'com_jem.eventslist.' . $itemid . '.filter_search', 'filter_search', '', 'string');
         $this->setState('filter.filter_search', $search);
 
-        $filtertype = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_type', 'filter_type', 0, 'int');
+        $filtertype = JemFilterInput::state($app, 'com_jem.eventslist.' . $itemid . '.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter.filter_type', $filtertype);
 
-        $filtermonth = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_month', 'filter_month', 0, 'string');
+        $filtermonth = JemFilterInput::state($app, 'com_jem.eventslist.' . $itemid . '.filter_month', 'filter_month', 0, 'string');
         $this->setState('filter.filter_month', $filtermonth);
 
         # Search - Filter by setting menu
@@ -617,7 +619,7 @@ class JemModelEventslist extends ListModel
             $filter_order_DirDefault,
             $isArchive
         );
-        $filter_order = $app->getUserStateFromRequest(
+        $filter_order = JemFilterInput::state($app,
             $orderContext . '.filter_order',
             'filter_order',
             $tableInitialorderby,
@@ -625,7 +627,7 @@ class JemModelEventslist extends ListModel
         );
 
         // Finalize order direction from request/session, falling back to determined default
-        $filter_order_Dir = $app->getUserStateFromRequest(
+        $filter_order_Dir = JemFilterInput::state($app,
             $orderContext . '.filter_order_Dir',
             'filter_order_Dir',
             $filter_order_DirDefault,

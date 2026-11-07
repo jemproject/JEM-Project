@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -15,9 +17,9 @@ use Joomla\CMS\Router\Route;
 
 $input = Factory::getApplication()->input;
 $function = $input->getCmd('function', 'jSelectArticle');
-$articleTitle = $input->getString('article_title', '');
+$articleTitle = JemFilterInput::read($input, 'article_title', '');
 $articleCatid = $input->getInt('article_catid', 0);
-$jemcats = $input->getString('jemcats', '');
+$jemcats = JemFilterInput::read($input, 'jemcats', '');
 Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_ARTICLE'));
 $cssSettings = JemHelper::retrieveCss();
 $filterBackground = $cssSettings->get('css_color_bg_filter');

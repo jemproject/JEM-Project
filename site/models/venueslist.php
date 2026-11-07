@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once __DIR__ . '/../classes/listlimit.class.php';
 
 use Joomla\CMS\Factory;
@@ -55,10 +57,10 @@ class JemModelVenueslist extends ListModel
         $this->setState('list.start', $limitstart);
 
         # Search - variables
-        $search      = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+        $search      = JemFilterInput::state($app, 'com_jem.venueslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
         $this->setState('filter.filter_search', $search); // must be escaped later
 
-        $filtertype  = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+        $filtertype  = JemFilterInput::state($app, 'com_jem.venueslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
         $this->setState('filter.filter_type', $filtertype);
 
         $filterCountries = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_country', 'filter_country', array(), 'array');
@@ -77,8 +79,8 @@ class JemModelVenueslist extends ListModel
         ## ORDER ##
         ###########
 
-        $filter_order        = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_order', 'filter_order', 'a.city', 'cmd');
-        $filter_order_Dir    = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+        $filter_order        = JemFilterInput::state($app, 'com_jem.venueslist.'.$itemid.'.filter_order', 'filter_order', 'a.city', 'cmd');
+        $filter_order_Dir    = JemFilterInput::state($app, 'com_jem.venueslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
         $filter_order        = InputFilter::getInstance()->clean($filter_order, 'cmd');
         $filter_order_Dir    = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
         $allowedOrder = array('a.city', 'a.venue', 'a.state', 'a.country', 'a.ordering', 'a.id');

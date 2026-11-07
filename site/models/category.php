@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 require_once __DIR__ . '/../classes/listlimit.class.php';
 require_once __DIR__ . '/../classes/listorder.class.php';
 
@@ -136,13 +138,13 @@ class JemModelCategory extends JemModelEventslist
         }
 
         # Search - variables
-        $search = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+        $search = JemFilterInput::state($app, 'com_jem.category.'.$itemid.'.filter_search', 'filter_search', '', 'string');
         $this->setState('filter.filter_search', $search);
 
-        $month = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_month', 'filter_month', '', 'string');
+        $month = JemFilterInput::state($app, 'com_jem.category.'.$itemid.'.filter_month', 'filter_month', '', 'string');
         $this->setState('filter.filter_month', $month);
 
-        $filtertype = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
+        $filtertype = JemFilterInput::state($app, 'com_jem.category.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter.filter_type', $filtertype);
 
         # show open date events

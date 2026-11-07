@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -188,11 +190,11 @@ class JemViewAttendeeregistrations extends HtmlView
     protected static function buildFilterSummary(): string
     {
         $app = Factory::getApplication();
-        $filter = $app->input->getInt('filter', 0);
-        $status = $app->input->getInt('filter_status', -2);
-        $search = trim($app->input->getString('filter_search', ''));
-        $order = $app->input->getCmd('filter_order', 'r.uregdate');
-        $direction = strtoupper($app->input->getWord('filter_order_Dir', 'DESC')) === 'ASC' ? 'ASC' : 'DESC';
+        $filter = JemFilterInput::read($app->input, 'filter', 0, 'int');
+        $status = JemFilterInput::read($app->input, 'filter_status', -2, 'int');
+        $search = trim(JemFilterInput::read($app->input, 'filter_search', ''));
+        $order = JemFilterInput::read($app->input, 'filter_order', 'r.uregdate', 'cmd');
+        $direction = strtoupper(JemFilterInput::read($app->input, 'filter_order_Dir', 'DESC', 'word')) === 'ASC' ? 'ASC' : 'DESC';
         $filterLabels = array(
             0 => Text::_('JALL'),
             1 => Text::_('COM_JEM_NAME'),

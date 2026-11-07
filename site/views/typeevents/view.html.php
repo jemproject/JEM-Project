@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -99,8 +101,8 @@ class JemViewTypeevents extends JemView
         $noevents   = !$rows ? 1 : 0;
         $pagination = $this->get('Pagination');
 
-        $filter_order     = $app->getUserStateFromRequest('com_jem.typeevents.filter_order',     'filter_order',     'a.dates', 'cmd');
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.typeevents.filter_order_Dir', 'filter_order_Dir', 'ASC',     'word');
+        $filter_order     = JemFilterInput::state($app, 'com_jem.typeevents.filter_order',     'filter_order',     'a.dates', 'cmd');
+        $filter_order_Dir = JemFilterInput::state($app, 'com_jem.typeevents.filter_order_Dir', 'filter_order_Dir', 'ASC',     'word');
 
         $lists                = array();
         $lists['order_Dir']   = $filter_order_Dir;
@@ -120,8 +122,8 @@ class JemViewTypeevents extends JemView
             $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_CATEGORY'));
         }
 
-        $filter_type = $app->getUserStateFromRequest('com_jem.typeevents.filter_type', 'filter_type', 0, 'int');
-        $search      = $app->getUserStateFromRequest('com_jem.typeevents.filter_search', 'filter_search', '', 'string');
+        $filter_type = JemFilterInput::state($app, 'com_jem.typeevents.filter_type', 'filter_type', 0, 'int');
+        $search      = JemFilterInput::state($app, 'com_jem.typeevents.filter_search', 'filter_search', '', 'string');
 
         $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type',
             array('size' => '1', 'class' => 'form-select'), 'value', 'text', $filter_type);

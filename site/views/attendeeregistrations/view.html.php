@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -53,11 +55,11 @@ class JemViewAttendeeregistrations extends JemView
 
         $rows = $this->get('Data');
         $pagination = $this->get('Pagination');
-        $filter = $app->getUserStateFromRequest('com_jem.attendeeregistrations.filter', 'filter', 0, 'int');
-        $search = $app->getUserStateFromRequest('com_jem.attendeeregistrations.filter_search', 'filter_search', '', 'string');
-        $filterStatus = $app->getUserStateFromRequest('com_jem.attendeeregistrations.filter_status', 'filter_status', -2, 'int');
-        $filterOrder = $app->getUserStateFromRequest('com_jem.attendeeregistrations.filter_order', 'filter_order', 'r.uregdate', 'cmd');
-        $filterOrderDir = $app->getUserStateFromRequest('com_jem.attendeeregistrations.filter_order_Dir', 'filter_order_Dir', 'DESC', 'word');
+        $filter = JemFilterInput::state($app, 'com_jem.attendeeregistrations.filter', 'filter', 0, 'int');
+        $search = JemFilterInput::state($app, 'com_jem.attendeeregistrations.filter_search', 'filter_search', '', 'string');
+        $filterStatus = JemFilterInput::state($app, 'com_jem.attendeeregistrations.filter_status', 'filter_status', -2, 'int');
+        $filterOrder = JemFilterInput::state($app, 'com_jem.attendeeregistrations.filter_order', 'filter_order', 'r.uregdate', 'cmd');
+        $filterOrderDir = JemFilterInput::state($app, 'com_jem.attendeeregistrations.filter_order_Dir', 'filter_order_Dir', 'DESC', 'word');
 
         $filters = array(
             HTMLHelper::_('select.option', 0, Text::_('JALL')),
