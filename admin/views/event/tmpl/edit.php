@@ -1130,6 +1130,7 @@ $this->document->addStyleDeclaration('
             <!--  END RIGHT DIV -->
         </div>
         <div class="clr"></div>
+<?php require JPATH_SITE . '/components/com_jem/common/views/tmpl/recurrence_change.php'; ?>
 </form>
 <script>
     output_recurrencescript();

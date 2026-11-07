@@ -31,6 +31,7 @@ require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/reminderservice.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrencevalidator.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/recurrencechange.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrenceexclusions.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/venueaccess.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/eventpricingcapacity.class.php';
@@ -84,6 +85,9 @@ class JemModelEvent extends JemModelAdmin
      */
     protected function canDelete($record)
     {
+        if ($this->replacingRecurrence) {
+            return $this->canReplaceRecurrenceChild('delete', (array) $record);
+        }
         if (!empty($record->id) && ($record->published == -2)) {
             return JemHelperBackend::can('event', 'delete', $record);
         }
@@ -724,6 +728,121 @@ class JemModelEvent extends JemModelAdmin
         return true;
     }
 
+    /** @var bool Allow confirmed recurrence replacement through the normal delete hooks. */
+    protected $replacingRecurrence = false;
+
+    /**
+     * Prepare the effective rule from either editor without writing any data.
+     *
+     * @param array $data Submitted form fields.
+     * @return array Candidate merged with the stored event.
+     * @throws RuntimeException On invalid dates or a missing event.
+     */
+    protected function recurrenceChangeCandidate(array $data): array
+    {
+        $stored = $this->getTable();
+        if (!$stored->load((int) ($data['id'] ?? 0))) {
+            throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
+        }
+        $candidate = array_replace($stored->getProperties(), $data);
+        if (!$this->normaliseEventDates($candidate)) {
+            throw new RuntimeException($this->getError());
+        }
+        $input = Factory::getApplication()->input->post;
+        $candidate['recurrence_number'] = $input->getInt('recurrence_number', (int) $stored->recurrence_number);
+        $candidate['recurrence_byday'] = $input->getString('recurrence_byday', (string) $stored->recurrence_byday);
+        $candidate['recurrence_bylastday'] = $input->getString('recurrence_bylastday', (string) $stored->recurrence_bylastday);
+        foreach (['start' => 'times', 'end' => 'endtimes'] as $prefix => $field) {
+            $hour = $input->getString($prefix . 'hours', '__missing__');
+            if ($hour !== '__missing__') {
+                $candidate[$field] = $hour === '' ? null
+                    : sprintf('%02d:%02d:00', (int) $hour, $input->getInt($prefix . 'minutes', 0));
+            }
+        }
+        $attribs = new Registry($stored->attribs ?? '');
+        if (class_exists('JemRecurrenceExclusions') && array_key_exists('recurrence_exclusions', $data)) {
+            $attribs->set('recurrence_exclusions', JemRecurrenceExclusions::normalise($data['recurrence_exclusions']));
+        } elseif (isset($data['attribs'])) {
+            $submitted = new Registry($data['attribs']);
+            if ($submitted->exists('recurrence_exclusions')) {
+                $attribs->set('recurrence_exclusions', $submitted->get('recurrence_exclusions'));
+            }
+        }
+        $candidate['attribs'] = (string) $attribs;
+
+        return $candidate;
+    }
+
+    /**
+     * Authorise changes to each stored child, never from submitted ownership.
+     *
+     * @param string $operation edit or delete.
+     * @param array $record Stored child event.
+     * @return bool Whether this user may perform the operation.
+     */
+    protected function canReplaceRecurrenceChild(string $operation, array $record): bool
+    {
+        if (Factory::getApplication()->isClient('administrator') || $operation === 'delete') {
+            return JemHelperBackend::can('event', $operation, (object) $record);
+        }
+
+        return JemFrontendAccess::canEdit(JemFactory::getUser(), 'event', (object) $record);
+    }
+
+    /**
+     * Preview a recurrence replacement for the editor, or recheck it under locks.
+     *
+     * @param array $data Submitted event values.
+     * @param bool $lock Whether the caller owns a transaction and requires row locks.
+     * @return array Current confirmation and affected-event counts.
+     */
+    public function previewRecurrenceChange(array $data, bool $lock = false): array
+    {
+        require_once JPATH_SITE . '/components/com_jem/classes/recurrencechange.class.php';
+        if (empty($data['id'])) {
+            return ['required' => false];
+        }
+        $snapshot = JemRecurrenceChange::snapshot(Factory::getContainer()->get('DatabaseDriver'), (int) $data['id'], $lock);
+        $candidate = $this->recurrenceChangeCandidate($data);
+
+        return JemRecurrenceChange::plan(
+            $snapshot,
+            $candidate,
+            fn (string $operation, array $record): bool => $this->canReplaceRecurrenceChild($operation, $record),
+            JemHelper::getJoomlaDate()
+        );
+    }
+
+    /**
+     * Apply a freshly confirmed decision using the existing model deletion hooks.
+     *
+     * @param array $data Original form values used for the preview.
+     * @return void
+     * @throws RuntimeException For a stale choice, active registrations or failed deletion.
+     */
+    protected function applyRecurrenceChange(array $data): void
+    {
+        $plan = $this->previewRecurrenceChange($data, true);
+        $input = Factory::getApplication()->input->post;
+        $choice = $input->getCmd('jem_recurrence_choice', '');
+        JemRecurrenceChange::assertDecision($plan, $choice, $input->getString('jem_recurrence_fingerprint', ''));
+        if (!$plan['required'] || $choice !== 'delete') {
+            return;
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db->setQuery('SELECT id FROM #__jem_events WHERE recurrence_first_id = ' . (int) $data['id'] . ' ORDER BY id');
+        $ids = array_map('intval', $db->loadColumn());
+        $this->replacingRecurrence = true;
+        try {
+            if (!$this->delete($ids)) {
+                throw new RuntimeException($this->getError() ?: Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
+            }
+        } finally {
+            $this->replacingRecurrence = false;
+        }
+    }
+
+
     /**
      * Method to save the form data.
      *
@@ -731,6 +850,8 @@ class JemModelEvent extends JemModelAdmin
      */
     public function save($data)
     {
+        $recurrenceSubmission = $data;
+        $recurrencePlan = ['required' => false];
         require_once JPATH_SITE . '/components/com_jem/classes/imagemetadata.class.php';
         JemImageMetadata::prepareSubmission($data, 'event', (int) $this->getState('image_metadata.copy_source', 0));
         // Variables
@@ -1275,11 +1396,38 @@ class JemModelEvent extends JemModelAdmin
             $data['reginvitedonly'] = 0;
         }
 
+        if (!$new && $task !== 'save2copy') {
+            try {
+                $recurrencePlan = $this->previewRecurrenceChange($recurrenceSubmission);
+                JemRecurrenceChange::assertDecision(
+                    $recurrencePlan,
+                    $jinput->post->getCmd('jem_recurrence_choice', ''),
+                    $jinput->post->getString('jem_recurrence_fingerprint', '')
+                );
+            } catch (Throwable $error) {
+                $this->setError($error->getMessage());
+                return false;
+            }
+            $storedRecurrence = $this->getTable();
+            $storedRecurrence->load((int) $data['id']);
+            if ($recurrencePlan['required']) {
+                $isInitialEvent = true;
+                $candidate = $this->recurrenceChangeCandidate($recurrenceSubmission);
+                foreach (['dates', 'enddates', 'times', 'endtimes'] as $field) {
+                    $data[$field] = $candidate[$field];
+                }
+            } elseif ((int) $storedRecurrence->recurrence_type > 0 || (int) $storedRecurrence->recurrence_first_id > 0) {
+                // Counters and submitted parent IDs must not silently restart a series.
+                $isInitialEvent = false;
+                $data['recurrence_first_id'] = $storedRecurrence->recurrence_first_id;
+            }
+        }
+
         $seriesDb = null;
         $seriesTransactionActive = false;
         $pricingDb = null;
         $pricingTransactionActive = false;
-        if ($customSeriesCreate || ($existingSeriesId > 0 && $customSeriesScope !== 'occurrence')) {
+        if ($recurrencePlan['required'] || $customSeriesCreate || ($existingSeriesId > 0 && $customSeriesScope !== 'occurrence')) {
             $seriesDb = Factory::getContainer()->get('DatabaseDriver');
             $seriesDb->transactionStart();
             $seriesTransactionActive = true;
@@ -1290,10 +1438,19 @@ class JemModelEvent extends JemModelAdmin
         }
 
         try {
+        if ($recurrencePlan['required']) {
+            $this->applyRecurrenceChange($recurrenceSubmission);
+        }
         if($isInitialEvent) {
             // event maybe first of recurrence set -> dissolve complete set
-            if (JemHelper::dissolve_recurrence($data['id'])) {
-                $this->cleanCache();
+            if ($recurrencePlan['required']) {
+                $dissolved = JemHelper::dissolve_recurrence($data['id']);
+                if (!$dissolved && $recurrencePlan['required']) {
+                    throw new RuntimeException(Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
+                }
+                if ($dissolved) {
+                    $this->cleanCache();
+                }
             }
 
             if ($data['dates'] == null || $data['recurrence_type'] == '0') {
@@ -1459,7 +1616,7 @@ class JemModelEvent extends JemModelAdmin
                 // so every new occurrence can copy the current link set.
                 $table->load($pk);
                 if (($table->recurrence_number > 0) && ($table->dates != null)) {
-                    JemHelper::cleanup(2); // 2 = force on save, needs special attention
+                    JemHelper::cleanup(2, $recurrencePlan['required'] ? (int) $pk : 0);
                 }
 
                 $this->createAssociatedArticleIfRequested($pk, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);
@@ -1658,7 +1815,9 @@ class JemModelEvent extends JemModelAdmin
         if ($seriesTransactionActive) {
             if ($saved) {
                 $seriesDb->transactionCommit();
-                if ($customSeriesCreate) {
+                if ($recurrencePlan['required']) {
+                    Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_RECURRENCE_CHANGE_SAVED'), 'success');
+                } elseif ($customSeriesCreate) {
                     Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JEM_CUSTOM_SERIES_CREATED', count($completeCustomSchedule)), 'success');
                 } else {
                     Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_CUSTOM_SERIES_SCHEDULE_UPDATED'), 'success');

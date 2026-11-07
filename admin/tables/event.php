@@ -904,7 +904,7 @@ class JemTableEvent extends Table
     {
         $id = (int) ($pk ?: $this->id);
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $db->transactionStart();
+        $db->transactionStart(true);
 
         try {
             (new JemRegistrationService($db))->purgeForEventLocked($id, array(
@@ -936,11 +936,11 @@ class JemTableEvent extends Table
                 ->where($db->quoteName('event_id') . ' = ' . $id);
             $db->setQuery($query)->execute();
 
-            $db->transactionCommit();
+            $db->transactionCommit(true);
 
             return true;
         } catch (Throwable $e) {
-            $db->transactionRollback();
+            $db->transactionRollback(true);
             $this->setError($e->getMessage());
 
             return false;
