@@ -22,3 +22,16 @@
         width: 100%;
     }
 }
+
+/* Confirmation shared by the backend and frontend event editors. */
+.jem-recurrence-change {
+    max-width: min(42rem, 94vw);
+    max-height: 90vh;
+    overflow: auto;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color, #767676);
+    border-radius: .5rem;
+    color: var(--body-color, CanvasText);
+    background: var(--body-bg, Canvas);
+}
+.jem-recurrence-change::backdrop { background: rgb(0 0 0 / 45%); }

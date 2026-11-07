@@ -2563,9 +2563,14 @@ class JemHelper
      * Performs daily scheduled cleanups
      *
      * Currently it archives and removes outdated events
-     * and takes care of the recurrence of events
+     * and takes care of the recurrence of events. A scoped recurrence save
+     * generates only that series and propagates failures to the caller.
+     *
+     * @param int $forced Force cleanup (2 when saving an event).
+     * @param int $recurrenceRoot Regenerate only this root; skip global housekeeping.
+     * @return void
      */
-    static public function cleanup($forced = 0)
+    static public function cleanup($forced = 0, $recurrenceRoot = 0)
     {
         $jemsettings  = JemHelper::config();
         $weekstart    = $jemsettings->weekdaystart;
@@ -2590,14 +2595,20 @@ class JemHelper
                                    ', running update: ' . $runningupdate . ', delay: ' . $delay .
                                    ', timezone: ' . $cleanupTimeZone->getName(), __METHOD__);
 
-            if (($runningupdate + $delay) < $now) {
+            if ($recurrenceRoot > 0 && ($runningupdate + $delay) >= $now) {
+                throw new RuntimeException(Text::_('COM_JEM_RECURRENCE_CHANGE_BUSY'));
+            }
+
+            if ($recurrenceRoot > 0 || ($runningupdate + $delay) < $now) {
                 // Set timestamp of running cleanup
-                JemConfig::getInstance()->set('runningupdate', $now);
+                if (!$recurrenceRoot) {
+                    JemConfig::getInstance()->set('runningupdate', $now);
+                }
 
                 JemHelper::addLogEntry('  do cleanup...', __METHOD__);
 
                 // trigger an event to let plugins handle whatever cleanup they want to do.
-                if (PluginHelper::importPlugin('jem')) {
+                if (!$recurrenceRoot && PluginHelper::importPlugin('jem')) {
                     $dispatcher = JemFactory::getDispatcher();
                     $dispatcher->triggerEvent('onJemBeforeCleanup', array($jemsettings, $forced));
                 }
@@ -2625,6 +2636,9 @@ class JemHelper
                     ->group('first_id')
                     ->order('dates DESC');
 
+                if ($recurrenceRoot > 0) {
+                    $query->where('(id = ' . (int) $recurrenceRoot . ' OR recurrence_first_id = ' . (int) $recurrenceRoot . ')');
+                }
                 $db->setQuery($query);
                 $recurrence_array = $db->loadAssocList();
 
@@ -2697,7 +2711,11 @@ class JemHelper
                         $new_event->enddates = $recurrence_row['enddates'];
                         $new_event->_autocreate = true; // to tell table class this has to be stored AS IS (the underscore is important!)
 
-                        if ($new_event->store())
+                        $storedOccurrence = $new_event->store();
+                        if (!$storedOccurrence && $recurrenceRoot > 0) {
+                            throw new RuntimeException($new_event->getError() ?: Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
+                        }
+                        if ($storedOccurrence)
                         {
                             $recurrence_row['counter']++;
                             // Duplicate categories event relationships via INSERT INTO ... SELECT.
@@ -2710,6 +2728,9 @@ class JemHelper
                             $db->setQuery($insertQuery);
 
                             if ($db->execute() === false) {
+                                if ($recurrenceRoot > 0) {
+                                    throw new RuntimeException(Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
+                                }
                                 // run query always but don't show error message to "normal" users
                                 $user = JemFactory::getUser();
                                 if ($user->authorise('core.manage')) {
@@ -2734,6 +2755,9 @@ class JemHelper
 
                 // The only dynamic value is $minusDays — cast to int to eliminate any injection risk
                 // even if the stored setting were somehow corrupted. Column names are hardcoded constants.
+                if ($recurrenceRoot > 0) {
+                    return;
+                }
                 $minusDays    = (int) $jemsettings->minus;
                 // Keep the legacy day-count contract: 1 archives an event on the
                 // calendar day after its end date. The comparison is date-only,

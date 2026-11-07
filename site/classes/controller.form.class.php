@@ -15,6 +15,31 @@ use Joomla\CMS\Language\Text;
 abstract class JemControllerForm extends FormController
 {
     /**
+     * Preview the recurrence decision for an authorised editor; never save data.
+     *
+     * @return void JSON response containing counts, permissions and a fingerprint.
+     */
+    public function recurrencePreview()
+    {
+        $this->checkToken();
+        $data = $this->input->post->get('jform', [], 'array');
+        $model = $this->getModel();
+        if (!method_exists($model, 'previewRecurrenceChange') || !$this->allowEdit($data, 'id')) {
+            throw new RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+        \JemHelper::setNoStoreHeaders();
+        $this->app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
+        $this->app->sendHeaders();
+        try {
+            echo new \Joomla\CMS\Response\JsonResponse($model->previewRecurrenceChange($data));
+        } catch (\Throwable $error) {
+            echo new \Joomla\CMS\Response\JsonResponse($error);
+        }
+        $this->app->close();
+    }
+
+
+    /**
      * Require an authenticated frontend identity.
      *
      * @return boolean True for an authenticated user, false when login redirect was issued.

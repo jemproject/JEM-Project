@@ -1070,7 +1070,8 @@ $document->addStyleDeclaration('
                 <input type="hidden" name="jform[catid]" value="<?php echo $this->params->get('catid', 1); ?>" />
             <?php endif; ?>
             <?php echo HTMLHelper::_('form.token'); ?>
-        </form>
+        <?php require JPATH_SITE . '/components/com_jem/common/views/tmpl/recurrence_change.php'; ?>
+</form>
     </div>
 
         <?php if ($this->params->get('showfootertext')) : ?>
