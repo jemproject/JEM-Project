@@ -86,8 +86,8 @@ class JemImportSecurityHelper
 
     public static function findValueThreats($field, $value, $context = '')
     {
-        if (is_array($value)) {
-            return self::findRecordThreats($value, $context);
+        if (is_array($value) || $value instanceof stdClass) {
+            return self::findRecordThreats((array) $value, $context);
         }
 
         if ($value === null || $value === '') {
@@ -163,7 +163,7 @@ class JemImportSecurityHelper
         self::assertRecordSafe($record, $context, $sourceLine);
 
         foreach ($record as $field => $value) {
-            $record[$field] = self::sanitiseValue((string) $field, $value, (string) $context);
+            $record[$field] = self::sanitiseValue((string) $field, $value, (string) $context, $sourceLine);
         }
 
         return $record;
@@ -191,7 +191,7 @@ class JemImportSecurityHelper
                 throw new RuntimeException(self::formatBlockedMessage($findings, $context, $sourceLine, $record));
             }
 
-            $record[$field] = self::sanitiseValue((string) $field, $value, (string) $context);
+            $record[$field] = self::sanitiseValue((string) $field, $value, (string) $context, $sourceLine);
         }
 
         return $record;
@@ -216,8 +216,12 @@ class JemImportSecurityHelper
             throw new RuntimeException(self::formatBlockedMessage($findings, $context, $sourceLine));
         }
 
+        if (in_array((string) $field, array('metadata', 'attribs', 'translations', 'image_metadata', 'venue_snapshot'), true)) {
+            return self::sanitiseJsonObject($value, (string) $field, (string) $context, $sourceLine);
+        }
+
         if (is_array($value)) {
-            return self::sanitiseRecord($value, $context);
+            return self::sanitiseRecord($value, $context, $sourceLine);
         }
 
         if ($value === null) {
@@ -239,6 +243,19 @@ class JemImportSecurityHelper
             return is_numeric($number) ? number_format((float) $number, 6, '.', '') : null;
         }
 
+        return self::sanitiseTextField($field, $value, $context);
+    }
+
+    /**
+     * Apply shared text, URL and path policies without numeric field coercion.
+     *
+     * @param string $field Field name selecting the existing text policy.
+     * @param mixed $value Source text value.
+     * @param string $context Entity context for editor-backed HTML fields.
+     * @return string Sanitised text.
+     */
+    protected static function sanitiseTextField($field, $value, $context)
+    {
         if (in_array($field, array('url', 'online_meeting_url', 'website', 'webpage'), true)) {
             return self::sanitiseUrl($value);
         }
@@ -250,10 +267,6 @@ class JemImportSecurityHelper
         if ($field === 'color') {
             $color = trim((string) $value);
             return preg_match('/^#[0-9a-fA-F]{6}$/', $color) ? strtolower($color) : '';
-        }
-
-        if (in_array($field, array('metadata', 'attribs'), true)) {
-            return self::sanitiseJsonObject($value);
         }
 
         if ($field === 'language') {
@@ -439,7 +452,7 @@ class JemImportSecurityHelper
             'article_id',
             'registra', 'unregistra', 'maxplaces', 'reservedplaces',
             'minbookeduser', 'maxbookeduser', 'waitinglist', 'requestanswer',
-            'show_dates', 'map', 'event_status', 'ticket_availability',
+            'show_dates', 'map',
         );
 
         return in_array((string) $field, $fields, true);
@@ -603,22 +616,87 @@ class JemImportSecurityHelper
         return substr($path, 0, 512);
     }
 
-    protected static function sanitiseJsonObject($value)
+    /**
+     * Clean a JSON column without applying database-column coercion to its keys.
+     *
+     * @param mixed $value JSON text or an already decoded container.
+     * @param string $field Column name, used only in validation diagnostics.
+     * @param string $context Import entity or source format.
+     * @param int|null $sourceLine Source row for error diagnostics.
+     * @return string|null Safe JSON, preserving scalar and container types.
+     * @throws RuntimeException When non-empty input is invalid or unsafe.
+     */
+    protected static function sanitiseJsonObject($value, $field = 'attribs', $context = '', $sourceLine = null)
     {
-        $text = trim((string) $value);
-
-        if ($text === '') {
-            return '{}';
+        if ($value === null) {
+            return null;
         }
 
-        $decoded = json_decode($text, true);
-
-        if (!is_array($decoded)) {
-            return '{}';
+        if (is_string($value) && trim($value) === '') {
+            return in_array($field, array('attribs', 'metadata'), true) ? '{}' : '';
         }
 
-        $decoded = self::sanitiseRecord($decoded, 'json');
+        try {
+            $decoded = is_string($value) ? json_decode($value, false, 512, JSON_THROW_ON_ERROR) : $value;
+            if (!is_array($decoded) && !($decoded instanceof stdClass)) {
+                throw new JsonException('A JSON object or list is required.');
+            }
 
-        return json_encode($decoded);
+            return json_encode(
+                self::sanitiseJsonNode($decoded, $field, $context, $sourceLine),
+                JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION
+            );
+        } catch (JsonException $exception) {
+            throw new RuntimeException(self::formatBlockedMessage(
+                array($field . ' contains invalid JSON'), $context, $sourceLine
+            ), 0, $exception);
+        }
+    }
+
+    /**
+     * Validate JSON leaves while retaining objects, lists and native scalar types.
+     *
+     * JSON property names are not table column names: a string ID such as "001"
+     * must not become an integer merely because a nested property is named id.
+     *
+     * @param mixed $value Decoded JSON node.
+     * @param string $field Property name for text policy and diagnostics.
+     * @param string $context Import entity or source format.
+     * @param int|null $sourceLine Source row for error diagnostics.
+     * @return mixed Sanitised node with its original JSON type.
+     */
+    protected static function sanitiseJsonNode($value, $field, $context, $sourceLine)
+    {
+        if (is_array($value) || $value instanceof stdClass) {
+            $result = is_array($value) ? array() : new stdClass();
+            foreach ($value as $key => $item) {
+                $clean = self::sanitiseJsonNode($item, (string) $key, $context, $sourceLine);
+                if (is_array($result)) {
+                    $result[$key] = $clean;
+                } else {
+                    $result->$key = $clean;
+                }
+            }
+
+            return $result;
+        }
+
+        if (is_string($value)) {
+            // Inspect decoded JSON escapes and HTML entities before text cleanup.
+            $findings = self::findValueThreats(
+                $field, html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8'), $context
+            );
+            if ($findings) {
+                throw new RuntimeException(self::formatBlockedMessage($findings, $context, $sourceLine));
+            }
+
+            return self::sanitiseTextField($field, $value, 'json');
+        }
+
+        if ($value === null || is_bool($value) || is_int($value) || is_float($value)) {
+            return $value;
+        }
+
+        throw new JsonException('Unsupported JSON value.');
     }
 }
