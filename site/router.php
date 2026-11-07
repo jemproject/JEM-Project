@@ -18,6 +18,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Menu\AbstractMenu;
 
 require_once __DIR__ . '/services/JemNomenuRules.php';
+require_once __DIR__ . '/helpers/calendardaylink.php';
 
 class JemRouter extends RouterView
 {
@@ -105,7 +106,11 @@ class JemRouter extends RouterView
     }
 
     /**
-     * Keep an explicitly selected Day menu while navigating dates or layouts.
+     * Keep an explicit Day menu or a recognised Calendar drill-down source.
+     *
+     * @param   array  $query  Component URL parameters.
+     *
+     * @return  array  Parameters with the selected menu context preserved when applicable.
      */
     public function preprocess($query)
     {
@@ -117,8 +122,10 @@ class JemRouter extends RouterView
 
             if ($item
                 && ($item->query['option'] ?? '') === 'com_jem'
-                && ($item->query['view'] ?? '') === 'day'
-                && ($language === '*' || $item->language === '*' || $item->language === $language)) {
+                && ($language === '*' || $item->language === '*' || $item->language === $language)
+                && (($item->query['view'] ?? '') === 'day'
+                    || (in_array($query['jemcal'] ?? null, array(1, '1'), true)
+                        && JemCalendarDayLink::sourceView((array) $item->query) !== ''))) {
                 return $query;
             }
         }
