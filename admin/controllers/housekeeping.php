@@ -414,42 +414,21 @@ class JemControllerHousekeeping extends BaseController
     }
 
     /**
-     * logic to massdelete unassigned images
+     * Open the image review for legacy cleanup buttons without deleting files.
      *
-     * @access public
      * @return void
-     *
      */
-    public function delete() {
+    public function delete()
+    {
         JemHelper::requirePostToken();
         $this->allowHousekeeping();
-
         $task = Factory::getApplication()->input->post->getCmd('task', '');
         $task = strpos($task, '.') !== false ? substr($task, strrpos($task, '.') + 1) : $task;
-        $model = $this->getModel('housekeeping');
-        $total = 0;
-
-        if ($task == 'cleaneventimg') {
-            $total = $model->delete($model::EVENTS);
-        } elseif ($task == 'cleanvenueimg') {
-            try {
-                $total = $model->delete($model::VENUES);
-            } catch (JemHousekeepingImageReferenceException $error) {
-                $this->setRedirect(
-                    'index.php?option=com_jem&view=housekeeping',
-                    $error->getMessage(),
-                    'warning'
-                );
-                return;
-            }
-        } elseif ($task == 'cleancategoryimg') {
-            $total = $model->delete($model::CATEGORIES);
+        $types = array('cleaneventimg' => 'events', 'cleanvenueimg' => 'venues', 'cleancategoryimg' => 'categories');
+        if (!isset($types[$task])) {
+            throw new \RuntimeException(Text::_('JERROR_LAYOUT_PAGE_NOT_FOUND'), 404);
         }
-
-        $link = 'index.php?option=com_jem&view=housekeeping';
-        $msg = Text::sprintf('COM_JEM_HOUSEKEEPING_IMAGES_DELETED', $total);
-
-        $this->setRedirect($link, $msg);
+        $this->setRedirect('index.php?option=com_jem&view=housekeeping&tool=files&area=' . $types[$task]);
     }
 
     /**
@@ -496,7 +475,7 @@ class JemControllerHousekeeping extends BaseController
 
     /**
      * Deletes explicitly selected unused image or attachment files after the
-     * "Unused files" preview. The one-click cleanup tasks above stay available.
+     * "Unused files" preview, checking current references again before deletion.
      */
     public function deleteUnusedFiles(): void
     {
@@ -521,6 +500,9 @@ class JemControllerHousekeeping extends BaseController
 
         try {
             $result = (new JemHousekeepingFiles(null, $this->getModel('housekeeping')))->delete($area, (array) $selected);
+        } catch (JemHousekeepingImageReferenceException $error) {
+            $this->setRedirect($url, $error->getMessage(), 'warning');
+            return;
         } catch (\InvalidArgumentException $error) {
             $this->setRedirect($url, Text::_('COM_JEM_HOUSEKEEPING_FILES_INVALID_SELECTION'), 'warning');
             return;

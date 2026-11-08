@@ -37,11 +37,10 @@ final class HousekeepingImageCleanupJoomlaIntegrationTest extends JoomlaTestCase
             '{"image":"images/jem/events/event-prado-social.webp"}',
             '{"image":"images/jem/venues/other.jpg"}',
             '{"image":""}',
-            '{broken json',
         );
 
         self::assertSame(
-            array('event-prado-social.webp', '2026/club/Poster.JPG', 'Unused Photo (1).JPG', 'party#1.jpg'),
+            array('event-prado-social.webp', '2026/club/Poster.JPG', 'Unused Photo (1).JPG', 'Unused%20Photo%20(1).JPG', 'party#1.jpg'),
             $extract->invoke(null, $rows, 'events')
         );
     }

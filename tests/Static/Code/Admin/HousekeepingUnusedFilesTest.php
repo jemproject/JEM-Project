@@ -6,12 +6,12 @@ use PHPUnit\Framework\TestCase;
 
 final class HousekeepingUnusedFilesTest extends TestCase
 {
-    public function testPreviewIsAddedNextToTheExistingOneClickCleanup(): void
+    public function testExistingCleanupActionsRemainAvailableThroughTheReview(): void
     {
         $controller = $this->read('admin/controllers/housekeeping.php');
         $layout = $this->read('admin/views/housekeeping/tmpl/default.php');
 
-        // The one-click tasks stay available (issue #2379: keep current functionality).
+        // Existing action names remain available; image actions now open their review.
         foreach (array('cleaneventimg', 'cleanvenueimg', 'cleancategoryimg') as $task) {
             self::assertStringContainsString("\$this->registerTask('" . $task . "'", $controller);
             self::assertStringContainsString("this.form.task.value='housekeeping." . $task . "'", $layout);

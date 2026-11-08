@@ -1241,30 +1241,40 @@ class JemModelHousekeeping extends BaseDatabaseModel
      */
     private function getAssigned($type)
     {
-        if ($type === JemModelHousekeeping::EVENTS) {
-            $query = 'SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, ' . $this->_db->quote('') . '), datimage)'
-                . ' FROM #__jem_events WHERE datimage <> ' . $this->_db->quote('')
-                . ' UNION SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, ' . $this->_db->quote('') . '), fullimage)'
-                . ' FROM #__jem_events WHERE fullimage <> ' . $this->_db->quote('');
-        } elseif ($type === JemModelHousekeeping::VENUES) {
-            $query = 'SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, ' . $this->_db->quote('') . '), locimage)'
-                . ' FROM #__jem_venues WHERE locimage <> ' . $this->_db->quote('');
-        } elseif ($type === JemModelHousekeeping::CATEGORIES) {
-            $query = 'SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, '
-                . $this->_db->quote('') . '), image)'
-                . ' FROM #__jem_categories WHERE image <> ' . $this->_db->quote('');
-        } else {
-            $query = 'SELECT '.$this->map[$type]['field'].' FROM #__jem_'.$this->map[$type]['table'];
+        try {
+            if ($type === JemModelHousekeeping::EVENTS) {
+                $query = 'SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, ' . $this->_db->quote('') . '), datimage)'
+                    . ' FROM #__jem_events WHERE datimage <> ' . $this->_db->quote('')
+                    . ' UNION SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, ' . $this->_db->quote('') . '), fullimage)'
+                    . ' FROM #__jem_events WHERE fullimage <> ' . $this->_db->quote('');
+            } elseif ($type === JemModelHousekeeping::VENUES) {
+                $query = 'SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, ' . $this->_db->quote('') . '), locimage)'
+                    . ' FROM #__jem_venues WHERE locimage <> ' . $this->_db->quote('');
+            } elseif ($type === JemModelHousekeeping::CATEGORIES) {
+                $query = 'SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, '
+                    . $this->_db->quote('') . '), image)'
+                    . ' FROM #__jem_categories WHERE image <> ' . $this->_db->quote('');
+            } else {
+                $query = 'SELECT '.$this->map[$type]['field'].' FROM #__jem_'.$this->map[$type]['table'];
+            }
+
+            $this->_db->setQuery($query);
+            $assigned = $this->_db->loadColumn();
+
+            if ($type === self::VENUES) {
+                $assigned = array_merge((array) $assigned, $this->getCapacityImagePaths());
+            }
+
+            return array_merge((array) $assigned, $this->getLinkImages($type));
+        } catch (JemHousekeepingImageReferenceException $error) {
+            throw $error;
+        } catch (\Exception $error) {
+            throw new JemHousekeepingImageReferenceException(
+                Text::_('COM_JEM_HOUSEKEEPING_IMAGE_REFERENCES_FAILED'),
+                0,
+                $error
+            );
         }
-
-        $this->_db->setQuery($query);
-        $assigned = $this->_db->loadColumn();
-
-        if ($type === self::VENUES) {
-            $assigned = array_merge((array) $assigned, $this->getCapacityImagePaths());
-        }
-
-        return array_merge((array) $assigned, $this->getLinkImages($type));
     }
 
     /**
@@ -1345,38 +1355,81 @@ class JemModelHousekeeping extends BaseDatabaseModel
 
 
     /**
-     * Link images may live in the same folders as event, venue or category images.
+     * Read link references regardless of publication or the event's current state.
+     *
+     * @param int $type Image area identifier.
+     * @return string[] Paths relative to the selected image folder.
      */
     private function getLinkImages($type): array
     {
-        $folder = $this->map[$type]['folder'];
         $query = $this->_db->getQuery(true)
             ->select($this->_db->quoteName('params'))
             ->from($this->_db->quoteName('#__jem_links'))
-            ->where($this->_db->quoteName('params') . ' LIKE ' . $this->_db->quote('%"image"%'));
+            ->where($this->_db->quoteName('params') . ' IS NOT NULL')
+            ->where($this->_db->quoteName('params') . ' <> ' . $this->_db->quote(''));
         $this->_db->setQuery($query);
 
-        return self::extractLinkImages((array) $this->_db->loadColumn(), $folder);
+        return self::extractLinkImages((array) $this->_db->loadColumn(), $this->map[$type]['folder']);
     }
 
-    /** Return folder-relative paths from stored link parameters. */
+    /**
+     * Resolve local link images without treating unreadable references as unused.
+     *
+     * @param array $rows Stored JSON parameter values.
+     * @param string $folder Managed image folder name.
+     * @return string[] Unique local names, including literal and URL-decoded variants.
+     * @throws UnexpectedValueException If stored image references cannot be interpreted.
+     * @throws JsonException If a nonempty parameter value is malformed.
+     */
     private static function extractLinkImages(array $rows, string $folder): array
     {
         $prefix = 'images/jem/' . $folder . '/';
         $images = array();
 
         foreach ($rows as $json) {
-            $params = json_decode((string) $json, true);
-            $image = is_array($params) ? trim((string) ($params['image'] ?? '')) : '';
+            if (trim((string) $json) === '') {
+                continue;
+            }
+            $params = json_decode((string) $json, true, 512, JSON_THROW_ON_ERROR);
+            if (!is_array($params)) {
+                throw new UnexpectedValueException('Invalid event link parameters.');
+            }
+            $image = $params['image'] ?? '';
+            if (!is_string($image)) {
+                throw new UnexpectedValueException('Invalid event link image.');
+            }
+            $image = trim($image);
             $fragment = strpos($image, '#joomlaImage://');
             if ($fragment !== false) {
                 $image = substr($image, 0, $fragment);
             }
-            $image = rawurldecode(str_replace('\\', '/', $image));
-            $image = ltrim($image, '/');
 
-            if (str_starts_with($image, $prefix) && strlen($image) > strlen($prefix)) {
-                $images[] = substr($image, strlen($prefix));
+            foreach (array_unique(array(rawurldecode($image), $image)) as $variant) {
+                $variant = str_replace('\\', '/', $variant);
+                // External URLs never protect an unrelated file in a JEM folder.
+                if (preg_match('#^(?:[a-z][a-z0-9+.-]*:|//)#i', $variant)) {
+                    continue;
+                }
+                $variant = ltrim($variant, '/');
+                if (str_contains($variant, "\0") || preg_match('#(?:^|/)\.\.(?:/|$)#', $variant)) {
+                    throw new UnexpectedValueException('Invalid local event link image path.');
+                }
+                $variant = implode('/', array_filter(explode('/', $variant), static fn($part): bool => $part !== '' && $part !== '.'));
+                $matches = PHP_OS_FAMILY === 'Windows'
+                    ? strncasecmp($variant, $prefix, strlen($prefix)) === 0
+                    : str_starts_with($variant, $prefix);
+                if (!$matches || strlen($variant) <= strlen($prefix)) {
+                    continue;
+                }
+                $relative = substr($variant, strlen($prefix));
+                $images[] = $relative;
+                // Removing an original also removes its thumbnail. Protect both
+                // when a link explicitly selects a file from the small folder.
+                $thumbnail = PHP_OS_FAMILY === 'Windows'
+                    ? strncasecmp($relative, 'small/', 6) === 0 : str_starts_with($relative, 'small/');
+                if ($thumbnail) {
+                    $images[] = substr($relative, strlen('small/'));
+                }
             }
         }
 

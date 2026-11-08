@@ -18,8 +18,7 @@ use Joomla\Filesystem\Path;
  * explicitly selected files only. Every selection is re-validated against the
  * current files and database at delete time.
  *
- * The one-click cleanup tasks of Housekeeping are kept unchanged; this class
- * only adds the reviewed alternative.
+ * Housekeeping image cleanup actions open this review before any deletion.
  */
 final class JemHousekeepingFiles
 {

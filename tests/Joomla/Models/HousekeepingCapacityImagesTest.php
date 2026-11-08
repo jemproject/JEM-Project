@@ -93,19 +93,17 @@ final class HousekeepingCapacityImagesTest extends TestCase
         }
     }
 
-    /** @return void Report a warning instead of a success message when validation refused cleanup. */
-    public function testControllerKeepsItsGuardsAndReportsRefusedCleanup(): void
+    /** @return void Open the review without deleting when a legacy cleanup button is used. */
+    public function testControllerKeepsItsGuardsAndOpensTheReview(): void
     {
         $report = self::report();
         self::assertSame(2, $report['token_checks']);
         foreach ($report['controller'] as $case) {
             self::assertTrue($case['allowed']);
             self::assertCount(1, $case['redirects']);
-            self::assertSame('index.php?option=com_jem&view=housekeeping', $case['redirects'][0][0]);
+            self::assertSame('index.php?option=com_jem&view=housekeeping&tool=files&area=venues', $case['redirects'][0][0]);
+            self::assertCount(1, $case['redirects'][0]);
         }
-        self::assertSame('1 images deleted.', $report['controller'][0]['redirects'][0][1]);
-        self::assertSame('warning', $report['controller'][1]['redirects'][0][2]);
-        self::assertStringContainsString('No files were deleted', $report['controller'][1]['redirects'][0][1]);
     }
 
     /** @return void An incomplete venue inventory must not hide the other file areas or claim zero unused files. */
