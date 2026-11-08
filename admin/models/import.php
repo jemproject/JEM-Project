@@ -301,9 +301,7 @@ class JemModelImport extends BaseDatabaseModel
      */
     private function importSimpleTable($tableclass, $tablename, $fieldsname, &$data, $replace = true)
     {
-        $rec = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'ignoredids' => '',
-                     'duplicated' => 0, 'duplicatedids' => '', 'replaced' => 0, 'replacedids' => '',
-                     'error' => 0, 'errorids' => '', 'error_details' => array());
+        $rec = $this->emptyImportResult();
 
         $db = Factory::getContainer()->get('DatabaseDriver');
 
@@ -365,6 +363,91 @@ class JemModelImport extends BaseDatabaseModel
 
 
     /**
+     * Create the complete result consumed by the CSV controller and row journal.
+     *
+     * @return array Counts, identifier lists and bounded validation details.
+     */
+    private function emptyImportResult(): array
+    {
+        return array(
+            'added' => 0, 'updated' => 0, 'ignored' => 0, 'ignoredids' => '',
+            'duplicated' => 0, 'duplicatedids' => '', 'replaced' => 0, 'replacedids' => '',
+            'error' => 0, 'errorids' => '', 'error_details' => array(),
+        );
+    }
+
+    /**
+     * Validate an original relation ID before converting it to an integer.
+     *
+     * @param mixed $value Original CSV value or an already validated record ID.
+     * @param string $field Reference field used in the validation message.
+     * @return int Positive ID representable by the relation table's signed INT columns.
+     * @throws RuntimeException When the value is not a valid positive integer ID.
+     */
+    private function normaliseRelationId($value, string $field): int
+    {
+        $digits = is_int($value) || is_string($value) ? trim((string) $value, " \t\r\n") : '';
+        $number = ltrim($digits, '0');
+        if (
+            !ctype_digit($digits) || $number === '' || strlen($number) > 10
+            || (strlen($number) === 10 && strcmp($number, '2147483647') > 0)
+        ) {
+            throw new RuntimeException(Text::sprintf('COM_JEM_IMPORT_RELATION_INVALID_ID', $field));
+        }
+
+        return (int) $number;
+    }
+
+    /**
+     * Check all relation references before deleting or updating any existing link.
+     *
+     * @param array $events Event IDs mapped to category IDs and ordering values.
+     * @param array $sourceLines CSV line numbers indexed by event and category IDs.
+     * @return array|null First invalid reference with its line and reason, or null.
+     */
+    private function findInvalidRelationReference(array $events, array $sourceLines): ?array
+    {
+        $references = array('itemid' => array(), 'catid' => array());
+        foreach ($events as $itemid => $cats) {
+            $lines = $sourceLines[$itemid] ?? array();
+            $line = (int) (reset($lines) ?: 0);
+            try {
+                $eventId = $this->normaliseRelationId($itemid, 'itemid');
+                $references['itemid'][$eventId] ??= $line;
+                foreach (array_keys((array) $cats) as $catid) {
+                    $line = (int) ($sourceLines[$itemid][$catid] ?? 0);
+                    $categoryId = $this->normaliseRelationId($catid, 'catid');
+                    $references['catid'][$categoryId] ??= $line;
+                }
+            } catch (RuntimeException $error) {
+                return array('line' => $line, 'reason' => $error->getMessage());
+            }
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        foreach (array('itemid' => '#__jem_events', 'catid' => '#__jem_categories') as $field => $table) {
+            // Bound query size without issuing a separate lookup for every CSV row.
+            foreach (array_chunk($references[$field], 500, true) as $ids) {
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName('id'))
+                    ->from($db->quoteName($table))
+                    ->where($db->quoteName('id') . ' IN (' . implode(',', array_keys($ids)) . ')');
+                $existing = array_fill_keys(array_map('intval', $db->setQuery($query)->loadColumn()), true);
+                foreach ($ids as $id => $line) {
+                    if (!isset($existing[$id])) {
+                        return array(
+                            'line' => $line,
+                            'reason' => Text::sprintf('COM_JEM_IMPORT_RELATION_MISSING_ID', $field, $id),
+                        );
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Return source position metadata added by the import controller.
      *
      * @param   array|object  $row  Imported row.
@@ -407,11 +490,12 @@ class JemModelImport extends BaseDatabaseModel
      */
     private function import($tablename, $prefix, $fieldsname, &$data, $replace = true)
     {
-        $rec = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'ignoredids' => "" , 'duplicated' => 0, 'duplicatedids' => "", 'replaced' => 0, 'replacedids' => "", 'error' => 0, 'errorids' => "", 'error_details' => array());
+        $rec = $this->emptyImportResult();
 
         // cats_event_relations table requires different handling
         if (strcasecmp($tablename, 'jem_cats_event_relations') == 0) {
             $events = array();
+            $sourceLines = array();
             $itemidx = $catidx = $orderidx = false;
 
             foreach ($fieldsname as $k => $field) {
@@ -422,15 +506,26 @@ class JemModelImport extends BaseDatabaseModel
                 }
             }
             if (($itemidx === false) || ($catidx === false)) {
-                echo Text::_('COM_JEM_IMPORT_PARSE_ERROR') . "\n";
+                $rec['error'] = 1;
+                $this->appendImportErrorDetail($rec, 1, Text::_('COM_JEM_IMPORT_RELATION_REQUIRED_FIELDS'));
                 return $rec;
             }
 
             // parse each row
             foreach ($data as $row) {
+                $sourceLine = $this->getImportSourceLine($row);
+                try {
+                    $itemid = $this->normaliseRelationId($row[$itemidx] ?? null, 'itemid');
+                    $catid = $this->normaliseRelationId($row[$catidx] ?? null, 'catid');
+                } catch (RuntimeException $error) {
+                    $rec['error']++;
+                    $this->getImportJournal()->begin('catevents', $sourceLine, 0);
+                    $this->appendImportErrorDetail($rec, $sourceLine, $error->getMessage());
+                    continue;
+                }
                 $values = array(
-                    'itemid' => $row[$itemidx],
-                    'catid' => $row[$catidx],
+                    'itemid' => $itemid,
+                    'catid' => $catid,
                     'ordering' => ($orderidx !== false) ? $row[$orderidx] : 0,
                 );
                 $values = JemImportSecurityHelper::sanitiseRecord(
@@ -440,11 +535,12 @@ class JemModelImport extends BaseDatabaseModel
                 );
 
                 // collect categories for each event; we get array( itemid => array( catid => ordering ) )
-                $events[$values['itemid']][$values['catid']] = $values['ordering'];
+                $events[$itemid][$catid] = $values['ordering'];
+                $sourceLines[$itemid][$catid] = $sourceLine;
             }
 
-            // store data
-            return $this->storeCatsEventRelations($events, $replace);
+            // Reject the entire file before touching any existing category assignment.
+            return $rec['error'] ? $rec : $this->storeCatsEventRelations($events, $replace, $sourceLines);
         }
 
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -465,6 +561,7 @@ class JemModelImport extends BaseDatabaseModel
         $rootkey = $this->_rootkey();
 
         $events = []; // collects cat event relations
+        $relationSourceLines = array();
 
         // parse each row
         foreach ($data as $row) {
@@ -481,6 +578,8 @@ class JemModelImport extends BaseDatabaseModel
             }
 
             $this->getImportJournal()->begin($kind, $sourceLine, (int) ($values['id'] ?? 0));
+            // Preserve the original category IDs for validation, before text sanitisation.
+            $rawCategories = $values['categories'] ?? null;
             $values = JemImportSecurityHelper::sanitiseRecord($values, $tablename, $sourceLine);
 
             if (strcasecmp($objectname, 'JemTableCategory') == 0) {
@@ -569,10 +668,17 @@ class JemModelImport extends BaseDatabaseModel
                 // we need to update the categories-events table too
                 // store cat relations
                 if (isset($values['categories'])) {
-                    $cats = explode(',', $values['categories']);
+                    $cats = explode(',', (string) $rawCategories);
                     foreach ($cats as $cat) {
-                        // collect categories for each event; we get array( itemid => array( catid => 0 ) )
-                        $events[$object->id][$cat] = 0;
+                        try {
+                            $catid = $this->normaliseRelationId($cat, 'catid');
+                            $events[$object->id][$catid] = 0;
+                            $relationSourceLines[$object->id][$catid] = $sourceLine;
+                        } catch (RuntimeException $error) {
+                            $rec['error']++;
+                            $this->getImportJournal()->begin($kind, $sourceLine, (int) $object->id);
+                            $this->appendImportErrorDetail($rec, $sourceLine, $error->getMessage());
+                        }
                     }
                 }
             }
@@ -586,8 +692,10 @@ class JemModelImport extends BaseDatabaseModel
 
         if (strcasecmp($objectname, 'JemTableEvent') == 0) {
             // store cat event relations
-            if (!empty($events)) {
-                $this->storeCatsEventRelations($events, $replace);
+            if (!empty($events) && !$rec['error']) {
+                $relations = $this->storeCatsEventRelations($events, $replace, $relationSourceLines);
+                $rec['error'] += $relations['error'];
+                $rec['error_details'] = array_slice(array_merge($rec['error_details'], $relations['error_details']), 0, 3);
             }
 
             // force the cleanup to update the imported events status
@@ -603,27 +711,25 @@ class JemModelImport extends BaseDatabaseModel
      * @param  array   $events  event ids with categories and ordering
      *                          format: array(itemid => array(catid => ordering))
      * @param  boolean $replace Replace if event-cat pair already exists
+     * @param  array $sourceLines Source lines indexed by event and category IDs.
      *
-     * @return array   Number of records inserted and updated
+     * @return array Complete import result, including any reference validation failure.
      */
-    private function storeCatsEventRelations(array $events, $replace = true)
+    private function storeCatsEventRelations(array $events, $replace = true, array $sourceLines = array())
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $columns = array('catid', 'itemid', 'ordering');
-        $result  = array('added' => 0, 'updated' => 0, 'ignored' => 0);
+        $result = $this->emptyImportResult();
+        $invalid = $this->findInvalidRelationReference($events, $sourceLines);
+        if ($invalid !== null) {
+            $result['error'] = 1;
+            $this->getImportJournal()->begin('catevents', $invalid['line'], 0);
+            $this->appendImportErrorDetail($result, $invalid['line'], $invalid['reason']);
+            return $result;
+        }
 
         // store data
         foreach ($events as $itemid => $cats) {
-            if (!ctype_digit((string) $itemid) || (int) $itemid <= 0) {
-                throw new RuntimeException('Invalid event ID in category relations.');
-            }
-
-            foreach (array_keys((array) $cats) as $catid) {
-                if (!ctype_digit((string) $catid) || (int) $catid <= 0) {
-                    throw new RuntimeException('Invalid category ID in event relations.');
-                }
-            }
-
             $itemid = (int) $itemid;
             // remove "old", unneeded relations of this event
             $query = $db->getQuery(true);
