@@ -174,7 +174,7 @@ $wa->addInlineScript('
                     <td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td> <?php // The ID could also be passed to submitName(), avoiding DOM traversal. ?>
                     <td><a href="<?php echo Route::_('index.php?option=com_jem&view=attendee&event='.(int) $row->event . '&id='.(int) $row->id);?>"><?php echo $this->escape($row->name); ?></a></td>
                     <td><?php echo $this->escape($row->username); ?></td>
-                    <td class="email"><a href="mailto:<?php echo htmlspecialchars($row->email, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $this->escape($row->email); ?></a></td>
+                    <td class="email"><a href="mailto:<?php echo htmlspecialchars((string) $row->email, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $this->escape($row->email); ?></a></td>
                     <td><?php echo $row->uip == 'DISABLED' ? Text::_('COM_JEM_DISABLED') : $this->escape($row->uip); ?></td>
                     <td><?php if (!empty($row->uregdate)) { echo HTMLHelper::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?></td>
                     <td class="center">

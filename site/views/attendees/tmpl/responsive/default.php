@@ -256,7 +256,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 
                     <?php if ($this->enableemailaddress == 1) :?>
                         <div class="jem-event-info-small jem-attendee-email">
-                            <a href="mailto:<?php echo htmlspecialchars($row->email, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $this->escape($row->email); ?></a>
+                            <a href="mailto:<?php echo htmlspecialchars((string) $row->email, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $this->escape($row->email); ?></a>
                         </div>
                     <?php endif; ?>
 
