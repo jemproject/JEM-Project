@@ -190,6 +190,31 @@ namespace {
     }
     final class JemHelper
     {
+        public static ?\Closure $eventRouteLayoutResolver = null;
+
+        /**
+         * Match layout CSS switches without loading component services.
+         *
+         * @param mixed $text Configured CSS suffix.
+         * @param string $needle Layout switch to find.
+         * @return bool Whether the suffix contains the switch.
+         */
+        public static function jemStringContains($text, $needle): bool
+        {
+            return str_contains((string) $text, $needle);
+        }
+
+        /**
+         * Disable unrelated article actions in module rendering fixtures.
+         *
+         * @param mixed $value Configured article-action mode.
+         * @return string Empty display mode for this fixture.
+         */
+        public static function getMoreInformationDisplay($value): string
+        {
+            return '';
+        }
+
         public static array $hourOffsets = [];
         public static array $minuteOffsets = [];
         public static string $hourOffsetDate = '2026-10-30';
@@ -255,11 +280,48 @@ namespace {
 
         public static function applyEventRouteLayout($route, $params): string
         {
-            return $route;
+            return self::$eventRouteLayoutResolver !== null
+                ? (self::$eventRouteLayoutResolver)($route, $params)
+                : $route;
         }
     }
     final class JemOutput
     {
+        public static int $lightboxCalls = 0;
+
+        /**
+         * Record modal setup without installing frontend assets.
+         *
+         * @return string Empty markup; the call counter records setup.
+         */
+        public static function lightbox(): string
+        {
+            ++self::$lightboxCalls;
+            return '';
+        }
+
+        /**
+         * Omit status ribbons outside the flyer navigation test.
+         *
+         * @param object $item Module item.
+         * @return string Empty ribbon markup.
+         */
+        public static function moduleEventStatusRibbon($item): string
+        {
+            return '';
+        }
+
+        /**
+         * Omit status badges outside the flyer navigation test.
+         *
+         * @param object $item Module item.
+         * @return string Empty badge markup.
+         */
+        public static function moduleEventStatusBadge($item): string
+        {
+            return '';
+        }
+
         public static array $timeCalls = [];
 
         /**
@@ -303,9 +365,11 @@ namespace {
     }
     final class JemImage
     {
+        public static ?array $moduleImage = null;
+
         public static function getModuleEventImageData(...$args)
         {
-            return null;
+            return self::$moduleImage;
         }
     }
     final class JemHelperRoute

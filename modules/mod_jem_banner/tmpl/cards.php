@@ -128,8 +128,8 @@ $wa->addInlineStyle($css);
                 <div class="event-card event_id<?php echo $item->eventid; ?><?php echo $showCategoryBadge ? ' has-event-badge' : ''; ?>">
                     <?php if ($showflyer == 1) : ?>
                         <div class="event-media<?php echo $hasEventImage ? ' jem-module-event-status-image' : ''; ?>"<?php echo $hasEventImage && $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
-                            <?php if (!empty($item->eventlink)) : ?>
-                                <a class="event-media-link" href="<?php echo $item->eventlink; ?>" aria-label="<?php echo $item->fulltitle; ?>">
+                            <?php if (!empty($item->flyerlink)) : ?>
+                                <a class="event-media-link" href="<?php echo htmlspecialchars($item->flyerlink, ENT_QUOTES, 'UTF-8', false); ?>" rel="<?php echo $modal; ?>" data-title="<?php echo $item->fulltitle; ?>" aria-label="<?php echo $item->fulltitle; ?>">
                             <?php else : ?>
                                 <div class="event-media-link">
                             <?php endif; ?>
@@ -143,7 +143,7 @@ $wa->addInlineStyle($css);
                                     </span>
                                 <?php endif; ?>
 
-                            <?php if (!empty($item->eventlink)) : ?>
+                            <?php if (!empty($item->flyerlink)) : ?>
                                 </a>
                             <?php else : ?>
                                 </div>

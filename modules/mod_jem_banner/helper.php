@@ -320,6 +320,13 @@ abstract class ModJemBannerHelper
                 $lists[$i]->eventimagecontainerstyle = $dimage['display_container_style'];
             }
 
+            // Image navigation is independent of the title-link setting.
+            $lists[$i]->flyerlink = match ((int) $params->get('flyer_link_type', 0)) {
+                0, 1 => $lists[$i]->eventimageorig,
+                2 => $hasEventAccess ? $lists[$i]->link : '',
+                default => '',
+            };
+
             if ($limage == null) {
                 $lists[$i]->venueimage     = '';
                 $lists[$i]->venueimageorig = '';

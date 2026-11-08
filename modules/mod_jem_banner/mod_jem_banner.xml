@@ -112,7 +112,7 @@
                        label="MOD_JEM_BANNER_EVENT_LINK_EVENT_LAYOUT"
                        description="MOD_JEM_BANNER_EVENT_LINK_EVENT_LAYOUT_DESC"
                        class="form-select w-auto"
-                       showon="linkevent:1"
+                       showon="linkevent:1[OR]flyer_link_type:2"
                 >
                     <option value="">JDEFAULT</option>
                     <option value="details">MOD_JEM_BANNER_EVENT_LINK_LAYOUT_DETAILS</option>
@@ -123,7 +123,7 @@
                        label="MOD_JEM_BANNER_EVENT_LINK_VENUE_LAYOUT"
                        description="MOD_JEM_BANNER_EVENT_LINK_VENUE_LAYOUT_DESC"
                        class="form-select w-auto"
-                       showon="linkevent:1"
+                       showon="linkevent:1[OR]flyer_link_type:2"
                 >
                     <option value="">JDEFAULT</option>
                     <option value="details">MOD_JEM_BANNER_EVENT_LINK_LAYOUT_DETAILS</option>

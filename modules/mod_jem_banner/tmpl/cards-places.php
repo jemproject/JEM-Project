@@ -11,6 +11,12 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
+$flyer_link_type = (int) $params->get('flyer_link_type', 0);
+$modal = $flyer_link_type === 1 ? 'lightbox' : '';
+if ($flyer_link_type === 1) {
+    echo JemOutput::lightbox();
+}
+
 $imageWidthMax = (int) $params->get('imagewidthmax', 0);
 $imageRatio    = preg_match('#^\d+\s*/\s*\d+$#', (string) $params->get('imageratio', '1 / 1')) ? (string) $params->get('imageratio', '1 / 1') : '1 / 1';
 $noImageText   = Text::_('MOD_JEM_BANNER_NO_IMAGE');
@@ -37,8 +43,8 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                 ?>
                 <article class="jem-banner-card-place event_id<?php echo (int) $item->eventid; ?>">
                     <div class="jem-banner-card-image<?php echo $hasEventImage ? ' jem-module-event-status-image' : ''; ?>"<?php echo $hasEventImage && $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
-                        <?php if (!empty($item->eventlink)) : ?>
-                            <a class="jem-banner-card-image-link" href="<?php echo $item->eventlink; ?>" aria-label="<?php echo $item->fulltitle; ?>">
+                        <?php if (!empty($item->flyerlink)) : ?>
+                            <a class="jem-banner-card-image-link" href="<?php echo htmlspecialchars($item->flyerlink, ENT_QUOTES, 'UTF-8', false); ?>" rel="<?php echo $modal; ?>" data-title="<?php echo $item->fulltitle; ?>" aria-label="<?php echo $item->fulltitle; ?>">
                         <?php else : ?>
                             <div class="jem-banner-card-image-link">
                         <?php endif; ?>
@@ -50,7 +56,7 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                                         <span><?php echo $noImageText; ?></span>
                                     </span>
                                 <?php endif; ?>
-                        <?php if (!empty($item->eventlink)) : ?>
+                        <?php if (!empty($item->flyerlink)) : ?>
                             </a>
                         <?php else : ?>
                             </div>
