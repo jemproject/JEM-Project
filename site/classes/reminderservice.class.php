@@ -357,6 +357,8 @@ final class JemReminderService
 
     private function createReminder($registration, $definition, $scheduledAt, $force)
     {
+        require_once dirname(__DIR__) . '/helpers/route.php';
+
         $language = $this->notifications->resolveRecipientLanguage(
             (int) $registration->user_id,
             (string) $registration->user_email
@@ -374,8 +376,8 @@ final class JemReminderService
             'city' => (string) $registration->city,
             'places' => (int) $registration->places,
             'event_description' => trim(strip_tags((string) $registration->event_description)),
-            'event_url' => rtrim(Uri::root(), '/') . '/index.php?option=com_jem&view=event&id=' . (int) $registration->event_id,
-            'reservation_url' => rtrim(Uri::root(), '/') . '/index.php?option=com_jem&view=registration&id=' . (int) $registration->registration_id,
+            'event_url' => JEMHelperRoute::getAbsoluteSiteRoute('index.php?option=com_jem&view=event&id=' . (int) $registration->event_id),
+            'reservation_url' => JEMHelperRoute::getAbsoluteSiteRoute('index.php?option=com_jem&view=registration&id=' . (int) $registration->registration_id),
             'event_image_url' => $this->imageUrl($registration->datimage ?? '', 'event', $registration->image_path ?? ''),
             'venue_image_url' => $this->imageUrl($registration->locimage ?? '', 'venue', $registration->venue_image_path ?? ''),
             'site_name' => (string) Factory::getApplication()->get('sitename'),

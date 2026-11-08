@@ -245,7 +245,7 @@ abstract class ModJemTeaserHelper
                     $hasCategoryAccess = !isset($cat->user_has_access_category) || (bool) $cat->user_has_access_category;
 
                     if ($linkcategory && $hasCategoryAccess) {
-                        $link = Route::_( Uri::root() . 'index.php?option=com_jem&view=category&id=' . $catId . ':' . $catAlias);
+                        $link = Route::_('index.php?option=com_jem&view=category&id=' . $catId . ':' . $catAlias, false);
                         $link = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
                     } else {
                         $link = null;
@@ -461,7 +461,7 @@ abstract class ModJemTeaserHelper
 
             // --- generate link ---
             if ($linkvenue && $hasVenueAccess) {
-                $link = Route::_(Uri::root() . 'index.php?option=com_jem&view=venue&id=' . $row->locid . ':' . $row->l_alias);
+                $link = Route::_('index.php?option=com_jem&view=venue&id=' . $row->locid . ':' . $row->l_alias, false);
                 $link = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
             } else {
                 $link = null;
