@@ -21,6 +21,7 @@ use Joomla\Utilities\ArrayHelper;
 require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/deletedobjectcleanup.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/ageaccess.class.php';
 /**
  * JEM Venue Table
@@ -32,6 +33,31 @@ class JemTableVenue extends Table
     public function __construct(&$db)
     {
         parent::__construct('#__jem_venues', 'id', $db);
+    }
+
+    /**
+     * Delete the venue row, then clean only its own attachments after the commit.
+     * Event ownership checks remain in the model; images are managed separately.
+     * @param mixed $pk Optional primary key; otherwise use this row's ID.
+     * @return bool Whether the venue deletion succeeded.
+     */
+    public function delete($pk = null)
+    {
+        $id = (int) ($pk ?: $this->id);
+        $db = $this->getDatabase();
+        $db->transactionStart(true);
+        try {
+            if (!parent::delete($pk)) {
+                throw new RuntimeException($this->getError() ?: 'Could not delete the JEM venue.');
+            }
+            $db->transactionCommit(true);
+            JemDeletedObjectCleanup::afterDelete($db, 'venue' . $id);
+            return true;
+        } catch (Throwable $error) {
+            $db->transactionRollback(true);
+            $this->setError($error->getMessage());
+            return false;
+        }
     }
 
     /**

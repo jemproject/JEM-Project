@@ -25,6 +25,42 @@ require_once JPATH_SITE . '/components/com_jem/classes/log.class.php';
 class JemControllerHousekeeping extends BaseController
 {
     /**
+     * Retry only confirmed orphan resources from a recent administrator preview.
+     * @return void
+     */
+    public function recoverDeletedResources(): void
+    {
+        JemHelper::requirePostToken();
+        $this->allowHousekeeping();
+        $app = Factory::getApplication();
+        if (!$app->getIdentity()->authorise('core.admin')) {
+            throw new RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+        $preview = $app->getUserState('com_jem.deleted_resources_preview', null);
+        $nonce = $app->input->post->getString('cleanup_nonce', '');
+        if (!JemHelper::consumeActionNonce('housekeeping.recoverDeletedResources', $nonce)
+            || !is_array($preview) || $preview['user'] !== (int) $app->getIdentity()->id
+            || $preview['time'] < time() - 900) {
+            throw new RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+        }
+        $app->setUserState('com_jem.deleted_resources_preview', null);
+        require_once JPATH_SITE . '/components/com_jem/classes/deletedobjectcleanup.class.php';
+        $url = 'index.php?option=com_jem&view=housekeeping&tool=attachmentrecovery';
+        try {
+            $result = JemDeletedObjectCleanup::recover(
+                Factory::getContainer()->get('DatabaseDriver'),
+                $app->input->post->get('objects', [], 'array'),
+                $preview['entries']
+            );
+            $app->setUserState('com_jem.deleted_resources_run', $result);
+            $this->setRedirect($url);
+        } catch (InvalidArgumentException $error) {
+            $this->setRedirect($url, Text::sprintf('COM_JEM_DELETED_RESOURCES_BATCH', JemDeletedObjectCleanup::BATCH_LIMIT), 'warning');
+        }
+    }
+
+
+    /**
      * Run the full read-only audit and retain its result in the private log.
      */
     public function runDiagnostics(): void

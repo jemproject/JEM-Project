@@ -39,7 +39,9 @@ class JemViewHousekeeping extends JemAdminView
             $this->tool = 'images';
         }
 
-        if ($this->tool === 'diagnostics') {
+        if ($this->tool === 'attachmentrecovery') {
+            $this->prepareDeletedResources();
+        } elseif ($this->tool === 'diagnostics') {
             $reports = new JemHousekeepingReports();
             $this->diagnosticImported = JemHousekeepingReports::consumeRequestPreview();
             $this->diagnosticDebugAll = JemLog::getConfiguredLevel() === 5;
@@ -173,6 +175,35 @@ class JemViewHousekeeping extends JemAdminView
         $this->addToolbar();
 
         parent::display($tpl);
+    }
+
+
+    /**
+     * Build a paginated, read-only preview and bind its confirmation to this administrator.
+     * @return void
+     */
+    protected function prepareDeletedResources(): void
+    {
+        $app = Factory::getApplication();
+        if (!$app->getIdentity()->authorise('core.admin')) {
+            throw new RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+        require_once JPATH_SITE . '/components/com_jem/classes/deletedobjectcleanup.class.php';
+        $this->cleanupPage = max(1, $app->input->getInt('page', 1));
+        $preview = JemDeletedObjectCleanup::preview(Factory::getContainer()->get('DatabaseDriver'), $this->cleanupPage);
+        $this->cleanupEntries = $preview['entries'];
+        $this->cleanupMore = $preview['more'];
+        // Store only ownership fingerprints in the session, never filesystem paths.
+        $entries = array_map(static fn (array $entry): array => [
+            'status' => $entry['status'], 'snapshot' => $entry['snapshot'],
+        ], $preview['entries']);
+        $app->setUserState('com_jem.deleted_resources_preview', [
+            'user' => (int) $app->getIdentity()->id, 'time' => time(), 'entries' => $entries,
+        ]);
+        $this->cleanupNonce = JemHelper::issueActionNonce('housekeeping.recoverDeletedResources');
+        $this->cleanupRun = (array) $app->getUserState('com_jem.deleted_resources_run', []);
+        $app->setUserState('com_jem.deleted_resources_run', null);
+        $this->setLayout('attachmentrecovery');
     }
 
 

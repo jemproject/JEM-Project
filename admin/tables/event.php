@@ -18,6 +18,7 @@ use Joomla\Utilities\ArrayHelper;
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/deletedobjectcleanup.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/ageaccess.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventschedule.class.php';
 /**
@@ -936,7 +937,14 @@ class JemTableEvent extends Table
                 ->where($db->quoteName('event_id') . ' = ' . $id);
             $db->setQuery($query)->execute();
 
+            $query = $db->getQuery(true)->delete($db->quoteName('#__jem_links'))
+                ->where($db->quoteName('event_id') . ' = ' . $id);
+            if (!$db->setQuery($query)->execute()) {
+                throw new RuntimeException('Could not delete the event links.');
+            }
+
             $db->transactionCommit(true);
+            JemDeletedObjectCleanup::afterDelete($db, 'event' . $id);
 
             return true;
         } catch (Throwable $e) {

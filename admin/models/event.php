@@ -29,6 +29,7 @@ require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php'
 require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/finderdeferral.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/deletedobjectcleanup.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/reminderservice.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrencevalidator.class.php';
@@ -163,7 +164,7 @@ class JemModelEvent extends JemModelAdmin
         $remaining = array_map('intval', $db->loadColumn() ?: array());
 
         try {
-            $db->transactionStart();
+            $db->transactionStart(true);
 
             if (count($remaining) < 2) {
                 if ($remaining) {
@@ -178,7 +179,7 @@ class JemModelEvent extends JemModelAdmin
                     ->delete($db->quoteName('#__jem_event_series'))
                     ->where($db->quoteName('id') . ' = ' . (int) $seriesId);
                 $db->setQuery($query)->execute();
-                $db->transactionCommit();
+                $db->transactionCommit(true);
                 return;
             }
 
@@ -192,9 +193,9 @@ class JemModelEvent extends JemModelAdmin
 
             $series = (object) array('id' => (int) $seriesId, 'root_event_id' => $remaining[0]);
             $db->updateObject('#__jem_event_series', $series, 'id');
-            $db->transactionCommit();
+            $db->transactionCommit(true);
         } catch (Throwable $error) {
-            $db->transactionRollback();
+            $db->transactionRollback(true);
             throw $error;
         }
     }
@@ -1917,6 +1918,7 @@ class JemModelEvent extends JemModelAdmin
                 if ($finderDeferred) {
                     JemFinderDeferral::end($finderCommitted);
                 }
+                JemDeletedObjectCleanup::flush(Factory::getContainer()->get('DatabaseDriver'));
             }
         }
     }
