@@ -20,6 +20,14 @@ use Joomla\CMS\HTML\HTMLHelper;
     <?php endif; ?>
         <table class="table table-striped housekeeping">
             <tbody>
+                <?php if (\Joomla\CMS\Factory::getApplication()->getIdentity()->authorise('core.admin')) : ?>
+                <tr>
+                    <td><div class="linkicon"><a href="<?php echo \Joomla\CMS\Router\Route::_('index.php?option=com_jem&view=housekeeping&tool=attachmentrecovery'); ?>">
+                        <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleanattachmentfiles.svg', Text::_('COM_JEM_DELETED_RESOURCES_TITLE'), null, true); ?>
+                    </a></div></td>
+                    <td><h3><?php echo Text::_('COM_JEM_DELETED_RESOURCES_TITLE'); ?></h3><?php echo Text::_('COM_JEM_DELETED_RESOURCES_DESC'); ?></td>
+                </tr>
+                <?php endif; ?>
                 <!-- CLEAN EVENT IMG -->
                 <tr>
                     <td>

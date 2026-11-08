@@ -16,6 +16,7 @@ use Joomla\Registry\Registry;
 use Joomla\Filesystem\File;
 use Joomla\Utilities\ArrayHelper;
 require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/deletedobjectcleanup.class.php';
 /**
  * JEM Event Table
  */
@@ -597,26 +598,28 @@ class JemTableEvent extends Table
      */
     public function delete($pk = null)
     {
-        $id = $this->id;
-
-        if (parent::delete($pk)) {
-            $db = Factory::getContainer()->get('DatabaseDriver');
-            $query = $db->getQuery(true);
-            $query->delete($db->quoteName('#__jem_cats_event_relations'));
-            $query->where('itemid = '.$db->quote($id));
-            $db->setQuery($query);
-            $db->execute();
-
-            $query = $db->getQuery(true);
-            $query->delete($db->quoteName('#__jem_register'));
-            $query->where('event = '.$db->quote($id));
-            $db->setQuery($query);
-            $db->execute();
-
+        $id = (int) ($pk ?: $this->id);
+        $db = $this->getDatabase();
+        $db->transactionStart(true);
+        try {
+            if (!parent::delete($pk)) {
+                throw new RuntimeException($this->getError() ?: 'Could not delete the JEM event.');
+            }
+            foreach (['#__jem_cats_event_relations' => 'itemid', '#__jem_register' => 'event', '#__jem_links' => 'event_id'] as $table => $column) {
+                $query = $db->getQuery(true)->delete($db->quoteName($table))
+                    ->where($db->quoteName($column) . ' = ' . $id);
+                if (!$db->setQuery($query)->execute()) {
+                    throw new RuntimeException('Could not delete the event relations.');
+                }
+            }
+            $db->transactionCommit(true);
+            JemDeletedObjectCleanup::afterDelete($db, 'event' . $id);
             return true;
+        } catch (Throwable $error) {
+            $db->transactionRollback(true);
+            $this->setError($error->getMessage());
+            return false;
         }
-
-        return false;
     }
 }
 ?>
