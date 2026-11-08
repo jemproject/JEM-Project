@@ -257,7 +257,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                         <!--td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td-->
                         <td><?php echo $this->escape($row->$namefield); ?></td>
                         <?php if ($this->enableemailaddress == 1) : ?>
-                        <td><a href="mailto:<?php echo htmlspecialchars($row->email, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $this->escape($row->email); ?></a></td>
+                        <td><a href="mailto:<?php echo htmlspecialchars((string) $row->email, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $this->escape($row->email); ?></a></td>
                         <?php endif; ?>
                         <td><?php if (!empty($row->uregdate)) { echo HTMLHelper::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?></td>
                         <td class="center">
