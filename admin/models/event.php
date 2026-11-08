@@ -28,6 +28,7 @@ require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.clas
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/finderdeferral.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/reminderservice.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrencevalidator.class.php';
@@ -1430,6 +1431,7 @@ class JemModelEvent extends JemModelAdmin
             }
         }
 
+        $finderCommitted = false;
         $seriesDb = null;
         $seriesTransactionActive = false;
         $pricingDb = null;
@@ -1442,6 +1444,11 @@ class JemModelEvent extends JemModelAdmin
             $pricingDb = Factory::getContainer()->get('DatabaseDriver');
             $pricingDb->transactionStart();
             $pricingTransactionActive = true;
+        }
+
+        $finderDeferred = $seriesTransactionActive || $pricingTransactionActive;
+        if ($finderDeferred) {
+            JemFinderDeferral::begin();
         }
 
         try {
@@ -1822,6 +1829,8 @@ class JemModelEvent extends JemModelAdmin
         if ($seriesTransactionActive) {
             if ($saved) {
                 $seriesDb->transactionCommit();
+                $seriesTransactionActive = false;
+                $finderCommitted = true;
                 if ($recurrencePlan['required']) {
                     Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_RECURRENCE_CHANGE_SAVED'), 'success');
                 } elseif ($customSeriesCreate) {
@@ -1838,6 +1847,8 @@ class JemModelEvent extends JemModelAdmin
         if ($pricingTransactionActive) {
             if ($saved) {
                 $pricingDb->transactionCommit();
+                $pricingTransactionActive = false;
+                $finderCommitted = true;
             } else {
                 $pricingDb->transactionRollback();
             }
@@ -1895,11 +1906,17 @@ class JemModelEvent extends JemModelAdmin
             }
             return false;
         } finally {
-            if ($seriesTransactionActive) {
-                $seriesDb->transactionRollback();
-            }
-            if ($pricingTransactionActive) {
-                $pricingDb->transactionRollback();
+            try {
+                if ($seriesTransactionActive) {
+                    $seriesDb->transactionRollback();
+                }
+                if ($pricingTransactionActive) {
+                    $pricingDb->transactionRollback();
+                }
+            } finally {
+                if ($finderDeferred) {
+                    JemFinderDeferral::end($finderCommitted);
+                }
             }
         }
     }
