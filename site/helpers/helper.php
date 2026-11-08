@@ -36,6 +36,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/categoryimagepath.class.php
 require_once(JPATH_SITE.'/components/com_jem/classes/menuviewscope.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/cssfilepolicy.class.php');
 require_once __DIR__ . '/../classes/recurrencevalidator.class.php';
+require_once __DIR__ . '/../classes/automaticcleanup.class.php';
 require_once __DIR__ . '/../classes/recurrenceexclusions.class.php';
 require_once __DIR__ . '/../classes/eventschedule.class.php';
 
@@ -2975,275 +2976,237 @@ class JemHelper
             }
 
             if ($recurrenceRoot > 0 || ($runningupdate + $delay) < $now) {
-                // Set timestamp of running cleanup
-                if (!$recurrenceRoot) {
-                    JemConfig::getInstance()->set('runningupdate', $now);
-                }
-
-                JemHelper::addLogEntry('  do cleanup...', __METHOD__);
-
-                // trigger an event to let plugins handle whatever cleanup they want to do.
-                if (!$recurrenceRoot && PluginHelper::importPlugin('jem')) {
-                    $dispatcher = JemFactory::getDispatcher();
-                    $dispatcher->triggerEvent('onJemBeforeCleanup', array($jemsettings, $forced));
-                }
-
                 $db = Factory::getContainer()->get('DatabaseDriver');
-
-                // Get the last event occurrence of each recurring published events, with unlimited repeat, or last date not passed.
-                // Ignore published field to prevent duplicate events.
-                // All column names are hardcoded constants — no user input reaches this query.
-                // quoteName() is omitted on internal column names for readability; the real guard is
-                // that $minusDays (below) is cast to int before any interpolation.
-                $query = $db->getQuery(true)
-                    ->select(array(
-                        'id',
-                        'CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id',
-                        'recurrence_number', 'recurrence_type', 'recurrence_limit_date',
-                        'recurrence_limit', 'recurrence_byday', 'recurrence_bylastday',
-                        'MAX(dates) AS dates', 'MAX(enddates) AS enddates',
-                        'MAX(recurrence_counter) AS counter',
-                    ))
-                    ->from('#__jem_events')
-                    ->where('recurrence_type <> ' . $db->quote('0'))
-                    ->where('CASE WHEN recurrence_limit_date IS NULL THEN 1 ELSE ' . $db->quote(self::getJoomlaDate()) . ' < recurrence_limit_date END')
-                    ->where('recurrence_number <> ' . $db->quote('0'))
-                    ->group('first_id')
-                    ->order('dates DESC');
-
-                if ($recurrenceRoot > 0) {
-                    $query->where('(id = ' . (int) $recurrenceRoot . ' OR recurrence_first_id = ' . (int) $recurrenceRoot . ')');
+                if (!$recurrenceRoot && !JemAutomaticCleanup::claim($db, $jemsettings, $now, $delay)) {
+                    return;
                 }
-                $db->setQuery($query);
-                $recurrence_array = $db->loadAssocList();
 
-                // If there are results we will be doing something with it
-                foreach ($recurrence_array as $recurrence_row)
-                {
-                    // get the info of reference event for the duplicates
-                    $ref_event = Table::getInstance('Event', 'JemTable');
-                    $ref_event->load($recurrence_row['id']);
+                try {
+                    JemHelper::addLogEntry('  do cleanup...', __METHOD__);
+
+                    // trigger an event to let plugins handle whatever cleanup they want to do.
+                    if (!$recurrenceRoot && PluginHelper::importPlugin('jem')) {
+                        $dispatcher = JemFactory::getDispatcher();
+                        $dispatcher->triggerEvent('onJemBeforeCleanup', array($jemsettings, $forced));
+                    }
 
                     $db = Factory::getContainer()->get('DatabaseDriver');
-                    $query = $db->getQuery(true);
-                    $query->select('*');
-                    $query->from($db->quoteName('#__jem_events').' AS a');
-                    $query->where('id = '.(int)$recurrence_row['id']);
+
+                    // Get the last event occurrence of each recurring published events, with unlimited repeat, or last date not passed.
+                    // Ignore published field to prevent duplicate events.
+                    // All column names are hardcoded constants — no user input reaches this query.
+                    // quoteName() is omitted on internal column names for readability; the real guard is
+                    // that $minusDays (below) is cast to int before any interpolation.
+                    $query = $db->getQuery(true)
+                        ->select(array(
+                            'id',
+                            'CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id',
+                            'recurrence_number', 'recurrence_type', 'recurrence_limit_date',
+                            'recurrence_limit', 'recurrence_byday', 'recurrence_bylastday',
+                            'MAX(dates) AS dates', 'MAX(enddates) AS enddates',
+                            'MAX(recurrence_counter) AS counter',
+                        ))
+                        ->from('#__jem_events')
+                        ->where('recurrence_type <> ' . $db->quote('0'))
+                        ->where('CASE WHEN recurrence_limit_date IS NULL THEN 1 ELSE ' . $db->quote(self::getJoomlaDate()) . ' < recurrence_limit_date END')
+                        ->where('recurrence_number <> ' . $db->quote('0'))
+                        ->group('first_id')
+                        ->order('dates DESC');
+
+                    if ($recurrenceRoot > 0) {
+                        $query->where('(id = ' . (int) $recurrenceRoot . ' OR recurrence_first_id = ' . (int) $recurrenceRoot . ')');
+                    }
                     $db->setQuery($query);
-                    $reference = $db->loadAssoc();
+                    $recurrence_array = $db->loadAssocList();
 
-                    // Read the root policy, not the arbitrary row selected by GROUP BY.
-                    // If legacy cleanup removed the root, use the surviving occurrence copy.
-                    try {
-                        $policyQuery = $db->getQuery(true)->select($db->quoteName('attribs'))
-                            ->from($db->quoteName('#__jem_events'))
-                            ->where('id = ' . (int) $recurrence_row['first_id']);
-                        $rootAttribs = $db->setQuery($policyQuery)->loadResult();
-                        $exclusionSelection = JemRecurrenceExclusions::fromAttribs($rootAttribs ?? $reference['attribs']);
-                        $exclusionRows = JemRecurrenceExclusions::loadRows($db, $exclusionSelection);
-                        $copyAttribs = new Registry($reference['attribs'] ?? '');
-                        $copyAttribs->set('recurrence_exclusions', $exclusionSelection);
-                        $reference['attribs'] = (string) $copyAttribs;
-                    } catch (Throwable $exception) {
-                        if ($recurrenceRoot > 0) {
-                            throw $exception;
-                        }
-                        self::addLogEntry('Cannot load recurrence exclusions for series ' . (int) $recurrence_row['first_id'], __METHOD__, Log::ERROR);
-                        continue;
-                    }
-
-                    // if reference event is "unpublished"(0) new event is "unpublished" too
-                    // but on "archived"(2) and "trashed"(-2) reference events create "published"(1) event
-                    if ($reference['published'] != 0) {
-                        $reference['published'] = 1;
-                    }
-
-                    // the first day of the week is used for certain rules
-                    $recurrence_row['weekstart'] = $weekstart;
-
-                    // calculate next occurrence date
-                    $nextRecurrence = JemHelper::calculate_recurrence($recurrence_row);
-                    if ($nextRecurrence === false) {
-                        continue;
-                    }
-                    $recurrence_row = $nextRecurrence;
-
-                    switch ($recurrence_row["recurrence_type"]) {
-                        case 1:
-                            $anticipation    = $jemsettings->recurrence_anticipation_day;
-                            break;
-                        case 2:
-                            $anticipation    = $jemsettings->recurrence_anticipation_week;
-                            break;
-                        case 3:
-                            $anticipation    = $jemsettings->recurrence_anticipation_month;
-                            break;
-                        case 4:
-                            $anticipation    = $jemsettings->recurrence_anticipation_week;
-                            break;
-                        case 5:
-                            $anticipation    = $jemsettings->recurrence_anticipation_year;
-                            break;
-                        case 6:
-                            $anticipation    = $jemsettings->recurrence_anticipation_lastday;
-                            break;
-                        default:
-                            $anticipation    = $jemsettings->recurrence_anticipation_day;
-                            break;
-                    }
-
-                    // add events as long as we are under the interval and under the limit, if specified.
-                    $shieldDate = new Date('now + ' . $anticipation . ' month');
-                    while (($recurrence_row['recurrence_limit_date'] == null
-                            || strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
-                            && strtotime($recurrence_row['dates']) <= strtotime($shieldDate))
+                    // If there are results we will be doing something with it
+                    foreach ($recurrence_array as $recurrence_row)
                     {
+                        // get the info of reference event for the duplicates
+                        $ref_event = Table::getInstance('Event', 'JemTable');
+                        $ref_event->load($recurrence_row['id']);
+
+                        $db = Factory::getContainer()->get('DatabaseDriver');
+                        $query = $db->getQuery(true);
+                        $query->select('*');
+                        $query->from($db->quoteName('#__jem_events').' AS a');
+                        $query->where('id = '.(int)$recurrence_row['id']);
+                        $db->setQuery($query);
+                        $reference = $db->loadAssoc();
+
+                        // Read the root policy, not the arbitrary row selected by GROUP BY.
+                        // If legacy cleanup removed the root, use the surviving occurrence copy.
                         try {
-                            $excluded = $exclusionRows && JemRecurrenceExclusions::matches(
-                                $exclusionRows, $recurrence_row['dates'], $recurrence_row['enddates']
-                            );
+                            $policyQuery = $db->getQuery(true)->select($db->quoteName('attribs'))
+                                ->from($db->quoteName('#__jem_events'))
+                                ->where('id = ' . (int) $recurrence_row['first_id']);
+                            $rootAttribs = $db->setQuery($policyQuery)->loadResult();
+                            $exclusionSelection = JemRecurrenceExclusions::fromAttribs($rootAttribs ?? $reference['attribs']);
+                            $exclusionRows = JemRecurrenceExclusions::loadRows($db, $exclusionSelection);
+                            $copyAttribs = new Registry($reference['attribs'] ?? '');
+                            $copyAttribs->set('recurrence_exclusions', $exclusionSelection);
+                            $reference['attribs'] = (string) $copyAttribs;
                         } catch (Throwable $exception) {
                             if ($recurrenceRoot > 0) {
                                 throw $exception;
                             }
-                            self::addLogEntry('Invalid recurrence exclusions for series ' . (int) $recurrence_row['first_id'], __METHOD__, Log::ERROR);
-                            break;
+                            self::addLogEntry('Cannot load recurrence exclusions for series ' . (int) $recurrence_row['first_id'], __METHOD__, Log::ERROR);
+                            continue;
                         }
-                        if ($excluded) {
-                            // Advance without storing, counting or moving the skipped occurrence.
+
+                        // if reference event is "unpublished"(0) new event is "unpublished" too
+                        // but on "archived"(2) and "trashed"(-2) reference events create "published"(1) event
+                        if ($reference['published'] != 0) {
+                            $reference['published'] = 1;
+                        }
+
+                        // the first day of the week is used for certain rules
+                        $recurrence_row['weekstart'] = $weekstart;
+
+                        // calculate next occurrence date
+                        $nextRecurrence = JemHelper::calculate_recurrence($recurrence_row);
+                        if ($nextRecurrence === false) {
+                            continue;
+                        }
+                        $recurrence_row = $nextRecurrence;
+
+                        switch ($recurrence_row["recurrence_type"]) {
+                            case 1:
+                                $anticipation    = $jemsettings->recurrence_anticipation_day;
+                                break;
+                            case 2:
+                                $anticipation    = $jemsettings->recurrence_anticipation_week;
+                                break;
+                            case 3:
+                                $anticipation    = $jemsettings->recurrence_anticipation_month;
+                                break;
+                            case 4:
+                                $anticipation    = $jemsettings->recurrence_anticipation_week;
+                                break;
+                            case 5:
+                                $anticipation    = $jemsettings->recurrence_anticipation_year;
+                                break;
+                            case 6:
+                                $anticipation    = $jemsettings->recurrence_anticipation_lastday;
+                                break;
+                            default:
+                                $anticipation    = $jemsettings->recurrence_anticipation_day;
+                                break;
+                        }
+
+                        // add events as long as we are under the interval and under the limit, if specified.
+                        $shieldDate = new Date('now + ' . $anticipation . ' month');
+                        while (($recurrence_row['recurrence_limit_date'] == null
+                                || strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
+                                && strtotime($recurrence_row['dates']) <= strtotime($shieldDate))
+                        {
+                            try {
+                                $excluded = $exclusionRows && JemRecurrenceExclusions::matches(
+                                    $exclusionRows, $recurrence_row['dates'], $recurrence_row['enddates']
+                                );
+                            } catch (Throwable $exception) {
+                                if ($recurrenceRoot > 0) {
+                                    throw $exception;
+                                }
+                                self::addLogEntry('Invalid recurrence exclusions for series ' . (int) $recurrence_row['first_id'], __METHOD__, Log::ERROR);
+                                break;
+                            }
+                            if ($excluded) {
+                                // Advance without storing, counting or moving the skipped occurrence.
+                                $nextRecurrence = JemHelper::calculate_recurrence($recurrence_row);
+                                if ($nextRecurrence === false) {
+                                    break;
+                                }
+                                $recurrence_row = $nextRecurrence;
+                                continue;
+                            }
+                            $new_event = Table::getInstance('Event', 'JemTable');
+                            $new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
+                            $new_event->recurrence_first_id = $recurrence_row['first_id'];
+                            $new_event->recurrence_counter = $recurrence_row['counter'] + 1;
+                            $new_event->dates = $recurrence_row['dates'];
+                            $new_event->enddates = $recurrence_row['enddates'];
+                            $new_event->_autocreate = true; // to tell table class this has to be stored AS IS (the underscore is important!)
+
+                            $storedOccurrence = $new_event->store();
+                            if (!$storedOccurrence && $recurrenceRoot > 0) {
+                                throw new RuntimeException($new_event->getError() ?: Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
+                            }
+                            if ($storedOccurrence)
+                            {
+                                $recurrence_row['counter']++;
+                                // Duplicate categories event relationships via INSERT INTO ... SELECT.
+                                // Both ids are cast to int — no user input is interpolated.
+                                $insertQuery = 'INSERT INTO #__jem_cats_event_relations (itemid, catid)'
+                                    . ' SELECT ' . (int) $new_event->id . ', catid'
+                                    . ' FROM #__jem_cats_event_relations'
+                                    . ' WHERE itemid = ' . (int) $ref_event->id;
+
+                                $db->setQuery($insertQuery);
+
+                                if ($db->execute() === false) {
+                                    if ($recurrenceRoot > 0) {
+                                        throw new RuntimeException(Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
+                                    }
+                                    // run query always but don't show error message to "normal" users
+                                    $user = JemFactory::getUser();
+                                    if ($user->authorise('core.manage')) {
+                                        // Escape title to prevent XSS in admin error output.
+                                        $safeTitle = htmlspecialchars($ref_event->title, ENT_QUOTES, 'UTF-8');
+                                        echo 'Error saving categories for event "' . $safeTitle . '" new recurrences' . "\n";
+                                    }
+                                }
+
+                                if (!self::copyEventLinks((int) $ref_event->id, (int) $new_event->id)) {
+                                    throw new RuntimeException('Error saving links for new recurrence');
+                                }
+                            }
+
                             $nextRecurrence = JemHelper::calculate_recurrence($recurrence_row);
                             if ($nextRecurrence === false) {
                                 break;
                             }
                             $recurrence_row = $nextRecurrence;
-                            continue;
-                        }
-                        $new_event = Table::getInstance('Event', 'JemTable');
-                        $new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
-                        $new_event->recurrence_first_id = $recurrence_row['first_id'];
-                        $new_event->recurrence_counter = $recurrence_row['counter'] + 1;
-                        $new_event->dates = $recurrence_row['dates'];
-                        $new_event->enddates = $recurrence_row['enddates'];
-                        $new_event->_autocreate = true; // to tell table class this has to be stored AS IS (the underscore is important!)
-
-                        $storedOccurrence = $new_event->store();
-                        if (!$storedOccurrence && $recurrenceRoot > 0) {
-                            throw new RuntimeException($new_event->getError() ?: Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
-                        }
-                        if ($storedOccurrence)
-                        {
-                            $recurrence_row['counter']++;
-                            // Duplicate categories event relationships via INSERT INTO ... SELECT.
-                            // Both ids are cast to int — no user input is interpolated.
-                            $insertQuery = 'INSERT INTO #__jem_cats_event_relations (itemid, catid)'
-                                . ' SELECT ' . (int) $new_event->id . ', catid'
-                                . ' FROM #__jem_cats_event_relations'
-                                . ' WHERE itemid = ' . (int) $ref_event->id;
-
-                            $db->setQuery($insertQuery);
-
-                            if ($db->execute() === false) {
-                                if ($recurrenceRoot > 0) {
-                                    throw new RuntimeException(Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
-                                }
-                                // run query always but don't show error message to "normal" users
-                                $user = JemFactory::getUser();
-                                if ($user->authorise('core.manage')) {
-                                    // Escape title to prevent XSS in admin error output.
-                                    $safeTitle = htmlspecialchars($ref_event->title, ENT_QUOTES, 'UTF-8');
-                                    echo 'Error saving categories for event "' . $safeTitle . '" new recurrences' . "\n";
-                                }
-                            }
-
-                            if (!self::copyEventLinks((int) $ref_event->id, (int) $new_event->id)) {
-                                throw new RuntimeException('Error saving links for new recurrence');
-                            }
-                        }
-
-                        $nextRecurrence = JemHelper::calculate_recurrence($recurrence_row);
-                        if ($nextRecurrence === false) {
-                            break;
-                        }
-                        $recurrence_row = $nextRecurrence;
-                    }
-                }
-
-                // The only dynamic value is $minusDays — cast to int to eliminate any injection risk
-                // even if the stored setting were somehow corrupted. Column names are hardcoded constants.
-                if ($recurrenceRoot > 0) {
-                    return;
-                }
-                $minusDays    = (int) $jemsettings->minus;
-                // Keep the legacy day-count contract: 1 archives an event on the
-                // calendar day after its end date. The comparison is date-only,
-                // so equality is required to avoid adding an unintended extra day.
-                $outdatedWhere = 'dates > 0 AND ' . $db->quote(self::getJoomlaDate(-$minusDays)) . ' >= (IF (enddates IS NOT NULL, enddates, dates))';
-
-                //delete outdated events
-                if ($jemsettings->oldevent == 1) {
-                    $db->setQuery('SELECT id FROM #__jem_events WHERE ' . $outdatedWhere . ' ORDER BY id ASC');
-                    $outdatedEventIds = array_map('intval', (array) $db->loadColumn());
-
-                    if ($outdatedEventIds) {
-                        $db->transactionStart();
-                        try {
-                            $registrationService = new JemRegistrationService($db);
-                            foreach ($outdatedEventIds as $outdatedEventId) {
-                                $registrationService->purgeForEventLocked($outdatedEventId, array(
-                                    'actorId'    => 0,
-                                    'source'     => 'system.cleanup',
-                                    'reasonCode' => 'outdated_event_deleted',
-                                ));
-                                (new JemNotificationService($db))->cancelPendingReminders(0, $outdatedEventId);
-                            }
-
-                            $db->setQuery('DELETE FROM #__jem_events WHERE id IN (' . implode(',', $outdatedEventIds) . ')');
-                            $db->execute();
-                            $db->setQuery('DELETE FROM #__jem_cats_event_relations WHERE itemid IN (' . implode(',', $outdatedEventIds) . ')');
-                            $db->execute();
-                            $db->setQuery('DELETE FROM #__jem_reminders WHERE event_id IN (' . implode(',', $outdatedEventIds) . ')');
-                            $db->execute();
-                            $db->transactionCommit();
-                        } catch (Throwable $e) {
-                            $db->transactionRollback();
-                            throw $e;
                         }
                     }
-                }
 
-                //Set state archived of outdated events
-                if ($jemsettings->oldevent == 2) {
-                    $db->setQuery('UPDATE #__jem_events SET published = 2 WHERE ' . $outdatedWhere . ' AND published = 1');
-                    $db->execute();
-                }
+                    // The only dynamic value is $minusDays — cast to int to eliminate any injection risk
+                    // even if the stored setting were somehow corrupted. Column names are hardcoded constants.
+                    if ($recurrenceRoot > 0) {
+                        return;
+                    }
+                    $minusDays    = (int) $jemsettings->minus;
+                    // Keep the legacy day-count contract: 1 archives an event on the
+                    // calendar day after its end date. The comparison is date-only,
+                    // so equality is required to avoid adding an unintended extra day.
 
-                //Set state trashed of outdated events
-                if ($jemsettings->oldevent == 3) {
-                    $db->setQuery('UPDATE #__jem_events SET published = -2 WHERE ' . $outdatedWhere . ' AND published = 1');
-                    $db->execute();
-                }
+                    $cleanupSucceeded = JemAutomaticCleanup::run(
+                        $db, (int) $jemsettings->oldevent, self::getJoomlaDate(-$minusDays), true
+                    );
 
-                //Set state unpublished of outdated events
-                if ($jemsettings->oldevent == 4) {
-                    $db->setQuery('UPDATE #__jem_events SET published = 0 WHERE ' . $outdatedWhere . ' AND published = 1');
-                    $db->execute();
-                }
+                    // Preserve terminal history when cleaning legacy orphan rows.
+                    $db->setQuery('SELECT DISTINCT event FROM #__jem_register WHERE event NOT IN (SELECT id FROM #__jem_events) ORDER BY event ASC');
+                    $orphanEventIds = array_map('intval', (array) $db->loadColumn());
+                    foreach ($orphanEventIds as $orphanEventId) {
+                        (new JemRegistrationService($db))->purgeForEvent($orphanEventId, array(
+                            'actorId'    => 0,
+                            'source'     => 'system.cleanup',
+                            'reasonCode' => 'legacy_orphan_cleanup',
+                        ));
+                    }
 
-                // Preserve terminal history when cleaning legacy orphan rows.
-                $db->setQuery('SELECT DISTINCT event FROM #__jem_register WHERE event NOT IN (SELECT id FROM #__jem_events) ORDER BY event ASC');
-                $orphanEventIds = array_map('intval', (array) $db->loadColumn());
-                foreach ($orphanEventIds as $orphanEventId) {
-                    (new JemRegistrationService($db))->purgeForEvent($orphanEventId, array(
-                        'actorId'    => 0,
-                        'source'     => 'system.cleanup',
-                        'reasonCode' => 'legacy_orphan_cleanup',
-                    ));
+                    if ($cleanupSucceeded) {
+                        JemAutomaticCleanup::complete($db, $jemsettings, $now);
+                    } else {
+                        JemAutomaticCleanup::warning('Daily event cleanup incomplete; retry after the cleanup delay.');
+                    }
+                } catch (Throwable $error) {
+                    if ($forced || $recurrenceRoot > 0) {
+                        throw $error;
+                    }
+                    JemAutomaticCleanup::warning('Daily event cleanup failed; retry after the cleanup delay; '
+                        . get_class($error));
                 }
-
-                // Set timestamp of last cleanup
-                JemConfig::getInstance()->set('lastupdate', $now);
-                // Clear timestamp of running cleanup
-                JemConfig::getInstance()->set('runningupdate', 0);
             }
 
             JemHelper::addLogEntry('finished.', __METHOD__);

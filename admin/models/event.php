@@ -1631,7 +1631,7 @@ class JemModelEvent extends JemModelAdmin
                 // so every new occurrence can copy the current link set.
                 $table->load($pk);
                 if (($table->recurrence_number > 0) && ($table->dates != null)) {
-                    JemHelper::cleanup(2, $recurrencePlan['required'] ? (int) $pk : 0);
+                    JemHelper::cleanup(2, (int) $pk);
                 }
 
                 $this->createAssociatedArticleIfRequested($pk, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);

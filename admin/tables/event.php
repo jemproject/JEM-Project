@@ -897,18 +897,19 @@ class JemTableEvent extends Table
      *
      * @param  mixed  $pk  An optional primary key value to delete.  If not set the instance property value is used.
      *
+     * @param  array  $context  Internal registration audit context; defaults to administrator deletion.
      * @return boolean  True on success.
      *
      * @note   Keep this table-level hook for JEM relation cleanup.
      */
-    public function delete($pk = null)
+    public function delete($pk = null, array $context = [])
     {
         $id = (int) ($pk ?: $this->id);
         $db = Factory::getContainer()->get('DatabaseDriver');
         $db->transactionStart(true);
 
         try {
-            (new JemRegistrationService($db))->purgeForEventLocked($id, array(
+            (new JemRegistrationService($db))->purgeForEventLocked($id, $context + array(
                 'actorId'    => (int) Factory::getApplication()->getIdentity()->id,
                 'source'     => 'administrator.event.delete',
                 'reasonCode' => 'event_deleted',
