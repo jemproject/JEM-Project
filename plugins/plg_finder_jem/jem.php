@@ -155,14 +155,22 @@ class plgFinderJEM extends Adapter
     {
         // We only want to handle events here
         if ($context === 'com_jem.event' || $context === 'com_jem.editevent') {
-            // Check if the access levels are different
-            if (!$isNew && $this->old_access != $row->access) {
-                // Process the change.
-                $this->itemAccessChange($row);
+            $accessChanged = !$isNew && $this->old_access != $row->access;
+            if (class_exists('JemFinderDeferral', false)) {
+                // Capture each event before another save changes the plugin's old_access.
+                $savedRow = (object) ['id' => (int) $row->id, 'access' => (int) $row->access];
+                if (JemFinderDeferral::defer(
+                    $savedRow->id,
+                    function (bool $updateAccess) use ($savedRow): void {
+                        $this->indexSavedEvent($savedRow, $updateAccess);
+                    },
+                    $accessChanged
+                )) {
+                    return true;
+                }
             }
 
-            // Reindex the item
-            $this->reindex($row->id);
+            $this->indexSavedEvent($row, $accessChanged);
         }
 
         // Check for access changes in the category
@@ -174,6 +182,22 @@ class plgFinderJEM extends Adapter
         }
 
         return true;
+    }
+
+    /**
+     * Update this event's index using the final database state, without replaying plugin notifications.
+     *
+     * @param object $row Saved event identity and access level.
+     * @param bool $accessChanged Whether access changed during this event's saves.
+     * @return void
+     */
+    private function indexSavedEvent(object $row, bool $accessChanged): void
+    {
+        if ($accessChanged) {
+            $this->itemAccessChange($row);
+        }
+
+        $this->reindex((int) $row->id);
     }
 
     /**

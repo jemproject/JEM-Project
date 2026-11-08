@@ -23,6 +23,7 @@ use Joomla\Utilities\ArrayHelper;
 require_once __DIR__ . '/admin.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/finderdeferral.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrencevalidator.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrencechange.class.php';
 
@@ -1131,12 +1132,18 @@ class JemModelEvent extends JemModelAdmin
             }
         }
 
+        $finderCommitted = false;
         $seriesDb = null;
         $seriesTransactionActive = false;
         if ($recurrencePlan['required'] || $customSeriesCreate || ($existingSeriesId > 0 && $customSeriesScope !== 'occurrence')) {
             $seriesDb = Factory::getContainer()->get('DatabaseDriver');
             $seriesDb->transactionStart();
             $seriesTransactionActive = true;
+        }
+
+        $finderDeferred = $seriesTransactionActive;
+        if ($finderDeferred) {
+            JemFinderDeferral::begin();
         }
 
         try {
@@ -1483,6 +1490,8 @@ class JemModelEvent extends JemModelAdmin
         if ($seriesTransactionActive) {
             if ($saved) {
                 $seriesDb->transactionCommit();
+                $seriesTransactionActive = false;
+                $finderCommitted = true;
                 if ($recurrencePlan['required']) {
                     Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_RECURRENCE_CHANGE_SAVED'), 'success');
                 } elseif ($customSeriesCreate) {
@@ -1523,8 +1532,14 @@ class JemModelEvent extends JemModelAdmin
             $this->setError(Text::sprintf('COM_JEM_CUSTOM_SERIES_SAVE_FAILED', $error->getMessage()));
             return false;
         } finally {
-            if ($seriesTransactionActive) {
-                $seriesDb->transactionRollback();
+            try {
+                if ($seriesTransactionActive) {
+                    $seriesDb->transactionRollback();
+                }
+            } finally {
+                if ($finderDeferred) {
+                    JemFinderDeferral::end($finderCommitted);
+                }
             }
         }
     }
