@@ -98,6 +98,7 @@ $totalBytes = array_sum(array_map(static fn(array $file): int => (int) $file['si
                             <tr>
                                 <td class="text-center">
                                     <input class="form-check-input jem-file-box" type="checkbox" name="files[]" id="<?php echo $id; ?>"
+                                           data-thumbnail="<?php echo $file['thumbnail'] !== '' ? '1' : '0'; ?>"
                                            value="<?php echo $escape($file['id']); ?>" <?php echo $file['elsewhere'] ? 'data-elsewhere="1"' : ''; ?>>
                                 </td>
                                 <?php if ($isImages) : ?>
@@ -129,6 +130,7 @@ $totalBytes = array_sum(array_map(static fn(array $file): int => (int) $file['si
                         </tbody>
                     </table>
                 </div>
+                <input type="hidden" name="confirm_references" id="jem-files-confirm-references" value="0">
                 <input type="hidden" name="area" value="<?php echo $escape($area); ?>">
                 <input type="hidden" name="files_nonce" value="<?php echo $escape($this->filesNonce); ?>">
                 <?php echo HTMLHelper::_('form.token'); ?>
@@ -150,6 +152,9 @@ $totalBytes = array_sum(array_map(static fn(array $file): int => (int) $file['si
     const limit = <?php echo (int) $this->filesBatchLimit; ?>;
     const label = <?php echo json_encode(Text::_('COM_JEM_HOUSEKEEPING_FILES_DELETE_SELECTED')); ?>;
     const confirmText = <?php echo json_encode(Text::_('COM_JEM_HOUSEKEEPING_FILES_CONFIRM')); ?>;
+    const confirmImages = <?php echo json_encode($isImages ? Text::_('COM_JEM_HOUSEKEEPING_FILES_CONFIRM_IMAGES') : ''); ?>;
+    const confirmUsed = <?php echo json_encode(Text::_('COM_JEM_HOUSEKEEPING_FILES_CONFIRM_USED')); ?>;
+    const acknowledgement = document.getElementById('jem-files-confirm-references');
     const update = function () {
         const selected = boxes.filter(function (box) { return box.checked; }).length;
         submit.textContent = label.replace('%1$d', String(selected)).replace('%2$d', String(limit));
@@ -166,10 +171,21 @@ $totalBytes = array_sum(array_map(static fn(array $file): int => (int) $file['si
     });
     boxes.forEach(function (box) { box.addEventListener('change', update); });
     form.addEventListener('submit', function (event) {
-        const selected = boxes.filter(function (box) { return box.checked; }).length;
-        if (!window.confirm(confirmText.replace('%d', String(selected)))) {
-            event.preventDefault();
+        acknowledgement.value = '0';
+        const selected = boxes.filter(function (box) { return box.checked; });
+        const used = selected.filter(function (box) { return box.dataset.elsewhere; }).length;
+        const thumbnails = selected.filter(function (box) { return box.dataset.thumbnail === '1'; }).length;
+        let message = confirmImages
+            ? confirmImages.replace('%1$d', String(selected.length)).replace('%2$d', String(thumbnails))
+            : confirmText.replace('%d', String(selected.length));
+        if (used) {
+            message += '\n\n' + confirmUsed.replace('%d', String(used));
         }
+        if (!window.confirm(message)) {
+            event.preventDefault();
+            return;
+        }
+        acknowledgement.value = used ? '1' : '0';
     });
     update();
 })();

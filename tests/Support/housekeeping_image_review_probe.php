@@ -46,7 +46,7 @@ namespace {
     class JemHousekeepingFiles {
         public function __construct($db, private object $model) {}
         public static function areas(): array { return ['events', 'venues', 'categories', 'attachments']; }
-        public function delete($area, $selected): array { return $this->model->deleteSelectedImages(1, $selected); }
+        public function delete($area, $selected, bool $confirmed = false): array { $this->model->confirmed = $confirmed; return $this->model->deleteSelectedImages(1, $selected); }
     }
     $input = new class {
         public array $data = [];
@@ -75,7 +75,7 @@ namespace {
         . 'public function setRedirect(...$args) { $this->redirects[] = $args; }' . $methods . '}');
     $results = [];
     foreach (['open_events', 'open_venues', 'open_categories', 'unknown_task', 'success', 'empty', 'bad_nonce', 'permission',
-        'csrf', 'references', 'invalid_selection', 'replay'] as $case) {
+        'csrf', 'references', 'invalid_selection', 'replay', 'confirmed_references', 'unconfirmed_references', 'invalid_confirmation'] as $case) {
         JemHelper::$token = $case !== 'csrf';
         JemHelper::$nonce = true;
         JemHelper::$purposes = [];
@@ -85,12 +85,17 @@ namespace {
             'files_nonce' => 'review-token', 'images' => ['selection'], 'files' => ['selection']];
         if ($case === 'bad_nonce') { $input->data['images_nonce'] = $input->data['files_nonce'] = 'wrong'; }
         if ($case === 'empty') { $input->data['images'] = $input->data['files'] = []; }
+        $input->data['confirm_references'] = ['confirmed_references' => 1, 'invalid_confirmation' => 2][$case] ?? 0;
         $controller = new ReviewController2478();
         $controller->model = new class ($case) {
             public int $calls = 0;
+            public bool $confirmed = false;
             public function __construct(private string $case) {}
             public function deleteSelectedImages($type, $selected): array {
                 $this->calls++;
+                if (in_array($this->case, ['unconfirmed_references', 'invalid_confirmation'], true) && !$this->confirmed) {
+                    throw new JemHousekeepingImageReferenceException(\Joomla\CMS\Language\Text::_('COM_JEM_HOUSEKEEPING_FILES_CONFIRM_REQUIRED'));
+                }
                 if ($this->case === 'references') { throw new JemHousekeepingImageReferenceException('Unverified <image> references'); }
                 if (!$selected || $this->case === 'invalid_selection') { throw new \InvalidArgumentException('Selection rejected'); }
                 return ['deleted' => 1, 'skipped' => 0, 'failed' => 0, 'folders' => 0, 'lines' => []];
@@ -109,12 +114,21 @@ namespace {
             $code = $error->getCode();
         }
         $results[$case] = ['calls' => $controller->model->calls, 'redirects' => $controller->redirects,
-            'code' => $code, 'purposes' => JemHelper::$purposes];
+            'code' => $code, 'confirmed' => $controller->model->confirmed, 'purposes' => JemHelper::$purposes];
     }
     $html = [];
-    foreach (['normal', 'error', 'empty'] as $case) {
+    foreach (['normal', 'referenced', 'error', 'empty'] as $case) {
         $candidates = $case === 'normal' ? [['id' => str_repeat('a', 64), 'relative' => 'orphan <photo>.png', 'size' => 1, 'modified' => 0,
             'url' => 'images/jem/events/orphan.png', 'elsewhere' => [], 'kind' => 'original', 'thumbnail' => '']] : [];
+        if ($case === 'referenced') {
+            $candidates = [
+                ['id' => str_repeat('b', 64), 'relative' => 'used.png', 'size' => 1, 'modified' => 0,
+                    'url' => 'images/jem/events/used.png', 'elsewhere' => [['label' => 'COM_JEM_HOUSEKEEPING_FILES_USED_MENU', 'id' => 7]],
+                    'kind' => 'original', 'thumbnail' => 'small/used.png'],
+                ['id' => str_repeat('c', 64), 'relative' => 'unused.png', 'size' => 1, 'modified' => 0,
+                    'url' => 'images/jem/events/unused.png', 'elsewhere' => [], 'kind' => 'original', 'thumbnail' => 'small/unused.png'],
+            ];
+        }
         $view = new class {
             public int $imagesType = 1;
             public string $imagesError = '';

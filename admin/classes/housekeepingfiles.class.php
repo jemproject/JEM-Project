@@ -9,6 +9,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Log\Log;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
@@ -115,7 +117,10 @@ final class JemHousekeepingFiles
             ->where($this->db->quoteName('object') . ' IN (' . implode(',', array_map(array($this->db, 'quote'), $objects)) . ')');
         $used = array();
         foreach ((array) $this->db->setQuery($query)->loadObjectList() as $row) {
-            $used[strtolower($row->object . '/' . $row->file)] = true;
+            $identity = self::fileIdentity($base . '/' . $row->object . '/' . $row->file);
+            if ($identity !== '') {
+                $used[$identity] = true;
+            }
         }
 
         $existing = $this->existingObjects($objects);
@@ -126,7 +131,7 @@ final class JemHousekeepingFiles
                     continue;
                 }
                 $relative = $object . '/' . $file;
-                if (isset($used[strtolower($relative)])) {
+                if (isset($used[self::fileIdentity($base . '/' . $relative)])) {
                     continue;
                 }
                 $path = $base . '/' . $relative;
@@ -158,9 +163,12 @@ final class JemHousekeepingFiles
     /**
      * Delete the selected candidates of one area. Unknown or changed selections are skipped.
      *
+     * @param string $area Managed image or attachment area.
+     * @param array $selected Identifiers from the reviewed inventory.
+     * @param bool $confirmReferences Whether the administrator accepted the detected-use warning.
      * @return array deleted, skipped, failed, folders, bytes, lines
      */
-    public function delete(string $area, array $selected): array
+    public function delete(string $area, array $selected, bool $confirmReferences = false): array
     {
         if (!in_array($area, self::areas(), true)) {
             throw new InvalidArgumentException('Unknown file area.');
@@ -181,6 +189,13 @@ final class JemHousekeepingFiles
         $byId = array();
         foreach ($this->candidates($area) as $candidate) {
             $byId[$candidate['id']] = $candidate;
+        }
+
+        // Validate acknowledgement before deleting any member of a mixed selection.
+        foreach ($selected as $id) {
+            if (!$confirmReferences && !empty($byId[$id]['elsewhere'])) {
+                throw new JemHousekeepingImageReferenceException(Text::_('COM_JEM_HOUSEKEEPING_FILES_CONFIRM_REQUIRED'));
+            }
         }
 
         $result = array('deleted' => 0, 'skipped' => 0, 'failed' => 0, 'folders' => 0, 'bytes' => 0, 'lines' => array());
@@ -341,7 +356,14 @@ final class JemHousekeepingFiles
         return strpos($real, $realBase . DIRECTORY_SEPARATOR) === 0 ? $real : '';
     }
 
-    /** Mark candidates whose path appears in articles, modules, menu items or JEM descriptions. */
+    /**
+     * Find local references to originals and paired thumbnails in known content.
+     *
+     * @param array $candidates Candidates updated with warnings and review-bound identifiers.
+     * @param string $prefix Site-relative image directory.
+     * @return void
+     * @throws JemHousekeepingImageReferenceException When the scan cannot be completed.
+     */
     private function markElsewhere(array &$candidates, string $prefix): void
     {
         if (!$candidates) {
@@ -351,40 +373,114 @@ final class JemHousekeepingFiles
             array('#__content', array('introtext', 'fulltext', 'images', 'urls'), 'COM_JEM_HOUSEKEEPING_FILES_USED_ARTICLE'),
             array('#__modules', array('content', 'params'), 'COM_JEM_HOUSEKEEPING_FILES_USED_MODULE'),
             array('#__menu', array('params'), 'COM_JEM_HOUSEKEEPING_FILES_USED_MENU'),
+            array('#__categories', array('description'), 'COM_JEM_HOUSEKEEPING_FILES_USED_JOOMLA_CATEGORY'),
             array('#__jem_events', array('introtext', 'fulltext'), 'COM_JEM_HOUSEKEEPING_FILES_USED_EVENT'),
             array('#__jem_venues', array('locdescription'), 'COM_JEM_HOUSEKEEPING_FILES_USED_VENUE'),
             array('#__jem_categories', array('description'), 'COM_JEM_HOUSEKEEPING_FILES_USED_CATEGORY'),
         );
-        // Loose on purpose: JSON columns store "images\/jem\/...". The exact match is done below.
-        $pattern = '%images%jem%' . trim(substr($prefix, strlen('images/jem/')), '/') . '%';
-        foreach ($sources as list($table, $columns, $label)) {
-            $where = array();
-            foreach ($columns as $column) {
-                $where[] = $this->db->quoteName($column) . ' LIKE ' . $this->db->quote($pattern);
+        $patterns = array();
+        $root = Uri::root();
+        foreach ($candidates as $index => $candidate) {
+            $patterns[$index] = self::referencePattern($prefix . $candidate['relative'], $root);
+            if ($candidate['thumbnail'] !== '') {
+                $patterns[$index] .= '|' . self::referencePattern($prefix . $candidate['thumbnail'], $root);
             }
-            $query = $this->db->getQuery(true)
-                ->select($this->db->quoteName(array_merge(array('id'), $columns)))
-                ->from($this->db->quoteName($table))
-                ->where('(' . implode(' OR ', $where) . ')');
-            try {
-                $rows = (array) $this->db->setQuery($query, 0, 5000)->loadAssocList();
-            } catch (Throwable $error) {
-                continue;
-            }
-            foreach ($rows as $row) {
-                $text = '';
-                foreach ($columns as $column) {
-                    $text .= "\n" . (string) $row[$column];
-                }
-                $text = rawurldecode(str_replace('\\/', '/', $text));
-                foreach ($candidates as &$candidate) {
-                    if (stripos($text, $prefix . $candidate['relative']) !== false && count($candidate['elsewhere']) < 5) {
-                        $candidate['elsewhere'][] = array('label' => $label, 'id' => (int) $row['id']);
-                    }
-                }
-                unset($candidate);
-            }
+            $patterns[$index] = '~(?:' . $patterns[$index] . ')~i';
         }
+        try {
+            foreach ($sources as list($table, $columns, $label)) {
+                $where = array();
+                foreach ($columns as $column) {
+                    $where[] = $this->db->quoteName($column) . ' <> ' . $this->db->quote('');
+                }
+                $query = $this->db->getQuery(true)
+                    ->select($this->db->quoteName(array_merge(array('id'), $columns)))
+                    ->from($this->db->quoteName($table))
+                    ->where('(' . implode(' OR ', $where) . ')')
+                    ->order($this->db->quoteName('id') . ' ASC');
+                $lastId = 0;
+                do {
+                    $page = clone $query;
+                    $page->where($this->db->quoteName('id') . ' > ' . $lastId);
+                    $rows = (array) $this->db->setQuery($page, 0, 500)->loadAssocList();
+                    foreach ($rows as $row) {
+                        $lastId = (int) $row['id'];
+                        $text = '';
+                        foreach ($columns as $column) {
+                            $value = (string) $row[$column];
+                            $decoded = json_decode($value, true);
+                            if (is_array($decoded)) {
+                                // Preserve paths stored with JSON slash or Unicode escapes.
+                                $value = json_encode($decoded, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                            }
+                            $text .= "\n" . $value;
+                        }
+                        $text = html_entity_decode(str_replace('\\/', '/', $text), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        $decodedText = rawurldecode($text);
+                        foreach ($candidates as $index => &$candidate) {
+                            if (!preg_match($patterns[$index], $text) && !preg_match($patterns[$index], $decodedText)) {
+                                continue;
+                            }
+                            if (count($candidate['elsewhere']) < 5) {
+                                $candidate['elsewhere'][] = array('label' => $label, 'id' => $lastId);
+                            }
+                            // Every matching row contributes, even beyond the five displayed notices.
+                            // A changed reference inventory invalidates an earlier selection.
+                            $candidate['id'] = hash('sha256', $candidate['id'] . '|' . $table . '|' . $lastId);
+                        }
+                        unset($candidate);
+                    }
+                } while (count($rows) === 500);
+            }
+        } catch (Throwable $error) {
+            throw new JemHousekeepingImageReferenceException(
+                Text::_('COM_JEM_HOUSEKEEPING_FILES_REFERENCES_FAILED'),
+                0,
+                $error
+            );
+        }
+    }
+
+    /**
+     * Match a complete local path, including site-root and same-site URL forms.
+     *
+     * @param string $path Site-relative image path.
+     * @param string $root Absolute Joomla site root URL.
+     * @return string Regular expression fragment without delimiters.
+     */
+    private static function referencePattern(string $path, string $root): string
+    {
+        $sitePath = (string) parse_url($root, PHP_URL_PATH);
+        $absolute = preg_replace('~^https?:~i', '', $root);
+        $forms = array($path, './' . $path, $sitePath . $path);
+        if (str_starts_with($absolute, '//')) {
+            $forms[] = $absolute . $path;
+            $forms[] = 'http:' . $absolute . $path;
+            $forms[] = 'https:' . $absolute . $path;
+        }
+        $quoted = array_map(static fn(string $form): string => preg_quote($form, '~'), array_unique($forms));
+
+        return '(?<![a-z0-9_./%:\\x5c-])(?:' . implode('|', $quoted) . ')(?=$|[\\s\x22\x27<>?#),;])';
+    }
+
+    /**
+     * Identify the existing registered file using the filesystem, not an OS guess.
+     *
+     * @param string $path Absolute path to an attachment file.
+     * @return string File identity, or an empty string when the file is absent.
+     */
+    private static function fileIdentity(string $path): string
+    {
+        $real = realpath($path);
+        if ($real === false || !is_file($real)) {
+            return '';
+        }
+        $stat = stat($real);
+        if ($stat !== false && !empty($stat['ino'])) {
+            return $stat['dev'] . ':' . $stat['ino'];
+        }
+
+        return DIRECTORY_SEPARATOR === '\\' ? strtolower($real) : $real;
     }
 
     /** Which attachment objects (event12, venue3, category4) still exist. */

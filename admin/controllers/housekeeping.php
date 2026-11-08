@@ -535,7 +535,11 @@ class JemControllerHousekeeping extends BaseController
         }
 
         try {
-            $result = (new JemHousekeepingFiles(null, $this->getModel('housekeeping')))->delete($area, (array) $selected);
+            $result = (new JemHousekeepingFiles(null, $this->getModel('housekeeping')))->delete(
+                $area,
+                (array) $selected,
+                $app->input->post->getInt('confirm_references', 0) === 1
+            );
         } catch (JemHousekeepingImageReferenceException $error) {
             $this->setRedirect($url, $error->getMessage(), 'warning');
             return;

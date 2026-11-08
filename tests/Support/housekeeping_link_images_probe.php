@@ -54,6 +54,16 @@ try {
         }
         $db->setQuery($match[0])->execute();
     }
+    (new ReflectionProperty(Joomla\CMS\Uri\Uri::class, 'root'))->setValue(null, [
+        'prefix' => 'https://site.example', 'path' => '/demo',
+    ]);
+    foreach ([
+        'content' => ['introtext', 'fulltext', 'images', 'urls'],
+        'modules' => ['content', 'params'], 'menu' => ['params'], 'categories' => ['description'],
+    ] as $table => $columns) {
+        $defs = array_map(static fn($name) => '`' . $name . '` TEXT NOT NULL DEFAULT \'\'', $columns);
+        $db->setQuery('CREATE TABLE #__' . $table . ' (id INT PRIMARY KEY, ' . implode(', ', $defs) . ')')->execute();
+    }
     $code = file_get_contents($source . '/admin/models/housekeeping.php');
     $code = str_replace("require_once JPATH_SITE . '/components/com_jem/classes/", "require_once \$source . '/site/classes/", $code);
     eval(preg_replace('/\?>\s*$/', '', substr($code, 5)));
