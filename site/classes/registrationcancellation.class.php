@@ -83,7 +83,7 @@ final class JemRegistrationCancellation
             $allocations = $currentAreas;
         }
         if ($remaining > 0 && $isPriced) {
-            throw new InvalidArgumentException('COM_JEM_PRICED_REGISTRATION_REQUIRES_ORDER');
+            throw new InvalidArgumentException('COM_JEM_PRICED_CANCELLATION_FULL_ONLY');
         }
         ksort($allocations);
         ksort($cancelledAreas);

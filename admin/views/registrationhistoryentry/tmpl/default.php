@@ -97,7 +97,10 @@ $changed = is_array($changed) ? $changed : array();
                     <td><a href="<?php echo Route::_('index.php?option=com_jem&view=registrationhistoryentry&id=' . (int) $entry->id); ?>"><?php echo $this->escape($entry->occurred); ?></a></td>
                     <td><?php echo $this->escape($entry->action); ?></td>
                     <td><?php echo $this->escape($status($entry->old_status)); ?> → <?php echo $this->escape($status($entry->new_status)); ?></td>
-                    <td><?php echo $entry->old_places === null ? '—' : (int) $entry->old_places; ?> → <?php echo $entry->new_places === null ? '—' : (int) $entry->new_places; ?></td>
+                    <td><?php echo $entry->old_places === null ? '—' : (int) $entry->old_places; ?> → <?php echo $entry->new_places === null ? '—' : (int) $entry->new_places; ?>
+                        <?php if ((int) $entry->new_status === -1 && $entry->old_status !== null && (int) $entry->old_status !== -1 && (int) $entry->old_places > 0) : ?>
+                            <br><small><?php echo Text::sprintf('COM_JEM_REGISTRATION_HISTORY_CANCELLED_PLACES', (int) $entry->old_places); ?></small>
+                        <?php endif; ?></td>
                     <td><?php echo $this->escape($user($entry->new_user_id ?? $entry->old_user_id, $entry->new_holder_name ?? $entry->old_holder_name, $entry->new_holder_username ?? $entry->old_holder_username)); ?></td>
                     <td><?php echo $this->escape($user($entry->actor_user_id, $entry->actor_name, $entry->actor_username)); ?></td>
                     <td><code><?php echo $this->escape($entry->source); ?></code></td>

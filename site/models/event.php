@@ -1601,6 +1601,12 @@ class JemModelEvent extends ItemModel
                 return false;
             }
 
+            if ($status === JemRegistrationTransition::ATTENDING && is_object($reg)
+                && in_array((string) ($reg->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true)) {
+                $this->setError(Text::_('COM_JEM_PRICED_REGISTRATION_REQUIRES_ORDER'));
+                return false;
+            }
+
             if ($isCancellation && !is_object($reg)) {
                 continue;
             }

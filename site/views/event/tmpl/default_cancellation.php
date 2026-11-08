@@ -11,7 +11,8 @@ $bookedAreas = array_filter((array) $this->capacityRegistration->options, static
     return (int) $area['current_quantity'] > 0;
 });
 ?>
-<?php if (count($bookedAreas) > 1) : ?>
+<?php if (count($bookedAreas) > 1
+    && !in_array((string) ($this->registration->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true)) : ?>
     <fieldset class="jem-cancellation-areas my-3" hidden disabled>
         <legend><?php echo Text::_('COM_JEM_CANCELLATION_AREAS'); ?></legend>
         <?php foreach ($bookedAreas as $area) : ?>

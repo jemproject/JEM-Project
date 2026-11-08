@@ -149,6 +149,9 @@ $statusText = static function ($status) use ($statusLabels) {
                         <td><span class="badge bg-info text-dark"><?php echo $this->escape($item->action); ?></span></td>
                         <td>
                             <?php echo $this->escape($statusText($item->old_status)); ?> → <?php echo $this->escape($statusText($item->new_status)); ?>
+                            <?php if ((int) $item->new_status === -1 && $item->old_status !== null && (int) $item->old_status !== -1 && (int) $item->old_places > 0) : ?>
+                                <br><small><?php echo Text::sprintf('COM_JEM_REGISTRATION_HISTORY_CANCELLED_PLACES', (int) $item->old_places); ?></small>
+                            <?php endif; ?>
                             <?php if ($item->old_places !== $item->new_places) : ?>
                                 <br><small class="text-muted"><?php echo Text::_('COM_JEM_ATTENDEES_PLACES'); ?>: <?php echo $item->old_places === null ? '—' : (int) $item->old_places; ?> → <?php echo $item->new_places === null ? '—' : (int) $item->new_places; ?></small>
                             <?php endif; ?>

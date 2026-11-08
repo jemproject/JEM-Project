@@ -16,6 +16,12 @@ use Joomla\CMS\Router\Route;
 
 if ($this->showRegForm && empty($this->print)) :
 
+    if (in_array((string) ($this->item->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true)
+        || in_array((string) ($this->registration->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true)) {
+        echo $this->loadTemplate('pricedregform');
+        return;
+    }
+
     if (($this->item->maxplaces > 0) && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && !$this->item->waitinglist && empty($this->registration->status)) :
         ?>
         <?php echo Text::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
