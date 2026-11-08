@@ -229,8 +229,9 @@ class JemControllerAttendees extends BaseController
                     $msg = Text::_('COM_JEM_ADDED_TO_ATTENDING');
                     $type = 'message';
                 } else {
-                    $reason = isset($promotion) && $promotion->reason === 'capacity_exceeded'
-                        ? Text::_('COM_JEM_WAITINGLIST_PROMOTION_CAPACITY_EXCEEDED')
+                    $reason = isset($promotion)
+                        && in_array($promotion->reason, array('capacity_exceeded', 'selected_user_missing'), true)
+                        ? self::promotionErrorMessage($promotion->reason)
                         : $model->getError();
                     $msg = Text::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR') . ': ' . $reason;
                     $type = 'error';
@@ -544,6 +545,7 @@ class JemControllerAttendees extends BaseController
         $keys = array(
             'capacity_exceeded' => 'COM_JEM_WAITINGLIST_PROMOTION_CAPACITY_EXCEEDED',
             'selection_not_waiting' => 'COM_JEM_WAITINGLIST_PROMOTION_SELECTION_INVALID',
+            'selected_user_missing' => 'COM_JEM_WAITINGLIST_PROMOTION_USER_MISSING',
             'no_selection' => 'JERROR_NO_ITEMS_SELECTED',
             'event_not_found' => 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND',
             'waiting_list_unavailable' => 'COM_JEM_NO_WAITINGLIST',

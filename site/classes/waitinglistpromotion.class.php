@@ -122,12 +122,37 @@ final class JemWaitingListPromotion
             $result->availableBefore = $available;
             $result->waitingBefore = count($waiting);
 
+            // Keep every stored waiting row in the counts, but only promote existing owners.
+            // uid=0 retains its existing guest/legacy behaviour.
+            $eligibleWaiting = $waiting;
+            $ownerIds = array_values(array_unique(array_filter(array_map(
+                static fn ($registration): int => (int) $registration->uid,
+                $waiting
+            ), static fn (int $uid): bool => $uid > 0)));
+            if ($ownerIds) {
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName('id'))
+                    ->from($db->quoteName('#__users'))
+                    ->whereIn($db->quoteName('id'), $ownerIds);
+                $db->setQuery($query);
+                $existingOwners = array_fill_keys(array_map('intval', (array) $db->loadColumn()), true);
+                foreach ($eligibleWaiting as $id => $registration) {
+                    if ((int) $registration->uid > 0 && !isset($existingOwners[(int) $registration->uid])) {
+                        unset($eligibleWaiting[$id]);
+                    }
+                }
+            }
+
             if ($mode === self::MODE_MANUAL) {
                 if (array_diff($selectedIds, array_keys($waiting))) {
                     throw new RuntimeException('selection_not_waiting');
                 }
 
-                $candidates = array_values(array_intersect_key($waiting, array_flip($selectedIds)));
+                if (array_diff($selectedIds, array_keys($eligibleWaiting))) {
+                    throw new RuntimeException('selected_user_missing');
+                }
+
+                $candidates = array_values(array_intersect_key($eligibleWaiting, array_flip($selectedIds)));
                 $required = array_sum(array_map(static function ($registration) {
                     return (int) $registration->places;
                 }, $candidates));
@@ -138,7 +163,7 @@ final class JemWaitingListPromotion
 
                 $promoted = $candidates;
             } else {
-                $candidates = array_values(array_diff_key($waiting, array_flip($excludedIds)));
+                $candidates = array_values(array_diff_key($eligibleWaiting, array_flip($excludedIds)));
                 $promoted = self::selectForAvailablePlaces($candidates, $available, $strategy);
             }
 
