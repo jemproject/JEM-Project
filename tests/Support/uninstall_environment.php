@@ -106,6 +106,11 @@ namespace {
             return true;
         }
 
+        public function loadObjectList(): array
+        {
+            return [];
+        }
+
         public function loadResult(): string
         {
             return $this->settings;

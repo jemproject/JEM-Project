@@ -539,6 +539,7 @@ class JemControllerFrontendmenu extends BaseController
 
     protected function createMenuItem($menutype, array $titleKeys, $defaultTitle, $alias, $link, $parentId, $type, $componentId, array $legacyAliases = array(), $access = 1, array $params = array())
     {
+        $params['jem_generated_menu'] = 1;
         $title = $this->translateFrontendMenuTitle($titleKeys, $defaultTitle);
         $existing = $this->getExistingMenuItem($menutype, array_merge(array($alias), $legacyAliases), $parentId);
 

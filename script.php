@@ -3226,70 +3226,131 @@ SQL;
     }
 
     /**
-     * Remove all JEM menu items.
+     * Remove owned frontend destinations while preserving foreign descendants and tree coordinates.
      *
      * @return void
      */
     private function removeJemMenuItems()
     {
-        // remove all "com_jem..." frontend entries
+        // Leave no selected link published even if a later physical removal fails.
+        $this->disableJemMenuItems();
+        $selection = $this->getJemMenuSelection();
+        if (!$selection['items']) {
+            return;
+        }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->delete('#__menu');
-        $query->where('client_id = 0')
-              ->where('link LIKE ' . $db->quote('index.php?option=com_jem%'));
-        $db->setQuery($query);
-        $db->execute();
+        $table = new \Joomla\CMS\Table\Menu($db);
+        $rebuildPaths = [];
+        foreach ($selection['items'] as $item) {
+            foreach ($selection['all'] as $other) {
+                if (!isset($selection['items'][(int) $other->id])
+                    && (int) $other->lft > (int) $item->lft && (int) $other->rgt < (int) $item->rgt) {
+                    $rebuildPaths[(int) $other->id] = true;
+                }
+            }
+            if (!$table->delete((int) $item->id, false)) {
+                throw new RuntimeException((string) $table->getError());
+            }
+        }
+        foreach (array_keys($rebuildPaths) as $id) {
+            if (!$table->rebuildPath($id)) {
+                throw new RuntimeException((string) $table->getError());
+            }
+        }
+
+        $ids = array_keys($selection['items']);
+        $tables = $db->getTableList();
+        if (in_array($db->getPrefix() . 'modules_menu', $tables, true)) {
+            $assignments = array_merge($ids, array_map(static fn ($id) => -$id, $ids));
+            $db->setQuery($db->getQuery(true)->delete($db->quoteName('#__modules_menu'))
+                ->where($db->quoteName('menuid') . ' IN (' . implode(',', $assignments) . ')'))->execute();
+        }
+        if (in_array($db->getPrefix() . 'associations', $tables, true)) {
+            $db->setQuery($db->getQuery(true)->delete($db->quoteName('#__associations'))
+                ->where($db->quoteName('context') . ' = ' . $db->quote('com_menus.item'))
+                ->where($db->quoteName('id') . ' IN (' . implode(',', $ids) . ')'))->execute();
+        }
     }
 
     /**
-     * Disable all JEM menu items.
-     * (usefull on uninstall to prevent dead links)
+     * Unpublish all identified frontend JEM destinations, preserving unpublished/trashed states.
      *
      * @return void
      */
     private function disableJemMenuItems()
     {
-        // unpublish all "com_jem..." frontend entries
+        $selection = $this->getJemMenuSelection();
+        if (!$selection['items']) {
+            return;
+        }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->update('#__menu');
-        $query->set('published = 0');
-        $query->where('client_id = 0')
-              ->where('published > 0')
-              ->where('link LIKE ' . $db->quote('index.php?option=com_jem%'));
-        $db->setQuery($query);
-        $db->execute();
+        $db->setQuery($db->getQuery(true)
+            ->update($db->quoteName('#__menu'))
+            ->set($db->quoteName('published') . ' = 0')
+            ->where($db->quoteName('published') . ' > 0')
+            ->where($db->quoteName('id') . ' IN (' . implode(',', array_keys($selection['items'])) . ')'))
+            ->execute();
     }
 
     /**
-     * Fix all JEM menu items by setting new extension id.
-     * (usefull on install to let menu items from older installation refer new extension id)
+     * Repair component references after reinstall without publishing menus or changing aliases/groups.
      *
      * @return void
      */
     private function fixJemMenuItems()
     {
-        // Get (new) extension ID of JEM
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('extension_id')
-              ->from('#__extensions')
-              ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
-              ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
-        $db->setQuery($query);
-        $newId = $db->loadResult();
-
-        if ($newId) {
-            // set component id on all "com_jem..." frontend entries
-            $query = $db->getQuery(true);
-            $query->update('#__menu');
-            $query->set('component_id = ' . (int)$newId);
-            $query->where('client_id = 0')
-                  ->where('link LIKE ' . $db->quote('index.php?option=com_jem%'));
-            $db->setQuery($query);
-            $db->execute();
+        $newId = (int) $db->setQuery($db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem')))
+            ->loadResult();
+        if (!$newId) {
+            return;
         }
+        $selection = $this->getJemMenuSelection($newId);
+        if ($selection['components']) {
+            $db->setQuery($db->getQuery(true)
+                ->update($db->quoteName('#__menu'))
+                ->set($db->quoteName('component_id') . ' = ' . $newId)
+                ->where($db->quoteName('id') . ' IN (' . implode(',', $selection['components']) . ')'))
+                ->execute();
+        }
+    }
+
+    /**
+     * Load the shared menu selector from either the installed component or installer source tree.
+     *
+     * @param int $componentId Known com_jem extension ID; zero loads it from Joomla.
+     * @return array Selected destinations, component references and the original frontend tree.
+     */
+    private function getJemMenuSelection(int $componentId = 0): array
+    {
+        $helper = __DIR__ . '/helpers/menulifecycle.php';
+        if (!is_file($helper)) {
+            $helper = __DIR__ . '/admin/helpers/menulifecycle.php';
+        }
+        require_once $helper;
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $items = $db->setQuery($db->getQuery(true)->select('*')->from($db->quoteName('#__menu'))
+            ->where($db->quoteName('client_id') . ' = 0'))->loadObjectList();
+        if (!$componentId && $items) {
+            $componentId = (int) $db->setQuery($db->getQuery(true)->select($db->quoteName('extension_id'))
+                ->from($db->quoteName('#__extensions'))
+                ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+                ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem')))->loadResult();
+        }
+        $siteRoot = '';
+        try {
+            $siteRoot = (string) Factory::getApplication()->get('live_site', '');
+            if ($siteRoot === '') {
+                $siteRoot = (string) \Joomla\CMS\Uri\Uri::root();
+            }
+        } catch (\Throwable $error) {
+            // Relative entry points remain identifiable without guessing an external origin in CLI.
+        }
+        return JemMenuLifecycle::select($items ?: [], $siteRoot, $componentId);
     }
 
     /**
