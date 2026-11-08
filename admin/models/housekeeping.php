@@ -1160,24 +1160,38 @@ class JemModelHousekeeping extends BaseDatabaseModel
     }
 
     /**
-     * Registration detail rows (price lines, capacity allocations) whose registration
-     * no longer exists. Read only and informational.
+     * Count details without a live registration or a later matching purge record.
+     * Retained pre-purge revisions are historical data, not unexplained orphans.
      *
-     * @return array Table name => number of rows.
+     * @return array<string, int|null> Table counts; null means the check could not be completed.
      */
     public function getOrphanRegistrationDetails(): array
     {
         $details = array();
         foreach (array('#__jem_register_items', '#__jem_register_capacity_allocations') as $table) {
+            $purged = $this->_db->getQuery(true)
+                ->select('1')
+                ->from($this->_db->quoteName('#__jem_register_history', 'h'))
+                ->where($this->_db->quoteName('h.registration_id') . ' = ' . $this->_db->quoteName('c.register_id'))
+                ->where($this->_db->quoteName('h.action') . ' = ' . $this->_db->quote('purged'))
+                ->where($this->_db->quoteName('c.register_id') . ' > 0')
+                ->where($this->_db->quoteName('c.registration_revision') . ' > 0')
+                // Purging creates the next revision; it never creates detail rows at that revision.
+                ->where($this->_db->quoteName('h.revision') . ' > ' . $this->_db->quoteName('c.registration_revision'));
+            if ($table === '#__jem_register_capacity_allocations') {
+                $purged->where($this->_db->quoteName('h.event_id') . ' = ' . $this->_db->quoteName('c.event_id'));
+            }
             $query = $this->_db->getQuery(true)
                 ->select('COUNT(*)')
                 ->from($this->_db->quoteName($table, 'c'))
                 ->join('LEFT', $this->_db->quoteName('#__jem_register', 'r') . ' ON ' . $this->_db->quoteName('r.id') . ' = ' . $this->_db->quoteName('c.register_id'))
-                ->where($this->_db->quoteName('r.id') . ' IS NULL');
+                ->where($this->_db->quoteName('r.id') . ' IS NULL')
+                ->where('NOT EXISTS (' . $purged . ')');
             try {
                 $details[$table] = (int) $this->_db->setQuery($query)->loadResult();
             } catch (\Throwable $error) {
-                // Older schemas do not have these tables.
+                // Missing tables or failed queries must not look like a successful empty check.
+                $details[$table] = null;
             }
         }
 

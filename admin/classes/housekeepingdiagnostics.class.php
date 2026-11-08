@@ -1280,7 +1280,18 @@ final class JemHousekeepingDiagnostics
         }
 
         foreach ($model->getOrphanRegistrationDetails() as $table => $total) {
-            if ($total > 0) {
+            if ($total === null) {
+                $this->add(
+                    $report,
+                    'warning',
+                    Text::sprintf('COM_JEM_TOOLS_REGISTRATION_DETAILS_UNVERIFIED', $table),
+                    Text::_('COM_JEM_TOOLS_RECOMMEND_REGISTRATION_DETAILS_ORPHANED'),
+                    '',
+                    '',
+                    'JEM',
+                    'COM_JEM_TOOLS_REGISTRATION_DETAILS_UNVERIFIED'
+                );
+            } elseif ($total > 0) {
                 $this->add(
                     $report,
                     'warning',

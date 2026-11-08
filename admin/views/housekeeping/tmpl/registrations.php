@@ -13,6 +13,7 @@ use Joomla\CMS\Router\Route;
 
 $escape = static fn ($value): string => htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $total = array_sum($this->registrationOrphans);
+$detailIssues = array_filter($this->registrationDetails, static fn ($count): bool => $count === null || $count > 0);
 ?>
 <div class="container-fluid jem-housekeeping-tool">
     <div class="card mb-4">
@@ -77,12 +78,14 @@ $total = array_sum($this->registrationOrphans);
         </form>
     <?php endif; ?>
 
-    <?php if (array_filter($this->registrationDetails)) : ?>
+    <?php if ($detailIssues) : ?>
         <div class="card mb-4"><div class="card-body">
             <h3 class="h5"><?php echo Text::_('COM_JEM_HOUSEKEEPING_REGISTRATIONS_DETAILS'); ?></h3>
             <ul class="mb-2">
-                <?php foreach ($this->registrationDetails as $table => $count) : ?>
-                    <?php if ($count) : ?>
+                <?php foreach ($detailIssues as $table => $count) : ?>
+                    <?php if ($count === null) : ?>
+                        <li><?php echo Text::sprintf('COM_JEM_TOOLS_REGISTRATION_DETAILS_UNVERIFIED', $escape($table)); ?></li>
+                    <?php else : ?>
                         <li><?php echo Text::sprintf('COM_JEM_TOOLS_REGISTRATION_DETAILS_ORPHANED', (int) $count, $escape($table)); ?></li>
                     <?php endif; ?>
                 <?php endforeach; ?>
