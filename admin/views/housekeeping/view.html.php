@@ -95,8 +95,15 @@ class JemViewHousekeeping extends JemAdminView
             }
             $this->filesCounts = array();
             $this->filesCandidates = array();
+            $this->filesErrors = array();
             foreach ($areas as $area) {
-                $list = $files->candidates($area);
+                try {
+                    $list = $files->candidates($area);
+                } catch (JemHousekeepingImageReferenceException $error) {
+                    $this->filesCounts[$area] = null;
+                    $this->filesErrors[$area] = $error->getMessage();
+                    continue;
+                }
                 $this->filesCounts[$area] = count($list);
                 if ($area === $this->filesArea) {
                     $this->filesCandidates = $list;

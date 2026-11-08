@@ -31,6 +31,11 @@ class JemHousekeepingResetPreflightException extends \RuntimeException
 {
 }
 
+/** Venue cleanup was refused because image references could not be verified. */
+class JemHousekeepingImageReferenceException extends \RuntimeException
+{
+}
+
 /**
  * Housekeeping-Model
  */
@@ -1255,8 +1260,89 @@ class JemModelHousekeeping extends BaseDatabaseModel
         $this->_db->setQuery($query);
         $assigned = $this->_db->loadColumn();
 
+        if ($type === self::VENUES) {
+            $assigned = array_merge((array) $assigned, $this->getCapacityImagePaths());
+        }
+
         return array_merge((array) $assigned, $this->getLinkImages($type));
     }
+
+    /**
+     * Resolve every capacity image before allowing venue-image cleanup to proceed.
+     * Unpublished records and thumbnails whose original is missing remain in use.
+     *
+     * @return string[] Image paths relative to images/jem/venues.
+     * @throws JemHousekeepingImageReferenceException When the inventory is incomplete.
+     */
+    private function getCapacityImagePaths(): array
+    {
+        $db = $this->_db;
+        $queries = array(
+            'profile' => $db->getQuery(true)
+                ->select('i.id, i.image, i.venue_id, 0 AS space_id, 0 AS layout_id')
+                ->from($db->quoteName('#__jem_venue_capacity_profiles', 'i')),
+            'space' => $db->getQuery(true)
+                ->select('i.id, i.image, i.venue_id, 0 AS space_id, 0 AS layout_id')
+                ->from($db->quoteName('#__jem_venue_spaces', 'i')),
+            'layout' => $db->getQuery(true)
+                ->select('i.id, i.image, s.venue_id, s.id AS space_id, 0 AS layout_id')
+                ->from($db->quoteName('#__jem_venue_layouts', 'i'))
+                ->join('LEFT', $db->quoteName('#__jem_venue_spaces', 's') . ' ON s.id = i.venue_space_id'),
+            'area' => $db->getQuery(true)
+                ->select('i.id, i.image, s.venue_id, s.id AS space_id, l.id AS layout_id')
+                ->from($db->quoteName('#__jem_venue_capacity_areas', 'i'))
+                ->join('LEFT', $db->quoteName('#__jem_venue_layouts', 'l') . ' ON l.id = i.venue_layout_id')
+                ->join('LEFT', $db->quoteName('#__jem_venue_spaces', 's') . ' ON s.id = l.venue_space_id'),
+        );
+        $images = array();
+
+        try {
+            foreach ($queries as $kind => $query) {
+                $query->where($db->quoteName('i.image') . ' <> ' . $db->quote(''));
+                foreach ($db->setQuery($query)->loadObjectList() as $row) {
+                    $id = (int) $row->id;
+                    $venueId = (int) $row->venue_id;
+                    $spaceId = (int) $row->space_id;
+                    $layoutId = (int) $row->layout_id;
+                    $image = (string) $row->image;
+                    $decodedImage = rawurldecode($image);
+
+                    // LEFT joins keep broken references visible; do not mistake them for unused files.
+                    if (
+                        $id < 1 || $venueId < 1
+                        || (in_array($kind, array('layout', 'area'), true) && $spaceId < 1)
+                        || ($kind === 'area' && $layoutId < 1)
+                        || strpbrk($decodedImage, "/\\\0") !== false
+                        || in_array($decodedImage, array('.', '..'), true)
+                    ) {
+                        throw new \RuntimeException('Unresolved capacity image reference: ' . $kind . ' ' . $id);
+                    }
+
+                    $folder = match ($kind) {
+                        'profile' => JemVenueImagePath::profileFolder($venueId, $id),
+                        'space' => JemVenueImagePath::spaceFolder($venueId, $id),
+                        'layout' => JemVenueImagePath::layoutFolder($venueId, $spaceId, $id),
+                        'area' => JemVenueImagePath::areaFolder($venueId, $spaceId, $layoutId, $id),
+                    };
+                    // Retain the stored filename; cleanup must not rename or sanitise a reference.
+                    $images[] = $folder . '/' . $image;
+                    // The selective thumbnail preview also compares literal filesystem names.
+                    if ($decodedImage !== $image) {
+                        $images[] = $folder . '/' . $decodedImage;
+                    }
+                }
+            }
+        } catch (\RuntimeException $error) {
+            throw new JemHousekeepingImageReferenceException(
+                Text::_('COM_JEM_HOUSEKEEPING_VENUE_IMAGE_REFERENCES_FAILED'),
+                0,
+                $error
+            );
+        }
+
+        return array_values(array_unique($images));
+    }
+
 
     /**
      * Link images may live in the same folders as event, venue or category images.

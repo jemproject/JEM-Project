@@ -45,7 +45,7 @@ $totalBytes = array_sum(array_map(static fn(array $file): int => (int) $file['si
                            <?php echo $name === $area ? 'aria-current="page"' : ''; ?>
                            href="<?php echo Route::_('index.php?option=com_jem&view=housekeeping&tool=files&area=' . $name); ?>">
                             <?php echo Text::_('COM_JEM_HOUSEKEEPING_FILES_AREA_' . strtoupper($name)); ?>
-                            <span class="badge <?php echo $count ? 'bg-warning text-dark' : 'bg-secondary'; ?>"><?php echo (int) $count; ?></span>
+                            <span class="badge <?php echo $count ? 'bg-warning text-dark' : 'bg-secondary'; ?>"><?php echo $count === null ? '&mdash;' : (int) $count; ?></span>
                         </a>
                     </li>
                 <?php endforeach; ?>
@@ -66,7 +66,9 @@ $totalBytes = array_sum(array_map(static fn(array $file): int => (int) $file['si
         </div></div>
     <?php endif; ?>
 
-    <?php if (!$this->filesCandidates) : ?>
+    <?php if (!empty($this->filesErrors[$area])) : ?>
+        <div class="alert alert-warning"><?php echo $escape($this->filesErrors[$area]); ?></div>
+    <?php elseif (!$this->filesCandidates) : ?>
         <div class="alert alert-success">
             <span class="icon-check" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_HOUSEKEEPING_FILES_NONE_' . ($isImages ? 'IMAGES' : 'ATTACHMENTS')); ?>
         </div>

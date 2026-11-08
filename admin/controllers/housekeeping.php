@@ -432,7 +432,16 @@ class JemControllerHousekeeping extends BaseController
         if ($task == 'cleaneventimg') {
             $total = $model->delete($model::EVENTS);
         } elseif ($task == 'cleanvenueimg') {
-            $total = $model->delete($model::VENUES);
+            try {
+                $total = $model->delete($model::VENUES);
+            } catch (JemHousekeepingImageReferenceException $error) {
+                $this->setRedirect(
+                    'index.php?option=com_jem&view=housekeeping',
+                    $error->getMessage(),
+                    'warning'
+                );
+                return;
+            }
         } elseif ($task == 'cleancategoryimg') {
             $total = $model->delete($model::CATEGORIES);
         }
