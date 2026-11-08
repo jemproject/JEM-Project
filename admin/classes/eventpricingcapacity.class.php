@@ -14,6 +14,7 @@ use Joomla\String\StringHelper;
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/venuecapacity.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/config.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/pricingcountry.class.php';
 
 /**
  * Administrator service for Point 4D event capacity snapshots and prices.
@@ -179,12 +180,15 @@ class JemEventPricingCapacityService
         $existing = $eventId > 0 ? self::loadEventPricingRow($eventId) : array();
         $mode = strtolower(trim((string) ($data['pricing_mode'] ?? ($existing['pricing_mode'] ?? self::MODE_CLASSIC))));
         if ($mode === 'priced') {
-            $mode = count($rawPrices) > 1 ? self::MODE_MULTIPLE : self::MODE_SINGLE;
+            $mode = count($pricesSubmitted ? $rawPrices : self::loadPriceRows($eventId)) > 1
+                ? self::MODE_MULTIPLE : self::MODE_SINGLE;
         }
         if (!in_array($mode, array(self::MODE_CLASSIC, self::MODE_SINGLE, self::MODE_MULTIPLE), true)) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_MODE'));
         }
         $data['pricing_mode'] = $mode;
+        $data['pricing_country_code'] = '';
+        $data['locid'] = (int) ($data['locid'] ?? ($existing['locid'] ?? 0));
 
         $storedSnapshot = self::decodeSnapshot($existing['venue_snapshot'] ?? '');
         $storedAllocationMode = strtolower(trim((string) ($existing['venue_allocation_mode'] ?? '')));
@@ -222,9 +226,18 @@ class JemEventPricingCapacityService
         );
 
         if (!$physicalActive) {
+            if ($eventId > 0 && ($storedAllocationMode !== 'none' || $storedSnapshot)
+                && self::hasRegistrations($eventId)) {
+                throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_REMOVE_ALLOCATION_REGISTERED'));
+            }
             $data['venue_profile_id'] = null;
             $data['venue_profile_revision'] = 0;
             $data['venue_snapshot'] = null;
+            if ($pricingActive) {
+                $context['country_code'] = self::unallocatedPricingCountry($data);
+
+                return self::preparePrices($data, $existing, $eventId, $rawPools, $rawPrices, $context);
+            }
             $data['currency'] = self::storedOrDefaultCurrency($existing);
             $data['default_tax_rate_id'] = self::normaliseNullableId($data['default_tax_rate_id'] ?? null);
             $data['prices_include_tax'] = !empty($data['prices_include_tax']) ? 1 : 0;
@@ -246,8 +259,9 @@ class JemEventPricingCapacityService
         if (!$requirements['venue_exists']) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_VENUE'));
         }
+        $requirements['country_code'] = JemPricingCountry::forVenue($requirements['country_code']);
         if ($pricingActive && !$requirements['country_code']) {
-            throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_COUNTRY'));
+            throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_REFERENCE_COUNTRY'));
         }
         if (!$requirements['capacity_ready']) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_CAPACITY_CONFIGURATION'));
@@ -311,6 +325,8 @@ class JemEventPricingCapacityService
         $snapshot = $reload
             ? JemVenueCapacityService::buildEventSnapshot($venueId, $submittedAssignmentIds)
             : $storedSnapshot;
+        $snapshot['country_code'] = $requirements['country_code'];
+        $data['pricing_country_code'] = $pricingActive ? $requirements['country_code'] : '';
         $snapshotCapacity = self::snapshotCapacity($snapshot);
         $eventCapacity = self::normaliseUnsignedInteger($data['maxplaces'] ?? 0, true);
         if ($capacityMode !== 'classic' && $eventCapacity < 1 && !$storedSnapshot) {
@@ -357,6 +373,32 @@ class JemEventPricingCapacityService
             return $context;
         }
 
+        return self::preparePrices($data, $existing, $eventId, $rawPools, $rawPrices, $context);
+    }
+
+    /**
+     * Validate admission prices against general capacity or optional physical areas.
+     *
+     * @param array $data Event policy fields, updated with normalised money and revision.
+     * @param array $existing Stored event policy, empty for a new event.
+     * @param int $eventId Existing event ID, or zero before first save.
+     * @param array $rawPools Submitted physical capacity rows.
+     * @param array $rawPrices Submitted admission rows.
+     * @param array $context Validated physical configuration and pricing country.
+     * @return array Child rows to persist after the parent event is saved.
+     */
+    private static function preparePrices(
+        array &$data,
+        array $existing,
+        int $eventId,
+        array $rawPools,
+        array $rawPrices,
+        array $context
+    ): array {
+        $eventCapacity = self::normaliseUnsignedInteger($data['maxplaces'] ?? ($existing['maxplaces'] ?? 0), true);
+        if ($eventCapacity < 1) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_EXACT_CAPACITY'));
+        }
         $currency = self::storedOrDefaultCurrency($existing);
         $data['currency'] = $currency;
         $data['prices_include_tax'] = !empty($data['prices_include_tax']) ? 1 : 0;
@@ -373,16 +415,43 @@ class JemEventPricingCapacityService
         $effectiveDate = self::normaliseEffectiveTaxDate($data['dates'] ?? null);
         self::validateTaxIds(
             array_filter(array($data['default_tax_rate_id'], $data['management_fee_tax_rate_id'])),
-            $requirements['country_code'],
+            $context['country_code'],
             $effectiveDate
         );
 
-        $desiredPools = $reload
-            ? self::buildPoolRowsFromSnapshot($snapshot)
-            : ($poolsSubmitted ? self::normalisePoolRows($rawPools, $eventId, $snapshot) : self::loadPoolRows($eventId));
-        $desiredPrices = $pricesSubmitted
-            ? self::normalisePriceRows($rawPrices, $eventId, $currency, $requirements['country_code'], $effectiveDate)
+        $desiredPools = !$context['physical_active'] ? array() : ($context['reload']
+            ? self::buildPoolRowsFromSnapshot($context['snapshot'])
+            : ($context['pools_submitted']
+                ? self::normalisePoolRows($rawPools, $eventId, $context['snapshot'])
+                : self::loadPoolRows($eventId)));
+        $desiredPrices = $context['prices_submitted']
+            ? self::normalisePriceRows($rawPrices, $eventId, $currency, $context['country_code'], $effectiveDate)
             : self::loadPriceRows($eventId);
+
+        if (!$context['physical_active']) {
+            if (!$context['prices_submitted']) {
+                $desiredPrices = self::normalisePriceRows(
+                    $desiredPrices, $eventId, $currency, $context['country_code'], $effectiveDate
+                );
+            }
+            $oldPools = self::loadPoolRows($eventId);
+            $oldIds = array_map('intval', array_column($oldPools, 'id'));
+            $oldCodes = array_column($oldPools, 'code');
+            $removingAllocation = ($existing['venue_allocation_mode'] ?? 'none') !== 'none'
+                || self::decodeSnapshot($existing['venue_snapshot'] ?? '');
+            foreach ($desiredPrices as &$price) {
+                $poolId = (int) ($price['capacity_pool_id'] ?? 0);
+                $poolCode = (string) ($price['_capacity_pool_code'] ?? '');
+                if (($poolId > 0 || $poolCode !== '') && (!$removingAllocation
+                    || ($poolId > 0 && !in_array($poolId, $oldIds, true))
+                    || ($poolCode !== '' && !in_array($poolCode, $oldCodes, true)))) {
+                    throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_PRICE_POOL'));
+                }
+                $price['capacity_pool_id'] = null;
+                $price['_capacity_pool_code'] = '';
+            }
+            unset($price);
+        }
 
         $publishedPrices = array_values(array_filter(
             $desiredPrices,
@@ -391,11 +460,18 @@ class JemEventPricingCapacityService
         if (!$publishedPrices) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_PRICE_REQUIRED'));
         }
-        if ($mode === self::MODE_SINGLE && count($publishedPrices) !== 1) {
+        if ($data['pricing_mode'] === self::MODE_SINGLE && count($publishedPrices) !== 1) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_SINGLE_PRICE'));
         }
-        if ($mode === self::MODE_MULTIPLE && count($publishedPrices) < 2) {
+        if ($data['pricing_mode'] === self::MODE_MULTIPLE && count($publishedPrices) < 2) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_MULTIPLE_PRICES'));
+        }
+        if (($data['capacity_mode'] ?? 'classic') === 'areas' && count($desiredPools) !== 1) {
+            foreach ($publishedPrices as $price) {
+                if (empty($price['capacity_pool_id']) && empty($price['_capacity_pool_code'])) {
+                    throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_PRICE_AREA_REQUIRED'));
+                }
+            }
         }
         self::validatePriceCapacityLimits($desiredPrices, $desiredPools, $eventId, $eventCapacity);
 
@@ -408,6 +484,37 @@ class JemEventPricingCapacityService
         $context['prices'] = $desiredPrices;
 
         return $context;
+    }
+
+    /**
+     * Resolve the pricing country without requiring spaces or a venue.
+     *
+     * @param array $data Event fields; stores the effective country for stable later quotes.
+     * @return string Validated two-letter country code used by prices and quotes.
+     */
+    private static function unallocatedPricingCountry(array &$data): string
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $venueId = (int) ($data['locid'] ?? 0);
+        if ($venueId > 0) {
+            $query = $db->getQuery(true)->select($db->quoteName('country'))
+                ->from($db->quoteName('#__jem_venues'))->where($db->quoteName('id') . ' = ' . $venueId);
+            $country = $db->setQuery($query)->loadResult();
+            if ($country === null) {
+                throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_VENUE'));
+            }
+        } else {
+            $country = '';
+        }
+        $country = JemPricingCountry::forVenue($country);
+        $query = $db->getQuery(true)->select('COUNT(*)')->from($db->quoteName('#__jem_countries'))
+            ->where($db->quoteName('iso2') . ' = ' . $db->quote($country));
+        if (preg_match('/^[A-Z]{2}$/D', $country) !== 1 || !(int) $db->setQuery($query)->loadResult()) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_REFERENCE_COUNTRY'));
+        }
+        $data['pricing_country_code'] = $country;
+
+        return $country;
     }
 
     public static function defaultCurrency(): string
@@ -770,8 +877,7 @@ class JemEventPricingCapacityService
         string $currency,
         string $countryCode,
         string $effectiveDate
-    ): array
-    {
+    ): array {
         $existingRows = array_column(self::loadPriceRows($eventId), null, 'id');
         $poolIds = array_fill_keys(array_map(
             static fn (array $pool): int => (int) $pool['id'],
@@ -1252,7 +1358,7 @@ class JemEventPricingCapacityService
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
             ->select(array(
-                'id', 'locid', 'venue_allocation_mode', 'capacity_mode', 'pricing_mode',
+                'id', 'locid', 'venue_allocation_mode', 'capacity_mode', 'pricing_mode', 'pricing_country_code',
                 'pricing_revision', 'currency', 'default_tax_rate_id',
                 'prices_include_tax', 'management_fee_mode', 'management_fee_value', 'management_fee_basis',
                 'management_fee_tax_rate_id', 'management_fee_refundable', 'venue_profile_id',
@@ -1341,7 +1447,7 @@ class JemEventPricingCapacityService
     private static function eventPolicyFingerprint(array $data): string
     {
         $fields = array(
-            'venue_allocation_mode', 'capacity_mode', 'pricing_mode', 'currency',
+            'venue_allocation_mode', 'capacity_mode', 'pricing_mode', 'currency', 'pricing_country_code',
             'default_tax_rate_id', 'prices_include_tax',
             'management_fee_mode', 'management_fee_value', 'management_fee_basis',
             'management_fee_tax_rate_id', 'management_fee_refundable', 'venue_profile_id',

@@ -11,12 +11,14 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
 require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/pricingcountry.class.php';
 
 $requirements = (array) ($this->item->pricing_requirements ?? array());
 $venueExists = !empty($requirements['venue_exists']);
-$countryCode = strtoupper((string) ($requirements['country_code'] ?? ''));
+$physicalActive = ($this->item->venue_allocation_mode ?? 'none') !== 'none';
+$countryCode = JemPricingCountry::forVenue($requirements['country_code'] ?? '');
 $capacityReady = !empty($requirements['capacity_ready']);
-$pricedReady = $venueExists && $countryCode !== '' && $capacityReady;
+$pricedReady = $countryCode !== '' && (!$physicalActive || ($venueExists && $capacityReady));
 $isSaved = !empty($this->item->id);
 $effectiveDate = trim((string) ($this->item->dates ?? ''));
 $parsedEffectiveDate = DateTimeImmutable::createFromFormat('!Y-m-d', $effectiveDate, new DateTimeZone('UTC'));
@@ -114,6 +116,9 @@ if (!is_array($selectedAssignmentIds)) {
             <div class="jem-event-venue-configuration-preview mt-3" aria-live="polite"></div>
         </fieldset>
 
+        <div class="alert alert-info" data-pricing-notice="general" <?php echo $physicalActive ? 'hidden' : ''; ?>>
+            <?php echo Text::_('COM_JEM_EVENT_PRICING_GENERAL_CAPACITY_HELP'); ?>
+        </div>
         <div class="alert alert-warning" data-pricing-notice="missing" <?php echo $pricedReady ? 'hidden' : ''; ?>>
             <?php echo Text::_('COM_JEM_EVENT_PRICING_REQUIREMENTS_MISSING'); ?>
         </div>
@@ -185,6 +190,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const details = root.querySelector('.jem-event-pricing-details');
     let countryCode = (root.dataset.countryCode || '').toUpperCase();
+    const allocationMode = document.getElementById('jform_venue_allocation_mode');
+    const defaultTaxCountry = <?php echo json_encode(JemPricingCountry::defaultCountry()); ?>;
+    let venueRequirements = <?php echo json_encode($requirements, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
     const effectiveDate = root.dataset.effectiveDate || '';
     const isSaved = <?php echo $isSaved ? 'true' : 'false'; ?>;
     let poolCandidates = <?php echo json_encode(
@@ -434,31 +442,38 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    const applyVenuePayload = function (payload) {
-        countryCode = String(payload.country_code || '').toUpperCase();
+    /** Refresh optional physical controls and the effective country for tax choices. */
+    const updatePricingReadiness = function () {
+        const physical = Boolean(allocationMode && allocationMode.value !== 'none');
+        countryCode = String(venueRequirements.country_code || defaultTaxCountry || '').toUpperCase();
         root.dataset.countryCode = countryCode;
+        ['venue', 'configuration'].forEach(function (name) {
+            root.querySelector('[data-requirement="' + name + '"]').hidden = !physical;
+        });
+        updateRequirement('country', Boolean(countryCode), countryCode);
+        const ready = Boolean(countryCode && (!physical || (venueRequirements.venue_exists && venueRequirements.capacity_ready)));
+        root.querySelector('[data-pricing-notice="general"]').hidden = physical;
+        root.querySelector('[data-pricing-notice="missing"]').hidden = !physical || ready;
+        root.querySelector('[data-pricing-notice="first-save"]').hidden = !physical || !ready || isSaved;
+        root.querySelector('[data-pricing-notice="snapshot"]').hidden = !physical || !ready || !isSaved;
+        configurationFieldset.hidden = !physical || !venueRequirements.capacity_ready;
+        const pools = root.querySelector('.jem-event-capacity-pools');
+        if (pools) {
+            pools.hidden = !physical;
+        }
+        filterTaxRates();
+    };
+
+    const applyVenuePayload = function (payload) {
+        venueRequirements = payload;
         configurationState = {
             options: Array.isArray(payload.configuration_options) ? payload.configuration_options : [],
             assignments: Array.isArray(payload.configuration_assignments) ? payload.configuration_assignments : [],
             customRequired: Boolean(payload.configuration_custom_required)
         };
         updateRequirement('venue', Boolean(payload.venue_exists), <?php echo json_encode(Text::_('JYES')); ?>);
-        updateRequirement('country', Boolean(countryCode), countryCode);
         updateRequirement('configuration', Boolean(payload.capacity_ready), payload.configuration_summary || <?php echo json_encode(Text::_('JYES')); ?>);
-        const pricedReadyNow = Boolean(payload.venue_exists && countryCode && payload.capacity_ready);
-        const missingNotice = root.querySelector('[data-pricing-notice="missing"]');
-        const firstSaveNotice = root.querySelector('[data-pricing-notice="first-save"]');
-        const snapshotNotice = root.querySelector('[data-pricing-notice="snapshot"]');
-        if (missingNotice) {
-            missingNotice.hidden = pricedReadyNow;
-        }
-        if (firstSaveNotice) {
-            firstSaveNotice.hidden = !pricedReadyNow || isSaved;
-        }
-        if (snapshotNotice) {
-            snapshotNotice.hidden = !pricedReadyNow || !isSaved;
-        }
-        configurationFieldset.hidden = !payload.capacity_ready;
+        updatePricingReadiness();
         configurationSelect.replaceChildren();
         configurationState.options.forEach(function (configuration) {
             const option = document.createElement('option');
@@ -802,6 +817,9 @@ document.addEventListener('DOMContentLoaded', function () {
         venueInput.addEventListener('change', loadVenueConfigurations);
     }
 
+    if (allocationMode) {
+        allocationMode.addEventListener('change', updatePricingReadiness);
+    }
     mode.addEventListener('change', updateMode);
     new MutationObserver(function () {
         updateMode();
@@ -813,6 +831,7 @@ document.addEventListener('DOMContentLoaded', function () {
     decorateRows();
     filterTaxRates();
     syncConfigurationSelection(false);
+    updatePricingReadiness();
     populateCapacityOptions();
     updatePreviews();
 });

@@ -264,6 +264,7 @@ final class JemPricedRegistrationService
         $saveOptions = $options;
         $saveOptions['operationReference'] = $operationReference;
         $saveOptions['commercialLines'] = $this->quoteItems($quote);
+        $saveOptions['capacityAllocations'] = $this->quoteCapacityAllocations($quote);
         $saveOptions['forceRevision'] = is_object($before);
         $saveOptions['requireNew'] = !is_object($before);
         $saveOptions['requireExisting'] = is_object($before);
@@ -398,6 +399,39 @@ final class JemPricedRegistrationService
         $quote['grand_total'] = $grandTotal->decimal();
 
         return $quote;
+    }
+
+    /**
+     * Derive physical area quantities from the authoritative quoted admission rows.
+     *
+     * @param array $quote Locked quote containing event-owned prices and quantities.
+     * @return array<string, int> Quantities keyed by the event's physical area/layout.
+     */
+    private function quoteCapacityAllocations(array $quote): array
+    {
+        $eventId = (int) $quote['event_id'];
+        $capacity = $this->registrations->capacityOptions($eventId);
+        if (!$capacity->enabled) {
+            return array();
+        }
+        $query = $this->db->getQuery(true)->select('*')
+            ->from($this->db->quoteName('#__jem_capacity_pools'))
+            ->where($this->db->quoteName('event_id') . ' = ' . $eventId);
+        $pools = $this->db->setQuery($query)->loadAssocList('id');
+        $areas = array_column($capacity->options, null, 'key');
+        $allocations = array();
+        foreach ($quote['lines'] as $line) {
+            $pool = $pools[(int) ($line['capacity_pool_id'] ?? 0)] ?? array();
+            $areaId = (int) ($pool['venue_capacity_area_id'] ?? 0);
+            $layoutId = (int) ($pool['venue_layout_id'] ?? 0);
+            $key = $areaId > 0 ? 'area:' . $areaId : 'layout:' . $layoutId;
+            if (!isset($areas[$key]) || (int) $areas[$key]['venue_layout_id'] !== $layoutId) {
+                throw new RuntimeException('Each admission price must select an available capacity area for this event.');
+            }
+            $allocations[$key] = ($allocations[$key] ?? 0) + (int) $line['quantity'];
+        }
+
+        return $allocations;
     }
 
     private function quoteItems(array $quote): array

@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `venue_allocation_mode` varchar(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'none',
     `capacity_mode` varchar(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'classic',
     `pricing_mode` varchar(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'classic',
+    `pricing_country_code` char(2) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
     `pricing_revision` int(10) unsigned NOT NULL DEFAULT '1',
     `currency` char(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
     `default_tax_rate_id` int(11) unsigned NULL DEFAULT NULL,

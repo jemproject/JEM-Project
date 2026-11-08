@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 use Joomla\Database\DatabaseDriver;
 
 require_once __DIR__ . '/money.class.php';
+require_once __DIR__ . '/pricingcountry.class.php';
 require_once __DIR__ . '/taxpolicy.class.php';
 require_once __DIR__ . '/taxcalculation.class.php';
 require_once __DIR__ . '/taxcalculator.class.php';
@@ -445,7 +446,7 @@ final class JemPricingQuoteService
     {
         $query = $this->db->getQuery(true)
             ->select(array(
-                'e.id', 'e.pricing_mode', 'e.pricing_revision', 'e.currency',
+                'e.id', 'e.pricing_mode', 'e.pricing_revision', 'e.currency', 'e.pricing_country_code',
                 'e.prices_include_tax', 'e.maxplaces', 'e.reservedplaces',
                 'e.minbookeduser', 'e.maxbookeduser', 'e.waitinglist',
                 'e.registra', 'e.registra_from', 'e.registra_until', 'e.reginvitedonly',
@@ -475,6 +476,8 @@ final class JemPricingQuoteService
             $this->db->setQuery($query);
             $countryCode = strtoupper(trim((string) $this->db->loadResult()));
         }
+        $countryCode = JemPricingCountry::normalise($event['pricing_country_code'] ?? '')
+            ?: JemPricingCountry::forVenue($countryCode);
         $event['country_code'] = $countryCode;
         unset($event['venue_snapshot']);
 

@@ -241,6 +241,11 @@
             default="0"
             fancy="false"
         />
+        <field name="defaultTaxCountry" type="countryoptions"
+            label="COM_JEM_SETTINGS_TAX_COUNTRY"
+            description="COM_JEM_SETTINGS_TAX_COUNTRY_DESC"
+            class="form-select w-auto" fancy="false" default="0" filter="string"
+        />
         <field name="defaultCurrency" type="currencyoptions"
             label="COM_JEM_SETTINGS_SELECT_DEFAULT_CURRENCY"
             description="COM_JEM_SETTINGS_SELECT_DEFAULT_CURRENCY_DESC"

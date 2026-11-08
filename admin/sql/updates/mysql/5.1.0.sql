@@ -81,7 +81,8 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('operating_profi
 ALTER TABLE `#__jem_events` ADD COLUMN `venue_allocation_mode` VARCHAR(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'none' AFTER `type_id` /** CAN FAIL **/;
 ALTER TABLE `#__jem_events` ADD COLUMN `capacity_mode` VARCHAR(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'classic' AFTER `venue_allocation_mode` /** CAN FAIL **/;
 ALTER TABLE `#__jem_events` ADD COLUMN `pricing_mode` VARCHAR(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'classic' AFTER `type_id` /** CAN FAIL **/;
-ALTER TABLE `#__jem_events` ADD COLUMN `pricing_revision` INT(10) UNSIGNED NOT NULL DEFAULT '1' AFTER `pricing_mode` /** CAN FAIL **/;
+ALTER TABLE `#__jem_events` ADD COLUMN `pricing_country_code` CHAR(2) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '' AFTER `pricing_mode` /** CAN FAIL **/;
+ALTER TABLE `#__jem_events` ADD COLUMN `pricing_revision` INT(10) UNSIGNED NOT NULL DEFAULT '1' AFTER `pricing_country_code` /** CAN FAIL **/;
 ALTER TABLE `#__jem_events` ADD COLUMN `currency` CHAR(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '' AFTER `pricing_revision` /** CAN FAIL **/;
 ALTER TABLE `#__jem_events` ADD COLUMN `default_tax_rate_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `currency` /** CAN FAIL **/;
 ALTER TABLE `#__jem_events` ADD COLUMN `prices_include_tax` TINYINT(1) NOT NULL DEFAULT '1' AFTER `default_tax_rate_id` /** CAN FAIL **/;

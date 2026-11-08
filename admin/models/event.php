@@ -4401,7 +4401,7 @@ class JemModelEvent extends JemModelAdmin
             }
             if ($existingEvent !== null) {
                 foreach (array(
-                    'pricing_mode', 'pricing_revision', 'currency', 'default_tax_rate_id',
+                    'pricing_mode', 'pricing_revision', 'currency', 'default_tax_rate_id', 'pricing_country_code',
                     'prices_include_tax', 'management_fee_mode', 'management_fee_value',
                     'management_fee_basis', 'management_fee_tax_rate_id',
                     'management_fee_refundable',

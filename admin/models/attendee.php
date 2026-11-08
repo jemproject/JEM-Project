@@ -443,7 +443,7 @@ class JemModelAttendee extends BaseDatabaseModel
         }
         $isAreaCapacity = $pricedEvent && (string) ($pricedEvent->capacity_mode ?? 'classic') === 'areas';
         $capacityAllocations = (array) ($data['capacity_areas'] ?? array());
-        if ($isAreaCapacity && in_array((int) $status, array(
+        if ($isAreaCapacity && !$isPriced && in_array((int) $status, array(
             JemRegistrationTransition::ATTENDING,
             JemRegistrationTransition::WAITING_LIST,
         ), true)) {
