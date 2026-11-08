@@ -31,6 +31,25 @@ abstract class JemControllerForm extends FormController
         $this->app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
         $this->app->sendHeaders();
         try {
+            $form = $model->getForm($data, false);
+            if (!$form) {
+                throw new RuntimeException(Text::_('JLIB_APPLICATION_ERROR_FORM_LOAD'));
+            }
+
+            // AJAX carries displayed dates. Use the editor's filters, as normal save does,
+            // before the model merges them with the stored ISO dates. Leave other fields alone.
+            foreach (['dates', 'enddates', 'recurrence_limit_date'] as $name) {
+                if (!array_key_exists($name, $data)) {
+                    continue;
+                }
+                $field = $form->getField($name);
+                if (!$field) {
+                    throw new RuntimeException(Text::_('JLIB_APPLICATION_ERROR_FORM_LOAD'));
+                }
+                // Filter the submitted value directly: an empty date must not become an XML default.
+                $data[$name] = $field->filter($data[$name]);
+            }
+
             echo new \Joomla\CMS\Response\JsonResponse($model->previewRecurrenceChange($data));
         } catch (\Throwable $error) {
             echo new \Joomla\CMS\Response\JsonResponse($error);
