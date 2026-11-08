@@ -273,9 +273,11 @@ class JemControllerAttendeeregistrations extends BaseController
                 ));
 
                 if (!$result->success) {
-                    $key = $result->reason === 'capacity_exceeded'
-                        ? 'COM_JEM_WAITINGLIST_PROMOTION_CAPACITY_EXCEEDED'
-                        : 'COM_JEM_WAITINGLIST_PROMOTION_FAILED';
+                    $keys = array(
+                        'capacity_exceeded' => 'COM_JEM_WAITINGLIST_PROMOTION_CAPACITY_EXCEEDED',
+                        'selected_user_missing' => 'COM_JEM_WAITINGLIST_PROMOTION_USER_MISSING',
+                    );
+                    $key = $keys[$result->reason] ?? 'COM_JEM_WAITINGLIST_PROMOTION_FAILED';
                     $this->setRedirect(Route::_($url, false), Text::_($key), 'error');
                     return;
                 }
