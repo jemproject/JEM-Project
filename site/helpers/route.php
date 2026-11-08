@@ -12,6 +12,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Log\Log;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/categories.class.php');
@@ -28,6 +30,23 @@ abstract class JEMHelperRoute
 {
     protected static $lookup;
     const ARTIFICALID = 0;
+
+    /**
+     * Build an absolute frontend notification link, retaining a non-SEF fallback.
+     *
+     * @param string $url Internal index.php route, including any menu and language parameters.
+     *
+     * @return string Absolute URL without HTML escaping.
+     */
+    public static function getAbsoluteSiteRoute(string $url): string
+    {
+        try {
+            return Route::link('site', $url, false, Route::TLS_IGNORE, true);
+        } catch (\RuntimeException $exception) {
+            // A routing failure must not interrupt an otherwise valid notification.
+            return rtrim(Uri::root(), '/') . '/' . $url;
+        }
+    }
 
     /**
      * Determines an JEM Link

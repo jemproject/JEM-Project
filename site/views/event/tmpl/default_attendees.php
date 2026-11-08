@@ -317,8 +317,10 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
                 <?php
                 $uri = Uri::getInstance();
                 $returnUrl = $uri->toString();
-                $urlLogin   = Route::_($uri->root() . 'index.php?option=com_users&view=login&return='.base64_encode($returnUrl));
-                $urlRegister = Route::_('index.php?option=com_users&view=registration');
+                $urlLogin = Route::_('index.php?option=com_users&view=login', false);
+                // Append the encoded return after routing: Joomla may decode query values while building a route.
+                $urlLogin .= (str_contains($urlLogin, '?') ? '&' : '?') . 'return=' . rawurlencode(base64_encode($returnUrl));
+                $urlRegister = Route::_('index.php?option=com_users&view=registration', false);
 
                 if ($this->item->published != 1) {
                     echo Text::_('COM_JEM_WRONG_STATE_FOR_REGISTER');

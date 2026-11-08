@@ -11,10 +11,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Log\Log;
-use Joomla\CMS\Router\Route;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\HTML\HTMLHelper;
 
@@ -89,7 +87,6 @@ class plgJemMailer extends CMSPlugin
             return true;
         }
 
-        $uri      = Uri::getInstance();
         $user     = JemFactory::getUser();
         $userid   = $user->get('id');
         $username = empty($this->_UseLoginName) ? $user->name : $user->username;
@@ -134,7 +131,7 @@ class plgJemMailer extends CMSPlugin
         }
 
         //create link to event
-        $link = $this->_appendOnlineMeetingInfo(Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false), $event);
+        $link = $this->_appendOnlineMeetingInfo(JEMHelperRoute::getAbsoluteSiteRoute(JEMHelperRoute::getEventRoute($event->slug)), $event);
 
         // Strip tags/scripts, etc. from description and comment
         $text_description = OutputFilter::cleanText($event->text);
@@ -288,7 +285,6 @@ class plgJemMailer extends CMSPlugin
             return true;
         }
 
-        $uri = Uri::getInstance();
 
         // get data
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -323,7 +319,7 @@ class plgJemMailer extends CMSPlugin
         $attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
 
         // create link to event
-        $link = $this->_appendOnlineMeetingInfo(Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false), $event);
+        $link = $this->_appendOnlineMeetingInfo(JEMHelperRoute::getAbsoluteSiteRoute(JEMHelperRoute::getEventRoute($event->slug)), $event);
 
         // Strip tags/scripts, etc. from description
         $text_description = OutputFilter::cleanText($event->text);
@@ -390,7 +386,6 @@ class plgJemMailer extends CMSPlugin
             return true;
         }
 
-        $uri = Uri::getInstance();
 
         $user     = JemFactory::getUser();
         $userid   = $user->get('id');
@@ -449,7 +444,7 @@ class plgJemMailer extends CMSPlugin
         }
 
         // create link to event
-        $link = $this->_appendOnlineMeetingInfo(Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false), $event);
+        $link = $this->_appendOnlineMeetingInfo(JEMHelperRoute::getAbsoluteSiteRoute(JEMHelperRoute::getEventRoute($event->slug)), $event);
 
         // Strip tags/scripts, etc. from description
         $text_description = OutputFilter::cleanText($event->text);
@@ -566,7 +561,6 @@ class plgJemMailer extends CMSPlugin
             return true;
         }
 
-        $uri = Uri::getInstance();
 
         $user     = JemFactory::getUser();
         $userid   = $user->get('id');
@@ -600,7 +594,7 @@ class plgJemMailer extends CMSPlugin
         $this->_formatEventMailDateTime($event);
 
         // Link for event
-        $link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+        $link = JEMHelperRoute::getAbsoluteSiteRoute(JEMHelperRoute::getEventRoute($event->slug));
 
         // Strip tags/scripts, etc. from description
         $text_description = OutputFilter::cleanText($event->text);
@@ -709,7 +703,6 @@ class plgJemMailer extends CMSPlugin
             return true;
         }
 
-        $uri = Uri::getInstance();
 
         $user     = JemFactory::getUser();
         $userid   = $user->get('id');
@@ -739,7 +732,7 @@ class plgJemMailer extends CMSPlugin
         # at this point we do have a result
 
         // Define link for venue
-        $link = Route::_($uri->root().JEMHelperRoute::getVenueRoute($venue->slug), false);
+        $link = JEMHelperRoute::getAbsoluteSiteRoute(JEMHelperRoute::getVenueRoute($venue->slug));
 
         // Define published-state message
         $adminstate = $venue->published ? Text::sprintf('PLG_JEM_MAILER_VENUE_PUBLISHED', $link) : Text::_('PLG_JEM_MAILER_VENUE_UNPUBLISHED');
