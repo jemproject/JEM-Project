@@ -66,6 +66,23 @@ class Pkg_JemInstallerScript
     }
 
     public function preflight($type, $parent) {
+        if (strtolower($type) === 'uninstall') {
+            // Package preflight must fail before Joomla starts removing sibling extensions.
+            // The component repeats this idempotent cleanup for standalone uninstall.
+            $script = JPATH_ADMINISTRATOR . '/components/com_jem/script.php';
+            if (!class_exists('com_jemInstallerScript', false) && is_file($script)) {
+                require_once $script;
+            }
+            if (class_exists('com_jemInstallerScript', false)) {
+                $installer = new com_jemInstallerScript();
+                if (is_callable(array($installer, 'removeJemSchedulerTasks'))) {
+                    $installer->removeJemSchedulerTasks();
+                }
+            }
+
+            return true;
+        }
+
         // Prevent installation if requirements are not met.
         if (!$this->checkRequirements()){
             return false;

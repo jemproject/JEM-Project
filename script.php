@@ -217,6 +217,104 @@ class com_jemInstallerScript
     }
 
     /**
+     * Remove JEM notification tasks before either uninstall mode removes their provider.
+     * Called by package and component preflight; repeated calls are harmless. TaskTable
+     * owns deletion of the associated ACL assets. Scheduler history is retained.
+     *
+     * @return void
+     * @throws RuntimeException If a task is locked or Joomla cannot clean it up.
+     */
+    public function removeJemSchedulerTasks(): void
+    {
+        $this->loadInstallerLanguage();
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            if (!in_array($db->getPrefix() . 'scheduler_tasks', $db->getTableList(), true)) {
+                return;
+            }
+
+            $query = $db->getQuery(true)
+                ->select($db->quoteName(array('id', 'locked')))
+                ->from($db->quoteName('#__scheduler_tasks'))
+                ->where($db->quoteName('type') . ' = ' . $db->quote('jem.notifications'));
+            $tasks = $db->setQuery($query)->loadObjectList();
+            if (!$tasks) {
+                return;
+            }
+
+            // A missing provider class must not turn this into direct SQL asset deletion.
+            if (!class_exists(\Joomla\Component\Scheduler\Administrator\Table\TaskTable::class)) {
+                $path = JPATH_ADMINISTRATOR . '/components/com_scheduler/src/Table/TaskTable.php';
+                if (!is_file($path)) {
+                    throw new RuntimeException(Text::_('COM_JEM_UNINSTALL_SCHEDULER_API_MISSING'));
+                }
+                require_once $path;
+            }
+
+            // Check the whole set before deleting any task, including disabled/trashed tasks.
+            foreach ($tasks as $task) {
+                if ($task->locked !== null) {
+                    throw new RuntimeException(Text::sprintf('COM_JEM_UNINSTALL_SCHEDULER_LOCKED', (int) $task->id));
+                }
+
+                $asset = $db->setQuery($db->getQuery(true)
+                    ->select($db->quoteName(array('lft', 'rgt')))
+                    ->from($db->quoteName('#__assets'))
+                    ->where($db->quoteName('name') . ' = ' . $db->quote('com_scheduler.task.' . (int) $task->id)))
+                    ->loadObject();
+                // Task assets must be leaves. Never delete a foreign subtree or rebuild ACLs.
+                if ($asset) {
+                    $left = (int) $asset->lft;
+                    $right = (int) $asset->rgt;
+                    $overlaps = $db->setQuery($db->getQuery(true)
+                        ->select('COUNT(*)')
+                        ->from($db->quoteName('#__assets'))
+                        ->where('(' . $db->quoteName('lft') . ' BETWEEN ' . $left . ' AND ' . $right
+                            . ' OR ' . $db->quoteName('rgt') . ' BETWEEN ' . $left . ' AND ' . $right . ')'))
+                        ->loadResult();
+                    if ($left < 0 || $right !== $left + 1 || (int) $overlaps !== 1) {
+                        throw new RuntimeException(Text::sprintf('COM_JEM_UNINSTALL_SCHEDULER_ASSET_INVALID', (int) $task->id));
+                    }
+                }
+            }
+
+            $ids = array_map(static function ($task): int {
+                return (int) $task->id;
+            }, $tasks);
+
+            // Prevent new scheduled runs, then detect a runner that acquired its lock meanwhile.
+            $db->setQuery($db->getQuery(true)
+                ->update($db->quoteName('#__scheduler_tasks'))
+                ->set($db->quoteName('state') . ' = 0')
+                ->where($db->quoteName('id') . ' IN (' . implode(',', $ids) . ')')
+                ->where($db->quoteName('type') . ' = ' . $db->quote('jem.notifications'))
+                ->where($db->quoteName('state') . ' <> -2'))
+                ->execute();
+            foreach ($db->setQuery($query)->loadObjectList() as $task) {
+                if ($task->locked !== null) {
+                    throw new RuntimeException(Text::sprintf('COM_JEM_UNINSTALL_SCHEDULER_LOCKED', (int) $task->id));
+                }
+            }
+
+            foreach ($ids as $id) {
+                $table = new \Joomla\Component\Scheduler\Administrator\Table\TaskTable($db);
+                try {
+                    if (!$table->delete($id)) {
+                        throw new RuntimeException((string) $table->getError());
+                    }
+                } catch (\Throwable $error) {
+                    throw new RuntimeException(Text::sprintf('COM_JEM_UNINSTALL_SCHEDULER_TASK_FAILED', $id, $error->getMessage()), 0, $error);
+                }
+            }
+        } catch (\Throwable $error) {
+            // Joomla ignores exceptions from uninstall(), so callers run this in preflight.
+            // TaskTable's asset locks can commit implicitly; do not promise a SQL rollback.
+            throw new RuntimeException(Text::sprintf('COM_JEM_UNINSTALL_SCHEDULER_FAILED', $error->getMessage()), 0, $error);
+        }
+    }
+
+    /**
      * method to update the component
      *
      * @return void
@@ -233,12 +331,18 @@ class com_jemInstallerScript
 
     /**
      * method to run before an install/update/uninstall method
-     * (it seams method is not called on uninstall)
+     * Uninstall preflight cleans Scheduler tasks before Joomla removes any JEM files.
      *
-     * @return void
+     * @return bool|null
      */
     public function preflight($type, $parent)
     {
+        if (strtolower($type) === 'uninstall') {
+            $this->removeJemSchedulerTasks();
+
+            return true;
+        }
+
         $this->loadInstallerLanguage();
 
         $app = Factory::getApplication();
