@@ -13,9 +13,17 @@ if (empty($this->capacityRegistration->enabled)) {
     return;
 }
 ?>
-<div class="jem-capacity-registration card my-3">
+<div class="jem-capacity-registration card my-3" data-jem-area-quantities
+    data-minimum="<?php echo (int) $this->capacityRegistration->minimum; ?>"
+    data-maximum="<?php echo (int) $this->capacityRegistration->maximum; ?>">
     <div class="card-body">
         <h3 class="h5"><?php echo Text::_('COM_JEM_CAPACITY_REGISTRATION_AREAS'); ?></h3>
+
+        <p class="mb-1"><?php echo $this->capacityRegistration->maximum > 0
+            ? Text::sprintf('COM_JEM_CAPACITY_REGISTRATION_LIMITS', $this->capacityRegistration->minimum, $this->capacityRegistration->maximum)
+            : Text::sprintf('COM_JEM_CAPACITY_REGISTRATION_MINIMUM_ONLY', $this->capacityRegistration->minimum); ?></p>
+        <p class="mb-1" data-area-total aria-live="polite"><?php echo Text::sprintf('COM_JEM_CAPACITY_REGISTRATION_TOTAL', array_sum((array) $this->capacityRegistration->current)); ?></p>
+        <p class="text-danger mb-1" data-area-error role="alert" hidden></p>
         <div class="row g-3">
             <?php foreach ((array) $this->capacityRegistration->options as $option) : ?>
                 <div class="col-12 col-md-6 col-xl-4">
@@ -27,7 +35,7 @@ if (empty($this->capacityRegistration->enabled)) {
                         <input class="form-control jem-capacity-area-quantity" type="number"
                             id="jem-capacity-<?php echo preg_replace('/[^a-z0-9_-]/i', '-', (string) $option['key']); ?>"
                             name="capacity_areas[<?php echo $this->escape((string) $option['key']); ?>]"
-                            min="0" max="<?php echo (int) $option['remaining']; ?>"
+                            min="0" max="<?php echo (int) $option['input_max']; ?>"
                             value="<?php echo (int) $option['current_quantity']; ?>">
                         <span class="input-group-text"><?php echo Text::sprintf('COM_JEM_CAPACITY_REGISTRATION_AREA_AVAILABLE', (int) $option['remaining']); ?></span>
                     </div>

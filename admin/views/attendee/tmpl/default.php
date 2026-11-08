@@ -73,13 +73,9 @@ Joomla.submitbutton = function(task)
                 return false;
             }
         }
-        if (task !== 'attendee.cancel' && <?php echo $isAreaCapacity ? 'true' : 'false'; ?> && (status === 1 || status === 2)) {
-            const total = Array.from(document.querySelectorAll('.jem-capacity-area-quantity'))
-                .reduce((sum, input) => sum + Math.max(0, parseInt(input.value || '0', 10)), 0);
-            if (total < 1) {
-                alert(<?php echo json_encode(Text::_('COM_JEM_CAPACITY_REGISTRATION_SELECTION_REQUIRED')); ?>);
-                return false;
-            }
+        if (task !== 'attendee.cancel' && window.JemAreaQuantities
+            && !window.JemAreaQuantities.validate(document.getElementById('adminForm'), true)) {
+            return false;
         }
         if (task == 'attendee.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {
             if (task == 'attendee.cancel' || document.getElementById('adminForm').uid.value != 0) {
@@ -333,7 +329,9 @@ document.addEventListener('DOMContentLoaded', function() {
             </tr>
             <?php endif; ?>
             <?php if ($isAreaCapacity) : ?>
-            <tr id="jem-capacity-areas-row">
+            <tr id="jem-capacity-areas-row" data-jem-area-quantities
+                data-minimum="<?php echo (int) $this->capacity->minimum; ?>"
+                data-maximum="<?php echo (int) $this->capacity->maximum; ?>">
                 <td class="key align-top">
                     <label><?php echo Text::_('COM_JEM_CAPACITY_REGISTRATION_AREAS'); ?>:</label>
                 </td>
@@ -354,13 +352,19 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <td class="text-center"><?php echo (int) $option['remaining']; ?></td>
                                     <td><input class="form-control form-control-sm jem-capacity-area-quantity" type="number"
                                         name="capacity_areas[<?php echo $this->escape((string) $option['key']); ?>]"
-                                        min="0" max="<?php echo (int) $option['remaining']; ?>"
+                                        min="0" max="<?php echo (int) $option['input_max']; ?>"
                                         value="<?php echo (int) $option['current_quantity']; ?>"></td>
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
+
+                    <p class="mb-1"><?php echo $this->capacity->maximum > 0
+                        ? Text::sprintf('COM_JEM_CAPACITY_REGISTRATION_LIMITS', $this->capacity->minimum, $this->capacity->maximum)
+                        : Text::sprintf('COM_JEM_CAPACITY_REGISTRATION_MINIMUM_ONLY', $this->capacity->minimum); ?></p>
+                    <p class="mb-1" data-area-total aria-live="polite"><?php echo Text::sprintf('COM_JEM_CAPACITY_REGISTRATION_TOTAL', array_sum((array) $this->capacity->current)); ?></p>
+                    <p class="text-danger mb-1" data-area-error role="alert" hidden></p>
                     <small class="text-muted"><?php echo Text::_('COM_JEM_CAPACITY_REGISTRATION_HELP'); ?></small>
                 </td>
             </tr>

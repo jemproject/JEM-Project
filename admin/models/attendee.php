@@ -426,7 +426,7 @@ class JemModelAttendee extends BaseDatabaseModel
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select(array('id', 'pricing_mode', 'pricing_revision', 'capacity_mode', 'waitinglist', 'recurrence_type', 'series_id'))
+            ->select(array('id', 'pricing_mode', 'pricing_revision', 'capacity_mode', 'waitinglist', 'recurrence_type', 'series_id', 'minbookeduser', 'maxbookeduser'))
             ->from($db->quoteName('#__jem_events'))
             ->where('id = ' . $eventid);
         $db->setQuery($query);
@@ -447,7 +447,12 @@ class JemModelAttendee extends BaseDatabaseModel
             JemRegistrationTransition::ATTENDING,
             JemRegistrationTransition::WAITING_LIST,
         ), true)) {
-            $data['places'] = array_sum(array_map('intval', $capacityAllocations));
+            try {
+                $data['places'] = JemRegistrationQuantity::areaSelectionTotal($capacityAllocations, $pricedEvent);
+            } catch (InvalidArgumentException $exception) {
+                $this->setError(Text::sprintf(...JemRegistrationQuantity::areaSelectionMessage($exception, $pricedEvent)));
+                return false;
+            }
         }
 
         if ($isPriced && in_array((int) $status, array(

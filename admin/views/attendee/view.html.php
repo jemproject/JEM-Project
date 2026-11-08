@@ -79,6 +79,13 @@ class JemViewAttendee extends HtmlView {
             }
         }
 
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerScript('jem.area-quantities', 'com_jem/area-quantities.js', array(), array('defer' => true), array('core'))
+            ->useScript('jem.area-quantities');
+        foreach (array('COM_JEM_CAPACITY_REGISTRATION_SELECTION_REQUIRED', 'COM_JEM_CAPACITY_REGISTRATION_INVALID_QUANTITY', 'COM_JEM_CAPACITY_REGISTRATION_BELOW_MINIMUM', 'COM_JEM_CAPACITY_REGISTRATION_ABOVE_MAXIMUM', 'COM_JEM_CAPACITY_REGISTRATION_TOTAL') as $key) {
+            Text::script($key);
+        }
+
         // add toolbar
         $this->addToolbar();
 

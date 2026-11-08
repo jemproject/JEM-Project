@@ -18,6 +18,11 @@ final class JemRegistrationQuantity
     public const CANCEL = 'cancel';
     public const DECLINE = 'decline';
 
+    public const ERROR_INVALID_QUANTITY = 1300;
+    public const ERROR_BELOW_MINIMUM = 1301;
+    public const ERROR_ABOVE_MAXIMUM = 1302;
+    public const ERROR_EMPTY_SELECTION = 1303;
+
     private const MAX_DATABASE_INTEGER = 2147483647;
 
     /**
@@ -239,11 +244,70 @@ final class JemRegistrationQuantity
         $maximum = max(0, (int) ($event->maxbookeduser ?? 0));
 
         if ($places < $minimum) {
-            throw new InvalidArgumentException('Registration quantity is below the configured minimum.');
+            throw new InvalidArgumentException('Registration quantity is below the configured minimum.', self::ERROR_BELOW_MINIMUM);
         }
         if ($maximum > 0 && $places > $maximum) {
-            throw new InvalidArgumentException('Registration quantity exceeds the configured maximum.');
+            throw new InvalidArgumentException('Registration quantity exceeds the configured maximum.', self::ERROR_ABOVE_MAXIMUM);
         }
+    }
+
+    /**
+     * Validate the final reservation total across all selected capacity areas.
+     *
+     * @param array $quantities Non-negative quantities keyed by area.
+     * @param object $event Per-user minimum and maximum for this event.
+     * @return int The validated total, not an increase over an existing booking.
+     * @throws InvalidArgumentException With a stable reason code for UI feedback.
+     */
+    public static function areaSelectionTotal(array $quantities, object $event): int
+    {
+        try {
+            $total = self::sumOptional($quantities);
+        } catch (InvalidArgumentException $exception) {
+            throw new InvalidArgumentException('Invalid area quantity.', self::ERROR_INVALID_QUANTITY, $exception);
+        }
+        if ($total === 0) {
+            throw new InvalidArgumentException('No capacity area places selected.', self::ERROR_EMPTY_SELECTION);
+        }
+        self::assertActiveTotal($total, $event);
+        return $total;
+    }
+
+    /**
+     * Describe an area-quantity error without coupling validation to Joomla language state.
+     *
+     * @param InvalidArgumentException $exception Quantity validation failure.
+     * @param object $event Event whose total limits were applied.
+     * @return array Language key followed by any formatting arguments.
+     */
+    public static function areaSelectionMessage(InvalidArgumentException $exception, object $event): array
+    {
+        switch ($exception->getCode()) {
+            case self::ERROR_BELOW_MINIMUM:
+                return array('COM_JEM_CAPACITY_REGISTRATION_BELOW_MINIMUM', max(1, (int) ($event->minbookeduser ?? 1)));
+            case self::ERROR_ABOVE_MAXIMUM:
+                return array('COM_JEM_CAPACITY_REGISTRATION_ABOVE_MAXIMUM', max(0, (int) ($event->maxbookeduser ?? 0)));
+            case self::ERROR_EMPTY_SELECTION:
+                return array('COM_JEM_CAPACITY_REGISTRATION_SELECTION_REQUIRED');
+            default:
+                return array('COM_JEM_CAPACITY_REGISTRATION_INVALID_QUANTITY');
+        }
+    }
+
+    /**
+     * Calculate the cap for one area input, retaining aggregate validation separately.
+     *
+     * @param array $area Capacity and remaining places, excluding the current reservation.
+     * @param object $event Per-user limit and waiting-list policy.
+     * @return int Maximum selectable final quantity in this area.
+     */
+    public static function areaInputMaximum(array $area, object $event): int
+    {
+        $capacity = max(0, (int) ($area['capacity'] ?? 0));
+        $available = !empty($event->waitinglist)
+            ? $capacity : min($capacity, max(0, (int) ($area['remaining'] ?? 0)));
+        $maximum = max(0, (int) ($event->maxbookeduser ?? 0));
+        return $maximum > 0 ? min($available, $maximum) : $available;
     }
 
     private static function safeAdd(int $left, int $right): int

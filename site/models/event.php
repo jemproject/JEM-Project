@@ -1653,10 +1653,9 @@ class JemModelEvent extends ItemModel
 
             if ($isAreaCapacity && $eventStatus > 0) {
                 try {
-                    $places = JemRegistrationQuantity::sumOptional($capacityAllocations);
-                    JemRegistrationQuantity::assertActiveTotal($places, $e);
+                    $places = JemRegistrationQuantity::areaSelectionTotal($capacityAllocations, $e);
                 } catch (InvalidArgumentException $exception) {
-                    $this->setError(Text::_('COM_JEM_CAPACITY_REGISTRATION_SELECTION_REQUIRED'));
+                    $this->setError(Text::sprintf(...JemRegistrationQuantity::areaSelectionMessage($exception, $e)));
                     return false;
                 }
             } else {

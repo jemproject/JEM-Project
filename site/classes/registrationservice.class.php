@@ -797,6 +797,8 @@ final class JemRegistrationService
             'event_capacity' => $event ? (int) ($event->maxplaces ?? 0) : 0,
             'options' => array(),
             'current' => array(),
+            'minimum' => max(1, (int) ($event->minbookeduser ?? 1)),
+            'maximum' => max(0, (int) ($event->maxbookeduser ?? 0)),
         );
 
         if (!$event || (string) $event->capacity_mode !== 'areas') {
@@ -814,6 +816,7 @@ final class JemRegistrationService
             $option['used'] = $usedQuantity;
             $option['remaining'] = max(0, (int) $option['capacity'] - $usedQuantity);
             $option['current_quantity'] = $currentQuantity;
+            $option['input_max'] = JemRegistrationQuantity::areaInputMaximum($option, $event);
             $result->options[] = $option;
             if ($currentQuantity > 0) {
                 $result->current[$key] = $currentQuantity;
@@ -903,7 +906,7 @@ final class JemRegistrationService
             return null;
         }
         $query = $this->db->getQuery(true)
-            ->select(array('id', 'capacity_mode', 'venue_snapshot', 'maxplaces', 'waitinglist'))
+            ->select(array('id', 'capacity_mode', 'venue_snapshot', 'maxplaces', 'waitinglist', 'minbookeduser', 'maxbookeduser'))
             ->from($this->db->quoteName('#__jem_events'))
             ->where($this->db->quoteName('id') . ' = ' . (int) $eventId);
         $this->db->setQuery($query);
