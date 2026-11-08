@@ -26,7 +26,26 @@ class JemViewHousekeeping extends JemAdminView
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
-        $this->totalcats = $this->get('Countcats');
+        $this->imagesReview = $app->input->getCmd('tool', '') === 'images';
+        if ($this->imagesReview) {
+            $this->imagesType = $app->input->getInt('type', 1);
+            if (!in_array($this->imagesType, array(1, 2, 3), true)) {
+                throw new \RuntimeException(Text::_('JERROR_LAYOUT_PAGE_NOT_FOUND'), 404);
+            }
+            $this->imagesCandidates = array();
+            $this->imagesError = '';
+            try {
+                $this->imagesCandidates = $this->getModel()->getImageCleanupCandidates($this->imagesType);
+            } catch (JemHousekeepingImageReferenceException $error) {
+                $this->imagesError = $error->getMessage();
+            }
+            $this->imagesBatchLimit = JemModelHousekeeping::IMAGE_CLEANUP_BATCH_LIMIT;
+            $this->imagesNonce = $this->imagesCandidates
+                ? JemHelper::issueActionNonce('housekeeping.images.' . $this->imagesType) : '';
+            $this->setLayout('images');
+        } else {
+            $this->totalcats = $this->get('Countcats');
+        }
         $this->truncateNonce = JemHelper::issueActionNonce('housekeeping.truncateAllData');
 
         // add toolbar
@@ -43,7 +62,7 @@ class JemViewHousekeeping extends JemAdminView
     {
         ToolbarHelper::title(Text::_('COM_JEM_HOUSEKEEPING'), 'housekeeping');
 
-        ToolbarHelper::back('JTOOLBAR_BACK', 'index.php?option=com_jem&view=main');
+        ToolbarHelper::back('JTOOLBAR_BACK', 'index.php?option=com_jem&view=' . ($this->imagesReview ? 'housekeeping' : 'main'));
         ToolbarHelper::divider();
         ToolBarHelper::help('housekeeping', true, 'https://www.joomlaeventmanager.net/documentation/backend/control-panel/housekeeping');
     }

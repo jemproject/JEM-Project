@@ -18,6 +18,11 @@ use Joomla\CMS\Client\ClientHelper;
 use Joomla\Filesystem\Path;
 use Joomla\CMS\Filter\InputFilter;
 
+/** Cleanup was refused because image references could not be verified. */
+class JemHousekeepingImageReferenceException extends \RuntimeException
+{
+}
+
 /**
  * Housekeeping-Model
  */
@@ -26,6 +31,9 @@ class JemModelHousekeeping extends BaseDatabaseModel
     const EVENTS = 1;
     const VENUES = 2;
     const CATEGORIES = 3;
+
+    /** Maximum number of explicitly reviewed originals deleted per request. */
+    public const IMAGE_CLEANUP_BATCH_LIMIT = 200;
 
     /**
      * Map logical name to folder and db names
@@ -55,38 +63,130 @@ class JemModelHousekeeping extends BaseDatabaseModel
      */
     public function delete($type)
     {
-        // Set FTP credentials, if given
         ClientHelper::setCredentialsFromRequest('ftp');
-
-        // Get some data from the request
-        $images    = $this->getImages($type);
-        $folder = $this->map[$type]['folder'];
-
-        $count = count($images);
-        $fail = 0;
-
-        foreach ($images as $image)
-        {
-            if ($image !== InputFilter::getInstance()->clean($image, 'path')) {
-                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
-                $fail++;
-                continue;
-            }
-
-            $fullPath = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
-            $fullPaththumb = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
-
-            if (is_file($fullPath)) {
-                File::delete($fullPath);
-                if (is_file($fullPaththumb)) {
-                    File::delete($fullPaththumb);
-                }
+        $deleted = 0;
+        foreach ($this->getImages($type) as $image) {
+            if ($this->deleteImageFile($type, $image)) {
+                $deleted++;
             }
         }
 
-        $deleted = $count - $fail;
-
         return $deleted;
+    }
+
+    /**
+     * List unused originals for review, with identifiers bound to their current metadata.
+     *
+     * @param int $type Event, venue or category image area.
+     * @return array Candidate identifier, relative name, size and modification time.
+     */
+    public function getImageCleanupCandidates(int $type): array
+    {
+        if (!isset($this->map[$type])) {
+            throw new InvalidArgumentException('Unknown image area.');
+        }
+        $base = JPATH_SITE . '/images/jem/' . $this->map[$type]['folder'];
+        $secret = (string) Factory::getApplication()->get('secret', '');
+        $candidates = array();
+        foreach ($this->getImages($type) as $image) {
+            $path = self::containedImageFile($base, $image);
+            if ($path === null) {
+                continue;
+            }
+            clearstatcache(true, $path);
+            $size = (int) filesize($path);
+            $modified = (int) filemtime($path);
+            $candidates[] = array(
+                'id' => hash_hmac('sha256', implode('|', array($type, $image, $size, $modified)), $secret),
+                'relative' => $image,
+                'size' => $size,
+                'modified' => $modified,
+            );
+        }
+        usort($candidates, static fn(array $a, array $b): int => strnatcasecmp($a['relative'], $b['relative']));
+
+        return $candidates;
+    }
+
+    /**
+     * Delete only selected originals that are still unused and unchanged since review.
+     *
+     * @param int $type Image area.
+     * @param array $selected Opaque candidate identifiers from the preview.
+     * @return array Counts of deleted, skipped and failed originals.
+     */
+    public function deleteSelectedImages(int $type, array $selected): array
+    {
+        if (!$selected || count($selected) > self::IMAGE_CLEANUP_BATCH_LIMIT) {
+            throw new InvalidArgumentException('Invalid image selection size.');
+        }
+        foreach ($selected as $id) {
+            if (!is_string($id) || !preg_match('/^[a-f0-9]{64}$/D', $id)) {
+                throw new InvalidArgumentException('Invalid image selection.');
+            }
+        }
+        $candidates = array_column($this->getImageCleanupCandidates($type), null, 'id');
+        $result = array('deleted' => 0, 'skipped' => 0, 'failed' => 0);
+        foreach (array_unique($selected) as $id) {
+            if (!isset($candidates[$id])) {
+                $result['skipped']++;
+                continue;
+            }
+            $result[$this->deleteImageFile($type, $candidates[$id]['relative']) ? 'deleted' : 'failed']++;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Remove a verified unused original and its contained thumbnail.
+     *
+     * @param int $type Image area.
+     * @param string $image Folder-relative filename.
+     * @return bool Whether all existing files were removed successfully.
+     */
+    private function deleteImageFile(int $type, string $image): bool
+    {
+        $base = JPATH_SITE . '/images/jem/' . $this->map[$type]['folder'];
+        $path = self::containedImageFile($base, $image);
+        if ($path === null) {
+            return false;
+        }
+        try {
+            if (!File::delete($path)) {
+                return false;
+            }
+            $thumb = self::containedImageFile($base . '/small', $image);
+            return $thumb === null || File::delete($thumb);
+        } catch (\RuntimeException $error) {
+            return false;
+        }
+    }
+
+    /**
+     * Resolve regular images within their managed directory, excluding links and control files.
+     *
+     * @param string $base Managed directory.
+     * @param string $relative Filename inside that directory.
+     * @return string|null Verified absolute path, or null for an unsafe/non-image entry.
+     */
+    private static function containedImageFile(string $base, string $relative): ?string
+    {
+        if (
+            $relative === '' || $relative[0] === '.' || str_contains($relative, "\0")
+            || !preg_match('/\.(?:bmp|gif|jpe|jpeg|jfif|jpg|png|svg|webp)$/iD', $relative)
+        ) {
+            return null;
+        }
+        $root = realpath($base);
+        $expected = Path::clean($base . '/' . $relative);
+        $path = realpath($expected);
+        if ($root === false || $path === false || !is_file($path) || is_link($expected)) {
+            return null;
+        }
+        $compare = static fn(string $value): string => PHP_OS_FAMILY === 'Windows' ? strtolower($value) : $value;
+        return str_starts_with($compare($path), $compare($root . DIRECTORY_SEPARATOR))
+            && $compare($path) === $compare($expected) ? $path : null;
     }
 
     /**
@@ -373,7 +473,10 @@ class JemModelHousekeeping extends BaseDatabaseModel
      */
     private function getImages($type)
     {
-        $images = array_diff($this->getAvailable($type), $this->getAssigned($type));
+        $assigned = $this->getAssigned($type);
+        $key = static fn($name): string => PHP_OS_FAMILY === 'Windows' ? mb_strtolower($name, 'UTF-8') : $name;
+        $used = array_fill_keys(array_map($key, $assigned), true);
+        $images = array_values(array_filter($this->getAvailable($type), static fn($name): bool => !isset($used[$key($name)])));
 
         return $images;
     }
@@ -386,17 +489,109 @@ class JemModelHousekeeping extends BaseDatabaseModel
      */
     private function getAssigned($type)
     {
-        if ($type === JemModelHousekeeping::EVENTS) {
-            $query = 'SELECT datimage FROM #__jem_events WHERE datimage <> ' . $this->_db->quote('')
-                . ' UNION SELECT fullimage FROM #__jem_events WHERE fullimage <> ' . $this->_db->quote('');
-        } else {
-            $query = 'SELECT '.$this->map[$type]['field'].' FROM #__jem_'.$this->map[$type]['table'];
+        try {
+            if ($type === JemModelHousekeeping::EVENTS) {
+                $query = 'SELECT datimage FROM #__jem_events WHERE datimage <> ' . $this->_db->quote('')
+                    . ' UNION SELECT fullimage FROM #__jem_events WHERE fullimage <> ' . $this->_db->quote('');
+            } else {
+                $query = 'SELECT '.$this->map[$type]['field'].' FROM #__jem_'.$this->map[$type]['table'];
+            }
+
+            $this->_db->setQuery($query);
+            $assigned = $this->_db->loadColumn();
+
+            return array_merge((array) $assigned, $this->getLinkImages($type));
+        } catch (JemHousekeepingImageReferenceException $error) {
+            throw $error;
+        } catch (\Exception $error) {
+            throw new JemHousekeepingImageReferenceException(
+                Text::_('COM_JEM_HOUSEKEEPING_IMAGE_REFERENCES_FAILED'),
+                0,
+                $error
+            );
+        }
+    }
+
+    /**
+     * Read link references regardless of publication or the event's current state.
+     *
+     * @param int $type Image area identifier.
+     * @return string[] Paths relative to the selected image folder.
+     */
+    private function getLinkImages($type): array
+    {
+        $query = $this->_db->getQuery(true)
+            ->select($this->_db->quoteName('params'))
+            ->from($this->_db->quoteName('#__jem_links'))
+            ->where($this->_db->quoteName('params') . ' IS NOT NULL')
+            ->where($this->_db->quoteName('params') . ' <> ' . $this->_db->quote(''));
+        $this->_db->setQuery($query);
+
+        return self::extractLinkImages((array) $this->_db->loadColumn(), $this->map[$type]['folder']);
+    }
+
+    /**
+     * Resolve local link images without treating unreadable references as unused.
+     *
+     * @param array $rows Stored JSON parameter values.
+     * @param string $folder Managed image folder name.
+     * @return string[] Unique local names, including literal and URL-decoded variants.
+     * @throws UnexpectedValueException If stored image references cannot be interpreted.
+     * @throws JsonException If a nonempty parameter value is malformed.
+     */
+    private static function extractLinkImages(array $rows, string $folder): array
+    {
+        $prefix = 'images/jem/' . $folder . '/';
+        $images = array();
+
+        foreach ($rows as $json) {
+            if (trim((string) $json) === '') {
+                continue;
+            }
+            $params = json_decode((string) $json, true, 512, JSON_THROW_ON_ERROR);
+            if (!is_array($params)) {
+                throw new UnexpectedValueException('Invalid event link parameters.');
+            }
+            $image = $params['image'] ?? '';
+            if (!is_string($image)) {
+                throw new UnexpectedValueException('Invalid event link image.');
+            }
+            $image = trim($image);
+            $fragment = strpos($image, '#joomlaImage://');
+            if ($fragment !== false) {
+                $image = substr($image, 0, $fragment);
+            }
+
+            foreach (array_unique(array(rawurldecode($image), $image)) as $variant) {
+                $variant = str_replace('\\', '/', $variant);
+                // External URLs never protect an unrelated file in a JEM folder.
+                if (preg_match('#^(?:[a-z][a-z0-9+.-]*:|//)#i', $variant)) {
+                    continue;
+                }
+                $variant = ltrim($variant, '/');
+                if (str_contains($variant, "\0") || preg_match('#(?:^|/)\.\.(?:/|$)#', $variant)) {
+                    throw new UnexpectedValueException('Invalid local event link image path.');
+                }
+                $variant = implode('/', array_filter(explode('/', $variant), static fn($part): bool => $part !== '' && $part !== '.'));
+                $matches = PHP_OS_FAMILY === 'Windows'
+                    ? strncasecmp($variant, $prefix, strlen($prefix)) === 0
+                    : str_starts_with($variant, $prefix);
+                if (!$matches || strlen($variant) <= strlen($prefix)) {
+                    continue;
+                }
+                $relative = substr($variant, strlen($prefix));
+                $images[] = $relative;
+                // Removing an original also removes its thumbnail. Protect both
+                // when a link explicitly selects a file from the small folder.
+                $thumbnail = PHP_OS_FAMILY === 'Windows'
+                    ? strncasecmp($relative, 'small/', 6) === 0 : str_starts_with($relative, 'small/');
+                if ($thumbnail) {
+                    $images[] = substr($relative, strlen('small/'));
+                }
+            }
         }
 
-        $this->_db->setQuery($query);
-        $assigned = $this->_db->loadColumn();
-
-        return $assigned;
+        return array_values(array_unique($images));
     }
 
     /**
@@ -419,7 +614,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
         if ($fileList !== false) {
             foreach ($fileList as $file)
             {
-                if (is_file($basePath.'/'.$file) && substr($file, 0, 1) != '.') {
+                if (self::containedImageFile($basePath, $file) !== null) {
                     $images[] = $file;
                 }
             }

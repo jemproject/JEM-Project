@@ -39,33 +39,55 @@ class JemControllerHousekeeping extends BaseController
     }
 
     /**
-     * logic to massdelete unassigned images
+     * Open the image review for legacy cleanup buttons without deleting files.
      *
-     * @access public
      * @return void
-     *
      */
-    public function delete() {
+    public function delete()
+    {
         JemHelper::requirePostToken();
         $this->allowHousekeeping();
-
         $task = Factory::getApplication()->input->post->getCmd('task', '');
         $task = strpos($task, '.') !== false ? substr($task, strrpos($task, '.') + 1) : $task;
-        $model = $this->getModel('housekeeping');
-        $total = 0;
-
-        if ($task == 'cleaneventimg') {
-            $total = $model->delete($model::EVENTS);
-        } elseif ($task == 'cleanvenueimg') {
-            $total = $model->delete($model::VENUES);
-        } elseif ($task == 'cleancategoryimg') {
-            $total = $model->delete($model::CATEGORIES);
+        $types = array('cleaneventimg' => 1, 'cleanvenueimg' => 2, 'cleancategoryimg' => 3);
+        if (!isset($types[$task])) {
+            throw new \RuntimeException(Text::_('JERROR_LAYOUT_PAGE_NOT_FOUND'), 404);
         }
+        $this->setRedirect('index.php?option=com_jem&view=housekeeping&tool=images&type=' . $types[$task]);
+    }
 
-        $link = 'index.php?option=com_jem&view=housekeeping';
-        $msg = Text::sprintf('COM_JEM_HOUSEKEEPING_IMAGES_DELETED', $total);
-
-        $this->setRedirect($link, $msg);
+    /**
+     * Delete a confirmed selection after checking permissions, CSRF and the review nonce.
+     *
+     * @return void
+     */
+    public function deleteReviewedImages(): void
+    {
+        JemHelper::requirePostToken();
+        $this->allowHousekeeping();
+        $post = Factory::getApplication()->input->post;
+        $type = $post->getInt('type', 0);
+        if (!in_array($type, array(1, 2, 3), true)) {
+            throw new \RuntimeException(Text::_('JERROR_LAYOUT_PAGE_NOT_FOUND'), 404);
+        }
+        if (!JemHelper::consumeActionNonce('housekeeping.images.' . $type, $post->getString('images_nonce', ''))) {
+            throw new \RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+        }
+        $url = 'index.php?option=com_jem&view=housekeeping&tool=images&type=' . $type;
+        try {
+            $result = $this->getModel('housekeeping')->deleteSelectedImages($type, $post->get('images', array(), 'array'));
+        } catch (JemHousekeepingImageReferenceException $error) {
+            $this->setRedirect($url, $error->getMessage(), 'warning');
+            return;
+        } catch (\InvalidArgumentException $error) {
+            $this->setRedirect($url, Text::_('COM_JEM_HOUSEKEEPING_IMAGES_SELECTION_INVALID'), 'warning');
+            return;
+        }
+        $this->setRedirect(
+            $url,
+            Text::sprintf('COM_JEM_HOUSEKEEPING_IMAGES_SELECTION_RESULT', $result['deleted'], $result['skipped'], $result['failed']),
+            $result['skipped'] || $result['failed'] ? 'warning' : 'message'
+        );
     }
 
     /**
