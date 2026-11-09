@@ -202,7 +202,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
 
         <?php if($params->get('show_my_location','0')) { ?>
             <!-- Location button -->
-            <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
+            <button type="button" class="btn btn-info btn-sm" id="locate-me-btn-<?= $map_id ?>">
                 <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
             </button>
         <?php } ?>
@@ -211,13 +211,13 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
 
     <!-- Location help text -->
     <?php if($params->get('show_my_location','0')) { ?>
-        <div class="alert alert-info small mt-2" id="location-help">
+        <div class="alert alert-info small mt-2" id="location-help-<?= $map_id ?>">
             <i class="icon-info"></i>
             <?= Text::_('MOD_JEM_MAP_LOCATION_HELP') ?>
         </div>
 
         <!-- Permission instructions -->
-        <div class="alert alert-warning small mt-1" id="permission-instructions" style="display: none;">
+        <div class="alert alert-warning small mt-1" id="permission-instructions-<?= $map_id ?>" style="display: none;">
             <i class="icon-warning"></i>
             <?= Text::_('MOD_JEM_MAP_PERMISSION_INSTRUCTIONS') ?>
         </div>
@@ -349,6 +349,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         var locationMarker = null;
         var locationCircle = null;
         var locationRequested = false;
+        var permissionTimer = null;
 
         function checkGeolocationSupport() {
             if (!navigator.geolocation) {
@@ -360,7 +361,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
 
         function showError(message) {
             alert(message);
-            var locateBtn = document.getElementById('locate-me-btn');
+            var locateBtn = document.getElementById('locate-me-btn-<?= $map_id ?>');
             if (locateBtn) {
                 locateBtn.innerHTML = '<i class="icon-location"></i> ' + <?= $encodeMapText('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>;
                 locateBtn.disabled = false;
@@ -368,8 +369,8 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         }
 
         function showPermissionInstructions() {
-            var instructions = document.getElementById('permission-instructions');
-            var help = document.getElementById('location-help');
+            var instructions = document.getElementById('permission-instructions-<?= $map_id ?>');
+            var help = document.getElementById('location-help-<?= $map_id ?>');
             if (instructions && help) {
                 help.style.display = 'none';
                 instructions.style.display = 'block';
@@ -377,8 +378,10 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         }
 
         function hidePermissionInstructions() {
-            var instructions = document.getElementById('permission-instructions');
-            var help = document.getElementById('location-help');
+            clearTimeout(permissionTimer);
+            permissionTimer = null;
+            var instructions = document.getElementById('permission-instructions-<?= $map_id ?>');
+            var help = document.getElementById('location-help-<?= $map_id ?>');
             if (instructions && help) {
                 instructions.style.display = 'none';
                 help.style.display = 'block';
@@ -388,7 +391,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         function locateUser() {
             if (!checkGeolocationSupport()) return;
 
-            var locateBtn = document.getElementById('locate-me-btn');
+            var locateBtn = document.getElementById('locate-me-btn-<?= $map_id ?>');
             if (!locateBtn) {
                 return;
             }
@@ -397,7 +400,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
             locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> ' + <?= $encodeMapText('MOD_JEM_MAP_LOCATING') ?>;
             locateBtn.disabled = true;
             locationRequested = true;
-            setTimeout(showPermissionInstructions, 1000);
+            permissionTimer = setTimeout(showPermissionInstructions, 1000);
 
             navigator.geolocation.getCurrentPosition(
                 function(position) {
@@ -464,7 +467,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
             );
         }
 
-        var locateBtn = document.getElementById('locate-me-btn');
+        var locateBtn = document.getElementById('locate-me-btn-<?= $map_id ?>');
         if (locateBtn) {
             locateBtn.addEventListener('click', function() {
                 if (!locationRequested) {
@@ -568,6 +571,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         var locationMarker = null;
         var locationCircle = null;
         var locationRequested = false;
+        var permissionTimer = null;
 
         // Check geolocation support and permissions
         function checkGeolocationSupport() {
@@ -581,7 +585,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         // Show error message
         function showError(message) {
             alert(message);
-            var locateBtn = document.getElementById('locate-me-btn');
+            var locateBtn = document.getElementById('locate-me-btn-<?= $map_id ?>');
             if (locateBtn) {
                 locateBtn.innerHTML = '<i class="icon-location"></i> ' + <?= $encodeMapText('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>;
                 locateBtn.disabled = false;
@@ -590,8 +594,8 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
 
         // Show permission instructions
         function showPermissionInstructions() {
-            var instructions = document.getElementById('permission-instructions');
-            var help = document.getElementById('location-help');
+            var instructions = document.getElementById('permission-instructions-<?= $map_id ?>');
+            var help = document.getElementById('location-help-<?= $map_id ?>');
             if (instructions && help) {
                 help.style.display = 'none';
                 instructions.style.display = 'block';
@@ -600,8 +604,10 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
 
         // Hide permission instructions
         function hidePermissionInstructions() {
-            var instructions = document.getElementById('permission-instructions');
-            var help = document.getElementById('location-help');
+            clearTimeout(permissionTimer);
+            permissionTimer = null;
+            var instructions = document.getElementById('permission-instructions-<?= $map_id ?>');
+            var help = document.getElementById('location-help-<?= $map_id ?>');
             if (instructions && help) {
                 instructions.style.display = 'none';
                 help.style.display = 'block';
@@ -613,14 +619,14 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
             if (!checkGeolocationSupport()) return;
 
             // Show loading state
-            var locateBtn = document.getElementById('locate-me-btn');
+            var locateBtn = document.getElementById('locate-me-btn-<?= $map_id ?>');
             var originalText = locateBtn.innerHTML;
             locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> ' + <?= $encodeMapText('MOD_JEM_MAP_LOCATING') ?>;
             locateBtn.disabled = true;
             locationRequested = true;
 
             // Show permission instructions after a short delay
-            setTimeout(showPermissionInstructions, 1000);
+            permissionTimer = setTimeout(showPermissionInstructions, 1000);
 
             // Use browser's native geolocation API
             navigator.geolocation.getCurrentPosition(
@@ -697,7 +703,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         }
 
         // Location button event - only add if button exists
-        var locateBtn = document.getElementById('locate-me-btn');
+        var locateBtn = document.getElementById('locate-me-btn-<?= $map_id ?>');
         if (locateBtn) {
             locateBtn.addEventListener('click', function() {
                 if (!locationRequested) {
