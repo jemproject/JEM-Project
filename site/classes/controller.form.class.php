@@ -59,6 +59,9 @@ abstract class JemControllerForm extends FormController
                 } else {
                     // Filter directly: an empty date must not become an XML default.
                     $data[$name] = $field->filter($data[$name]);
+                    if ($data[$name] === false) {
+                        throw new RuntimeException(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_DATE', $field->title));
+                    }
                 }
             }
 
