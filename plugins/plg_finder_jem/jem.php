@@ -271,7 +271,8 @@ class plgFinderJEM extends Adapter
             return;
         }
 
-        $levels = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
+        $identity = Factory::getApplication()->getIdentity();
+        $levels = $identity !== null ? $identity->getAuthorisedViewLevels() : array(1);
         JemHelper::applyAssociatedArticleEventContent($item, $levels);
 
         $item->slug = !empty($item->alias) ? ((int) $item->id . ':' . $item->alias) : (int) $item->id;
@@ -291,7 +292,10 @@ class plgFinderJEM extends Adapter
 
         // Build the necessary route and path information.
         $item->url   = $this->getURL($item->id, $this->extension, $this->layout);
-        $item->route = JEMHelperRoute::getEventRoute($item->slug, $item->catslug);
+        $application = Factory::getApplication();
+        $item->route = method_exists($application, 'getMenu')
+            ? JEMHelperRoute::getEventRoute($item->slug, $item->catslug)
+            : $item->url;
 
         // Get the menu title if it exists.
         // $title = $this->getItemMenuTitle($item->url);
