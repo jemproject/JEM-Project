@@ -115,6 +115,34 @@ final class JemRecurrenceValidator
         return $row;
     }
 
+    /**
+     * Validate the effective cutoff when editing a periodic recurrence.
+     * @param array $data Event fields with dates and recurrence_limit_date in SQL date format.
+     * @return string|null Translation key on failure, or null for a valid/non-periodic event.
+     */
+    public static function limitDateError(array $data): ?string
+    {
+        $type = (int) ($data['recurrence_type'] ?? 0);
+        if ($type < 1 || $type > 6) {
+            return null;
+        }
+
+        $value = $data['recurrence_limit_date'] ?? '';
+        if ($value === null || is_string($value) && trim($value) === '') {
+            return 'COM_JEM_RECURRENCE_END_REQUIRED';
+        }
+        if (!is_string($value) || str_contains($value, "\0") || !self::calendarDate($value)) {
+            return 'COM_JEM_RECURRENCE_END_INVALID';
+        }
+
+        $start = $data['dates'] ?? '';
+        if (is_string($start) && !str_contains($start, "\0") && self::calendarDate($start) && $value < $start) {
+            return 'COM_JEM_RECURRENCE_END_BEFORE_START';
+        }
+
+        return null;
+    }
+
     private static function calendarDate(string $value): ?DateTimeImmutable
     {
         $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value, new DateTimeZone('UTC'));

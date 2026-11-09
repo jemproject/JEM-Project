@@ -2922,7 +2922,19 @@ class JemHelper
                 }
                 break;
             case "5": // year recurrence
-                $start_day = mktime(1,0,0,($date_array["month"]),$date_array["day"],$date_array["year"]+ $recurrence_number);
+                // Keep the original interval and skip nonexistent dates (29 February).
+                $interval = (int) $recurrence_number;
+                if ($interval < 1) {
+                    return false;
+                }
+                $year = (int) $date_array["year"] + $interval;
+                while ($year <= 9999 && !checkdate((int) $date_array["month"], (int) $date_array["day"], $year)) {
+                    $year += $interval;
+                }
+                if ($year > 9999) {
+                    return false;
+                }
+                $start_day = mktime(1, 0, 0, $date_array["month"], $date_array["day"], $year);
                 break;
             case "6": // last day recurrence
                 $selected = $recurrence_row['recurrence_bylastday'];
