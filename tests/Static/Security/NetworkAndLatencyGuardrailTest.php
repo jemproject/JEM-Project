@@ -16,6 +16,10 @@ final class NetworkAndLatencyGuardrailTest extends TestCase
         'admin/views/types/tmpl/default.php:fetch',
         'admin/views/venue/tmpl/edit.php:fetch',
         'admin/views/venues/tmpl/default.php:fetch',
+        // Same-origin, CSRF/ACL-protected recurrence preview; no files are uploaded.
+        'media/js/recurrence-change.js:fetch',
+        // Same-origin cancellation preview with token, ownership and confirmation checks.
+        'media/js/registration-cancellation.js:fetch',
         'media/js/attachments.js:fetch',
         // Same-origin POST to the CSRF/ACL-protected image filename check; no upload.
         'media/js/image-filename-policy.js:fetch',

@@ -86,11 +86,11 @@ final class AreaCancellationTest extends TestCase
         JemRegistrationCancellation::reduce($this->event(), $this->registration(4, -1), 2, [], ['area:1' => 4]);
     }
 
-    public function testPricedPartialCancellationStillRequiresCommercialWorkflow(): void
+    public function testPricedPartialCancellationRequiresFullCancellation(): void
     {
         $registration = $this->registration();
         $registration->pricing_mode = 'single';
-        $this->expectExceptionMessage('COM_JEM_PRICED_REGISTRATION_REQUIRES_ORDER');
+        $this->expectExceptionMessage('COM_JEM_PRICED_CANCELLATION_FULL_ONLY');
         JemRegistrationCancellation::reduce($this->event('classic'), $registration, 2, [], []);
     }
 

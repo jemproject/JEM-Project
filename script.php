@@ -9,6 +9,12 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Uri\Uri;
+
+use Joomla\CMS\Table\Menu;
+
+use Joomla\Component\Scheduler\Administrator\Table\TaskTable;
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Access\Rules;
@@ -244,7 +250,7 @@ class com_jemInstallerScript
             }
 
             // A missing provider class must not turn this into direct SQL asset deletion.
-            if (!class_exists(\Joomla\Component\Scheduler\Administrator\Table\TaskTable::class)) {
+            if (!class_exists(TaskTable::class)) {
                 $path = JPATH_ADMINISTRATOR . '/components/com_scheduler/src/Table/TaskTable.php';
                 if (!is_file($path)) {
                     throw new RuntimeException(Text::_('COM_JEM_UNINSTALL_SCHEDULER_API_MISSING'));
@@ -298,7 +304,7 @@ class com_jemInstallerScript
             }
 
             foreach ($ids as $id) {
-                $table = new \Joomla\Component\Scheduler\Administrator\Table\TaskTable($db);
+                $table = new TaskTable($db);
                 try {
                     if (!$table->delete($id)) {
                         throw new RuntimeException((string) $table->getError());
@@ -3240,7 +3246,7 @@ SQL;
             return;
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $table = new \Joomla\CMS\Table\Menu($db);
+        $table = new Menu($db);
         $rebuildPaths = [];
         foreach ($selection['items'] as $item) {
             foreach ($selection['all'] as $other) {
@@ -3346,7 +3352,7 @@ SQL;
         try {
             $siteRoot = (string) Factory::getApplication()->get('live_site', '');
             if ($siteRoot === '') {
-                $siteRoot = (string) \Joomla\CMS\Uri\Uri::root();
+                $siteRoot = (string) Uri::root();
             }
         } catch (\Throwable $error) {
             // Relative entry points remain identifiable without guessing an external origin in CLI.

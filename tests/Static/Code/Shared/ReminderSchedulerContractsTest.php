@@ -78,8 +78,10 @@ final class ReminderSchedulerContractsTest extends TestCase
         self::assertStringContainsString('cancelPendingReminders(0, $id)', $eventTable);
         self::assertStringContainsString("#__jem_reminders", $eventTable);
         self::assertStringContainsString("quoteName('event_id')", $eventTable);
-        self::assertStringContainsString('cancelPendingReminders(0, $outdatedEventId)', $housekeeping);
-        self::assertStringContainsString('DELETE FROM #__jem_reminders WHERE event_id IN', $housekeeping);
+        self::assertStringContainsString('JemAutomaticCleanup::run(', $housekeeping);
+        $cleanup = $this->read('/site/classes/automaticcleanup.class.php');
+        self::assertStringContainsString("Table::getInstance('Event', 'JemTable'", $cleanup);
+        self::assertStringContainsString('$table->delete($id', $cleanup);
     }
 
     private function read(string $path): string

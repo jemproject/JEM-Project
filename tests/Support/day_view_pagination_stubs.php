@@ -65,6 +65,14 @@ namespace Joomla\CMS\HTML {
 }
 
 namespace {
+    require_once JEM_TEST_ROOT . '/tests/Support/recurrence_source_stream.php';
+    if (!in_array('jemrecurrence', stream_get_wrappers(), true)) {
+        stream_wrapper_register('jemrecurrence', RecurrenceSourceStream::class);
+    }
+    if (!defined('JPATH_SITE')) {
+        define('JPATH_SITE', 'jemrecurrence://site');
+    }
+
     // Loaded only inside isolated tests, never into Joomla or the main PHPUnit process.
     if (!defined('JPATH_ROOT')) {
         define('JPATH_ROOT', JEM_TEST_ROOT);
@@ -267,6 +275,21 @@ namespace {
         public function get(string $key, mixed $default = null): mixed
         {
             return $default;
+        }
+
+        /** @var array<string, mixed> Isolated request/session state. */
+        private array $session = [];
+
+        /** @param string $key State key. @param mixed $default Fallback. @return mixed Stored state. */
+        public function getUserState(string $key, mixed $default = null): mixed
+        {
+            return $this->session[$key] ?? $default;
+        }
+
+        /** @param string $key State key. @param mixed $value Value. @return void */
+        public function setUserState(string $key, mixed $value): void
+        {
+            $this->session[$key] = $value;
         }
 
         public function getUserStateFromRequest(string $key, string $request, mixed $default, string $type): mixed

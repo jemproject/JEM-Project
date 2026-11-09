@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Response\JsonResponse;
+
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Language\Text;
@@ -65,9 +67,9 @@ abstract class JemControllerForm extends FormController
                 }
             }
 
-            echo new \Joomla\CMS\Response\JsonResponse($model->previewRecurrenceChange($data));
+            echo new JsonResponse($model->previewRecurrenceChange($data));
         } catch (\Throwable $error) {
-            echo new \Joomla\CMS\Response\JsonResponse($error);
+            echo new JsonResponse($error);
         }
         $this->app->close();
     }

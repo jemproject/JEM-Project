@@ -43,7 +43,7 @@ $canDecline = !$registration && !empty($this->item->requestanswer) && $this->all
         </label>
         <?php if ($canCancel && !$pricedReservation) : ?>
             <input id="cancelplaces" type="number" name="cancelplaces" value="<?php echo $places; ?>"
-                min="1" max="<?php echo $places; ?>" aria-label="<?php echo $this->escape(Text::_('COM_JEM_ATTENDEES_PLACES')); ?>">
+                min="1" max="<?php echo $places; ?>" aria-label="<?php echo $this->escape(Text::_('COM_JEM_PLACES')); ?>">
         <?php else : ?>
             <input id="cancelplaces" type="hidden" name="cancelplaces" value="<?php echo $canCancel ? $places : 0; ?>">
         <?php endif; ?>

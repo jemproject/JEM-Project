@@ -457,6 +457,9 @@ final class PricingQuoteJoomlaIntegrationTest extends JoomlaTestCase
     public function testPricedWaitingPromotionHonoursPoolAndQuotaEvenWhenForced(): void
     {
         $fixture = $this->createFixture();
+        // This capacity test uses a valid ten-place waiting order.
+        $this->updateValue('#__jem_events', $fixture['event_id'], 'maxbookeduser', 10);
+        $this->updateValue('#__jem_event_prices', $fixture['adult_price_id'], 'max_quantity', 10);
         $this->updateValue('#__jem_events', $fixture['event_id'], 'waitinglist', 1);
         $blocked = JemWaitingListPromotion::promote($fixture['event_id'], array(
             'mode' => JemWaitingListPromotion::MODE_MANUAL,

@@ -150,6 +150,26 @@ final class AttendeesStatusFilterTest extends TestCase
     #[DataProvider('clients')]
     public function testPaginationUsesFilteredRegistrationCount(string $client): void
     {
+        if ($client === 'site') {
+            // Frontend page sizes are limited to the visible selector values.
+            // Exercise an actual second page with Limit=5, not a rejected Limit=1.
+            for ($id = 101; $id <= 104; ++$id) {
+                $user = (object) ['id' => $id, 'name' => 'Extra ' . $id, 'username' => 'extra' . $id];
+                $this->db->insertObject('#__users', $user);
+                $registration = (object) ['id' => $id, 'event' => 1, 'uid' => $id,
+                    'status' => 1, 'waiting' => 0, 'uregdate' => '2026-10-31 12:00:00'];
+                $this->db->insertObject('#__jem_register', $registration);
+            }
+            $all = $this->ids($client, $this->model($client, 1, 1, ['limit' => 0]));
+            self::assertCount(6, $all);
+            foreach ([0, 5] as $offset) {
+                $model = $this->model($client, 1, 1, ['limit' => 5, 'limitstart' => $offset]);
+                self::assertSame(array_slice($all, $offset, 5), $this->ids($client, $model));
+                self::assertSame(6, $model->getTotal());
+                self::assertSame(2, $model->getPagination()->pagesTotal);
+            }
+            return;
+        }
         foreach ([0 => 11, 1 => 15] as $offset => $id) {
             $model = $this->model($client, 1, 1, ['limit' => 1, 'limitstart' => $offset]);
             self::assertSame([$id], $this->ids($client, $model));

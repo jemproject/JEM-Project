@@ -17,7 +17,15 @@ final class HousekeepingImageCleanupTest extends TestCase
         self::assertStringContainsString('self::isImageCandidate($relative)', $model);
         self::assertStringContainsString('self::containedExistingFile($basePath, $relative)', $model);
         self::assertStringContainsString('if (!File::delete($fullPath))', $model);
-        self::assertSame(3, substr_count($layout, "Text::_('COM_JEM_HOUSEKEEPING_CLEANUP_IMAGES_CONFIRM')"));
+        $controller = (string) file_get_contents(JEM_TEST_ROOT . '/admin/controllers/housekeeping.php');
+        $review = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/housekeeping/tmpl/files.php');
+        foreach (['cleaneventimg', 'cleanvenueimg', 'cleancategoryimg'] as $task) {
+            self::assertStringContainsString('housekeeping.' . $task, $layout);
+        }
+        self::assertStringContainsString('view=housekeeping&tool=files&area=', $controller);
+        self::assertStringContainsString("consumeActionNonce('housekeeping.deleteUnusedFiles'", $controller);
+        self::assertStringContainsString("getInt('confirm_references', 0) === 1", $controller);
+        self::assertStringContainsString('if (!window.confirm(message))', $review);
         self::assertStringContainsString('COM_JEM_HOUSEKEEPING_CLEANUP_IMAGES_CONFIRM=', $language);
     }
 }

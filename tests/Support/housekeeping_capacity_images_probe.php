@@ -48,7 +48,7 @@ try {
         public function enqueueMessage($message, $type): void { throw new RuntimeException($message); }
     };
     $install = file_get_contents($source . '/admin/sql/install.mysql.utf8.sql');
-    foreach (['venues', 'links', 'venue_capacity_profiles', 'venue_spaces', 'venue_layouts', 'venue_capacity_areas'] as $table) {
+    foreach (['events', 'categories', 'venues', 'links', 'venue_capacity_profiles', 'venue_spaces', 'venue_layouts', 'venue_capacity_areas'] as $table) {
         if (!preg_match('/CREATE TABLE IF NOT EXISTS `#__jem_' . $table . '`.*?ENGINE=InnoDB;/s', $install, $match)) {
             throw new RuntimeException('Fixture schema missing: ' . $table);
         }

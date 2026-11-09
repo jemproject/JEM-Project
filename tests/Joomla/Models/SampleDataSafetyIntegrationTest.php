@@ -67,6 +67,7 @@ final class SampleDataSafetyIntegrationTest extends TestCase
         $this->db = new \Joomla\Database\Mysqli\MysqliDriver($options);
         $container = new \Joomla\DI\Container();
         $container->set('DatabaseDriver', $this->db, true);
+        $container->alias(\Joomla\Database\DatabaseInterface::class, 'DatabaseDriver');
         (new ReflectionProperty(Factory::class, 'container'))->setValue(null, $container);
         $this->db->setQuery("SET SESSION sql_mode = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'")->execute();
         foreach (\Joomla\Database\DatabaseDriver::splitSql(file_get_contents(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql')) as $sql) {
