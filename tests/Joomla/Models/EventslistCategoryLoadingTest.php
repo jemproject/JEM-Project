@@ -210,8 +210,11 @@ final class EventslistCategoryLoadingTest extends TestCase
             $this->user->permissions['core.edit'] = true;
         } elseif ($scenario === 'owner' || $scenario === 'other owner') {
             $this->user->permissions['core.edit.own'] = true;
-        } elseif ($scenario === 'JEM group') {
-            $this->user->jemGroups = [9 => ['id' => 9]];
+        } elseif ($scenario === 'JEM group' || $scenario === 'JEM group visible categories') {
+            $this->user->jemGroups = [9 => ['id' => 9, 'editevent' => 1]];
+            if ($scenario === 'JEM group visible categories') {
+                $this->db->setQuery('DELETE FROM t_jem_cats_event_relations WHERE itemid=10 AND catid IN (4,5)')->execute();
+            }
         } elseif ($scenario === 'guest') {
             $this->user->guest = 1;
         }
@@ -225,7 +228,7 @@ final class EventslistCategoryLoadingTest extends TestCase
 
     public static function permissionCases(): iterable
     {
-        foreach (['allow' => true, 'hidden deny' => false, 'owner' => true, 'other owner' => false, 'JEM group' => true, 'guest' => false, 'unset' => false] as $scenario => $allowed) {
+        foreach (['allow' => true, 'hidden deny' => false, 'owner' => true, 'other owner' => false, 'JEM group' => false, 'JEM group visible categories' => true, 'guest' => false, 'unset' => false] as $scenario => $allowed) {
             yield $scenario => [$scenario, $allowed];
         }
     }

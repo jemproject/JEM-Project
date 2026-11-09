@@ -110,6 +110,8 @@ final class InitialNegativeResponseTest extends TestCase
         self::assertSame(1015, $this->model->userregister());
         self::assertSame(1015, $this->model->userregister());
         self::assertCount(1, $this->database->registrations);
+        self::assertCount(1, JemRegistrationService::$writes, 'A repeated negative answer must not create a cancellation history entry.');
+        self::assertSame(['required' => false], $this->model->userregister(true));
         self::assertSame(-1, $this->database->registrations[15]->status);
         self::assertSame(0, $this->database->registrations[15]->places);
     }

@@ -381,4 +381,162 @@ final class AutomaticCleanupTest extends TestCase
         self::assertSame(0, (int) $this->value('SELECT COUNT(*) FROM #__jem_events WHERE id=3'));
         self::assertSame([['onFinderAfterDelete', 0], ['onFinderAfterDelete', 0]], $this->notifications);
     }
+
+    /** @return iterable Invalid legacy values for each independently stored timestamp. */
+    public static function issue2501InvalidStates(): iterable
+    {
+        foreach (['lastupdate', 'runningupdate'] as $key) {
+            foreach (['empty' => '', 'null' => null, 'text' => 'broken', 'spaces' => ' ',
+                'negative' => '-1', 'overflow' => str_repeat('9', 80), 'missing' => '__missing__'] as $case => $value) {
+                yield $key . '-' . $case => [$key, $value];
+            }
+        }
+    }
+
+    /** @param string $key Timestamp key. @param ?string $value Legacy state. @return void */
+    #[DataProvider('issue2501InvalidStates')]
+    public function testIssue2501InvalidStateRecoversAndCompletes(string $key, ?string $value): void
+    {
+        $this->sql("UPDATE #__jem_config SET value='2' WHERE keyname='oldevent'");
+        if ($value === '__missing__') {
+            $this->sql('DELETE FROM #__jem_config WHERE keyname=' . $this->db->quote($key));
+        } else {
+            $this->sql('UPDATE #__jem_config SET value=' . ($value === null ? 'NULL' : $this->db->quote($value))
+                . ' WHERE keyname=' . $this->db->quote($key));
+        }
+        JemHelper::cleanup();
+        self::assertSame(2, (int) $this->value('SELECT published FROM #__jem_events WHERE id=1'));
+        self::assertGreaterThan(0, (int) $this->value("SELECT value FROM #__jem_config WHERE keyname='lastupdate'"));
+        self::assertSame('0', $this->value("SELECT value FROM #__jem_config WHERE keyname='runningupdate'"));
+        self::assertSame(0, (int) $this->value('SELECT @@in_transaction'));
+    }
+
+    /** @return void Disabling old-event actions still permits bookkeeping to recover. */
+    public function testIssue2501RecoveryWithOldEventActionsDisabled(): void
+    {
+        $this->sql("UPDATE #__jem_config SET value='' WHERE keyname='lastupdate'");
+        $this->sql("UPDATE #__jem_config SET value='0' WHERE keyname='oldevent'");
+        JemHelper::cleanup();
+        self::assertSame(1, (int) $this->value('SELECT published FROM #__jem_events WHERE id=1'));
+        self::assertGreaterThan(0, (int) $this->value("SELECT value FROM #__jem_config WHERE keyname='lastupdate'"));
+        self::assertSame([], $this->notifications);
+    }
+
+    /** @return void Form data and stale registry values cannot overwrite another request's task state. */
+    public function testIssue2501SettingsSavePreservesRuntimeState(): void
+    {
+        $state = ['lastupdate' => '123', 'runningupdate' => '456'];
+        if ($this->hierarchy) {
+            $state += ['notification_last_purge' => '2026-11-09 10:00:00', 'acl_migration_state' => 'complete'];
+            $this->sql("INSERT INTO #__jem_config VALUES ('notification_last_purge','2000-01-01 00:00:00'),('acl_migration_state','pending')");
+        }
+        $config = JemConfig::getInstance();
+        foreach ($state as $key => $value) {
+            $this->observer->setQuery('UPDATE #__jem_config SET value=' . $this->observer->quote($value)
+                . ' WHERE keyname=' . $this->observer->quote($key))->execute();
+        }
+        $config->bind(['lastupdate' => '', 'runningupdate' => '', 'unrelated' => 'saved']);
+        self::assertTrue($config->store());
+        foreach ($state as $key => $value) {
+            self::assertSame($value, $this->value('SELECT value FROM #__jem_config WHERE keyname=' . $this->db->quote($key)));
+        }
+        self::assertSame('saved', $this->value("SELECT value FROM #__jem_config WHERE keyname='unrelated'"));
+    }
+
+    /** @return void Import may reset completion without discarding a live lease or newer settings. */
+    public function testIssue2501ExplicitImportResetOnlyWritesItsKey(): void
+    {
+        $this->sql("UPDATE #__jem_config SET value='123' WHERE keyname='lastupdate'");
+        $config = JemConfig::getInstance();
+        $this->observer->setQuery("UPDATE #__jem_config SET value='456' WHERE keyname='runningupdate'")->execute();
+        $this->observer->setQuery("UPDATE #__jem_config SET value='newer' WHERE keyname='unrelated'")->execute();
+        $config->set('lastupdate', 0);
+        self::assertSame('0', $this->value("SELECT value FROM #__jem_config WHERE keyname='lastupdate'"));
+        self::assertSame('456', $this->value("SELECT value FROM #__jem_config WHERE keyname='runningupdate'"));
+        self::assertSame('newer', $this->value("SELECT value FROM #__jem_config WHERE keyname='unrelated'"));
+    }
+
+    /** @return void A repair based on stale settings cannot steal a newly acquired lease. */
+    public function testIssue2501RecoveryRespectsNewLease(): void
+    {
+        $this->sql("UPDATE #__jem_config SET value='' WHERE keyname='lastupdate'");
+        $settings = JemHelper::config();
+        $now = time();
+        $this->observer->setQuery("UPDATE #__jem_config SET value='$now' WHERE keyname='runningupdate'")->execute();
+        self::assertFalse(JemAutomaticCleanup::claim($this->db, $settings, $now, 300));
+        self::assertSame((string) $now, $this->value("SELECT value FROM #__jem_config WHERE keyname='runningupdate'"));
+        self::assertSame('', $this->value("SELECT value FROM #__jem_config WHERE keyname='lastupdate'"));
+    }
+
+    /** @return void A newer completed run is not repeated by a request with an old snapshot. */
+    public function testIssue2501RecoveryRespectsNewCompletion(): void
+    {
+        $this->sql("UPDATE #__jem_config SET value='' WHERE keyname='lastupdate'");
+        $settings = JemHelper::config();
+        $now = time();
+        $this->observer->setQuery("UPDATE #__jem_config SET value='$now' WHERE keyname='lastupdate'")->execute();
+        self::assertFalse(JemAutomaticCleanup::claim($this->db, $settings, $now, 300));
+        self::assertSame((string) $now, $this->value("SELECT value FROM #__jem_config WHERE keyname='lastupdate'"));
+        self::assertSame('0', $this->value("SELECT value FROM #__jem_config WHERE keyname='runningupdate'"));
+    }
+
+    /** @return void Claim errors are logged during automatic frontend maintenance and roll back. */
+    public function testIssue2501AutomaticClaimFailureDoesNotEscape(): void
+    {
+        $this->db->failSql = 'ORDER BY keyname DESC FOR UPDATE';
+        JemHelper::cleanup();
+        self::assertSame('0', $this->value("SELECT value FROM #__jem_config WHERE keyname='lastupdate'"));
+        self::assertSame('0', $this->value("SELECT value FROM #__jem_config WHERE keyname='runningupdate'"));
+        self::assertSame(0, (int) $this->value('SELECT @@in_transaction'));
+        self::assertSame([], $this->notifications);
+        self::assertStringContainsString('Daily event cleanup failed', implode('\n', JemLog::$messages));
+    }
+
+    /** @return void Forced administration work must still report a failed claim. */
+    public function testIssue2501ForcedClaimFailureIsReported(): void
+    {
+        $this->db->failSql = 'ORDER BY keyname DESC FOR UPDATE';
+        try {
+            JemHelper::cleanup(1);
+            self::fail('Forced maintenance must report the SQL failure.');
+        } catch (RuntimeException $error) {
+            self::assertSame('Injected cleanup failure.', $error->getMessage());
+        }
+        self::assertSame('0', $this->value("SELECT value FROM #__jem_config WHERE keyname='runningupdate'"));
+        self::assertSame(0, (int) $this->value('SELECT @@in_transaction'));
+    }
+
+    /** @return void Scoped recurrence generation remains independent of a corrupt global timestamp. */
+    public function testIssue2501ScopedRecurrenceIgnoresInvalidGlobalState(): void
+    {
+        $this->sql("UPDATE #__jem_config SET value='' WHERE keyname IN ('lastupdate','runningupdate')");
+        JemHelper::cleanup(2, 1);
+        self::assertSame(1, (int) $this->value('SELECT published FROM #__jem_events WHERE id=1'));
+        self::assertSame('', $this->value("SELECT value FROM #__jem_config WHERE keyname='lastupdate'"));
+    }
+
+    /** @return void Timestamp parsing accepts canonical values and rejects unsafe shapes and ranges. */
+    public function testIssue2501TimestampValidation(): void
+    {
+        foreach ([null, new stdClass(), [], true, '', 'abc', '-1', '1.5', ' 1 ', str_repeat('9', 80)] as $invalid) {
+            self::assertSame(0, JemAutomaticCleanup::timestamp($invalid));
+        }
+        self::assertSame(0, JemAutomaticCleanup::timestamp('000'));
+        self::assertSame(123, JemAutomaticCleanup::timestamp('000123'));
+        self::assertSame(123, JemAutomaticCleanup::timestamp(123));
+        self::assertSame(253402300799, JemAutomaticCleanup::timestamp('253402300799'));
+        self::assertSame(0, JemAutomaticCleanup::timestamp('253402300800'));
+    }
+
+
+    /** @return void Explicit nested registry writes keep their existing persistence semantics. */
+    public function testIssue2501ExplicitNestedSettingStillPersists(): void
+    {
+        $this->sql("INSERT INTO #__jem_config VALUES ('globalattribs','{\"existing\":1}')");
+        JemConfig::getInstance()->set('globalattribs.existing', 2);
+        self::assertSame(['existing' => 2], json_decode(
+            $this->value("SELECT value FROM #__jem_config WHERE keyname='globalattribs'"), true
+        ));
+    }
+
 }

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace JemProject\Tests\VenueState;
 
 use RuntimeException;
+use JemFilterInput;
+
+require_once JEM_TEST_ROOT . '/site/classes/filterinput.class.php';
 
 require_once JEM_TEST_ROOT . '/site/classes/listlimit.class.php';
 

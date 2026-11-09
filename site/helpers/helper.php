@@ -2953,8 +2953,8 @@ class JemHelper
 
         $now = time(); // UTC timestamp
         $cleanupTimeZone = new \DateTimeZone(self::getJoomlaTimeZoneName());
-        $lastupdate = (int)$jemsettings->lastupdate;
-        $runningupdate = isset($jemsettings->runningupdate) ? $jemsettings->runningupdate : 0;
+        $lastupdate = JemAutomaticCleanup::timestamp($jemsettings->lastupdate ?? null);
+        $runningupdate = JemAutomaticCleanup::timestamp($jemsettings->runningupdate ?? null);
         $maxexectime = get_cfg_var('max_execution_time');
         $delay = min(86400, max(300, $maxexectime * 2));
 
@@ -2977,11 +2977,10 @@ class JemHelper
 
             if ($recurrenceRoot > 0 || ($runningupdate + $delay) < $now) {
                 $db = Factory::getContainer()->get('DatabaseDriver');
-                if (!$recurrenceRoot && !JemAutomaticCleanup::claim($db, $jemsettings, $now, $delay)) {
-                    return;
-                }
-
                 try {
+                    if (!$recurrenceRoot && !JemAutomaticCleanup::claim($db, $jemsettings, $now, $delay)) {
+                        return;
+                    }
                     JemHelper::addLogEntry('  do cleanup...', __METHOD__);
 
                     // trigger an event to let plugins handle whatever cleanup they want to do.

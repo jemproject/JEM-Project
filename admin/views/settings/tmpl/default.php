@@ -204,7 +204,6 @@ jQuery(document).ready(function($) {
 
     <input type="hidden" name="task" value="">
     <input type="hidden" name="id" value="1">
-    <input type="hidden" name="lastupdate" value="<?php $this->jemsettings->lastupdate; ?>">
     <input type="hidden" name="option" value="com_jem">
     <input type="hidden" name="controller" value="settings">
     <?php echo HTMLHelper::_('form.token'); ?>

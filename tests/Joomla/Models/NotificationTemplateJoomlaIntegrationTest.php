@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Language;
 use Joomla\Database\DatabaseDriver;
 
 require_once dirname(__DIR__) . '/JoomlaTestCase.php';
@@ -14,6 +15,7 @@ final class NotificationTemplateJoomlaIntegrationTest extends JoomlaTestCase
     protected function setUp(): void
     {
         self::bootJoomlaSite();
+        Factory::getApplication()->loadLanguage(Language::getInstance('en-GB'));
         require_once JPATH_BASE . '/components/com_jem/factory.php';
         $this->deleteTestOverrides();
     }

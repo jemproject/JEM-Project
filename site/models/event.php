@@ -1755,10 +1755,17 @@ class JemModelEvent extends ItemModel
         $comment = OutputFilter::cleanText($comment);
         $service = new JemRegistrationService($this->_db);
         $rows = $revisions = $allocations = $summary = $identity = array();
+        $unchangedResponseId = 0;
         try {
             foreach ($events as $event) {
                 $id = (int) $event->id;
                 $registration = $registrations[$id];
+                // Repeating a zero-place negative answer releases no reservation.
+                // Access was checked above; keep its row without cancellation writes.
+                if ((int) $registration->status === -1 && (int) $registration->places === 0 && $quantity === 0) {
+                    $unchangedResponseId = $unchangedResponseId ?: (int) $registration->id;
+                    continue;
+                }
                 $capacity = $service->capacityOptions($id, (int) $registration->id);
                 $reduction = JemRegistrationCancellation::reduce(
                     $event, $registration, $quantity, $requestedAreas, (array) $capacity->current
@@ -1781,6 +1788,9 @@ class JemModelEvent extends ItemModel
                     'label' => Text::sprintf('COM_JEM_CANCELLATION_EVENT', $id) . ' — ' . (string) $event->dates,
                     'quantity' => $quantity, 'remaining' => $reduction['remaining'], 'areas' => $areas);
                 $identity[$id] = array($registration, $event, $reduction);
+            }
+            if (!$rows && $unchangedResponseId > 0) {
+                return $preview ? array('required' => false) : $unchangedResponseId;
             }
             ksort($identity);
             $fingerprint = hash_hmac('sha256', json_encode(array($uid, (int) $this->_registerid, $identity), JSON_THROW_ON_ERROR),

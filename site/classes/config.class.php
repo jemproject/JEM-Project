@@ -166,7 +166,7 @@ class JemConfig
         $result = $this->_data->set($key, $value);
 
         if (!is_null($result)) {
-            if (!$this->store()) {
+            if (!$this->store(explode('.', $key, 2)[0])) {
                 $result = null;
             }
         }
@@ -175,10 +175,12 @@ class JemConfig
     }
 
     /**
-     * Store data
+     * Store configuration without overwriting state owned by background tasks.
      *
+     * @param string|null $onlyKey Explicit single-key write from set(), or null for form settings.
+     * @return bool Whether the selected configuration values were stored.
      */
-    public function store()
+    public function store(?string $onlyKey = null)
     {
         $data = $this->_data->toArray();
 
@@ -204,6 +206,13 @@ class JemConfig
         $keys = array_keys($list);
 
         foreach ($data as $k => $v) {
+            if ($onlyKey !== null && $k !== $onlyKey) {
+                continue;
+            }
+            // Only an explicit single-key write may change task bookkeeping.
+            if ($onlyKey === null && in_array($k, ['lastupdate', 'runningupdate', 'notification_last_purge'], true)) {
+                continue;
+            }
             // Only the migration runner owns this state; an old Settings form must not overwrite it.
             if ($k === 'acl_migration_state') {
                 continue;

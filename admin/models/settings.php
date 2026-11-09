@@ -210,7 +210,11 @@ class JemModelSettings extends AdminModel
         $jinput = Factory::getApplication()->input;
         $varmetakey = $jinput->get('meta_keywords','','');
         $data['meta_keywords'] = implode(', ', array_filter($varmetakey));
-        $data['lastupdate'] = $jinput->get('lastupdate','',''); // 'lastupdate' indicates last cleanup etc., not when config as stored.
+        // Runtime bookkeeping is not administrator form input.
+        unset(
+            $data['lastupdate'], $data['runningupdate'],
+            $data['notification_last_purge'], $data['acl_migration_state']
+        );
         if ($jinput->exists('jem_custom_fields')) {
             $data['custom_fields_config'] = json_encode(JemCustomFields::normaliseConfig($jinput->get('jem_custom_fields', array(), 'array')));
         }
@@ -542,7 +546,7 @@ class JemModelSettings extends AdminModel
             $settings = Table::getInstance('Settings', 'JemTable');
 
             $fields = $settings->getFields();
-            if (!empty($fields)) {
+            if (!empty($fields) && $settings->load(1)) {
                 // Bind the form fields to the table
                 if (!$settings->bind($data,'')) {
                     $this->setError($settings->getError());
@@ -559,10 +563,6 @@ class JemModelSettings extends AdminModel
                     }
                     $meta_key .= $meta_keyword;
                 }
-
-                // binding the input fields (outside the jform)
-                $varlastupdate = $jinput->get('lastupdate','','');
-                $settings->lastupdate = $varlastupdate;
 
                 $settings->meta_keywords = $meta_key;
                 $settings->id = 1;

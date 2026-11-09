@@ -14,13 +14,21 @@ final class PdfEmptyMessageTest extends TestCase
     /** @return void Load actual helper and registration view with private service boundaries. */
     public static function setUpBeforeClass(): void
     {
+        require_once JEM_TEST_ROOT . '/tests/Support/recurrence_source_stream.php';
+        if (!in_array('jemrecurrence', stream_get_wrappers(), true)) {
+                stream_wrapper_register('jemrecurrence', \RecurrenceSourceStream::class);
+        }
+        if (!defined('JPATH_SITE')) {
+                define('JPATH_SITE', 'jemrecurrence://site');
+        }
+
         foreach (['site/classes/pdfview.class.php', 'site/views/attendeeregistrations/view.raw.php'] as $file) {
             $source = file_get_contents(JEM_TEST_ROOT . '/' . $file);
             $source = preg_replace('/^use [^;]+;\R/m', '', substr($source, 5));
             $source = str_replace('__DIR__', var_export(dirname(JEM_TEST_ROOT . '/' . $file), true), $source);
             // Only redirect the explicit class-name availability check to our namespaced service.
             $source = str_replace("class_exists('JemPdf', false)", 'class_exists(JemPdf::class, false)', $source);
-            eval('namespace ' . __NAMESPACE__ . '; ' . $source);
+            eval('namespace ' . __NAMESPACE__ . '; use \\JemFilterInput; ' . $source);
         }
     }
 

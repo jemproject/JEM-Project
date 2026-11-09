@@ -44,6 +44,7 @@ final class EventScheduleIntegrationTest extends TestCase
         $this->db = new EventUtcOrderingDatabase(['driver' => 'sqlite', 'database' => ':memory:', 'prefix' => 't_']);
         $container = new \Joomla\DI\Container();
         $container->set('DatabaseDriver', $this->db, true);
+        $container->alias(\Joomla\Database\DatabaseInterface::class, 'DatabaseDriver');
         (new ReflectionProperty(Factory::class, 'container'))->setValue(null, $container);
         Factory::$config = new Registry(['offset' => 'Europe/Madrid', 'sitename' => 'schedule.test']);
         $container->set('config', Factory::$config);
@@ -64,6 +65,13 @@ final class EventScheduleIntegrationTest extends TestCase
             public function getConfig() { return Factory::$config; }
             public function getLanguage() { return Factory::$language; }
             public function getName() { return 'site'; }
+            /** @return object Isolated route builder; ICS dates use the real implementation. */
+            public static function getRouter(): object
+            {
+                return new class {
+                    public function build($url): \Joomla\CMS\Uri\Uri { return new \Joomla\CMS\Uri\Uri($url); }
+                };
+            }
             public function getDispatcher() { return new \Joomla\Event\Dispatcher(); }
         };
         $config = (new ReflectionClass(JemConfig::class))->newInstanceWithoutConstructor();

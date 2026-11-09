@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Response\JsonResponse;
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
@@ -591,14 +593,14 @@ class JemControllerEvent extends JemControllerForm
         $app = Factory::getApplication();
         $app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
         if (!Session::checkToken('post')) {
-            echo new \Joomla\CMS\Response\JsonResponse(null, Text::_('JINVALID_TOKEN'), true);
+            echo new JsonResponse(null, Text::_('JINVALID_TOKEN'), true);
             $app->close();
             return;
         }
         $model = $this->getModel('Event', 'JemModel');
         $model->setId($app->input->post->getInt('rdid', 0));
         $preview = $model->userregister(true);
-        echo new \Joomla\CMS\Response\JsonResponse($preview ?: null, $preview === false ? $model->getError() : null, $preview === false);
+        echo new JsonResponse($preview ?: null, $preview === false ? $model->getError() : null, $preview === false);
         $app->close();
     }
 

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace JemProject\Tests\DayPrint;
 
 use DateTimeImmutable;
+use JemFilterInput;
+
+require_once JEM_TEST_ROOT . '/site/classes/filterinput.class.php';
 
 /** Filtered request boundary; never starts a Joomla session or touches an installed site. */
 final class Input
@@ -122,9 +125,9 @@ final class Application
     }
 
     /** @param string $key Session key. @return mixed State. */
-    public function getUserState(string $key): mixed
+    public function getUserState(string $key, mixed $default = null): mixed
     {
-        return $this->session[$key] ?? null;
+        return $this->session[$key] ?? $default;
     }
 
     /** @param string $key Session key. @param mixed $value Value. @return void */

@@ -24,7 +24,7 @@ final class VenuesListStateTest extends TestCase
         foreach (['populateState', 'normaliseCountries', 'normaliseCountry', 'getCountryOptions'] as $method) {
             $methods .= self::methodSource($source, $method);
         }
-        eval('namespace JemProject\Tests\VenueState; class Model extends ModelDependencies {' . $methods . '}');
+        eval('namespace JemProject\Tests\VenueState; use \JemFilterInput; class Model extends ModelDependencies {' . $methods . '}');
         $source = file_get_contents(JEM_TEST_ROOT . '/site/models/typevenues.php');
         eval('namespace JemProject\Tests\VenueState; final class TypeModel extends Model {' . self::methodSource($source, 'populateState') . '}');
     }
