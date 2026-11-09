@@ -90,12 +90,62 @@ function generateWeeklyDays() {
     return container;
 }
 
+/**
+ * Keep the cutoff required only while a periodic rule is selected.
+ * @param {string} type Selected recurrence type.
+ * @returns {void}
+ */
+function updateRecurrenceEnd(type) {
+    var field = document.getElementById('jform_recurrence_limit_date');
+    if (!field) {
+        return;
+    }
+    var periodic = /^[1-6]$/.test(String(type));
+    field.classList.toggle('required', periodic);
+    field.setAttribute('aria-required', periodic ? 'true' : 'false');
+    if (periodic) {
+        field.setAttribute('required', 'required');
+        field.removeAttribute('disabled');
+    } else {
+        field.removeAttribute('required');
+        field.setAttribute('disabled', 'disabled');
+    }
+    if (!field.dataset.recurrenceInvalidText) {
+        field.dataset.recurrenceInvalidText = field.getAttribute('data-validation-text') || '';
+    }
+    field.setAttribute('data-validation-text', field.value.trim() === ''
+        ? field.getAttribute('data-recurrence-required-text') || field.dataset.recurrenceInvalidText
+        : field.dataset.recurrenceInvalidText);
+}
+
 function start_recurrencescript(el) {
 
     // $content = $("#recurrence_output"); // get the object (position) of the output
     $content = document.getElementById('recurrence_output');  // get the object (position) of the output
     // $select_element = $("#"+el);
     $select_element = document.getElementById(el);
+    var recurrenceEnd = document.getElementById('jform_recurrence_limit_date');
+    if (recurrenceEnd) {
+        // Restore rejected text only after Joomla has initialised its calendar.
+        var restoreRejectedDate = function () {
+            setTimeout(function () {
+                var rejected = recurrenceEnd.getAttribute('data-recurrence-invalid-date');
+                var wrapper = recurrenceEnd.closest('.field-calendar');
+                if (rejected !== null && wrapper && wrapper._joomlaCalendar) {
+                    recurrenceEnd.value = rejected;
+                    recurrenceEnd.removeAttribute('data-recurrence-invalid-date');
+                    updateRecurrenceEnd($select_element.value);
+                }
+            }, 0);
+        };
+        document.addEventListener('DOMContentLoaded', restoreRejectedDate, {once: true});
+        if (document.readyState !== 'loading') {
+            restoreRejectedDate();
+        }
+        ['input', 'change'].forEach(function (event) {
+            recurrenceEnd.addEventListener(event, function () { updateRecurrenceEnd($select_element.value); });
+        });
+    }
 
     var date = document.getElementById('jform_dates');
     if (date) {
@@ -125,6 +175,7 @@ function start_recurrencescript(el) {
 function output_recurrencescript() {
 
     var $select_value = $select_element.value;	// the value of the select list
+    updateRecurrenceEnd($select_value);
 
     if ($select_value === '7') {
         document.getElementById("recurrence_number").value = 0;

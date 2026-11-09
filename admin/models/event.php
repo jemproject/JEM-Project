@@ -750,6 +750,10 @@ class JemModelEvent extends JemModelAdmin
         if (!$this->normaliseEventDates($candidate)) {
             throw new RuntimeException($this->getError());
         }
+        $cutoffError = JemRecurrenceValidator::limitDateError($candidate);
+        if ($cutoffError !== null) {
+            throw new RuntimeException(Text::_($cutoffError));
+        }
         $input = Factory::getApplication()->input->post;
         $candidate['recurrence_number'] = $input->getInt('recurrence_number', (int) $stored->recurrence_number);
         $candidate['recurrence_byday'] = $input->getString('recurrence_byday', (string) $stored->recurrence_byday);
@@ -1051,6 +1055,15 @@ class JemModelEvent extends JemModelAdmin
 
         require_once JPATH_SITE . '/components/com_jem/classes/eventschedule.class.php';
         if (!$this->normaliseEventDates($data)) {
+            return false;
+        }
+        $cutoffError = JemRecurrenceValidator::limitDateError(array_replace(
+            isset($existingEvent) ? $existingEvent->getProperties() : [],
+            $data
+        ));
+        if ($cutoffError !== null) {
+            $this->setError(Text::_($cutoffError));
+
             return false;
         }
         $scheduleTimes = null;
