@@ -11,6 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Component\Router\RouterView;
 use Joomla\CMS\Component\Router\Rules\RulesInterface;
 
+require_once dirname(__DIR__) . '/helpers/detailmenu.php';
+
 /**
  * Rule to process URLs without a menu item
  *
@@ -264,6 +266,19 @@ class JemNomenuRules implements RulesInterface
      */
     public function build(&$query, &$segments)
     {
+        if (in_array($query['view'] ?? '', ['event', 'venue', 'category'], true) && isset($query['id'])) {
+            $item = isset($query['Itemid']) ? $this->router->menu->getItem($query['Itemid']) : null;
+            if ($item && JemDetailMenu::matches($item->query, $query)) {
+                unset($query['view'], $query['id'], $query['layout']);
+            } else {
+                $segments[] = $query['view'];
+                $segments[] = $query['id'];
+                unset($query['view'], $query['id']);
+            }
+
+            return;
+        }
+
         // StandardRules has already resolved this Day menu. Keep its date in the
         // query instead of turning it into a menu-less segment and losing context.
         if (!isset($query['view']) && isset($query['Itemid'])) {

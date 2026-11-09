@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once dirname(__DIR__, 2) . '/helpers/detailmenu.php';
+
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
@@ -138,7 +140,7 @@ class JemViewEvent extends JemView
         // Decide which parameters should take priority
         $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
             && $menuitem->query['view']   == 'event'
-            && $menuitem->query['id']     == $item->id);
+            && JemDetailMenu::id($menuitem->query['id'] ?? null) === (int) $item->id);
 
         // Add router helpers.
         $item->slug = $item->alias ? ($item->id.':'.$item->alias) : $item->id;

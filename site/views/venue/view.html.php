@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once dirname(__DIR__, 2) . '/helpers/detailmenu.php';
+
 require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
 
 use Joomla\CMS\HTML\HTMLHelper;
@@ -270,7 +272,7 @@ class JemViewVenue extends JemView
             $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
                                             && $menuitem->query['view']   == 'venue'
                                             && (!isset($menuitem->query['layout']) || $menuitem->query['layout'] == 'default')
-                                            && $menuitem->query['id']     == $venue->id);
+                                            && JemDetailMenu::id($menuitem->query['id'] ?? null) === (int) $venue->id);
 
             // get search & user-state variables
             $filter_order = $this->getModel()->getState('list.ordering', 'a.dates');

@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once dirname(__DIR__, 2) . '/helpers/detailmenu.php';
+
 require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
 
 use Joomla\CMS\HTML\HTMLHelper;
@@ -249,7 +251,7 @@ class JemViewCategory extends JemView
             $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
                                             && $menuitem->query['view']   == 'category'
                                             && (!isset($menuitem->query['layout']) || $menuitem->query['layout'] == 'default')
-                                            && $menuitem->query['id']     == $category->id);
+                                            && JemDetailMenu::id($menuitem->query['id'] ?? null) === (int) $category->id);
 
             // get variables
             $itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
