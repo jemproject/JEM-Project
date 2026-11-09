@@ -23,7 +23,7 @@ final class EventDateValidationContractsTest extends TestCase
 
         self::assertStringContainsString('public function filter($value, $group = null, ?Registry $input = null)', $contents);
         self::assertStringContainsString('createFromFormat(\'!\' . $format', $contents);
-        self::assertStringContainsString('$date->format($format) !== (string) $value', $contents);
+        self::assertStringContainsString('$date->format($format) === $value', $contents);
         self::assertStringContainsString("validate-jemdate", $contents);
         self::assertStringContainsString("useScript('jem.datevalidation')", $contents);
         self::assertStringContainsString('return parent::filter($value, $group, $input);', $contents);

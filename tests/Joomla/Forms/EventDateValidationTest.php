@@ -86,8 +86,9 @@ final class EventDateValidationTest extends JoomlaTestCase
     {
         $field = $this->calendarField($fieldPath);
 
-        $this->expectException(Exception::class);
-        $field->filter('2027-02-29');
+        $filtered = $field->filter('2027-02-29');
+        self::assertFalse($filtered);
+        self::assertInstanceOf(RuntimeException::class, $field->validate($filtered));
     }
 
     private function calendarField(string $fieldPath): object

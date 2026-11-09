@@ -35,6 +35,9 @@ class JFormFieldRecurrenceend extends JFormFieldCalendarJem
 
         try {
             $filtered = parent::filter($value, $group, $input);
+            if ($filtered === false) {
+                return $value;
+            }
 
             // Joomla's localised date filter adds a time; the cutoff is a DATE column.
             return is_string($filtered) && preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/D', $filtered)

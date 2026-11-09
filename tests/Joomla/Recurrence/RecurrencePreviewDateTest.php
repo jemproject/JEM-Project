@@ -197,6 +197,29 @@ final class RecurrencePreviewDateTest extends TestCase
         self::assertStringContainsString('cannot be earlier', $response['message']);
     }
 
+    /**
+     * Legacy previews must stop on the field's rejection marker before model normalization.
+     * @param string $side Editor implementation.
+     * @param string $display Calendar display format.
+     * @param string $filter Localized input format.
+     * @return void
+     */
+    #[DataProvider('formats')]
+    public function testLegacyPreviewRejectsMalformedDatesBeforePlanning(string $side, string $display, string $filter): void
+    {
+        [$controller, $model, $app] = $this->editor($side, $display, $filter);
+        foreach (['dates', 'enddates'] as $name) {
+            foreach ([[], false, true, 'now', '2026-11-13 12:30:00', "2026-11-13\0"] as $value) {
+                $model->candidate = [];
+                $response = $this->preview($controller, $app, ['id' => 1, $name => $value]);
+                self::assertFalse($response['success']);
+                self::assertStringContainsString('not a valid calendar date', $response['message']);
+                self::assertSame([], $model->candidate);
+            }
+        }
+    }
+
+
     /** @return array Controller, model and application with real form fields and deterministic stored data. */
     private function editor(string $side, string $display, string $filter): array
     {

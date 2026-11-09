@@ -94,6 +94,11 @@ Joomla\CMS\Factory::$application = new class ($document, $language) {
     }
 };
 
+// Allow isolated event tests to exercise the actual frontend field class as well.
+if (defined('JEM_TEST_CALENDAR_SIDE')) {
+    require_once JEM_TEST_ROOT . '/' . JEM_TEST_CALENDAR_SIDE . '/models/fields/calendarjem.php';
+}
+
 require_once JEM_TEST_ROOT . '/admin/models/fields/specialdaycalendar.php';
 require_once JEM_TEST_ROOT . '/admin/tables/jem_special_days.php';
 
