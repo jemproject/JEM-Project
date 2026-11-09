@@ -352,7 +352,7 @@ foreach ((array) $events as $event) {
 
             <?php if($this->params->get('show_my_location','0')) { ?>
                 <!-- Location button -->
-                <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
+                <button type="button" class="btn btn-info btn-sm" id="locate-me-btn-<?= $map_id ?>">
                     <i class="icon-location"></i> <?= Text::_('COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION') ?>
                 </button>
             <?php } ?>
@@ -423,13 +423,13 @@ foreach ((array) $events as $event) {
 
         <!-- Location help text -->
         <?php if($this->params->get('show_my_location','0')) { ?>
-            <div class="alert alert-info small mt-2" id="location-help">
+            <div class="alert alert-info small mt-2" id="location-help-<?= $map_id ?>">
                 <i class="icon-info"></i>
                 <?= Text::_('COM_JEM_EVENTS_MAP_LOCATION_HELP') ?>
             </div>
 
             <!-- Permission instructions -->
-            <div class="alert alert-warning small mt-1" id="permission-instructions" style="display: none;">
+            <div class="alert alert-warning small mt-1" id="permission-instructions-<?= $map_id ?>" style="display: none;">
                 <i class="icon-warning"></i>
                 <?= Text::_('COM_JEM_EVENTS_MAP_PERMISSION_INSTRUCTIONS') ?>
             </div>
@@ -612,10 +612,11 @@ foreach ((array) $events as $event) {
         var locationMarker = null;
         var locationCircle = null;
         var locationRequested = false;
+        var permissionTimer = null;
 
         function showError(message) {
             alert(message);
-            var locateBtn = document.getElementById('locate-me-btn');
+            var locateBtn = document.getElementById('locate-me-btn-<?= $map_id ?>');
             if (locateBtn) {
                 locateBtn.innerHTML = '<i class="icon-location"></i> ' + <?= $encodeMapText('COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION') ?>;
                 locateBtn.disabled = false;
@@ -623,8 +624,8 @@ foreach ((array) $events as $event) {
         }
 
         function showPermissionInstructions() {
-            var instructions = document.getElementById('permission-instructions');
-            var help = document.getElementById('location-help');
+            var instructions = document.getElementById('permission-instructions-<?= $map_id ?>');
+            var help = document.getElementById('location-help-<?= $map_id ?>');
             if (instructions && help) {
                 help.style.display = 'none';
                 instructions.style.display = 'block';
@@ -632,8 +633,10 @@ foreach ((array) $events as $event) {
         }
 
         function hidePermissionInstructions() {
-            var instructions = document.getElementById('permission-instructions');
-            var help = document.getElementById('location-help');
+            clearTimeout(permissionTimer);
+            permissionTimer = null;
+            var instructions = document.getElementById('permission-instructions-<?= $map_id ?>');
+            var help = document.getElementById('location-help-<?= $map_id ?>');
             if (instructions && help) {
                 instructions.style.display = 'none';
                 help.style.display = 'block';
@@ -646,7 +649,7 @@ foreach ((array) $events as $event) {
                 return;
             }
 
-            var locateBtn = document.getElementById('locate-me-btn');
+            var locateBtn = document.getElementById('locate-me-btn-<?= $map_id ?>');
             if (!locateBtn) {
                 return;
             }
@@ -654,7 +657,7 @@ foreach ((array) $events as $event) {
             locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> ' + <?= $encodeMapText('COM_JEM_EVENTS_MAP_LOCATING') ?>;
             locateBtn.disabled = true;
             locationRequested = true;
-            setTimeout(showPermissionInstructions, 1000);
+            permissionTimer = setTimeout(showPermissionInstructions, 1000);
 
             navigator.geolocation.getCurrentPosition(
                 function(position) {
@@ -719,7 +722,7 @@ foreach ((array) $events as $event) {
             );
         }
 
-        var locateBtn = document.getElementById('locate-me-btn');
+        var locateBtn = document.getElementById('locate-me-btn-<?= $map_id ?>');
         if (locateBtn) {
             locateBtn.addEventListener('click', function() {
                 if (!locationRequested) {
@@ -830,6 +833,7 @@ foreach ((array) $events as $event) {
         var locationMarker = null;
         var locationCircle = null;
         var locationRequested = false;
+        var permissionTimer = null;
 
         // Check geolocation support and permissions
         function checkGeolocationSupport() {
@@ -843,7 +847,7 @@ foreach ((array) $events as $event) {
         // Show error message
         function showError(message) {
             alert(message);
-            var locateBtn = document.getElementById('locate-me-btn');
+            var locateBtn = document.getElementById('locate-me-btn-<?= $map_id ?>');
             if (locateBtn) {
                 locateBtn.innerHTML = '<i class="icon-location"></i> ' + <?= $encodeMapText('COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION') ?>;
                 locateBtn.disabled = false;
@@ -852,8 +856,8 @@ foreach ((array) $events as $event) {
 
         // Show permission instructions
         function showPermissionInstructions() {
-            var instructions = document.getElementById('permission-instructions');
-            var help = document.getElementById('location-help');
+            var instructions = document.getElementById('permission-instructions-<?= $map_id ?>');
+            var help = document.getElementById('location-help-<?= $map_id ?>');
             if (instructions && help) {
                 help.style.display = 'none';
                 instructions.style.display = 'block';
@@ -862,8 +866,10 @@ foreach ((array) $events as $event) {
 
         // Hide permission instructions
         function hidePermissionInstructions() {
-            var instructions = document.getElementById('permission-instructions');
-            var help = document.getElementById('location-help');
+            clearTimeout(permissionTimer);
+            permissionTimer = null;
+            var instructions = document.getElementById('permission-instructions-<?= $map_id ?>');
+            var help = document.getElementById('location-help-<?= $map_id ?>');
             if (instructions && help) {
                 instructions.style.display = 'none';
                 help.style.display = 'block';
@@ -877,7 +883,7 @@ foreach ((array) $events as $event) {
                 }
 
             // Show loading state
-            var locateBtn = document.getElementById('locate-me-btn');
+            var locateBtn = document.getElementById('locate-me-btn-<?= $map_id ?>');
             if (!locateBtn) {
                 return;
             }
@@ -887,7 +893,7 @@ foreach ((array) $events as $event) {
             locationRequested = true;
 
             // Show permission instructions after a short delay
-            setTimeout(showPermissionInstructions, 1000);
+            permissionTimer = setTimeout(showPermissionInstructions, 1000);
 
             // Use browser's native geolocation API
             navigator.geolocation.getCurrentPosition(
@@ -964,7 +970,7 @@ foreach ((array) $events as $event) {
         }
 
         // Location button event - only add if button exists
-        var locateBtn = document.getElementById('locate-me-btn');
+        var locateBtn = document.getElementById('locate-me-btn-<?= $map_id ?>');
         if (locateBtn) {
             locateBtn.addEventListener('click', function() {
                 if (!locationRequested) {
