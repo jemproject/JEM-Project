@@ -9,6 +9,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\Multilanguage;
 
 use Joomla\CMS\Component\Router\RouterView;
 use Joomla\CMS\Component\Router\RouterViewConfiguration;
@@ -106,7 +108,7 @@ class JemRouter extends RouterView
     }
 
     /**
-     * Keep an explicit Day menu or a recognised Calendar drill-down source.
+     * Select an eligible detail menu and preserve explicit Day/Calendar navigation.
      *
      * @param   array  $query  Component URL parameters.
      *
@@ -114,6 +116,31 @@ class JemRouter extends RouterView
      */
     public function preprocess($query)
     {
+        // These keyed views need record-aware selection, not MenuRules' whole-view lookup.
+        if (in_array($query['view'] ?? '', ['event', 'venue', 'category'], true)) {
+            $language = $query['lang'] ?? '*';
+            if ($language === '*' && Multilanguage::isEnabled()) {
+                $language = $this->app->get('language');
+            }
+            $items = $this->menu->getItems(
+                ['component_id', 'language'],
+                [(int) ComponentHelper::getComponent('com_jem')->id, [$language, '*']]
+            );
+            $itemId = JemDetailMenu::select($items ?: [], $query, (int) ($this->menu->getActive()->id ?? 0));
+            unset($query['Itemid']);
+            if ($itemId !== null) {
+                $query['Itemid'] = $itemId;
+                $item = $this->menu->getItem($itemId);
+                if (!isset($query['layout']) && !empty($item->query['layout'])
+                    && $item->query['layout'] !== 'default') {
+                    // A source list/calendar layout is not the target detail layout.
+                    $query['layout'] = 'default';
+                }
+            }
+
+            return $query;
+        }
+
         if (($query['view'] ?? '') === 'day'
             && isset($query['Itemid'])
             && is_numeric($query['Itemid'])) {

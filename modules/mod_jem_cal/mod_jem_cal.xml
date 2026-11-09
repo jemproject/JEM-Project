@@ -188,8 +188,14 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field name="Month_offset" type="text"
+                <field name="Month_offset" type="number"
                        default="0"
+                       step="1"
+                       required="true"
+                       filter="raw"
+                       validate="regex"
+                       validate_regex="\A[+-]?[0-9]+\z"
+                       message="MOD_JEM_CAL_MONTH_OFFSET_INVALID"
                        label="MOD_JEM_CAL_MONTH_OFFSET"
                        description="MOD_JEM_CAL_MONTH_OFFSET_DESC"
                        class="form-control w-auto"

@@ -15,6 +15,7 @@ use Joomla\CMS\Log\Log;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
+require_once __DIR__ . '/detailmenu.php';
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/categories.class.php');
 
@@ -65,7 +66,8 @@ abstract class JEMHelperRoute
         Log::add('JEMHelperRoute::getRoute() is deprecated, use specific route methods instead.', Log::WARNING, 'deprecated');
 
         $needles = array(
-            $view => array((int) $id)
+            $view => array(in_array($view, ['event', 'venue', 'category'], true)
+                ? JemDetailMenu::id($id) : (int) $id)
         );
 
         if ($item = self::_findItem($needles)) {
@@ -97,7 +99,7 @@ abstract class JEMHelperRoute
         $defaultItemid     = $settings->get('default_Itemid');
 
         $needles = array(
-            'category' => array((int) $id)
+            'category' => array(JemDetailMenu::id($id))
         );
 
         // Create the link
@@ -134,7 +136,7 @@ abstract class JEMHelperRoute
         $defaultItemid     = $settings->get('default_Itemid');
 
         $needles = array(
-            'event' => array((int) $id)
+            'event' => array(JemDetailMenu::id($id))
         );
 
         // Create the link
@@ -171,7 +173,7 @@ abstract class JEMHelperRoute
         $defaultItemid     = $settings->get('default_Itemid');
 
         $needles = array(
-            'venue' => array((int) $id)
+            'venue' => array(JemDetailMenu::id($id))
         );
 
         // Create the link
@@ -319,7 +321,17 @@ abstract class JEMHelperRoute
                         }
 
                         if (isset($item->query['id'])) {
-                            self::$lookup[$view][$item->query['id']] = $item->id;
+                            $id = $item->query['id'];
+                            if (in_array($view, ['event', 'venue', 'category'], true)) {
+                                if (!in_array($item->query['layout'] ?? 'default', ['', 'default'], true)) {
+                                    continue;
+                                }
+                                $id = JemDetailMenu::id($id);
+                                if ($id === null || $id < 1) {
+                                    continue;
+                                }
+                            }
+                            self::$lookup[$view][$id] = $item->id;
                         }
                         // Some views have no ID, but we have to set one
                         else {

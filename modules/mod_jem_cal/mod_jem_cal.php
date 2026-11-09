@@ -41,7 +41,11 @@ $day_name_length     = $params->get('day_name_length', '2');
 $first_day           = $params->get('first_day', '1');
 $Year_length         = $params->get('Year_length', '1');
 $Month_length        = $params->get('Month_length', '0');
-$Month_offset        = $params->get('Month_offset', '0');
+// Parse whole months without truncating fractions or accepting numeric prefixes.
+$rawMonthOffset      = $params->get('Month_offset', '0');
+$monthOffsetText     = is_int($rawMonthOffset) || is_string($rawMonthOffset)
+    ? trim((string) $rawMonthOffset) : '';
+$Month_offset        = preg_match('/\A[+-]?[0-9]+\z/', $monthOffsetText) === 1 ? (int) $monthOffsetText : 0;
 $Time_offset         = $params->get('Time_offset', '0');
 $Show_Tooltips       = $params->get('Show_Tooltips', '1');
 $Show_Tooltips_Title = $params->get('Show_Tooltips_Title', '1');
@@ -89,18 +93,17 @@ $today       = $calendarNow->format('j');
 if ($req_month == 0) { $req_month = $today_month; }
 if ($req_year  == 0) { $req_year  = $today_year;  }
 
-$offset_month = $req_month + $Month_offset;
-$offset_year  = $req_year;
-
-if ($offset_month < 1) {
-    $offset_month += 12; // Roll over year start
-    --$offset_year;
+// Reject offsets outside the supported four-digit database date range before adding.
+$minimumMonthOffset = (1000 - (int) $req_year) * 12 + 1 - (int) $req_month;
+$maximumMonthOffset = (9999 - (int) $req_year) * 12 + 12 - (int) $req_month;
+if ($Month_offset < $minimumMonthOffset || $Month_offset > $maximumMonthOffset) {
+    $Month_offset = 0;
 }
 
-if ($offset_month > 12) {
-    $offset_month -= 12; // Roll over year end
-    ++$offset_year;
-}
+// Normalise across any number of year boundaries, including negative offsets.
+$offset_index = (int) $req_month - 1 + $Month_offset;
+$offset_year  = (int) $req_year + (int) floor($offset_index / 12);
+$offset_month = (($offset_index % 12 + 12) % 12) + 1;
 
 # Setting the previous and next month numbers
 $prev_month_year = $req_year;

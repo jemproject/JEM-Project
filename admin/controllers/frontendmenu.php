@@ -902,10 +902,14 @@ class JemControllerFrontendmenu extends BaseController
         return $db->loadObject();
     }
 
+    /**
+     * Store a stable numeric record ID in generated menu links.
+     *
+     * @param object $row Selected event, venue or category.
+     * @return string Record ID; SEF routing supplies the public path.
+     */
     protected function slug($row)
     {
-        $alias = trim((string) ($row->alias ?? ''));
-
-        return (int) $row->id . ($alias !== '' ? ':' . $alias : '');
+        return (string) (int) $row->id;
     }
 }
