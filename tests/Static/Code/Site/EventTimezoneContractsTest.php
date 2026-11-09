@@ -168,8 +168,13 @@ final class EventTimezoneContractsTest extends TestCase
         );
         self::assertStringNotContainsString("\$offset = idate('Z')", $helper);
         self::assertStringContainsString(
-            "self::getJoomlaDate(-\$minusDays)) . ' >= (IF (enddates IS NOT NULL, enddates, dates))'",
+            'self::getJoomlaDate(-$minusDays)',
             $helper
+        );
+        self::assertStringContainsString('JemAutomaticCleanup::run(', $helper);
+        self::assertStringContainsString(
+            "' >= (IF (enddates IS NOT NULL, enddates, dates))'",
+            $this->read('/site/classes/automaticcleanup.class.php')
         );
     }
 

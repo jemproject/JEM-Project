@@ -20,6 +20,14 @@ namespace {
     use PHPUnit\Framework\Attributes\DataProvider;
     use PHPUnit\Framework\TestCase;
 
+    require_once JEM_TEST_ROOT . '/tests/Support/recurrence_source_stream.php';
+    if (!in_array('jemrecurrence', stream_get_wrappers(), true)) {
+        stream_wrapper_register('jemrecurrence', RecurrenceSourceStream::class);
+    }
+    if (!defined('JPATH_SITE')) {
+        define('JPATH_SITE', 'jemrecurrence://site');
+    }
+
     require_once JEM_TEST_ROOT . '/site/models/categories.php';
 
     final class CategoriesTypeSelectionTest extends TestCase

@@ -26,6 +26,7 @@ $language = (new ReflectionClass(Joomla\CMS\Language\Language::class))->newInsta
 Joomla\CMS\Factory::$language = $language;
 // Field loading injects a driver but never executes SQL. Reject any accidental connection.
 (new ReflectionProperty(Joomla\CMS\Factory::class, 'container'))->setValue(null, new Joomla\DI\Container());
+Joomla\CMS\Factory::getContainer()->set(Joomla\CMS\HTML\Registry::class, new Joomla\CMS\HTML\Registry());
 Joomla\CMS\Factory::getContainer()->set(Joomla\Database\DatabaseInterface::class, new class ([]) extends Joomla\Database\Mysqli\MysqliDriver {
     public function connect(): void
     {

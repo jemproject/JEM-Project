@@ -48,7 +48,7 @@ final class DayPrintContextTest extends TestCase
         // Only the database-backed descendant lookup is simulated, not the menu policy.
         $methods .= 'public function getListChildCat($id, $reset) { return [$id + 1]; }';
         $methods .= 'protected function getVenueTreeIds($id) { return [$id, $id + 1]; }';
-        eval('namespace ' . self::NS . '; use \\DateTimeImmutable; use \\JemListOrder; use \\JemCalendarDayLink; class DayModel extends ModelBoundary {' . $methods . '}');
+        eval('namespace ' . self::NS . '; use \\JemFilterInput; use \\DateTimeImmutable; use \\JemListOrder; use \\JemCalendarDayLink; class DayModel extends ModelBoundary {' . $methods . '}');
 
         $output = file_get_contents(JEM_TEST_ROOT . '/site/classes/output.class.php');
         eval('namespace ' . self::NS . '; class JemOutput {' . self::method($output, 'buildPrintLink') . '}');
@@ -61,7 +61,7 @@ final class DayPrintContextTest extends TestCase
         self::assertSame(1, preg_match('/\$isTimetableLayout = .*?(?=        \/\/ Get data from model)/s', $view, $limits));
         self::assertSame(1, preg_match('/\$print_link = \$this->buildDayPrintLink\([^;]+;/', $view, $call));
         self::assertSame(1, preg_match('/        foreach \(\$this->buildDayLinkQuery.*?(?=        \$this->)/s', $view, $paging));
-        eval('namespace ' . self::NS . '; use \\JemCalendarDayLink; class DayView extends ViewBoundary {'
+        eval('namespace ' . self::NS . '; use \\JemFilterInput; use \\JemCalendarDayLink; class DayView extends ViewBoundary {'
             . self::method($view, 'buildDayPrintLink')
             . self::method($view, 'buildDayLinkQuery')
             . 'public function pageContext($model, $params): array { $day = $model->getDay();'

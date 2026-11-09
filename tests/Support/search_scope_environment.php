@@ -53,6 +53,12 @@ final class SearchScopeApplication
     public Registry $params;
     public array $state = [];
 
+    /** @param string $key State key. @param mixed $default Fallback. @return mixed Saved state. */
+    public function getUserState(string $key, mixed $default = null): mixed
+    {
+        return $this->state[$key] ?? $default;
+    }
+
     /** @return void Initialize an isolated application/request. */
     public function __construct()
     {

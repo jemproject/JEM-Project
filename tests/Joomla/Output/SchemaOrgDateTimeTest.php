@@ -16,10 +16,10 @@ final class SchemaOrgDateTimeTest extends JoomlaTestCase
         self::bootJoomlaSite();
 
         if (!class_exists('JemHelper')) {
-            require_once JEM_TEST_ROOT . '/site/helpers/helper.php';
+            require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
         }
 
-        require_once JEM_TEST_ROOT . '/site/classes/output.class.php';
+        require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
     }
 
     public function testOpenDateDoesNotGenerateTemporalMetadata(): void

@@ -65,6 +65,7 @@ abstract class JoomlaTestCase extends TestCase
             ->alias(SessionInterface::class, 'session.web.site');
 
         Factory::$application = $container->get(SiteApplication::class);
+        Factory::$application->createExtensionNamespaceMap();
         Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_jem/tables');
 
         self::$booted = true;

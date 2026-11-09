@@ -84,6 +84,13 @@ final class BackendAclGuardTest extends TestCase
 
         foreach ($files as $file) {
             $contents = (string) file_get_contents(JEM_TEST_ROOT . '/' . $file);
+            if ($file === 'admin/models/event.php') {
+                // This shared model also serves the frontend editor. Only its
+                // explicitly frontend-only Featured guard uses JemUser::can().
+                self::assertSame(1, preg_match('/    protected function protectFrontendFeaturedData\([^\n]+\).*?^    \}/ms', $contents, $guard));
+                self::assertMatchesRegularExpression('/if \(!\$backend && !\$this->protectFrontendFeaturedData\(/', $contents);
+                $contents = str_replace($guard[0], '', $contents);
+            }
             self::assertStringNotContainsString('->can(', $contents, $file);
         }
     }

@@ -20,7 +20,7 @@ final class RecurringEventLinksContractsTest extends TestCase
         $validation = strpos($model, "isset(\$data['event_links']) && !\$this->validateLinkData");
         $recurrenceBranch = strpos($model, 'if($isInitialEvent)');
         $rootSave = strpos($model, "saveLinks(\$pk, \$data['event_links'])");
-        $cleanup = strpos($model, 'JemHelper::cleanup(2)');
+        $cleanup = strpos($model, 'JemHelper::cleanup(2, (int) $pk)');
 
         self::assertIsInt($validation);
         self::assertIsInt($recurrenceBranch);

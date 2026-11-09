@@ -27,6 +27,15 @@ final class SearchFilterControlsTest extends TestCase
             self::markTestSkipped('Requires JEM_TEST_JOOMLA_ROOT and pdo_sqlite; no site is modified.');
         }
         require_once $root . '/libraries/vendor/autoload.php';
+        require_once JEM_TEST_ROOT . '/tests/Support/recurrence_source_stream.php';
+        if (!in_array('jemrecurrence', stream_get_wrappers(), true)) {
+                stream_wrapper_register('jemrecurrence', RecurrenceSourceStream::class);
+        }
+        if (!defined('JPATH_SITE')) {
+                define('JPATH_SITE', 'jemrecurrence://site');
+        }
+
+
         spl_autoload_register(static function (string $class) use ($root): void {
             $prefix = 'Joomla\\CMS\\';
             if (str_starts_with($class, $prefix)) {

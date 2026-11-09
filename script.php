@@ -9,6 +9,10 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Uri\Uri;
+
+use Joomla\CMS\Table\Menu;
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Access\Rules;
@@ -1199,7 +1203,7 @@ class com_jemInstallerScript
             return;
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $table = new \Joomla\CMS\Table\Menu($db);
+        $table = new Menu($db);
         $rebuildPaths = [];
         foreach ($selection['items'] as $item) {
             foreach ($selection['all'] as $other) {
@@ -1305,7 +1309,7 @@ class com_jemInstallerScript
         try {
             $siteRoot = (string) Factory::getApplication()->get('live_site', '');
             if ($siteRoot === '') {
-                $siteRoot = (string) \Joomla\CMS\Uri\Uri::root();
+                $siteRoot = (string) Uri::root();
             }
         } catch (\Throwable $error) {
             // Relative entry points remain identifiable without guessing an external origin in CLI.

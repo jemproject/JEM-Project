@@ -29,20 +29,63 @@ final class JemAutomaticCleanup
         if (self::inTransaction($db)) {
             return false;
         }
-        $db->setQuery('INSERT IGNORE INTO #__jem_config (keyname, value) VALUES ('
-            . $db->quote('runningupdate') . ', ' . $db->quote('0') . ')')->execute();
-        $db->setQuery('UPDATE #__jem_config AS running JOIN #__jem_config AS completed'
-            . ' ON completed.keyname = ' . $db->quote('lastupdate')
-            . ' SET running.value = ' . $db->quote((string) $now)
-            . ' WHERE running.keyname = ' . $db->quote('runningupdate')
-            . ' AND CAST(running.value AS UNSIGNED) = ' . (int) ($settings->runningupdate ?? 0)
-            . ' AND CAST(running.value AS UNSIGNED) < ' . ($now - $delay)
-            . ' AND CAST(completed.value AS UNSIGNED) = ' . (int) $settings->lastupdate)->execute();
-        if ((int) $db->getAffectedRows() !== 1) {
-            return false;
+        $db->transactionStart();
+        try {
+            // Lock the lease first, matching complete(), without changing existing values.
+            foreach (['runningupdate', 'lastupdate'] as $key) {
+                $db->setQuery('INSERT INTO #__jem_config (keyname, value) VALUES ('
+                    . $db->quote($key) . ', ' . $db->quote('0')
+                    . ') ON DUPLICATE KEY UPDATE keyname = keyname')->execute();
+            }
+            $rows = $db->setQuery('SELECT keyname, value FROM #__jem_config WHERE keyname IN ('
+                . $db->quote('lastupdate') . ', ' . $db->quote('runningupdate')
+                . ') ORDER BY keyname DESC FOR UPDATE')->loadAssocList();
+            $state = [];
+            foreach ($rows as $row) {
+                $state[$row['keyname']] = self::timestamp($row['value']);
+            }
+            // Recheck the snapshot under lock before repairing or claiming any state.
+            if (
+                $state['lastupdate'] !== self::timestamp($settings->lastupdate ?? null)
+                || $state['runningupdate'] !== self::timestamp($settings->runningupdate ?? null)
+                || $state['runningupdate'] >= $now - $delay
+            ) {
+                $db->transactionRollback();
+                return false;
+            }
+            $state['runningupdate'] = $now;
+            foreach ($state as $key => $value) {
+                $db->setQuery('UPDATE #__jem_config SET value = ' . $db->quote((string) $value)
+                    . ' WHERE keyname = ' . $db->quote($key))->execute();
+            }
+            $db->transactionCommit();
+        } catch (Throwable $error) {
+            $db->transactionRollback();
+            throw $error;
         }
-        self::cache($settings, ['runningupdate' => $now]);
+        self::cache($settings, $state);
         return true;
+    }
+
+    /**
+     * Read a nonnegative timestamp without accepting malformed or overflowing state.
+     * @param mixed $value Stored bookkeeping value, including legacy empty or null values.
+     * @return int Timestamp within the supported calendar range, or zero for invalid state.
+     */
+    public static function timestamp($value): int
+    {
+        if (!is_int($value) && !is_string($value)) {
+            return 0;
+        }
+        $digits = ltrim((string) $value, '0');
+        $maximum = (string) min(PHP_INT_MAX, 253402300799); // End of year 9999 in UTC.
+        if (
+            $digits === '' || !ctype_digit($digits) || strlen($digits) > strlen($maximum)
+            || (strlen($digits) === strlen($maximum) && strcmp($digits, $maximum) > 0)
+        ) {
+            return 0;
+        }
+        return (int) $digits;
     }
 
     /**
@@ -58,7 +101,7 @@ final class JemAutomaticCleanup
         try {
             $owner = $db->setQuery('SELECT value FROM #__jem_config WHERE keyname = '
                 . $db->quote('runningupdate') . ' FOR UPDATE')->loadResult();
-            if ((int) $owner !== $claim) {
+            if (self::timestamp($owner) !== $claim) {
                 $db->transactionRollback();
                 return;
             }
