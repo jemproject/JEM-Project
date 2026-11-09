@@ -103,6 +103,100 @@ final class RecurrencePreviewDateTest extends TestCase
         }
     }
 
+    /**
+     * Canonical preview data must not depend on the request's translated date format.
+     * @param string $side Editor source directory.
+     * @param string $display Request calendar format.
+     * @param string $filter Request PHP date format.
+     * @return void
+     */
+    #[DataProvider('formats')]
+    public function testCanonicalDatesIgnorePreviewLanguage(string $side, string $display, string $filter): void
+    {
+        [$controller, $model, $app] = $this->editor($side, $display, $filter);
+        $data = ['id' => 1, 'dates' => '2026-11-08', 'enddates' => '2026-11-15',
+            'recurrence_limit_date' => '2026-12-20', 'title' => '<strong>Unchanged title</strong>'];
+        $response = $this->preview($controller, $app, $data, 'iso');
+        self::assertTrue($response['success'], $response['message'] ?? '');
+        self::assertFalse($response['data']['required']);
+        foreach (['dates', 'enddates', 'recurrence_limit_date', 'title'] as $name) {
+            self::assertSame($data[$name], $model->candidate[$name]);
+        }
+        self::assertSame($data, $app->input->post->get('jform', [], 'array'));
+        self::assertTrue($controller->tokenChecked);
+        self::assertTrue($app->closed);
+
+        // Older JS/overrides without the protocol marker retain localised filtering.
+        $local = ['id' => 1, 'dates' => (new DateTimeImmutable('2026-11-08'))->format($filter)];
+        self::assertTrue($this->preview($controller, $app, $local)['success']);
+        self::assertSame('2026-11-08', $model->candidate['dates']);
+    }
+
+    /**
+     * The ISO preview and normal localised save must agree, including booking safeguards.
+     * @param string $side Editor source directory.
+     * @param string $display Request calendar format.
+     * @param string $filter Request PHP date format.
+     * @return void
+     */
+    #[DataProvider('formats')]
+    public function testCanonicalDatesKeepRecurrenceDecision(string $side, string $display, string $filter): void
+    {
+        [$controller, $model, $app] = $this->editor($side, $display, $filter);
+        $model->stored['recurrence_type'] = 2;
+        $model->children = [array_replace($model->stored, ['id' => 2, 'recurrence_first_id' => 1])];
+        $model->registrations = [['id' => 1, 'event' => 2, 'status' => 1]];
+        $response = $this->preview($controller, $app, ['id' => 1, 'dates' => '2026-11-09'], 'iso');
+        self::assertTrue($response['success'], $response['message'] ?? '');
+        self::assertTrue($response['data']['required']);
+        self::assertFalse($response['data']['deleteAllowed']);
+        self::assertSame('2026-11-15', $model->candidate['enddates']);
+        self::assertSame('2026-12-20', $model->candidate['recurrence_limit_date']);
+        $local = ['id' => 1, 'dates' => (new DateTimeImmutable('2026-11-09'))->format($filter)];
+        $saved = $model->previewRecurrenceChange($model->form->filter($local) + ['id' => 1]);
+        self::assertSame($saved['fingerprint'], $response['data']['fingerprint']);
+        self::assertSame($saved['deleteAllowed'], $response['data']['deleteAllowed']);
+    }
+
+    /**
+     * Explicit ISO dates are strict; empty/omitted values retain the event's existing rules.
+     * @param string $side Editor source directory.
+     * @param string $display Request calendar format.
+     * @param string $filter Request PHP date format.
+     * @return void
+     */
+    #[DataProvider('formats')]
+    public function testCanonicalDatesRejectMalformedValues(string $side, string $display, string $filter): void
+    {
+        [$controller, $model, $app] = $this->editor($side, $display, $filter);
+        foreach (['dates', 'enddates', 'recurrence_limit_date'] as $name) {
+            foreach (['2026-11-31', '2026-2-03', '2026-11-13 00:00:00', '13.11.2026',
+                '0000-00-00', "2026-11-13\0", [], null, ' ', '2026-11-13extra'] as $invalid) {
+                $model->candidate = [];
+                $response = $this->preview($controller, $app, ['id' => 1, $name => $invalid], 'iso');
+                self::assertFalse($response['success']);
+                self::assertStringContainsString('not a valid calendar date', $response['message']);
+                self::assertSame([], $model->candidate);
+            }
+        }
+        $response = $this->preview($controller, $app, ['id' => 1, 'dates' => '2028-02-29'], 'iso');
+        self::assertTrue($response['success'], $response['message'] ?? '');
+        self::assertSame('2028-02-29', $model->candidate['dates']);
+        self::assertTrue($this->preview($controller, $app, ['id' => 1], 'iso')['success']);
+        self::assertSame('2026-11-08', $model->candidate['dates']);
+        self::assertTrue($this->preview($controller, $app, ['id' => 1, 'dates' => '',
+            'enddates' => '', 'recurrence_limit_date' => ''], 'iso')['success']);
+        self::assertEmpty($model->candidate['dates']);
+
+        $model->stored['recurrence_type'] = 2;
+        $response = $this->preview($controller, $app, ['id' => 1, 'recurrence_limit_date' => ''], 'iso');
+        self::assertFalse($response['success']);
+        self::assertSame('Please enter an end date for the recurrence.', $response['message']);
+        $response = $this->preview($controller, $app, ['id' => 1, 'recurrence_limit_date' => '2026-11-07'], 'iso');
+        self::assertFalse($response['success']);
+        self::assertStringContainsString('cannot be earlier', $response['message']);
+    }
+
     /** @return array Controller, model and application with real form fields and deterministic stored data. */
     private function editor(string $side, string $display, string $filter): array
     {
@@ -236,10 +330,17 @@ final class RecurrencePreviewDateTest extends TestCase
         return [$controller, $model, $app];
     }
 
-    /** @return array Decoded response from the production preview action for the submitted form data. */
-    private function preview(object $controller, object $app, array $data): array
+    /**
+     * Invoke the production preview action using the selected date transport.
+     * @param object $controller Authorised fixture controller.
+     * @param object $app Capture-only application services.
+     * @param array $data Submitted event fields.
+     * @param string $dateFormat Explicit transport marker, or empty for legacy clients.
+     * @return array Decoded JSON response from the actual preview action.
+     */
+    private function preview(object $controller, object $app, array $data, string $dateFormat = ''): array
     {
-        $app->input->post = new Input(['jform' => $data]);
+        $app->input->post = new Input(['jform' => $data, 'jem_recurrence_date_format' => $dateFormat]);
         ob_start();
         try {
             $controller->recurrencePreview();

@@ -39,6 +39,41 @@
             resume = null;
             submit();
         });
+        /**
+         * Send Gregorian preview dates independently of the AJAX request language.
+         * @param {FormData} body Scalar preview data; the visible fields remain unchanged.
+         * @returns {void} Legacy calendars keep their existing localised transport.
+         * @throws {Error} When the displayed date cannot be parsed without rollover.
+         */
+        const normalisePreviewDates = body => {
+            const dates = [];
+            for (const name of ['dates', 'enddates', 'recurrence_limit_date']) {
+                const key = 'jform[' + name + ']';
+                if (!body.has(key)) continue;
+                const field = form.elements.namedItem(key);
+                const wrapper = field && field.closest && field.closest('.field-calendar');
+                const calendar = wrapper && wrapper._joomlaCalendar;
+                const value = String(body.get(key)).trim();
+                if (value === '') {
+                    dates.push([key, '']);
+                    continue;
+                }
+                // Do not guess the format of an override or a non-Gregorian calendar.
+                if (!calendar || calendar.params.dateType !== 'gregorian'
+                    || typeof Date.parseFieldDate !== 'function') return;
+                const parsed = Date.parseFieldDate(value, calendar.params.dateFormat,
+                    calendar.params.dateType, calendar.strings, true);
+                if (!parsed || parsed.print(calendar.params.dateFormat, calendar.params.dateType,
+                    true, calendar.strings) !== value) {
+                    throw new Error(field.getAttribute('data-validation-text')
+                        || Joomla.Text._('COM_JEM_RECURRENCE_CHANGE_REVIEW'));
+                }
+                // Calendar arithmetic uses the displayed day, without a UTC conversion.
+                dates.push([key, parsed.print('%Y-%m-%d', 'gregorian', false, calendar.strings)]);
+            }
+            dates.forEach(([key, value]) => body.set(key, value));
+            body.set('jem_recurrence_date_format', 'iso');
+        };
         Joomla.submitform = function (task, target, ...args) {
             target = target || document.getElementById('adminForm');
             const id = form.elements.namedItem('jem_recurrence_event_id');
@@ -54,6 +89,13 @@
             // Preview sends scalar form data, never uploads or editor file contents.
             for (const [key, value] of new FormData(form)) {
                 if (typeof value === 'string') body.append(key, value);
+            }
+            try {
+                normalisePreviewDates(body);
+            } catch (error) {
+                cancel();
+                window.alert(error.message || Joomla.Text._('COM_JEM_RECURRENCE_CHANGE_REVIEW'));
+                return false;
             }
             body.set('task', 'event.recurrencePreview');
             body.set('jform[id]', id.value);

@@ -36,8 +36,8 @@ abstract class JemControllerForm extends FormController
                 throw new RuntimeException(Text::_('JLIB_APPLICATION_ERROR_FORM_LOAD'));
             }
 
-            // AJAX carries displayed dates. Use the editor's filters, as normal save does,
-            // before the model merges them with the stored ISO dates. Leave other fields alone.
+            // New clients send explicit ISO dates; older clients retain the editor filters.
+            $isoDates = $this->input->post->getString('jem_recurrence_date_format', '') === 'iso';
             foreach (['dates', 'enddates', 'recurrence_limit_date'] as $name) {
                 if (!array_key_exists($name, $data)) {
                     continue;
@@ -46,8 +46,20 @@ abstract class JemControllerForm extends FormController
                 if (!$field) {
                     throw new RuntimeException(Text::_('JLIB_APPLICATION_ERROR_FORM_LOAD'));
                 }
-                // Filter the submitted value directly: an empty date must not become an XML default.
-                $data[$name] = $field->filter($data[$name]);
+                if ($isoDates) {
+                    $value = $data[$name];
+                    if (
+                        !is_string($value) || ($value !== '' && (
+                            !preg_match('/^\d{4}-\d{2}-\d{2}$/D', $value)
+                            || !JemHelper::isValidCalendarDate($value, 'Y-m-d')
+                        ))
+                    ) {
+                        throw new RuntimeException(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_DATE', $field->title));
+                    }
+                } else {
+                    // Filter directly: an empty date must not become an XML default.
+                    $data[$name] = $field->filter($data[$name]);
+                }
             }
 
             echo new \Joomla\CMS\Response\JsonResponse($model->previewRecurrenceChange($data));
