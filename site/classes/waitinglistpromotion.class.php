@@ -11,6 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\PluginHelper;
 
+require_once __DIR__ . '/registrationaccesspolicy.class.php';
+
 /**
  * Applies one waiting-list promotion policy to frontend and backend workflows.
  */
@@ -46,15 +48,6 @@ final class JemWaitingListPromotion
             : self::STRATEGY_STRICT;
         $result->strategy = $mode === self::MODE_AUTOMATIC ? $strategy : self::MODE_MANUAL;
 
-        if ($mode === self::MODE_AUTOMATIC
-            && !(int) ($jemsettings->waitinglist_automatic ?? 1)) {
-            $result->success = true;
-            $result->skipped = true;
-            $result->reason = 'automatic_disabled';
-            self::loadAvailability($result);
-            return $result;
-        }
-
         $selectedIds = self::normaliseIds($options['registrationIds'] ?? array());
         $excludedIds = self::normaliseIds($options['excludeIds'] ?? array());
         $notify = !array_key_exists('notify', $options) || (bool) $options['notify'];
@@ -77,7 +70,7 @@ final class JemWaitingListPromotion
             $db->transactionStart();
 
             $query = $db->getQuery(true)
-                ->select(array('maxplaces', 'waitinglist', 'reservedplaces'))
+                ->select(array('maxplaces', 'waitinglist', 'reservedplaces', 'event_status'))
                 ->from($db->quoteName('#__jem_events'))
                 ->where($db->quoteName('id') . ' = ' . $eventId);
             $db->setQuery((string) $query . ' FOR UPDATE');
@@ -85,6 +78,27 @@ final class JemWaitingListPromotion
 
             if (!$event) {
                 throw new RuntimeException('event_not_found');
+            }
+
+            $statusMessage = JemRegistrationAccessPolicy::eventStatusMessage($event);
+            if ($statusMessage !== '') {
+                $result->success = $mode === self::MODE_AUTOMATIC;
+                $result->skipped = true;
+                $result->reason = $statusMessage === 'COM_JEM_EVENT_REGISTRATION_CANCELLED'
+                    ? 'event_cancelled' : 'event_postponed';
+                self::loadAvailability($result);
+                $db->transactionCommit();
+                return $result;
+            }
+
+            if ($mode === self::MODE_AUTOMATIC
+                && !(int) ($jemsettings->waitinglist_automatic ?? 1)) {
+                $result->success = true;
+                $result->skipped = true;
+                $result->reason = 'automatic_disabled';
+                self::loadAvailability($result);
+                $db->transactionCommit();
+                return $result;
             }
 
             if (!(int) $event->waitinglist || (int) $event->maxplaces < 1) {

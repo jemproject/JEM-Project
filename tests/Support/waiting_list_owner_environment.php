@@ -34,6 +34,8 @@ namespace Joomla\CMS {
                 /**
                  * @return object Synthetic administrator identity.
                  */
+                public function enqueueMessage($message, $type = "message"): void {}
+
                 public function getIdentity(): object
                 {
                     return (object) ['id' => 100];
@@ -73,11 +75,34 @@ namespace Joomla\CMS\Plugin {
     }
 }
 
+namespace Joomla\CMS\Language {
+    /** Translate public failure messages without booting a site or invoking mail. */
+    final class Text
+    {
+        /** @param string $key Language key. @return string Source English message. */
+        public static function _($key): string
+        {
+            $strings = parse_ini_file(JEM_TEST_ROOT . '/site/language/en-GB/com_jem.ini', false, INI_SCANNER_RAW);
+            return $strings[$key] ?? $key;
+        }
+
+        /** @param string $key Language key. @param mixed ...$args Formatting data. @return string Public message. */
+        public static function sprintf($key, ...$args): string
+        {
+            return sprintf(self::_($key), ...$args);
+        }
+    }
+}
+
 namespace {
     /** Provide only the promotion settings used by the production service. */
     final class JemHelper
     {
         public static string $strategy = 'strict';
+
+        /** @param mixed ...$args Failure context. @return void Do not write installed site logs. */
+        public static function addLogEntry(...$args): void {}
+
 
         /**
          * @return object Automatic promotion remains enabled for all fixtures.
@@ -92,6 +117,17 @@ namespace {
     final class JemFactory
     {
         public static array $notifications = [];
+
+        /** @param int $id Synthetic booking holder. @return object Server-owned fixture identity. */
+        public static function getUser($id): object
+        {
+            return new class ((int) $id) {
+                public function __construct(public int $id) {}
+                public function getAuthorisedViewLevels(): array { return [1]; }
+                public function getAuthorisedGroups(): array { return [2]; }
+            };
+        }
+
 
         /**
          * @return object Recording event dispatcher.

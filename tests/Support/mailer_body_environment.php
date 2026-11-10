@@ -77,16 +77,17 @@ final class Factory
 
 final class Text
 {
+    public static array $strings = [];
     /** @param string $key Translation key. @return string Stable fixture label. */
     public static function _(string $key): string
     {
-        return $key === 'COM_JEM_EVENT_VENUE_CONFIGURATION' ? 'Venue configuration' : $key;
+        return self::$strings[$key] ?? ($key === 'COM_JEM_EVENT_VENUE_CONFIGURATION' ? 'Venue configuration' : $key);
     }
 
     /** @param string $key Translation key. @param mixed ...$args Arguments. @return string Key. */
     public static function sprintf(string $key, mixed ...$args): string
     {
-        return $key;
+        return isset(self::$strings[$key]) ? sprintf(self::$strings[$key], ...$args) : $key;
     }
 }
 
@@ -145,7 +146,7 @@ function loadMailer(): void
     }
 
     $source = file_get_contents(JEM_TEST_ROOT . '/plugins/plg_jem_mailer/mailer.php');
-    $names = ['_send'];
+    $names = ['_send', '_appendEventStatusInfo'];
     if (str_contains($source, 'private function _appendVenueConfiguration(')) {
         $names[] = '_appendVenueConfiguration';
     }

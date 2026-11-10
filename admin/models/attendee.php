@@ -394,8 +394,34 @@ class JemModelAttendee extends BaseDatabaseModel
             $waiting = 0;
         }
 
+        $db = Factory::getContainer()->get('DatabaseDriver');
         try {
-            $db = Factory::getContainer()->get('DatabaseDriver');
+            $db->transactionStart();
+            if ($status === 1) {
+                $query = $db->getQuery(true)
+                    ->select('event_status')
+                    ->from($db->quoteName('#__jem_events'))
+                    ->where('id = ' . (int) $eventId);
+                $event = $db->setQuery((string) $query . ' FOR UPDATE')->loadObject();
+                $statusMessage = JemRegistrationAccessPolicy::eventStatusMessage($event);
+                if ($statusMessage !== '') {
+                    $query = $db->getQuery(true)
+                        ->select('*')
+                        ->from($db->quoteName('#__jem_register'))
+                        ->where('event = ' . (int) $eventId)
+                        ->where('id IN (' . implode(',', $pks) . ')');
+                    $rows = (array) $db->setQuery((string) $query . ' FOR UPDATE')->loadObjectList();
+                    foreach ($rows as $before) {
+                        $after = clone $before;
+                        JemRegistrationTransition::applyLogicalStatus($after, $value);
+                        if (JemRegistrationAccessPolicy::addsReservation($before, $after)) {
+                            throw new RuntimeException(Text::sprintf(
+                                'COM_JEM_EVENT_REGISTRATION_EVENT_MESSAGE', (int) $eventId, Text::_($statusMessage)
+                            ));
+                        }
+                    }
+                }
+            }
 
             $db->setQuery(
                     'UPDATE #__jem_register' .
@@ -407,7 +433,9 @@ class JemModelAttendee extends BaseDatabaseModel
                 throw new Exception($db->getErrorMsg());
             }
 
-        } catch (Exception $e) {
+            $db->transactionCommit();
+        } catch (Throwable $e) {
+            $db->transactionRollback();
             JemHelper::addLogEntry($e->getMessage(), __METHOD__, Log::ERROR);
             $this->setError($e->getMessage());
             return false;

@@ -305,6 +305,9 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
             <dd><a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES') ?> <i class="icon-out-2" aria-hidden="true"></i></a></dd>
         <?php endif; ?>
     </dl>
+    <?php if (!empty($this->registrationStatusMessage)) : ?>
+        <p class="alert alert-warning" role="status"><?php echo Text::_($this->registrationStatusMessage); ?></p>
+    <?php endif; ?>
     <?php if ($eventLayout !== 'compact' && $showRegistrationAction) : ?>
         <hr />
     <?php endif; ?>
@@ -336,7 +339,9 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
                             echo Text::_('COM_JEM_TOO_LATE_UNREGISTER');
                             break;
                         case 1:
-                            echo Text::_('COM_JEM_TOO_LATE_REGISTER');
+                            if (empty($this->registrationStatusMessage)) {
+                                echo Text::_('COM_JEM_TOO_LATE_REGISTER');
+                            }
                             break;
                         case 2:
                             if ($this->item->requestanswer) { ?>

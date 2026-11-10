@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/registrationtransition.class.php';
+
 /**
  * Immutable result of a frontend self-registration access check.
  */
@@ -57,6 +59,83 @@ final class JemRegistrationAccessPolicy
     public const INVITATION_REQUIRED = 'invitation_required';
     public const REGISTRATION_NOT_FOUND = 'registration_not_found';
     public const CANCELLATION_CLOSED = 'cancellation_closed';
+
+
+    /**
+     * Return the explanation for an event whose bookings are suspended.
+     *
+     * @param object|array|null $event Authoritative event data.
+     * @return string Language key, or an empty string when the status permits bookings.
+     */
+    public static function eventStatusMessage($event): string
+    {
+        $event = is_array($event) ? (object) $event : $event;
+        $status = strtolower(trim((string) self::value($event, 'event_status', '')));
+
+        return array(
+            'cancelled' => 'COM_JEM_EVENT_REGISTRATION_CANCELLED',
+            'postponed' => 'COM_JEM_EVENT_REGISTRATION_POSTPONED',
+        )[$status] ?? '';
+    }
+
+    /**
+     * Identify new reservations, extra places, reactivations and promotions.
+     * Cancellations, reductions and non-booking edits preserve existing records.
+     *
+     * @param object|null $before Stored registration before this operation.
+     * @param object $after Normalised registration proposed by this operation.
+     * @return bool Whether the change requires an event that accepts bookings.
+     */
+    public static function addsReservation($before, $after): bool
+    {
+        $newStatus = JemRegistrationTransition::logicalStatus($after);
+        if (!in_array($newStatus, array(1, 2), true)) {
+            return false;
+        }
+
+        $oldStatus = JemRegistrationTransition::logicalStatus($before);
+
+        return !is_object($before)
+            || !in_array($oldStatus, array(1, 2), true)
+            || (int) ($before->uid ?? 0) !== (int) ($after->uid ?? 0)
+            || max(1, (int) ($after->places ?? 1)) > max(1, (int) ($before->places ?? 1))
+            || ($oldStatus === 2 && $newStatus === 1);
+    }
+
+    /**
+     * Detect a changed date or time saved without confirming a postponed event.
+     *
+     * @param object|null $before Previously stored event.
+     * @param array $after Normalised submitted fields; omitted fields retain their values.
+     * @return bool Whether the editor needs a reminder to select Rescheduled.
+     */
+    public static function postponedScheduleChanged($before, array $after): bool
+    {
+        if (!is_object($before)) {
+            return false;
+        }
+        $status = $after['event_status'] ?? self::value($before, 'event_status', '');
+        if (strtolower(trim((string) $status)) !== 'postponed') {
+            return false;
+        }
+
+        foreach (array('dates', 'enddates', 'times', 'endtimes') as $field) {
+            if (!array_key_exists($field, $after)) {
+                continue;
+            }
+            $oldValue = (string) self::value($before, $field, '');
+            $newValue = (string) $after[$field];
+            if (in_array($field, array('times', 'endtimes'), true)) {
+                $oldValue = preg_match('/^\d{2}:\d{2}$/D', $oldValue) ? $oldValue . ':00' : $oldValue;
+                $newValue = preg_match('/^\d{2}:\d{2}$/D', $newValue) ? $newValue . ':00' : $newValue;
+            }
+            if ($oldValue !== $newValue) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Resolve a registration window without trusting the rendered form.
@@ -168,6 +247,11 @@ final class JemRegistrationAccessPolicy
 
         if (!self::registrationIsEnabled($settings, $event)) {
             return self::deny(self::REGISTRATION_DISABLED, 'COM_JEM_EVENT_REGISTRATION_CLOSED');
+        }
+
+        $statusMessage = self::eventStatusMessage($event);
+        if ($statusMessage !== '') {
+            return self::deny(self::REGISTRATION_CLOSED, $statusMessage);
         }
 
         if (!$registrationOpen) {

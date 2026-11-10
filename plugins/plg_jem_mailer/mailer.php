@@ -578,7 +578,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label'));
+        $query->select(array('a.id', 'a.event_status', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city'));
         $query->select($case_when);
@@ -623,6 +623,8 @@ class plgJemMailer extends CMSPlugin
                 break;
         }
 
+        $adminstate = $this->_appendEventStatusInfo($adminstate, $event);
+        $userstate  = $this->_appendEventStatusInfo($userstate, $event);
         $adminstate = $this->_appendOnlineMeetingInfo($adminstate, $event);
         $userstate  = $this->_appendOnlineMeetingInfo($userstate, $event);
 
@@ -794,6 +796,26 @@ class plgJemMailer extends CMSPlugin
         }
 
         return true;
+    }
+
+    /**
+     * Include the current lifecycle status in configured event edit notifications.
+     *
+     * @param string $text Existing publication message.
+     * @param object $event Saved event data.
+     * @return string Plain notification text with a translated event status.
+     */
+    private function _appendEventStatusInfo($text, $event)
+    {
+        $status = strtolower(trim((string) ($event->event_status ?? 'scheduled')));
+        if (!in_array($status, array('scheduled', 'cancelled', 'postponed', 'rescheduled', 'moved_online'), true)) {
+            $status = 'scheduled';
+        }
+
+        return $text . "\n" . Text::sprintf(
+            'PLG_JEM_MAILER_EVENT_STATUS_LINE',
+            Text::_('PLG_JEM_MAILER_EVENT_STATUS_' . strtoupper($status))
+        );
     }
 
     /**
