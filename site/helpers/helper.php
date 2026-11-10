@@ -37,6 +37,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/menuviewscope.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/cssfilepolicy.class.php');
 require_once __DIR__ . '/../classes/recurrencevalidator.class.php';
 require_once __DIR__ . '/../classes/automaticcleanup.class.php';
+require_once __DIR__ . '/../classes/registrationaccesspolicy.class.php';
 require_once __DIR__ . '/../classes/recurrenceexclusions.class.php';
 require_once __DIR__ . '/../classes/eventschedule.class.php';
 
@@ -921,6 +922,11 @@ class JemHelper
         }
 
         $mode = (int) ($event->registra ?? 0);
+
+        if (in_array($mode, array(1, 2), true)
+            && JemRegistrationAccessPolicy::eventStatusMessage($event) !== '') {
+            return 'closed';
+        }
 
         if (empty($event->dates)) {
             return in_array($mode, array(1, 2), true) ? 'open' : 'disabled';

@@ -10,6 +10,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
+require_once __DIR__ . '/registrationaccesspolicy.class.php';
+
 /**
  * Event reminder definitions, event selection and scheduled notification work.
  */
@@ -284,7 +286,7 @@ final class JemReminderService
             ->where('r.status = 1')
             ->where('r.waiting = 0')
             ->where('e.dates IS NOT NULL')
-            ->where("COALESCE(e.event_status, 'scheduled') <> " . $this->db->quote('cancelled'))
+            ->where("COALESCE(e.event_status, 'scheduled') NOT IN (" . $this->db->quote('cancelled') . ',' . $this->db->quote('postponed') . ')')
             ->order('r.id ASC');
         $this->db->setQuery($query, 0, max(1, (int) $limit));
         $created = 0;
@@ -478,7 +480,7 @@ final class JemReminderService
             && in_array(trim((string) $registration->user_activation), array('', '0'), true)
             && filter_var((string) $registration->user_email, FILTER_VALIDATE_EMAIL)
             && !empty($registration->dates)
-            && (string) $registration->event_status !== 'cancelled';
+            && JemRegistrationAccessPolicy::eventStatusMessage($registration) === '';
     }
 
     private function notificationStillEligible($notification)

@@ -1899,6 +1899,11 @@ class JemModelEvent extends JemModelAdmin
                 }
             }
 
+            if (!$new && $task !== 'save2copy'
+                && JemRegistrationAccessPolicy::postponedScheduleChanged($existingEvent ?? null, $data)) {
+                $app->enqueueMessage(Text::_('COM_JEM_EVENT_POSTPONED_DATE_CHANGED'), 'warning');
+            }
+
             $this->setState('event.new', $new);
             $this->setState($stateName . '.new', $new);
         }

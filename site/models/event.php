@@ -1628,7 +1628,12 @@ class JemModelEvent extends ItemModel
                 (string) ($e->age_access_state ?? JemAgeAccess::UNRESTRICTED)
             );
             if (!$decision->isAllowed()) {
-                $this->setError(Text::_($decision->getMessageKey()));
+                $message = Text::_($decision->getMessageKey());
+                if (JemRegistrationAccessPolicy::eventStatusMessage($e) !== ''
+                    && $decision->getReason() === JemRegistrationAccessPolicy::REGISTRATION_CLOSED) {
+                    $message = Text::sprintf('COM_JEM_EVENT_REGISTRATION_EVENT_MESSAGE', (int) $e->id, $message);
+                }
+                $this->setError($message);
                 return false;
             }
 

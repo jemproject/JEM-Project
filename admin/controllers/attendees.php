@@ -258,7 +258,7 @@ class JemControllerAttendees extends BaseController
                     $type = 'message';
                 } else {
                     $reason = isset($promotion)
-                        && in_array($promotion->reason, array('capacity_exceeded', 'selected_user_missing'), true)
+                        && in_array($promotion->reason, array('capacity_exceeded', 'selected_user_missing', 'event_cancelled', 'event_postponed'), true)
                         ? self::promotionErrorMessage($promotion->reason)
                         : $model->getError();
                     $msg = Text::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR') . ': ' . $reason;
@@ -578,6 +578,8 @@ class JemControllerAttendees extends BaseController
             'selected_user_missing' => 'COM_JEM_WAITINGLIST_PROMOTION_USER_MISSING',
             'no_selection' => 'JERROR_NO_ITEMS_SELECTED',
             'event_not_found' => 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND',
+            'event_cancelled' => 'COM_JEM_EVENT_REGISTRATION_CANCELLED',
+            'event_postponed' => 'COM_JEM_EVENT_REGISTRATION_POSTPONED',
             'waiting_list_unavailable' => 'COM_JEM_NO_WAITINGLIST',
         );
 

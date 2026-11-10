@@ -15,6 +15,7 @@ require_once __DIR__ . '/taxpolicy.class.php';
 require_once __DIR__ . '/taxcalculation.class.php';
 require_once __DIR__ . '/taxcalculator.class.php';
 require_once __DIR__ . '/registrationidentity.class.php';
+require_once __DIR__ . '/registrationaccesspolicy.class.php';
 
 /**
  * Stable domain failure returned by the Point 4E quote engine.
@@ -449,7 +450,7 @@ final class JemPricingQuoteService
                 'e.id', 'e.pricing_mode', 'e.pricing_revision', 'e.currency', 'e.pricing_country_code',
                 'e.prices_include_tax', 'e.maxplaces', 'e.reservedplaces',
                 'e.minbookeduser', 'e.maxbookeduser', 'e.waitinglist',
-                'e.registra', 'e.registra_from', 'e.registra_until', 'e.reginvitedonly',
+                'e.registra', 'e.registra_from', 'e.registra_until', 'e.reginvitedonly', 'e.event_status',
                 'e.published', 'e.publish_up', 'e.publish_down', 'e.access',
                 'e.dates', 'e.locid', 'e.venue_snapshot',
             ))
@@ -674,6 +675,14 @@ final class JemPricingQuoteService
             throw new JemPricingQuoteException(
                 'event_access',
                 'The booking holder cannot access this event.'
+            );
+        }
+
+        $statusMessage = JemRegistrationAccessPolicy::eventStatusMessage($event);
+        if ($statusMessage !== '') {
+            throw new JemPricingQuoteException(
+                'registration_closed',
+                \Joomla\CMS\Language\Text::_($statusMessage)
             );
         }
 

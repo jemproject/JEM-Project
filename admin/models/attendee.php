@@ -426,7 +426,7 @@ class JemModelAttendee extends BaseDatabaseModel
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select(array('id', 'pricing_mode', 'pricing_revision', 'capacity_mode', 'waitinglist', 'recurrence_type', 'series_id', 'minbookeduser', 'maxbookeduser'))
+            ->select(array('id', 'event_status', 'pricing_mode', 'pricing_revision', 'capacity_mode', 'waitinglist', 'recurrence_type', 'series_id', 'minbookeduser', 'maxbookeduser'))
             ->from($db->quoteName('#__jem_events'))
             ->where('id = ' . $eventid);
         $db->setQuery($query);
@@ -500,6 +500,34 @@ class JemModelAttendee extends BaseDatabaseModel
             }
 
             try {
+                // A suspended event still permits notes on an unchanged order.
+                // New places, reactivation and admission changes use the quote gate below.
+                if ($before && JemRegistrationAccessPolicy::eventStatusMessage($pricedEvent) !== ''
+                    && JemRegistrationTransition::logicalStatus($before) === (int) $status) {
+                    $registrations = new JemRegistrationService($db);
+                    $storedSelections = array();
+                    foreach ($registrations->commercialItems($id, (int) $before->revision) as $item) {
+                        if ($item->line_kind === 'admission') {
+                            $storedSelections[(int) $item->event_price_id] = (int) $item->quantity;
+                        }
+                    }
+                    $submittedSelections = array_column($selections, 'quantity', 'event_price_id');
+                    ksort($storedSelections);
+                    ksort($submittedSelections);
+                    if ($submittedSelections === $storedSelections) {
+                        $result = $registrations->save((object) array(
+                            'id' => $id, 'event' => $eventid, 'uid' => $userid,
+                            'comment' => (string) ($data['comment'] ?? $before->comment),
+                        ), array(
+                            'requireExisting' => true,
+                            'expectedRevision' => (int) $before->revision,
+                            'source' => 'administrator.attendee.order_edit',
+                        ));
+                        $this->_data = $result->after;
+                        return $result->after;
+                    }
+                }
+
                 $bookingHolder = JemFactory::getUser($userid);
                 $context = JemPricingQuoteContext::fromIdentity(
                     $bookingHolder,

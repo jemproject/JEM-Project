@@ -9,8 +9,10 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 require_once __DIR__ . '/registrationquantity.class.php';
+require_once __DIR__ . '/registrationaccesspolicy.class.php';
 
 /**
  * Authoritative transactional writer for JEM registrations.
@@ -173,7 +175,7 @@ final class JemRegistrationService
         if (is_object($before) && (int) ($before->event ?? 0) !== (int) $after->event) {
             throw new RuntimeException('A registration cannot be moved to another event.');
         }
-        $this->assertQuantityPolicy($after);
+        $this->assertQuantityPolicy($after, $before);
         $after = $this->applyCapacityPolicy($before, $after, $options);
         $capacity = $this->prepareCapacityAllocations($before, $after, $options);
         $oldStatus = is_object($before) ? JemRegistrationTransition::logicalStatus($before) : null;
@@ -764,12 +766,17 @@ final class JemRegistrationService
     }
 
     /**
-     * Enforce per-user quantity rules while the event row is locked.
+     * Enforce event suspension and quantity rules while the event row is locked.
+     *
+     * @param object $registration Normalised proposed registration.
+     * @param object|null $before Stored registration before the operation.
+     * @return void
+     * @throws RuntimeException When the change would add a suspended reservation.
      */
-    private function assertQuantityPolicy($registration)
+    private function assertQuantityPolicy($registration, $before = null)
     {
         $query = $this->db->getQuery(true)
-            ->select(array('minbookeduser', 'maxbookeduser'))
+            ->select(array('minbookeduser', 'maxbookeduser', 'event_status'))
             ->from($this->db->quoteName('#__jem_events'))
             ->where($this->db->quoteName('id') . ' = ' . (int) $registration->event);
         $this->db->setQuery($query);
@@ -777,6 +784,15 @@ final class JemRegistrationService
 
         if (!$event) {
             throw new RuntimeException('Registration event does not exist.');
+        }
+
+        $statusMessage = JemRegistrationAccessPolicy::eventStatusMessage($event);
+        if ($statusMessage !== '' && JemRegistrationAccessPolicy::addsReservation($before, $registration)) {
+            throw new RuntimeException(Text::sprintf(
+                'COM_JEM_EVENT_REGISTRATION_EVENT_MESSAGE',
+                (int) $registration->event,
+                Text::_($statusMessage)
+            ));
         }
 
         JemRegistrationQuantity::assertStoredRow($registration, $event);
