@@ -86,6 +86,7 @@ class JemControllerFrontendmenu extends BaseController
             array(array('COM_JEM_FRONTEND_MENU_SPECIAL_DAYS', 'COM_JEM_SPECIAL_DAYS_VIEW_DEFAULT_TITLE'), 'Special Days', 'special-days', 'index.php?option=com_jem&view=specialdays', $groups['management']),
             array(array('COM_JEM_FRONTEND_MENU_SUBMIT_SPECIAL_DAY', 'COM_JEM_SPECIALDAY_VIEW_EDIT_TITLE'), 'Submit Special Day', 'submit-special-day', 'index.php?option=com_jem&view=specialday&layout=edit', $groups['management']),
             array(array('COM_JEM_FRONTEND_MENU_ATTENDEE_REGISTRATIONS', 'COM_JEM_ATTENDEE_REGISTRATIONS_VIEW_DEFAULT_TITLE'), 'Attendee Registrations', 'attendee-registrations', 'index.php?option=com_jem&view=attendeeregistrations', $groups['management']),
+            array(array('COM_JEM_RS_TITLE'), 'Tickets', 'registration-status', 'index.php?option=com_jem&view=registrationstatus', $groups['management']),
             array(array('COM_JEM_FRONTEND_MENU_FIELDS', 'COM_JEM_MENU_FIELDS'), 'Fields', 'fields', $administratorUrl . '?option=com_fields&view=fields&context=com_jem.event', $groups['management'], 'url', 0),
             array(array('COM_JEM_FRONTEND_MENU_FIELD_GROUPS', 'COM_JEM_MENU_FIELD_GROUPS'), 'Field Groups', 'field-groups', $administratorUrl . '?option=com_fields&view=groups&context=com_jem.event', $groups['management'], 'url', 0),
             array(array('COM_JEM_FRONTEND_MENU_MY_EVENTS', 'COM_JEM_MYEVENTS_VIEW_DEFAULT_TITLE'), 'My Events', 'my-events', 'index.php?option=com_jem&view=myevents', $groups['user']),

@@ -496,6 +496,14 @@ class JemHelperBackend
             );
         }
 
+        if (self::canManage('jem.attendees.manage')) {
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_RS_TITLE'),
+                'index.php?option=com_jem&amp;view=registrationstatus',
+                $vName === 'registrationstatus'
+            );
+        }
+
         if (self::canManage('jem.registrations.history')) {
             JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_REGISTRATION_HISTORY'),

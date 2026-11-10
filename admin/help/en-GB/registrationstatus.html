@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Tickets - User guide</title></head>
+<body>
+<h1>Tickets</h1>
+<div class="jem-doc-article lh-lg">
+    <p class="lead"><strong>Tickets</strong> gives event managers an overview of reserved and available places in JEM 5.1.0. It shows programmes, subevents, rooms and areas in an expandable table. The view is available in both the administrator area and the frontend.</p>
+    <p>This guide describes the current development implementation. Tickets is a read-only overview: it does not take payments, issue PDF tickets or record admission.</p>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Open Tickets</h2>
+    <ul>
+        <li><strong>Backend:</strong> open <strong>Components → JEM → Control Panel</strong>. In the <strong>Data</strong> section, click <strong>Tickets</strong>, immediately after <strong>Registration</strong>.</li>
+        <li><strong>Generated frontend menu:</strong> sign in and open <strong>JEM → Management → Tickets</strong>.</li>
+        <li><strong>Your own frontend menu:</strong> create a Joomla menu item and select <strong>JEM → Tickets</strong> as its Menu Item Type. Choose its access level and configure the options described below.</li>
+    </ul>
+    <p><strong>Create JEM Menu</strong> includes Tickets under Management as a direct link. The generated entry uses the <strong>Special</strong> access level. Running the generator again adds or updates this entry without creating another copy.</p>
+    <p>Users need access to the menu as well as the relevant JEM permissions. Backend access requires permission to access JEM and <strong>Manage Attendees</strong>. In the frontend, users must sign in; the report includes only events they are allowed to edit under JEM's event permissions. Reading movements also requires <strong>View Registration History</strong>. Making a menu visible does not grant these permissions.</p>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead><tr><th scope="col">View or link</th><th scope="col">Purpose</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Tickets</strong></td><td>Review current place totals and recorded cancellations by programme, event and area.</td></tr>
+                <tr><td><strong>Registration</strong> in the Control Panel</td><td>Open the registration audit history.</td></tr>
+                <tr><td><strong>Registrations</strong> below an event in Tickets</td><td>Open that event's attendee manager, subject to its permissions.</td></tr>
+                <tr><td><strong>Movements</strong> below an event in Tickets</td><td>Inspect recorded changes for that event without leaving the overview.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Start with an overview</h2>
+    <ol>
+        <li>Open Tickets. By default, it shows <strong>Published</strong> events under <strong>Current and upcoming</strong>.</li>
+        <li>Select a period and, if needed, a category, venue or location.</li>
+        <li>Enter part of an event title and click <strong>Apply / Refresh</strong>. Changing a visible dropdown or date control applies that selection automatically.</li>
+        <li>Use the expand buttons beside programme and room rows, or choose <strong>Expand all</strong> or <strong>Collapse all</strong>.</li>
+        <li>Check <strong>Updated</strong> to see when the displayed figures were loaded. Click <strong>Apply / Refresh</strong> to load them again.</li>
+    </ol>
+    <p>The default period uses calendar dates: it includes events ending today or later, including events that started on an earlier date and continue into the selected period. It does not exclude an event merely because its finishing time today has passed.</p>
+    <p>Use <strong>All dates</strong> to include past and undated events. The other filters still apply: choosing All dates does not automatically include archived or unpublished events.</p>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Dates and navigation arrows</h2>
+    <p><strong>Today</strong> always selects the current day. <strong>Day</strong> uses the selected date, or today if no valid date is selected. Week, Month and Year show the period containing the selected date; the date box displays the start of that period. Today follows Joomla's configured timezone, and weeks follow JEM's configured first day of the week.</p>
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead><tr><th scope="col">Selected period</th><th scope="col">Single arrows ‹ / ›</th><th scope="col">Double arrows « / »</th></tr></thead>
+            <tbody>
+                <tr><td>Today / Day</td><td>Previous / next day</td><td>Previous / next week</td></tr>
+                <tr><td>Week</td><td>Previous / next week</td><td>Previous / next month, then align to the start of the week</td></tr>
+                <tr><td>Month</td><td>Previous / next month</td><td>Previous / next year</td></tr>
+                <tr><td>Year</td><td>Previous / next year</td><td>Not shown</td></tr>
+                <tr><td>Current and upcoming / All dates</td><td>Disabled</td><td>Disabled</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p>Moving away from Today switches the selection to Day. Refreshing the page keeps the resolved date rather than repeating the previous arrow movement. <strong>Tomorrow (preset)</strong> is available in the menu options; it opens the next day with Day selected, without adding a Tomorrow button to the report.</p>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Combine the filters</h2>
+    <ul>
+        <li><strong>Event title, Category and Venue:</strong> narrow the report to the events you need.</li>
+        <li><strong>Country → State / Region → County → City:</strong> each selected location narrows the choices below it. With only a country selected, City can offer cities across that country. Changing a parent selection clears the visible child selections.</li>
+        <li><strong>Publication:</strong> choose Published, Unpublished, Archived, Trashed or All.</li>
+        <li><strong>Event status:</strong> choose Scheduled, Cancelled, Postponed, Rescheduled, Moved online or All.</li>
+    </ul>
+    <p>Location choices come from JEM events and venues within your permitted event scope. They are not a complete directory of countries or towns. An online event without a venue can appear when no location filter excludes it.</p>
+    <p><strong>Publication</strong> and <strong>Event status</strong> describe the event. The Confirmed, Waiting and Invited columns describe its bookings. For example, a published but cancelled event can retain confirmed reservations that still need attention; viewing it in Tickets does not change those reservations.</p>
+    <p><strong>Clear</strong> restores the menu's configured defaults. A fixed country or other default may therefore remain selected. In the backend, Clear returns to the standard report defaults.</p>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Read the hierarchy and counters</h2>
+    <p>A programme can contain subevents with their own dates, times and venues. Where configured, an event expands into rooms and areas. If the parent accepts its own registrations, these appear under <strong>Programme registration</strong>.</p>
+    <p>A permitted parent may appear as <strong>Context only</strong> when its children match the filters but the parent does not. Its own bookings then do not contribute to the summary. Programme totals include only matching events. Pagination keeps each programme group together; room and area rows are breakdowns of their event, not extra bookings.</p>
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead><tr><th scope="col">Column</th><th scope="col">Meaning</th></tr></thead>
+            <tbody>
+                <tr><td>Capacity</td><td>The applicable configured place limit for the event or area.</td></tr>
+                <tr><td>Held by organiser</td><td>Places held back by the organiser. These reduce free capacity.</td></tr>
+                <tr><td>Confirmed</td><td>Places in confirmed registrations. This does not mean they have been paid for or used to enter.</td></tr>
+                <tr><td>Waiting</td><td>Places requested on the waiting list.</td></tr>
+                <tr><td>Invited</td><td>Places in invitations. This optional column is hidden by default.</td></tr>
+                <tr><td>Free capacity</td><td>Remaining capacity after applicable limits, confirmed places and organiser holds. Registration conditions still determine whether a new booking is allowed.</td></tr>
+                <tr><td>Cancelled places</td><td>Recorded cancellation quantities, including supported partial reductions. This is a history total, not a count of occupied places or refunds.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p>All booking figures count <strong>places</strong>, not orders or unique people. The same person booked into two subevents contributes to both subevents. Programme capacities and free places are not added across independent events.</p>
+    <p><strong>∞</strong> means no capacity limit is configured. <strong>—</strong> means a value is not applicable or is unavailable; it does not mean zero. Cancelled places do not occupy capacity, and must not be added to free capacity a second time.</p>
+    <p>Click a linked Confirmed, Waiting or Invited count to open the event's attendee list with that status selected. A linked cancellation count opens its recorded movements when you have history permission. The Movements panel shows previous and new booking states and quantities; older or imported records may have incomplete history, and area-level cancellation detail may be unavailable.</p>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Examples</h2>
+    <p><strong>A programme with two sessions.</strong> A conference has 10 places booked directly against the parent, 30 in its morning workshop and 20 in its afternoon workshop. With all three events matching, the programme shows 60 confirmed places. This does not mean 60 different visitors. Filtering to the morning workshop excludes the other bookings from that summary.</p>
+    <p><strong>Areas sharing an event limit.</strong> An event allows 50 places, has 40 confirmed and holds 2 for the organiser: 8 remain free. Two areas may each have physical room for 15 more people, but neither can exceed the shared remainder of 8. Adding their displayed free capacities would overstate availability.</p>
+    <p><strong>A partial cancellation.</strong> Reducing a booking from 4 places to 2 records 2 cancelled places. Cancelling the remaining 2 adds another 2. The history then shows 4 cancelled places and the booking occupies no capacity. The historical original quantity is not an active reservation.</p>
+    <p><strong>Review archived events.</strong> Select All dates and set Publication to Archived. Add a title, venue or category filter if needed. Choosing All dates alone would keep the default Published filter.</p>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Configure a frontend menu item</h2>
+    <p>Open the Joomla menu item of type <strong>Tickets</strong>. Its settings are grouped as follows:</p>
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead><tr><th scope="col">Settings</th><th scope="col">What you can configure</th></tr></thead>
+            <tbody>
+                <tr><td>Filters</td><td>Show or hide each period, title, category, venue, location, publication and event-status filter.</td></tr>
+                <tr><td>Default filter values</td><td>Set the initial period, date and other selections. Defaults still apply when the corresponding filter is hidden, and cannot then be changed through the URL.</td></tr>
+                <tr><td>Columns</td><td>Show or hide counters and Country, State / Region, County and City columns. Location columns are hidden by default. A filter's visibility and its table column are separate settings.</td></tr>
+                <tr><td>Expand groups initially</td><td>Choose whether groups start expanded. The default is Yes.</td></tr>
+                <tr><td>Programme groups per page</td><td>Choose 10, 20, 50 or 100 groups. The default is 20; the number counts groups, not all their expanded rows.</td></tr>
+                <tr><td>Automatic refresh</td><td>Use manual refresh, or refresh every 30, 60 or 120 seconds. Manual refresh is the default.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p>For example, set Default country to Spain and hide the country filter to create a Spain-specific report. You can also hide the Country table column to leave more space for event names. The report remains subject to each user's event permissions.</p>
+    <p>Automatic refresh waits while the browser tab is hidden or focus is inside the filter form. It reloads the current report; it is not a live payment or entrance monitor. On smaller screens, filters wrap and the table can scroll horizontally.</p>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">If an event is missing</h2>
+    <ol>
+        <li>Check the period. Past and undated events require an appropriate period or All dates.</li>
+        <li>Check Publication and Event status independently.</li>
+        <li>Clear temporary filters, then check the menu defaults, including any hidden fixed filters.</li>
+        <li>Check that the signed-in user has the required event permissions.</li>
+        <li>Refresh after changing bookings elsewhere.</li>
+    </ol>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">QR, payments and admission: planned functionality</h2>
+    <p>The current view does not yet provide <strong>Read QR</strong>, reservation PDFs with a QR attached to the confirmation email, manual payment confirmation or entrance/exit recording. Paid and Inside counters are therefore not shown.</p>
+    <p>The agreed workflow uses the event-reservation locator to find the booking. A cashier explicitly confirms a real payment; an entrance controller checks that the reservation is active and paid, or does not require payment, before recording the number of places admitted. These actions need separate permissions. Scanning alone must not record a payment or admit everyone in a group. The same QR can continue identifying the booking while its current validity is checked on the server.</p>
+    <p>This planned workflow is separate from the functions described above. An amount on a booking is not proof of payment, and Joomla's record check-in is not visitor admission.</p>
+</div>
+
+</body>
+</html>

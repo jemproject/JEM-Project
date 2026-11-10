@@ -1,0 +1,27 @@
+body.admin.com_jem.view-registrationstatus .container-main { min-width: 0; }
+/* Shared FE/BE management view. All colours inherit the current Joomla theme. */
+.jem-registration-status { color: inherit; }
+.jem-registration-status .rs-filters { padding: 1rem; border: 1px solid var(--border-color, #aaa); border-radius: .3rem; margin-bottom: 1rem; }
+.jem-registration-status .rs-periods, .jem-registration-status .rs-date-nav,
+.jem-registration-status .rs-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.jem-registration-status .rs-fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem; margin: 1rem 0; }
+.jem-registration-status .rs-field { min-width: 0; }
+.jem-registration-status .rs-field label { display: block; margin-bottom: .25rem; }
+.jem-registration-status .rs-field input, .jem-registration-status .rs-field select { width: 100%; min-width: 0; }
+.jem-registration-status .rs-date-nav input { width: auto; min-width: 10rem; }
+.jem-registration-status .rs-scroll { overflow-x: auto; }
+.jem-registration-status table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.jem-registration-status th, .jem-registration-status td { padding: .6rem; vertical-align: middle; border-bottom: 1px solid var(--border-color, #aaa); }
+.jem-registration-status .rs-number { text-align: end; white-space: nowrap; }
+.jem-registration-status .rs-name { min-width: 17rem; text-align: start; font-weight: normal; }
+.jem-registration-status .rs-entry { padding-inline-start: calc(var(--rs-depth, 0) * 1rem); }
+.jem-registration-status .rs-programme { background: var(--tertiary-bg, var(--body-bg, transparent)); font-weight: bold; }
+.jem-registration-status .rs-area { font-size: .9em; }
+.jem-registration-status .rs-toggle { color: inherit; background: transparent; border: 1px solid var(--border-color, #aaa); border-radius: .2rem; min-width: 1.8rem; margin-inline-end: .4rem; }
+.jem-registration-status .rs-detail { display: block; font-size: .85em; margin-top: .2rem; }
+.jem-registration-status .rs-meta { font-size: .9em; margin: .75rem 0; }
+.jem-registration-status .rs-pagination { display: flex; gap: 1rem; align-items: center; margin: 1rem 0; }
+.jem-registration-status .rs-spacer { flex: 1; }
+.jem-registration-status [hidden] { display: none !important; }
+@media (max-width: 900px) { .jem-registration-status .rs-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .jem-registration-status .rs-fields { grid-template-columns: minmax(0, 1fr); } }

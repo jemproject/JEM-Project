@@ -178,6 +178,10 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
                     $this->quickiconButton('index.php?option=com_jem&amp;view=registrationhistory', 'icon-48-registration.svg', Text::_('COM_JEM_REGISTRATION_BUTTON'));
                 }
 
+                if (JemHelperBackend::canManage('jem.attendees.manage')) {
+                    $this->quickiconButton('index.php?option=com_jem&amp;view=registrationstatus', 'icon-48-tickets.svg', Text::_('COM_JEM_RS_TITLE'));
+                }
+
                 if ($canManageTools) {
                     $this->quickiconButton('index.php?option=com_jem&amp;view=import', 'icon-48-tableimport.svg', Text::_('COM_JEM_IMPORT_DATA'));
                     $this->quickiconButton('index.php?option=com_jem&amp;view=export', 'icon-48-tableexport.svg', Text::_('COM_JEM_EXPORT_DATA'));

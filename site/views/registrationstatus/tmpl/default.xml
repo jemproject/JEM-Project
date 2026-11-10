@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <layout title="COM_JEM_RS_TITLE">
+        <message>COM_JEM_RS_VIEW_DESC</message>
+    </layout>
+    <fields name="params">
+        <fieldset name="filters" label="COM_JEM_RS_FILTERS" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field name="show_date_filter" type="radio" default="1" label="COM_JEM_RS_SHOW_DATE_FILTER" class="btn-group btn-group-yesno" description="COM_JEM_RS_HIDDEN_FILTER">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_category_filter" type="radio" default="1" label="COM_JEM_RS_SHOW_CATEGORY_FILTER" class="btn-group btn-group-yesno" description="COM_JEM_RS_HIDDEN_FILTER">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_venue_filter" type="radio" default="1" label="COM_JEM_RS_SHOW_VENUE_FILTER" class="btn-group btn-group-yesno" description="COM_JEM_RS_HIDDEN_FILTER">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_country_filter" type="radio" default="1" label="COM_JEM_RS_SHOW_COUNTRY_FILTER" class="btn-group btn-group-yesno" description="COM_JEM_RS_HIDDEN_FILTER">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_region_filter" type="radio" default="1" label="COM_JEM_RS_SHOW_REGION_FILTER" class="btn-group btn-group-yesno" description="COM_JEM_RS_HIDDEN_FILTER">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_county_filter" type="radio" default="1" label="COM_JEM_RS_SHOW_COUNTY_FILTER" class="btn-group btn-group-yesno" description="COM_JEM_RS_HIDDEN_FILTER">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_city_filter" type="radio" default="1" label="COM_JEM_RS_SHOW_CITY_FILTER" class="btn-group btn-group-yesno" description="COM_JEM_RS_HIDDEN_FILTER">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_publication_filter" type="radio" default="1" label="COM_JEM_RS_SHOW_PUBLICATION_FILTER" class="btn-group btn-group-yesno" description="COM_JEM_RS_HIDDEN_FILTER">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_event_status_filter" type="radio" default="1" label="COM_JEM_RS_SHOW_EVENT_STATUS_FILTER" class="btn-group btn-group-yesno" description="COM_JEM_RS_HIDDEN_FILTER">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_search_filter" type="radio" default="1" label="COM_JEM_RS_SHOW_SEARCH_FILTER" class="btn-group btn-group-yesno" description="COM_JEM_RS_HIDDEN_FILTER">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+        </fieldset>
+        <fieldset name="defaults" label="COM_JEM_RS_DEFAULTS" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field name="date_filter_default" type="list" default="upcoming" label="COM_JEM_RS_DEFAULT_MODE" class="form-select">
+                <option value="upcoming">COM_JEM_RS_PERIOD_UPCOMING</option>
+                <option value="all">COM_JEM_RS_PERIOD_ALL</option>
+                <option value="today">COM_JEM_RS_PERIOD_TODAY</option>
+                <option value="tomorrow">COM_JEM_RS_PERIOD_TOMORROW</option>
+                <option value="date">COM_JEM_RS_PERIOD_DATE</option>
+                <option value="week">COM_JEM_RS_PERIOD_WEEK</option>
+                <option value="month">COM_JEM_RS_PERIOD_MONTH</option>
+                <option value="year">COM_JEM_RS_PERIOD_YEAR</option>
+            </field>
+            <field name="default_date" type="calendar" default="" label="COM_JEM_RS_DEFAULT_DATE" format="%Y-%m-%d" filter="raw" showtime="false" />
+            <field name="default_category" type="categoryedit" default="0" label="COM_JEM_RS_DEFAULT_CATEGORY" removeroot="true" />
+            <field name="default_venue" type="sql" default="0" label="COM_JEM_RS_DEFAULT_VENUE" query="SELECT id AS value, venue AS text FROM #__jem_venues ORDER BY venue" key_field="value" value_field="text">
+                <option value="0">JALL</option>
+            </field>
+            <field name="default_country" type="countryoptions" default="" label="COM_JEM_RS_DEFAULT_COUNTRY" />
+            <field name="default_region" type="maplocation" default="" label="COM_JEM_RS_DEFAULT_REGION" level="region" />
+            <field name="default_county" type="maplocation" default="" label="COM_JEM_RS_DEFAULT_COUNTY" level="county" />
+            <field name="default_city" type="maplocation" default="" label="COM_JEM_RS_DEFAULT_CITY" level="city" />
+            <field name="default_search" type="text" default="" label="COM_JEM_RS_DEFAULT_SEARCH" />
+            <field name="default_publication" type="list" default="1" label="COM_JEM_RS_DEFAULT_PUBLICATION">
+                <option value="1">JPUBLISHED</option>
+                <option value="0">JUNPUBLISHED</option>
+                <option value="2">JARCHIVED</option>
+                <option value="-2">JTRASHED</option>
+                <option value="all">JALL</option>
+            </field>
+            <field name="default_event_status" type="list" default="" label="COM_JEM_RS_DEFAULT_EVENT_STATUS">
+                <option value="">JALL</option>
+                <option value="scheduled">COM_JEM_RS_EVENT_SCHEDULED</option>
+                <option value="cancelled">COM_JEM_RS_EVENT_CANCELLED</option>
+                <option value="postponed">COM_JEM_RS_EVENT_POSTPONED</option>
+                <option value="rescheduled">COM_JEM_RS_EVENT_RESCHEDULED</option>
+                <option value="moved_online">COM_JEM_RS_EVENT_MOVED_ONLINE</option>
+            </field>
+        </fieldset>
+        <fieldset name="columns" label="COM_JEM_RS_COLUMNS">
+            <field name="show_capacity_column" type="radio" default="1" label="COM_JEM_RS_SHOW_CAPACITY_COLUMN" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_reserved_column" type="radio" default="1" label="COM_JEM_RS_SHOW_RESERVED_COLUMN" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_confirmed_column" type="radio" default="1" label="COM_JEM_RS_SHOW_CONFIRMED_COLUMN" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_waiting_column" type="radio" default="1" label="COM_JEM_RS_SHOW_WAITING_COLUMN" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_invited_column" type="radio" default="0" label="COM_JEM_RS_SHOW_INVITED_COLUMN" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_free_column" type="radio" default="1" label="COM_JEM_RS_SHOW_FREE_COLUMN" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_cancelled_column" type="radio" default="1" label="COM_JEM_RS_SHOW_CANCELLED_COLUMN" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_country_column" type="radio" default="0" label="COM_JEM_RS_SHOW_COUNTRY_COLUMN" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_region_column" type="radio" default="0" label="COM_JEM_RS_SHOW_REGION_COLUMN" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_county_column" type="radio" default="0" label="COM_JEM_RS_SHOW_COUNTY_COLUMN" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_city_column" type="radio" default="0" label="COM_JEM_RS_SHOW_CITY_COLUMN" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="expand_groups" type="radio" default="1" label="COM_JEM_RS_EXPAND_DEFAULT" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="status_page_size" type="list" default="20" label="COM_JEM_RS_PAGE_SIZE">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </field>
+            <field name="refresh_seconds" type="list" default="0" label="COM_JEM_RS_REFRESH_SECONDS">
+                <option value="0">COM_JEM_RS_REFRESH_OFF</option>
+                <option value="30">COM_JEM_RS_REFRESH_30</option>
+                <option value="60">COM_JEM_RS_REFRESH_60</option>
+                <option value="120">COM_JEM_RS_REFRESH_120</option>
+            </field>
+        </fieldset>
+    </fields>
+</metadata>
