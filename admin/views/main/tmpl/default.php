@@ -178,7 +178,7 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
                     $this->quickiconButton('index.php?option=com_jem&amp;view=registrationhistory', 'icon-48-registration.svg', Text::_('COM_JEM_REGISTRATION_BUTTON'));
                 }
 
-                if (JemHelperBackend::canManage('jem.attendees.manage')) {
+                if (JemHelperBackend::canManage('jem.attendees.manage') || JemHelperBackend::canUseTickets()) {
                     $this->quickiconButton('index.php?option=com_jem&amp;view=registrationstatus', 'icon-48-tickets.svg', Text::_('COM_JEM_RS_TITLE'));
                 }
 

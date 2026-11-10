@@ -5,7 +5,7 @@
 <h1>Tickets</h1>
 <div class="jem-doc-article lh-lg">
     <p class="lead"><strong>Tickets</strong> gives event managers an overview of reserved and available places in JEM 5.1.0. It shows programmes, subevents, rooms and areas in an expandable table. The view is available in both the administrator area and the frontend.</p>
-    <p>This guide describes the current development implementation. Tickets is a read-only overview: it does not take payments, issue PDF tickets or record admission.</p>
+    <p>Tickets also provides a private reservation PDF with QR, manual payment confirmation and quantity-based entrance control. Scanning a QR only looks up the reservation; recording payment and recording entry are separate, explicit actions.</p>
 
     <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Open Tickets</h2>
     <ul>
@@ -14,7 +14,7 @@
         <li><strong>Your own frontend menu:</strong> create a Joomla menu item and select <strong>JEM → Tickets</strong> as its Menu Item Type. Choose its access level and configure the options described below.</li>
     </ul>
     <p><strong>Create JEM Menu</strong> includes Tickets under Management as a direct link. The generated entry uses the <strong>Special</strong> access level. Running the generator again adds or updates this entry without creating another copy.</p>
-    <p>Users need access to the menu as well as the relevant JEM permissions. Backend access requires permission to access JEM and <strong>Manage Attendees</strong>. In the frontend, users must sign in; the report includes only events they are allowed to edit under JEM's event permissions. Reading movements also requires <strong>View Registration History</strong>. Making a menu visible does not grant these permissions.</p>
+    <p>Users need access to the menu as well as the relevant JEM permissions. Backend access requires permission to access JEM and either <strong>Manage Attendees</strong> or the relevant Tickets staff permission. In the frontend, signed-in users see events they may edit or serve as authorised ticket staff. Reading movements also requires <strong>View Registration History</strong>. Making a menu visible does not grant these permissions.</p>
 
     <div class="table-responsive">
         <table class="table table-striped align-middle">
@@ -40,6 +40,7 @@
     <p>Use <strong>All dates</strong> to include past and undated events. The other filters still apply: choosing All dates does not automatically include archived or unpublished events.</p>
 
     <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Dates and navigation arrows</h2>
+    <p>The operational table uses short dates and times, for example <strong>10/11/2026</strong> and <strong>09:30</strong>, leaving room for the counters. Navigation arrows have larger symbols and descriptive tooltips.</p>
     <p><strong>Today</strong> always selects the current day. <strong>Day</strong> uses the selected date, or today if no valid date is selected. Week, Month and Year show the period containing the selected date; the date box displays the start of that period. Today follows Joomla's configured timezone, and weeks follow JEM's configured first day of the week.</p>
     <div class="table-responsive">
         <table class="table table-striped align-middle">
@@ -74,12 +75,14 @@
             <thead><tr><th scope="col">Column</th><th scope="col">Meaning</th></tr></thead>
             <tbody>
                 <tr><td>Capacity</td><td>The applicable configured place limit for the event or area.</td></tr>
-                <tr><td>Held by organiser</td><td>Places held back by the organiser. These reduce free capacity.</td></tr>
+                <tr><td>Reserved</td><td>Places held back by the organiser. These reduce free capacity.</td></tr>
                 <tr><td>Confirmed</td><td>Places in confirmed registrations. This does not mean they have been paid for or used to enter.</td></tr>
                 <tr><td>Waiting</td><td>Places requested on the waiting list.</td></tr>
                 <tr><td>Invited</td><td>Places in invitations. This optional column is hidden by default.</td></tr>
-                <tr><td>Free capacity</td><td>Remaining capacity after applicable limits, confirmed places and organiser holds. Registration conditions still determine whether a new booking is allowed.</td></tr>
-                <tr><td>Cancelled places</td><td>Recorded cancellation quantities, including supported partial reductions. This is a history total, not a count of occupied places or refunds.</td></tr>
+                <tr><td>Free</td><td>Remaining capacity after applicable limits, confirmed places and organiser holds. Registration conditions still determine whether a new booking is allowed.</td></tr>
+                <tr><td>Paid</td><td>Confirmed places covered by a recorded payment. Free reservations are not counted as paid.</td></tr>
+                <tr><td>Entered</td><td>Cumulative admitted places, including previous entries if a reservation is subsequently cancelled. This is not current occupancy; exits are not tracked.</td></tr>
+                <tr><td>Cancelled</td><td>Recorded cancellation quantities, including supported partial reductions. This is a history total, not a count of occupied places or refunds.</td></tr>
             </tbody>
         </table>
     </div>
@@ -120,10 +123,53 @@
         <li>Refresh after changing bookings elsewhere.</li>
     </ol>
 
-    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">QR, payments and admission: planned functionality</h2>
-    <p>The current view does not yet provide <strong>Read QR</strong>, reservation PDFs with a QR attached to the confirmation email, manual payment confirmation or entrance/exit recording. Paid and Inside counters are therefore not shown.</p>
-    <p>The agreed workflow uses the event-reservation locator to find the booking. A cashier explicitly confirms a real payment; an entrance controller checks that the reservation is active and paid, or does not require payment, before recording the number of places admitted. These actions need separate permissions. Scanning alone must not record a payment or admit everyone in a group. The same QR can continue identifying the booking while its current validity is checked on the server.</p>
-    <p>This planned workflow is separate from the functions described above. An amount on a booking is not proof of payment, and Joomla's record check-in is not visitor admission.</p>
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Reservation PDF and QR</h2>
+    <p>JEM Mailer attaches a private reservation PDF to the owner's confirmed booking email. Waiting-list, invited and cancelled reservations do not receive an admission PDF. The owner can also open their registration details and choose <strong>Download reservation PDF</strong>. Authorised desk staff can download it after looking up the reservation.</p>
+    <p>The QR contains the opaque reservation locator. It contains no personal information, payment status or password. It stays the same after payment and partial admission. An old PDF never overrides the current state stored in JEM. Keep the document private. It is a reservation document, not a legal invoice or proof that a payment was received.</p>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Set up staff permissions</h2>
+    <ul>
+        <li><strong>Tickets: confirm payment</strong> allows a cashier to record an actual external collection.</li>
+        <li><strong>Tickets: record admission</strong> allows a door controller to admit eligible places.</li>
+        <li>Assign these permissions in JEM component permissions, or restrict them through event category permissions. Staff must also have access to the chosen frontend menu. Backend staff additionally need access to the Joomla administrator area and JEM.</li>
+        <li>Event editing and attendee management do not automatically grant either new permission. A controller does not need event-edit permission and cannot confirm payments unless separately authorised.</li>
+    </ul>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Look up a reservation</h2>
+    <ol>
+        <li>Open <strong>Tickets</strong> in the frontend or backend and click <strong>Read QR / Ticket desk</strong>.</li>
+        <li>Select the event being served at this desk or entrance. A locator from another event is rejected.</li>
+        <li>Enter the locator and choose <strong>Find reservation</strong>, or use a keyboard-style QR reader. To use a camera, click <strong>Read QR with camera</strong> and allow camera access.</li>
+        <li>If several cameras are available, select the desired camera from the list in the dialog. Camera access requires HTTPS or localhost and browser permission. Images are decoded on the device; JEM does not upload camera images.</li>
+        <li>Check the event, reservation holder, places, payment and remaining entry quantities. Merely looking up or scanning a QR does not record payment or entry.</li>
+    </ol>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Confirm payment at the ticket desk</h2>
+    <ol>
+        <li>Receive the cash, or verify that the bank transfer has actually arrived.</li>
+        <li>Enter the full outstanding amount in the displayed currency. Select <strong>Cash at the ticket desk</strong> or <strong>Verified bank transfer</strong>. A transfer requires a bank reference; a cash receipt reference is optional.</li>
+        <li>Click <strong>Confirm payment received</strong>, review the event, locator and amount, and confirm the popup. Cancel leaves the reservation unchanged.</li>
+        <li>JEM records the amount, method, reference, operator and UTC time. It does not charge a card or initiate a bank transfer.</li>
+    </ol>
+    <p>The current desk records the complete outstanding balance, not instalments. A priced order with a missing amount cannot be treated as free. An event without a stored price does not require payment in JEM; do not use a free booking to represent an unrecorded external ticket price.</p>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Confirm entry</h2>
+    <ol>
+        <li>Look up the reservation at the selected event entrance.</li>
+        <li>The reservation must be confirmed, the event must be published and neither Cancelled nor Postponed, and the order must be paid or require no payment.</li>
+        <li>Select the area or admission group, then enter the number of people actually entering now. The initial quantity is one, not the entire group.</li>
+        <li>Click <strong>Confirm entry</strong>, review the summary and confirm the popup. JEM rechecks the current state immediately before recording entry.</li>
+        <li>The remaining quantity decreases. Two simultaneous readers cannot admit the same last place twice. Retrying the same submitted operation does not create another entry.</li>
+    </ol>
+    <p><strong>Example:</strong> a reservation has three places and an order total of EUR 30.00. Before collection, entry is blocked. The cashier records EUR 30.00. Two people arrive first: the controller admits two, leaving one available. Later the same QR admits the third person. A further scan shows that all places have been used and cannot admit another person.</p>
+    <p><strong>Areas:</strong> a booking with two places in Area A and two in Area B has separate remaining quantities. Admitting two in Area A does not consume Area B's places or allow a third person into Area A.</p>
+
+    <h2 class="h4 mt-4 pt-2 pb-2 border-bottom">Cancellation and audit</h2>
+    <p>The existing cancellation rules still apply. A permitted cancellation releases booking capacity immediately and blocks further use of the cancelled reservation. It does not erase previous payment or admission records. A free or unpaid cancellation needs no refund. If a payment was recorded, JEM shows the amount awaiting an external refund; it does not claim to have refunded the money.</p>
+    <p>A cancelled paid reservation cannot be reactivated by reusing its old payment. An order awaiting an external refund cannot be increased against those funds either. These cases require administrative settlement review; this version does not record completed refunds. A paid marker without its payment audit is also rejected for review.</p>
+    <p>The dialog's recent history shows the last 20 payments and entries with the operator ID and UTC time. The full append-only operations ledger remains stored, including after ordinary reservation or event deletion. Explicit removal of all JEM data removes this history too.</p>
+    <p><strong>Entered</strong> counts admissions, not people currently inside. Exit tracking, re-entry, payment gateways, refund execution and a turnstile API are not part of this implementation. The same reservation QR can be presented again only while unused eligible places remain.</p>
+
 </div>
 
 </body>

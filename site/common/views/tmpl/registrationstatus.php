@@ -41,7 +41,7 @@ $choices['event_status'] = [];
 foreach (['scheduled', 'cancelled', 'postponed', 'rescheduled', 'moved_online'] as $status) {
     $choices['event_status'][$status] = Text::_('COM_JEM_RS_EVENT_' . strtoupper($status));
 }
-$columns = ['capacity', 'reserved', 'confirmed', 'waiting', 'invited', 'free', 'cancelled'];
+$columns = ['capacity', 'reserved', 'confirmed', 'waiting', 'invited', 'free', 'paid', 'entered', 'cancelled'];
 $columns = array_values(array_filter($columns, static fn ($name) => (bool) ($options['show_' . $name . '_column'] ?? ($name === 'invited' ? 0 : 1))));
 $locations = array_keys(JemRegistrationStatus::LOCATIONS);
 $locations = array_values(array_filter($locations, static fn ($name) => !empty($options['show_' . $name . '_column'])));
@@ -54,6 +54,7 @@ $expanded = (bool) ($options['expand_groups'] ?? 1);
 <section class="jem-registration-status" data-rs-refresh="<?php echo (int) ($options['refresh_seconds'] ?? 0); ?>" data-rs-canonical="<?php echo $escape($url($canonical)); ?>">
     <?php if (!$report['backend']) : ?><h1><?php echo Text::_('COM_JEM_RS_TITLE'); ?></h1><?php endif; ?>
     <p><?php echo Text::_('COM_JEM_RS_INTRO'); ?></p>
+    <?php require __DIR__ . '/ticket-desk.php'; ?>
     <form method="get" action="<?php echo $escape($url($base)); ?>" class="rs-filters">
         <?php foreach ($base as $name => $value) : ?>
             <input type="hidden" name="<?php echo $escape($name); ?>" value="<?php echo $escape($value); ?>">
@@ -122,7 +123,7 @@ $expanded = (bool) ($options['expand_groups'] ?? 1);
                 <th scope="col"><?php echo Text::_('COM_JEM_RS_TIME'); ?></th>
                 <th scope="col"><?php echo Text::_('COM_JEM_RS_EVENT'); ?></th>
                 <?php foreach ($locations as $name) : ?><th scope="col"><?php echo Text::_($labels[$name]); ?></th><?php endforeach; ?>
-                <?php foreach ($columns as $column) : ?><th scope="col" class="rs-number"><?php echo Text::_('COM_JEM_RS_' . strtoupper($column)); ?></th><?php endforeach; ?>
+                <?php foreach ($columns as $column) : ?><th scope="col" class="rs-number" title="<?php echo $escape(Text::_('COM_JEM_RS_' . strtoupper($column) . '_DESC')); ?>"><?php echo Text::_('COM_JEM_RS_' . strtoupper($column)); ?></th><?php endforeach; ?>
             </tr></thead>
             <tbody>
             <?php foreach ($report['rows'] as $row) : ?>
@@ -135,8 +136,8 @@ $expanded = (bool) ($options['expand_groups'] ?? 1);
                     : ['option' => 'com_jem', 'view' => 'attendees', 'id' => (int) $event->id] + (isset($base['Itemid']) ? ['Itemid' => $base['Itemid']] : []);
                 ?>
                 <tr id="<?php echo $escape($row['key']); ?>" class="rs-<?php echo $row['kind']; ?>" data-rs-row data-rs-parent="<?php echo $escape($row['parent']); ?>">
-                    <td><?php echo !$isArea && $event->dates ? $escape(JemOutput::formatdate($event->dates)) : '—'; ?></td>
-                    <td><?php echo !$isArea && $event->times ? $escape(JemOutput::formattime($event->times)) : '—'; ?></td>
+                    <td><?php echo !$isArea && $event->dates ? $escape((new DateTimeImmutable($event->dates))->format(Text::_('COM_JEM_RS_DATE_FORMAT'))) : '—'; ?></td>
+                    <td><?php echo !$isArea && $event->times ? $escape(substr($event->times, 0, 5)) : '—'; ?></td>
                     <th scope="row" class="rs-name">
                         <div class="rs-entry" style="--rs-depth: <?php echo (int) $row['depth']; ?>">
                             <?php if (!empty($childRows[$row['key']])) : ?>
@@ -147,7 +148,7 @@ $expanded = (bool) ($options['expand_groups'] ?? 1);
                             <?php if (!$isArea) : ?>
                                 <small class="rs-detail"><?php echo $escape(($choices['event_status'][$event->event_status] ?? $event->event_status) . ' · ' . ($choices['publication'][(string) $event->published] ?? '')); ?></small>
                                 <?php if ($row['context']) : ?><small class="rs-detail"><?php echo Text::_('COM_JEM_RS_CONTEXT'); ?></small><?php endif; ?>
-                                <?php if (!$isProgramme && !$row['context']) : ?>
+                                <?php if (!$isProgramme && !$row['context'] && ($event->canManageBookings ?? true)) : ?>
                                     <a href="<?php echo $escape($url($attendees)); ?>"><?php echo Text::_('COM_JEM_RS_BOOKINGS'); ?></a>
                                     <?php if ($report['canHistory']) : ?>
                                         · <a href="<?php echo $escape($url(array_replace($query, ['rs_history' => (int) $event->id]))); ?>#rs-history"><?php echo Text::_('COM_JEM_RS_HISTORY'); ?></a>
@@ -165,7 +166,7 @@ $expanded = (bool) ($options['expand_groups'] ?? 1);
                             <?php if (!empty($row['totals']['unknown']) && in_array($column, ['capacity', 'free'], true)) : ?>—
                             <?php elseif ($value === null) : ?>
                                 <?php echo !$isProgramme && !$row['context'] && in_array($column, ['capacity', 'free'], true) ? '∞' : '—'; ?>
-                            <?php elseif (!$isArea && !$isProgramme && in_array($column, ['confirmed', 'waiting', 'invited'], true) && $value > 0) : ?>
+                            <?php elseif (!$isArea && !$isProgramme && in_array($column, ['confirmed', 'waiting', 'invited'], true) && $value > 0 && ($event->canManageBookings ?? true)) : ?>
                                 <a href="<?php echo $escape($url($attendees + ['filter_status' => ['confirmed' => 1, 'waiting' => 2, 'invited' => 0][$column]])); ?>"><?php echo (int) $value; ?></a>
                             <?php elseif ($column === 'cancelled' && !$isArea && !$isProgramme && $value > 0 && $report['canHistory']) : ?>
                                 <a href="<?php echo $escape($url(array_replace($query, ['rs_history' => (int) $event->id]))); ?>#rs-history"><?php echo (int) $value; ?></a>
@@ -184,7 +185,6 @@ $expanded = (bool) ($options['expand_groups'] ?? 1);
         <?php if ($report['page'] < $report['pages']) : ?><a href="<?php echo $escape($url(array_replace($query, ['rs_page' => $report['page'] + 1]))); ?>"><?php echo Text::_('JNEXT'); ?></a><?php endif; ?>
     </nav>
     <p class="rs-meta"><?php echo Text::_('COM_JEM_RS_LEGEND'); ?></p>
-    <p class="rs-meta"><?php echo Text::_('COM_JEM_RS_FUTURE'); ?></p>
     <?php if ($report['historyId']) : ?>
         <div id="rs-history" class="rs-scroll">
             <h2><?php echo Text::_('COM_JEM_RS_HISTORY') . ': ' . $escape($report['historyTitle']); ?></h2>

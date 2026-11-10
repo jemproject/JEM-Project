@@ -496,7 +496,7 @@ class JemHelperBackend
             );
         }
 
-        if (self::canManage('jem.attendees.manage')) {
+        if (self::canManage('jem.attendees.manage') || self::canUseTickets()) {
             JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_RS_TITLE'),
                 'index.php?option=com_jem&amp;view=registrationstatus',
@@ -570,5 +570,19 @@ class JemHelperBackend
 
         return $options;
     }
+
+    /** @return bool Whether the current operator has any cashier or gate scope. */
+    public static function canUseTickets(): bool
+    {
+        require_once JPATH_SITE . '/components/com_jem/classes/ticketservice.class.php';
+        $user = Factory::getApplication()->getIdentity();
+        if (JemTicketService::can($user, 'pay') || JemTicketService::can($user, 'admit')) {
+            return true;
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $ids = $db->setQuery('SELECT id FROM #__jem_categories')->loadColumn();
+        return JemTicketService::can($user, 'pay', $ids) || JemTicketService::can($user, 'admit', $ids);
+    }
+
 
 }

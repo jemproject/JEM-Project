@@ -32,7 +32,7 @@ class JemPdf
             return false;
         }
 
-        $path = JPATH_COMPONENT_SITE . '/classes/tcpdf/tcpdf.php';
+        $path = __DIR__ . '/tcpdf/tcpdf.php';
 
         if (!is_file($path)) {
             self::log('TCPDF library file not found: ' . $path);

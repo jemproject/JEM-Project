@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const interval = Number(root.dataset.rsRefresh || 0);
         if ([30, 60, 120].includes(interval)) {
             setInterval(() => {
-                if (!document.hidden && !form.contains(document.activeElement)) window.location.reload();
+                if (!document.hidden && !document.querySelector('.jem-ticket-dialog[open]') && !form.contains(document.activeElement)) window.location.reload();
             }, interval * 1000);
         }
     });

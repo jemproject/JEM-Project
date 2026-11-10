@@ -12,6 +12,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 require_once dirname(__DIR__) . '/classes/registrationstatus.class.php';
+require_once dirname(__DIR__) . '/classes/ticketservice.class.php';
 
 /** Shared read model: no reservation, payment or admission writes. */
 class JemModelRegistrationstatus extends BaseDatabaseModel
@@ -25,7 +26,7 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
         $app = Factory::getApplication();
         $user = JemFactory::getUser();
         $backend = $app->isClient('administrator');
-        if (!(int) $user->get('id') || ($backend && !JemHelperBackend::canManage('jem.attendees.manage'))) {
+        if (!(int) $user->get('id')) {
             throw new RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
         $options = $backend ? [] : $app->getParams()->toArray();
@@ -38,10 +39,21 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
         $now = new DateTimeImmutable('now', new DateTimeZone($app->get('offset', 'UTC')));
         $filters = JemRegistrationStatus::filters($options, $request, $now, (int) JemHelper::config()->weekdaystart);
         $events = $this->metadata();
+        $ticketEvents = [];
         foreach ($events as $id => $event) {
-            if (!$backend && !$user->can('edit', 'event', $id, (int) $event->created_by, $event->categories)) {
+            $event->canManageBookings = $backend ? JemHelperBackend::canManage('jem.attendees.manage')
+                : $user->can('edit', 'event', $id, (int) $event->created_by, $event->categories);
+            $canTicket = JemTicketService::can($user, 'pay', $event->categories)
+                || JemTicketService::can($user, 'admit', $event->categories);
+            if (!$event->canManageBookings && !$canTicket) {
                 unset($events[$id]);
+            } elseif ($canTicket) {
+                $ticketEvents[$id] = $event->title . ' (' . ($event->dates ?? '') . ')';
             }
+        }
+        if ($backend && !JemHelperBackend::canManage('jem.attendees.manage') && !$ticketEvents
+            && !JemTicketService::can($user, 'pay') && !JemTicketService::can($user, 'admit')) {
+            throw new RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
         $choices = $this->choices($events, $filters);
         $groups = JemRegistrationStatus::groups($events, $filters);
@@ -68,7 +80,7 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
         }
         $historyPage = max(1, $app->input->getInt('rs_history_page', 1));
         return [
-            'rows' => $rows, 'filters' => $filters, 'choices' => $choices, 'options' => $options,
+            'ticketEvents' => $ticketEvents, 'rows' => $rows, 'filters' => $filters, 'choices' => $choices, 'options' => $options,
             'page' => $page, 'pages' => $pages, 'groups' => count($groups), 'backend' => $backend,
             'updated' => $now->format('Y-m-d H:i:s T'), 'canHistory' => $canHistory,
             'historyId' => $historyId, 'historyTitle' => $events[$historyId]->title ?? '',
@@ -174,6 +186,7 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
             'a.event_id', 'a.venue_layout_id', 'a.venue_capacity_area_id',
             'SUM(CASE WHEN r.status = 1 AND r.waiting = 0 THEN a.quantity ELSE 0 END) AS confirmed',
             'SUM(CASE WHEN r.status = 1 AND r.waiting = 1 THEN a.quantity ELSE 0 END) AS waiting',
+            "SUM(CASE WHEN r.status = 1 AND r.waiting = 0 AND r.grand_total > 0 AND r.payment_state IN ('paid','refund_pending') THEN a.quantity ELSE 0 END) AS paid",
         ])->from($db->quoteName('#__jem_register_capacity_allocations', 'a'))
             ->join('INNER', $db->quoteName('#__jem_register', 'r') . ' ON r.id = a.register_id AND r.revision = a.registration_revision AND r.event = a.event_id')
             ->where('a.event_id IN (' . $list . ')')->group(['a.event_id', 'a.venue_layout_id', 'a.venue_capacity_area_id']);
@@ -187,6 +200,7 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
             'p.id', 'p.event_id', 'p.name', 'p.capacity',
             'SUM(CASE WHEN r.status = 1 AND r.waiting = 0 THEN i.quantity ELSE 0 END) AS confirmed',
             'SUM(CASE WHEN r.status = 1 AND r.waiting = 1 THEN i.quantity ELSE 0 END) AS waiting',
+            "SUM(CASE WHEN r.status = 1 AND r.waiting = 0 AND r.grand_total > 0 AND r.payment_state IN ('paid','refund_pending') THEN i.quantity ELSE 0 END) AS paid",
         ])->from($db->quoteName('#__jem_capacity_pools', 'p'))
             ->join('LEFT', $db->quoteName('#__jem_register_items', 'i') . " ON i.capacity_pool_id = p.id AND i.line_kind = 'admission'")
             ->join('LEFT', $db->quoteName('#__jem_register', 'r') . ' ON r.id = i.register_id AND r.revision = i.registration_revision AND r.event = p.event_id')
@@ -196,9 +210,19 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
         $commercialPools = [];
         foreach ((array) $db->loadObjectList() as $row) {
             $commercialPools[(int) $row->event_id][] = [
-                'name' => $row->name, 'space' => '', 'capacity' => (int) $row->capacity,
-                'confirmed' => (int) $row->confirmed, 'waiting' => (int) $row->waiting,
+                'ticket_key' => 'pool:' . $row->id, 'name' => $row->name, 'space' => '', 'capacity' => (int) $row->capacity,
+                'confirmed' => (int) $row->confirmed, 'waiting' => (int) $row->waiting, 'paid' => (int) $row->paid,
             ];
+        }
+        $entered = [];
+        $enteredPools = [];
+        $paid = $db->setQuery("SELECT event,SUM(places) AS places FROM #__jem_register WHERE event IN (" . $list
+            . ") AND status=1 AND waiting=0 AND grand_total > 0 AND pricing_mode <> 'classic' AND payment_state IN ('paid','refund_pending') GROUP BY event")->loadObjectList('event');
+        foreach ($db->setQuery("SELECT event_id,quantity,allocations FROM #__jem_ticket_operations WHERE action='admission' AND event_id IN (" . $list . ')')->loadObjectList() as $entry) {
+            $entered[$entry->event_id] = ($entered[$entry->event_id] ?? 0) + (int) $entry->quantity;
+            foreach (json_decode($entry->allocations, true) ?: [] as $key => $quantity) {
+                $enteredPools[$entry->event_id][$key] = ($enteredPools[$entry->event_id][$key] ?? 0) + (int) $quantity;
+            }
         }
         $totals = [];
         foreach ($ids as $id) {
@@ -212,6 +236,12 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
             if (!$pools && $event->pricing_mode !== 'classic') {
                 $pools = $commercialPools[$id] ?? [];
             }
+            foreach ($pools as &$pool) {
+                $pool['entered'] = (int) ($enteredPools[$id][$pool['ticket_key'] ?? ''] ?? 0);
+            }
+            unset($pool);
+            $event->entered = (int) ($entered[$id] ?? 0);
+            $event->paid = (int) ($paid[$id]->places ?? 0);
             $totals[$id] = JemRegistrationStatus::totals($event, $pools);
         }
         return $totals;
@@ -242,10 +272,11 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
             foreach ($areas as $area) {
                 $key = !empty($area['id']) ? 'area:' . (int) $area['id'] : 'layout:' . (int) $layout['id'];
                 $pools[$key] = [
+                    'ticket_key' => $key,
                     'name' => (string) $area['name'], 'space' => (string) ($space['name'] ?? ''),
                     'space_key' => (string) $layout['id'],
                     'capacity' => (int) $area['capacity'], 'confirmed' => (int) ($used[$key]->confirmed ?? 0),
-                    'waiting' => (int) ($used[$key]->waiting ?? 0),
+                    'waiting' => (int) ($used[$key]->waiting ?? 0), 'paid' => (int) ($used[$key]->paid ?? 0),
                 ];
             }
         }
@@ -274,9 +305,9 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
         $own = $members[$id];
         $rows[] = ['key' => $key, 'parent' => $parent, 'depth' => $depth, 'kind' => $children ? 'programme' : 'event',
             'event' => $event, 'name' => $event->title, 'context' => !$own, 'totals' => $own ? $totals[$id] : null];
-        $summary = ['confirmed' => 0, 'waiting' => 0, 'invited' => 0, 'cancelled' => 0, 'capacity' => null, 'free' => null, 'reserved' => null];
+        $summary = ['paid' => 0, 'entered' => 0, 'confirmed' => 0, 'waiting' => 0, 'invited' => 0, 'cancelled' => 0, 'capacity' => null, 'free' => null, 'reserved' => null];
         if ($own) {
-            foreach (['confirmed', 'waiting', 'invited', 'cancelled'] as $name) {
+            foreach (['confirmed', 'waiting', 'invited', 'cancelled', 'paid', 'entered'] as $name) {
                 $summary[$name] += $totals[$id][$name];
             }
             if ($children && ((int) $event->registra || $totals[$id]['confirmed'] || $totals[$id]['waiting'] || $totals[$id]['cancelled'] || $totals[$id]['pools'])) {
@@ -291,11 +322,11 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
                     $spaces[$spaceKey] = count($rows);
                     $rows[] = ['key' => $spaceKey, 'parent' => $poolParent, 'depth' => $depth + ($children ? 2 : 1),
                         'kind' => 'space', 'event' => $event, 'name' => $pool['space'], 'space' => '', 'context' => false,
-                        'totals' => ['capacity' => 0, 'confirmed' => 0, 'waiting' => 0, 'free' => 0]];
+                        'totals' => ['capacity' => 0, 'confirmed' => 0, 'waiting' => 0, 'paid' => 0, 'entered' => 0, 'free' => 0]];
                 }
                 if ($spaceKey !== '') {
                     $spaceTotals = &$rows[$spaces[$spaceKey]]['totals'];
-                    foreach (['capacity', 'confirmed', 'waiting'] as $name) {
+                    foreach (['capacity', 'confirmed', 'waiting', 'paid', 'entered'] as $name) {
                         $spaceTotals[$name] += (int) $pool[$name];
                     }
                     $spaceTotals['free'] = max(0, $spaceTotals['capacity'] - $spaceTotals['confirmed']);
@@ -311,7 +342,7 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
         }
         foreach ($children as $child) {
             $sub = $this->appendGroup($rows, $child, $members, $events, $totals, $key, $depth + 1, $visited);
-            foreach (['confirmed', 'waiting', 'invited', 'cancelled'] as $name) {
+            foreach (['confirmed', 'waiting', 'invited', 'cancelled', 'paid', 'entered'] as $name) {
                 $summary[$name] += $sub[$name];
             }
         }

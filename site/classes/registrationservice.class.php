@@ -207,6 +207,10 @@ final class JemRegistrationService
             throw new RuntimeException('The registration was modified by another operation.');
         }
 
+        if (is_object($before)) {
+            require_once __DIR__ . '/ticketservice.class.php';
+            (new JemTicketService($this->db))->reconcile($before, $after);
+        }
         $changedFields = self::changedFields($before, $after);
         if (!empty($capacity['changed'])) {
             $changedFields[] = 'capacity_allocations';

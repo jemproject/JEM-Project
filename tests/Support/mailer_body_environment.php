@@ -11,6 +11,14 @@ namespace JemProject\Tests\MailerBody;
 /** Capture only the mail boundary; no transport or installed Joomla is loaded. */
 final class Mail
 {
+    public array $attachments = [];
+
+    /** Capture a private attachment at the real mail boundary. */
+    public function addStringAttachment(string $bytes, string $name, string $encoding, string $mime): void
+    {
+        $this->attachments[] = compact('bytes', 'name', 'encoding', 'mime');
+    }
+
     public string $Body = '';
     public string $AltBody = '';
     public string $Encoding = '';

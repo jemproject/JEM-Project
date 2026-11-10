@@ -819,6 +819,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
             'notifications',
             'register_items',
             'register_capacity_allocations',
+            'ticket_operations',
             'register_history',
             'register',
             'event_prices',

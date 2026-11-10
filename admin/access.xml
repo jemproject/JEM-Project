@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <access component="com_jem">
     <section name="component">
+        <action name="jem.tickets.pay" title="COM_JEM_TK_ACL_PAY" description="COM_JEM_TK_ACL_PAY_DESC" />
+        <action name="jem.tickets.admit" title="COM_JEM_TK_ACL_ADMIT" description="COM_JEM_TK_ACL_ADMIT_DESC" />
+
         <action name="core.admin" title="JACTION_ADMIN" description="JACTION_ADMIN_COMPONENT_DESC" />
         <action name="core.options" title="JACTION_OPTIONS" description="JACTION_OPTIONS_COMPONENT_DESC" />
         <action name="core.manage" title="JACTION_MANAGE" description="JACTION_MANAGE_COMPONENT_DESC" />
@@ -39,6 +42,9 @@
         <action name="jem.tools.manage" title="COM_JEM_ACL_TOOLS_MANAGE" description="COM_JEM_ACL_TOOLS_MANAGE_DESC" />
     </section>
     <section name="category">
+        <action name="jem.tickets.pay" title="COM_JEM_TK_ACL_PAY" description="COM_JEM_TK_ACL_PAY_DESC" />
+        <action name="jem.tickets.admit" title="COM_JEM_TK_ACL_ADMIT" description="COM_JEM_TK_ACL_ADMIT_DESC" />
+
         <action name="core.create" title="JACTION_CREATE" description="COM_CATEGORIES_ACCESS_CREATE_DESC" />
         <action name="core.delete" title="JACTION_DELETE" description="COM_CATEGORIES_ACCESS_DELETE_DESC" />
         <action name="core.edit" title="JACTION_EDIT" description="COM_CATEGORIES_ACCESS_EDIT_DESC" />

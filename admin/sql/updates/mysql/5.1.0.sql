@@ -269,3 +269,27 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_c
 ALTER TABLE `#__jem_events` ADD COLUMN `image_metadata` TEXT NULL DEFAULT NULL /** CAN FAIL **/;
 ALTER TABLE `#__jem_categories` ADD COLUMN `image_metadata` TEXT NULL DEFAULT NULL /** CAN FAIL **/;
 ALTER TABLE `#__jem_venues` ADD COLUMN `image_metadata` TEXT NULL DEFAULT NULL /** CAN FAIL **/;
+
+CREATE TABLE IF NOT EXISTS `#__jem_ticket_operations` (
+    `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `operation_reference` varchar(28) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `fingerprint` char(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `registration_id` int(11) unsigned NOT NULL,
+    `registration_reference` varchar(28) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `registration_revision` int(10) unsigned NOT NULL,
+    `event_id` int(11) unsigned NOT NULL,
+    `event_title` varchar(255) NOT NULL DEFAULT '',
+    `action` varchar(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `quantity` int(10) unsigned NOT NULL DEFAULT '0',
+    `allocations` text NOT NULL,
+    `amount` decimal(15,2) NULL DEFAULT NULL,
+    `currency` char(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+    `method` varchar(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+    `external_reference` varchar(255) NOT NULL DEFAULT '',
+    `actor_user_id` int(11) unsigned NOT NULL,
+    `occurred` datetime NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_ticket_operation` (`operation_reference`),
+    KEY `idx_ticket_registration` (`registration_reference`, `id`),
+    KEY `idx_ticket_event` (`event_id`, `action`)
+) ENGINE=InnoDB;

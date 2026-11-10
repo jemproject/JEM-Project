@@ -1447,6 +1447,35 @@ class plgJemMailer extends CMSPlugin
     }
 
     /**
+     * Build an immutable, private PDF attachment for a confirmed owner notification.
+     * @param object $spec Notification identity and registration revision.
+     * @param string $recipientType Recipient role.
+     * @param string $receiver Actual recipient address.
+     * @param string $languageTag Resolved recipient language.
+     * @return array Attachment snapshots, including private base64 PDF bytes.
+     */
+    private function _ticketAttachments($spec, string $recipientType, string $receiver, string $languageTag = ''): array
+    {
+        if ($recipientType !== 'user' || (int) $spec->recipient_user_id < 1) {
+            return [];
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $row = $db->setQuery('SELECT * FROM #__jem_register WHERE id=' . (int) $spec->registration_id)->loadObject();
+        $owner = Factory::getContainer()->get(\Joomla\CMS\User\UserFactoryInterface::class)->loadUserById((int) $spec->recipient_user_id);
+        if (!$row || (int) $row->revision !== (int) $spec->revision || (int) $row->uid !== (int) $owner->id
+            || (int) $row->status !== 1 || (int) $row->waiting || (int) $owner->block
+            || strcasecmp(trim($receiver), trim((string) $owner->email)) !== 0) {
+            return [];
+        }
+        require_once JPATH_SITE . '/components/com_jem/classes/ticketservice.class.php';
+        require_once JPATH_SITE . '/components/com_jem/classes/ticketpdf.class.php';
+        $ticket = (new JemTicketService($db))->document($row->reference, (int) $row->event, $owner);
+        $bytes = JemTicketPdf::render($ticket, $languageTag);
+        return [['name' => 'reservation-' . $row->reference . '.pdf', 'mime' => 'application/pdf',
+            'sha256' => hash('sha256', $bytes), 'content_base64' => base64_encode($bytes)]];
+    }
+
+    /**
      * Render one recipient language, persist the immutable snapshot and record
      * the transport attempt around the actual Joomla mail handoff.
      */
@@ -1515,7 +1544,7 @@ class plgJemMailer extends CMSPlugin
                     'recipient_causes' => array_values($causes),
                     'revision' => (int) $spec->revision,
                 ),
-                'attachments' => array(),
+                'attachments' => $this->_ticketAttachments($spec, $recipientType, $receiver, $language->resolved),
                 'idempotency_key' => hash('sha256', $idempotencyMaterial),
                 'resend_of' => (int) $spec->resend_of,
                 'source' => (string) $spec->source,
@@ -1542,7 +1571,8 @@ class plgJemMailer extends CMSPlugin
                 $notification->subject,
                 $notification->body,
                 $notification->htmlbody,
-                $error
+                $error,
+                json_decode((string) $notification->attachments_json, true) ?: []
             );
             $service->finishAttempt($notification->id, $attempt->id, $sent, $error);
 
@@ -1828,7 +1858,7 @@ class plgJemMailer extends CMSPlugin
      * @param   string  $htmlbody   optional customised HTML body
      * @return  boolean true on success, false on error
      */
-    private function _send($recipient, $subject, $body, $htmlbody = '', &$errorMessage = '')
+    private function _send($recipient, $subject, $body, $htmlbody = '', &$errorMessage = '', array $attachments = [])
     {
         $result = false;
         $errorMessage = '';
@@ -1855,6 +1885,13 @@ class plgJemMailer extends CMSPlugin
                 $mail->AltBody = $body;
             } else {
                 $mail->setBody($body);
+            }
+            foreach ($attachments as $attachment) {
+                $bytes = base64_decode((string) ($attachment['content_base64'] ?? ''), true);
+                if ($bytes === false || !hash_equals((string) ($attachment['sha256'] ?? ''), hash('sha256', $bytes))) {
+                    throw new RuntimeException('Invalid private reservation PDF attachment.');
+                }
+                $mail->addStringAttachment($bytes, (string) $attachment['name'], 'base64', 'application/pdf');
             }
             $mail->addRecipient($recipient);
             $ret = $mail->send();

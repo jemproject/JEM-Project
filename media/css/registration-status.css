@@ -25,3 +25,20 @@ body.admin.com_jem.view-registrationstatus .container-main { min-width: 0; }
 .jem-registration-status [hidden] { display: none !important; }
 @media (max-width: 900px) { .jem-registration-status .rs-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .jem-registration-status .rs-fields { grid-template-columns: minmax(0, 1fr); } }
+
+/* Compact operational columns and touch-friendly date navigation. */
+.jem-registration-status .rs-scroll th.rs-number { white-space: normal; min-width: 3.3rem; max-width: 6rem; }
+.jem-registration-status .rs-scroll th, .jem-registration-status .rs-scroll td { padding: .5rem .4rem; }
+.jem-registration-status .rs-scroll .rs-name { min-width: 12rem; }
+.jem-registration-status .rs-scroll td:nth-child(-n+2) { white-space: nowrap; }
+.jem-registration-status .rs-date-nav button { font-size: 1.6rem; line-height: 1; min-width: 2.3rem; min-height: 2.3rem; }
+.jem-ticket-desk { margin-block: .8rem; }
+.jem-ticket-dialog { width: min(40rem, calc(100vw - 2rem)); max-height: 90dvh; overflow: auto; color: inherit; background: var(--body-bg, var(--bs-body-bg, white)); border: 1px solid var(--border-color, #888); border-radius: .5rem; padding: 1rem; }
+.jem-ticket-dialog::backdrop { background: rgb(0 0 0 / 50%); }
+.jem-ticket-dialog header, .jem-ticket-dialog .tk-actions { display: flex; gap: .6rem; justify-content: space-between; align-items: center; margin-block: .5rem; }
+.jem-ticket-dialog header h2 { margin: 0; }
+.jem-ticket-dialog label { display: block; margin-top: .7rem; }
+.jem-ticket-dialog fieldset { margin-block: 1rem; padding: .7rem; border: 1px solid var(--border-color, #888); }
+.jem-ticket-dialog fieldset button { margin-top: .7rem; }
+.jem-ticket-dialog video { display: block; width: 100%; max-height: 18rem; }
+.jem-ticket-dialog [hidden] { display: none !important; }

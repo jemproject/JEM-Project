@@ -440,6 +440,7 @@ class com_jemInstallerScript
             $this->repair510RegistrationSchema();
             $this->repair510NotificationSchema();
             $this->repair510PricingSchema();
+            $this->repair510TicketSchema();
             $this->repair510MediaSchema();
             $this->repair510DiagnosticReportsSchema();
             $this->repair510CategoryCustomFieldsSchema();
@@ -981,6 +982,41 @@ SQL;
                 'error'
             );
         }
+    }
+
+    /**
+     * Ensure the additive ticket operations ledger also exists on beta-to-beta updates.
+     * @return void
+     */
+    private function repair510TicketSchema(): void
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db->setQuery(<<<'SQL'
+CREATE TABLE IF NOT EXISTS `#__jem_ticket_operations` (
+    `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `operation_reference` varchar(28) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `fingerprint` char(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `registration_id` int(11) unsigned NOT NULL,
+    `registration_reference` varchar(28) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `registration_revision` int(10) unsigned NOT NULL,
+    `event_id` int(11) unsigned NOT NULL,
+    `event_title` varchar(255) NOT NULL DEFAULT '',
+    `action` varchar(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `quantity` int(10) unsigned NOT NULL DEFAULT '0',
+    `allocations` text NOT NULL,
+    `amount` decimal(15,2) NULL DEFAULT NULL,
+    `currency` char(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+    `method` varchar(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+    `external_reference` varchar(255) NOT NULL DEFAULT '',
+    `actor_user_id` int(11) unsigned NOT NULL,
+    `occurred` datetime NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_ticket_operation` (`operation_reference`),
+    KEY `idx_ticket_registration` (`registration_reference`, `id`),
+    KEY `idx_ticket_event` (`event_id`, `action`)
+) ENGINE=InnoDB;
+SQL
+        )->execute();
     }
 
     /**
@@ -4002,6 +4038,7 @@ SQL;
             '#__jem_import_profiles',
             '#__jem_links',
             '#__jem_registration_history',
+            '#__jem_ticket_operations',
             '#__jem_register_history',
             '#__jem_reminders',
             '#__jem_notification_attempts',

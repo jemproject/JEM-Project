@@ -7,6 +7,14 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 ?>
 <div id="jem" class="jem-registration-detail">
+    <?php if ((int) $this->item->status === 1 && empty($this->item->waiting)) : ?>
+        <form method="post" action="<?php echo \Joomla\CMS\Uri\Uri::base(true); ?>/index.php?option=com_jem&amp;task=tickets.download&amp;format=raw">
+            <input type="hidden" name="event_id" value="<?php echo (int) $this->item->event; ?>">
+            <input type="hidden" name="reference" value="<?php echo $this->escape($this->item->reference); ?>">
+            <?php echo HTMLHelper::_('form.token'); ?>
+            <button type="submit" class="btn btn-primary"><?php echo Text::_('COM_JEM_TK_DOWNLOAD'); ?></button>
+        </form>
+    <?php endif; ?>
     <h1><?php echo Text::_('COM_JEM_REGISTRATION_DETAILS'); ?></h1>
     <div class="card mb-4"><div class="card-body">
         <h2><?php echo $this->escape($this->item->event_title); ?></h2>

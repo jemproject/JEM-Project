@@ -186,6 +186,7 @@ final class JemRegistrationStatus
         }
         unset($pool);
         return [
+            'paid' => max(0, (int) ($event->paid ?? 0)), 'entered' => max(0, (int) ($event->entered ?? 0)),
             'capacity' => $capacity, 'reserved' => $reserved, 'confirmed' => $confirmed,
             'waiting' => max(0, (int) ($event->waiting ?? 0)), 'invited' => max(0, (int) ($event->invited ?? 0)),
             'free' => $free, 'cancelled' => max(0, (int) ($event->cancelled ?? 0)), 'pools' => $pools,
