@@ -241,17 +241,14 @@ if ($this->showRegForm && empty($this->print)) :
                         } else {
                             echo ' <input id="addplaces" style="text-align: center; width:auto;" type="hidden" name="addplaces" value="1">';
                         }
-                    if ($this->item->recurrence_type || !empty($this->item->series_id)){
-                            if ($this->item->seriesbooking) {
-                                if ($seriesEvents) {
-                                    if ($this->item->singlebooking) {
-                                        echo '<div class="px-3 pt-3"> <input data-registration-action="1" id="jem_registration_series_1" type = "checkbox"  name = "reg_check_series"> ' . Text::_('COM_JEM_I_WILL_GO_SERIES_2') . '</input ></div>';
-                                    } else {
-                                        echo '<div class="px-3 pt-3">' . Text::_('COM_JEM_I_WILL_GO_SERIES_3') . '</div>';
-                                    }
-                                }
-                            }
+                    }
+                    if ($this->item->seriesbooking && ($this->item->recurrence_type || !empty($this->item->series_id))) {
+                        if ($this->item->singlebooking) {
+                            echo '<div class="px-3 pt-3"><input data-registration-action="1" id="jem_registration_series_1" type="checkbox" name="reg_check_series"> ' . Text::_('COM_JEM_I_WILL_GO_SERIES_2') . '</div>';
+                        } else {
+                            echo '<div class="px-3 pt-3">' . Text::_('COM_JEM_I_WILL_GO_SERIES_3') . '</div>';
                         }
+                        echo '<div class="px-3 small">' . Text::_('COM_JEM_SERIES_BOOKING_SUSPENDED_NOTICE') . '</div>';
                     }
                     ?>
                 </li>

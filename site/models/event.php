@@ -671,7 +671,7 @@ class JemModelEvent extends ItemModel
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                     'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.image_path, a.image_metadata, a.fullimage_layout, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                     'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                    'a.hits, a.language, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.type_id, a.venue_allocation_mode, a.capacity_mode, a.venue_snapshot, a.pricing_mode, a.pricing_revision, a.currency, a.prices_include_tax' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
+                    'a.hits, a.language, a.event_status, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.type_id, a.venue_allocation_mode, a.capacity_mode, a.venue_snapshot, a.pricing_mode, a.pricing_revision, a.currency, a.prices_include_tax' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');
 
             # Author
@@ -1542,10 +1542,20 @@ class JemModelEvent extends ItemModel
         }
         $isAreaCapacity = (string) ($event->capacity_mode ?? 'classic') === 'areas';
 
+        // Do not bypass suspension on the event used to start the request.
+        if ($status === JemRegistrationTransition::ATTENDING
+            && JemRegistrationAccessPolicy::eventStatusMessage($event) !== '') {
+            $this->setError(Text::sprintf('COM_JEM_EVENT_REGISTRATION_EVENT_MESSAGE', $eventId,
+                Text::_(JemRegistrationAccessPolicy::eventStatusMessage($event))));
+            return false;
+        }
+
+        $isSeriesBooking = false;
         // If event has 'seriesbooking' active and $checkseries is true then get all recurrence events of series from now (register or unregister)
         if($event->recurrence_type || !empty($event->series_id)){
 
             if(($event->seriesbooking && !$event->singlebooking) || ($event->singlebooking && $checkseries)) {
+                $isSeriesBooking = true;
                 try {
                     $events = $this->getListRecurrenceEventsbyId(
                         $event->id,
@@ -1589,8 +1599,16 @@ class JemModelEvent extends ItemModel
         // Cancellation skips absent rows so a partial series can be released
         // without creating forged "not attending" registrations.
         $registrations = array();
+        $excludedSeriesEvents = 0;
         $authorisedEvents = array();
         foreach ($events as $e) {
+            if ($isSeriesBooking && $status === JemRegistrationTransition::ATTENDING
+                && (int) $e->id !== $eventId
+                && JemRegistrationAccessPolicy::eventStatusMessage($e) !== '') {
+                ++$excludedSeriesEvents;
+                continue;
+            }
+
             try {
                 $reg = $this->getUserRegistration($e->id, $uid, $status < 0);
             } catch (RuntimeException $exception) {
@@ -1642,7 +1660,8 @@ class JemModelEvent extends ItemModel
         }
 
         if (!$authorisedEvents) {
-            $this->setError(Text::_('COM_JEM_REGISTRATION_NOT_FOUND'));
+            $this->setError(Text::_($excludedSeriesEvents
+                ? 'COM_JEM_EVENT_REGISTRATION_CLOSED' : 'COM_JEM_REGISTRATION_NOT_FOUND'));
             return false;
         }
         $events = $authorisedEvents;
@@ -1725,18 +1744,30 @@ class JemModelEvent extends ItemModel
         }
 
         $result = 0;
+        $seriesConfirmed = 0;
+        $seriesWaiting = 0;
         foreach ($stored as $storedRegistration) {
             if ((int) $storedRegistration->after->event === $eventId || !$result) {
                 $result = (int) $storedRegistration->after->id;
             }
 
             $logicalStatus = JemRegistrationTransition::logicalStatus($storedRegistration->after);
+            if ($logicalStatus === JemRegistrationTransition::ATTENDING) {
+                ++$seriesConfirmed;
+            } elseif ($logicalStatus === JemRegistrationTransition::WAITING_LIST) {
+                ++$seriesWaiting;
+            }
             Factory::getApplication()->enqueueMessage(
                 $logicalStatus === JemRegistrationTransition::NOT_ATTENDING
                     ? Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')
                     : Text::_('COM_JEM_REGISTERED_USER_IN_EVENT'),
                 'info'
             );
+        }
+
+        if ($excludedSeriesEvents > 0) {
+            $app->enqueueMessage(Text::sprintf('COM_JEM_SERIES_BOOKING_RESULT',
+                $seriesConfirmed, $seriesWaiting, $excludedSeriesEvents), 'notice');
         }
 
         return $result;
