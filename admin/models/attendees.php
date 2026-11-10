@@ -380,7 +380,7 @@ class JemModelAttendees extends ListModel
                 // comments are limited to 255 characters in db so we don't need to truncate them on export
                 $data[] = $comment;
             }
-            $data[] = $item->uid;
+            $data[] = $item->id;
 
             JemCsv::putRow($csv, $data, $separator, $delimiter, '', "\n");
         }
