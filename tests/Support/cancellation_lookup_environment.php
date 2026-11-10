@@ -51,6 +51,13 @@ namespace Joomla\CMS\MVC\Model {
 namespace Joomla\CMS\Language {
     class Text
     {
+        /** Format the translation key and values for observable model messages. */
+        public static function sprintf($key, ...$values): string
+        {
+            return $key . implode(',', $values);
+        }
+
+
         public static function _($key): string
         {
             return $key;
