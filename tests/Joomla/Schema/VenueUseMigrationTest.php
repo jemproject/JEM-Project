@@ -164,9 +164,9 @@ final class VenueUseMigrationTest extends TestCase
             'denied event permission' => [['jem.events.edit' => [20 => true, 30 => false]], [], [], [20 => true], true, true, true],
             'multiple groups deny wins' => [$create + ['jem.venues.use' => [40 => false]], [], [], [40 => false, 30 => true], true, true, false],
         ];
-        foreach (['5.0.1', '5.0.2'] as $version) {
+        foreach (['', '4.5.0', '5.0.1', '5.0.2'] as $version) {
             foreach ($cases as $name => $args) {
-                yield $version . '/' . $name => [$version, ...$args];
+                yield ($version === '' ? 'install' : $version) . '/' . $name => [$version, ...$args];
             }
         }
     }
@@ -204,7 +204,8 @@ final class VenueUseMigrationTest extends TestCase
             $before[$action] = Access::checkGroup(30, $action, 'com_jem');
         }
 
-        $this->migrate($version);
+        $type = $version === '' ? 'install' : 'update';
+        $this->migrate($version, $type);
         $stored = $this->storedRules();
         self::assertEquals($expected, $stored['jem.venues.use'] ?? []);
         foreach ($component as $action => $rules) {
@@ -229,22 +230,117 @@ final class VenueUseMigrationTest extends TestCase
             self::assertTrue(JemVenueAccess::canUse($author, 2), 'Resource denial must not deny every venue');
         }
 
-        $this->migrate($version);
+        $this->migrate($version, $type);
         self::assertSame($stored, $this->storedRules(), 'Repeating migration must not materialise inherited grants');
     }
 
-    /** @return iterable<string, array{string, string}> Cases outside the granular first-entry policy. */
+    /** @return iterable<string, array{string, string, string}> Core actions mapped during first installation or legacy upgrade. */
+    public static function corePermissionCases(): iterable
+    {
+        foreach (['', '4.4.2', '4.5.0', '5.0.0'] as $version) {
+            foreach (['core.create' => 'jem.events.create', 'core.edit' => 'jem.events.edit', 'core.edit.own' => 'jem.events.edit.own'] as $core => $jem) {
+                yield ($version === '' ? 'install' : $version) . '/' . $core => [$version, $core, $jem];
+            }
+        }
+    }
+
+    /**
+     * Use event permissions mapped in memory, while preserving resource and inherited denials.
+     *
+     * @param string $version Source release, or empty for a fresh installation.
+     * @param string $core Joomla permission inherited from the root asset.
+     * @param string $jem Event permission created by the installer.
+     * @return void
+     */
+    #[DataProvider('corePermissionCases')]
+    public function testInitialisesVenueUseFromNewlyMappedEventPermissions(string $version, string $core, string $jem): void
+    {
+        $this->setRules('root.1', [$core => [30 => true]]);
+        $this->setRules('com_jem.venue.2', ['jem.venues.use' => [30 => false]]);
+        $type = $version === '' ? 'install' : 'update';
+        $this->migrate($version, $type);
+        $stored = $this->storedRules();
+
+        self::assertTrue(Access::checkGroup(30, $jem, 'com_jem'));
+        self::assertTrue(Access::checkGroup(3, $jem, 'com_jem'));
+        self::assertEquals([30 => true], $stored['jem.venues.use'] ?? [], 'Descendants must inherit instead of receiving redundant grants');
+        self::assertTrue(JemVenueAccess::canUse($this->user(100), 1));
+        self::assertTrue(JemVenueAccess::canUse($this->user(101), 1));
+        self::assertFalse(JemVenueAccess::canUse($this->user(102), 1), 'Users without event rights must remain excluded');
+        self::assertFalse(JemVenueAccess::canUse($this->user(100), 2), 'Venue-specific denial must remain effective');
+        self::assertSame([1], JemVenueAccess::getAuthorisedIds($this->user(100)));
+        self::assertTrue(JemVenueAccess::canUse($this->user(100), 0));
+        self::assertFalse(JemVenueAccess::canUse($this->user(100), 999));
+        self::assertFalse(JemVenueAccess::canUse(new User(), 1));
+        self::assertNull(Access::checkGroup(30, 'core.admin', 'com_jem'), 'Using a venue must not grant administration');
+
+        $this->migrate($version, $type);
+        self::assertSame($stored, $this->storedRules(), 'Repeating initialisation must be idempotent');
+    }
+
+    /** @return iterable<string, array{array, array, array}> Denials and empty rights during a clean install. */
+    public static function freshPermissionBoundaries(): iterable
+    {
+        yield 'root venue denial' => [
+            ['core.create' => [30 => true], 'jem.venues.use' => [20 => false]], [], [],
+        ];
+        yield 'inherited component venue denial' => [
+            ['core.create' => [30 => true]], ['jem.venues.use' => [20 => false]], [20 => false],
+        ];
+        yield 'explicit component venue denial' => [
+            ['core.create' => [30 => true]], ['jem.venues.use' => [30 => false]], [30 => false],
+        ];
+        yield 'explicit event denial' => [
+            ['core.create' => [30 => true]], ['jem.events.create' => [30 => false, 3 => false]], [],
+        ];
+        yield 'no event permissions' => [[], [], []];
+        yield 'venue management only' => [[], ['jem.venues.create' => [30 => true]], []];
+    }
+
+    /**
+     * Avoid granting venue use where the administrator or parent group denies it.
+     *
+     * @param array $root Global permissions before installation.
+     * @param array $component Component permissions before installation.
+     * @param array $expected Expected component venue-use rules.
+     * @return void
+     */
+    #[DataProvider('freshPermissionBoundaries')]
+    public function testFreshInstallPreservesPermissionBoundaries(array $root, array $component, array $expected): void
+    {
+        $this->setRules('root.1', $root);
+        $this->setRules('com_jem', $component);
+        $this->migrate('', 'install');
+        self::assertEquals($expected, $this->storedRules()['jem.venues.use'] ?? []);
+        self::assertFalse(JemVenueAccess::canUse($this->user(100), 1));
+        self::assertFalse(JemVenueAccess::canUse($this->user(101), 1));
+    }
+
+    /** @return void Removing an initial grant must survive the next 5.1 update. */
+    public function testUpdateDoesNotRestoreRemovedInitialGrant(): void
+    {
+        $this->setRules('root.1', ['core.create' => [30 => true]]);
+        $this->migrate('', 'install');
+        self::assertTrue(JemVenueAccess::canUse($this->user(100), 1));
+        $rules = $this->storedRules();
+        unset($rules['jem.venues.use']);
+        $this->setRules('com_jem', $rules);
+        $this->migrate('5.1.0beta7');
+        self::assertSame($rules, $this->storedRules());
+        self::assertFalse(JemVenueAccess::canUse($this->user(100), 1));
+    }
+
+    /** @return iterable<string, array{string, string}> Updates outside the first-entry policy. */
     public static function excludedVersions(): iterable
     {
-        foreach (['', '4.5.0', '5.0.0', '5.1.0dev', '5.1.0beta5', '5.1.0beta6', '5.1.0'] as $version) {
+        foreach (['', '5.1.0dev', '5.1.0beta5', '5.1.0beta6', '5.1.0beta7', '5.1.0'] as $version) {
             yield 'update/' . $version => [$version, 'update'];
         }
-        yield 'fresh install' => ['', 'install'];
     }
 
     /** @param string $version Source version. @param string $type Installer type. @return void */
     #[DataProvider('excludedVersions')]
-    public function testDoesNotRegrantOutsideFirstGranularUpgrade(string $version, string $type): void
+    public function testDoesNotRegrantOutsideFirstEntry(string $version, string $type): void
     {
         $rules = ['jem.events.create' => [30 => true]];
         $this->setRules('com_jem', $rules);

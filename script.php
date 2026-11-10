@@ -2137,7 +2137,7 @@ SQL;
             }
         }
 
-        $changed = $fromGranular && $this->migrateVenueUseAcl($rules);
+        $changed = false;
 
         foreach ($groupIds as $groupId) {
             $legacyManager = $preserveLegacyManage
@@ -2169,6 +2169,9 @@ SQL;
             }
         }
 
+        // Include newly mapped event permissions before the component rules are stored.
+        $changed = $this->migrateVenueUseAcl($rules) || $changed;
+
         if (!$changed) {
             return;
         }
@@ -2194,7 +2197,7 @@ SQL;
     }
 
     /**
-     * Preserve venue selection for event editors on first entry to 5.1 from granular ACL versions.
+     * Initialise venue selection for event editors on first installation or upgrade to 5.1.
      *
      * Existing component/root decisions, including inherited denials, remain authoritative.
      * Resource-specific venue rules are not modified. Process parents first so newly
@@ -2208,6 +2211,7 @@ SQL;
     {
         // Detach from Joomla's cached rules: do not change effective ACL before a successful store.
         $effectiveRules = new Rules((string) Access::getAssetRules('com_jem', true, true));
+        $effectiveRules->merge($rules);
         $groups = UserGroupsHelper::getInstance()->getAll();
         uasort($groups, static fn ($left, $right): int => (int) $left->lft <=> (int) $right->lft);
         $changed = false;
