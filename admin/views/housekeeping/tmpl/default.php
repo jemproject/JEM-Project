@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 ?>
 <form name="adminForm" method="post" id="adminForm">
     <?php if (isset($this->sidebar)) : ?>
