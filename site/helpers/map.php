@@ -14,6 +14,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Filesystem\File;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
 
 /**
  * Shared map data helper for JEM map module and map menu views.
@@ -194,7 +195,7 @@ class JemMapHelper
             $show = (bool) $params->get('show_' . $name . '_filter', 0);
             $default = trim((string) $params->get('default_' . $name, ''));
             $result['show_' . $name] = $show;
-            $result[$name] = $show ? trim($input->getString('jem_map_filter_' . $name, $default)) : $default;
+            $result[$name] = $show ? trim((string) \JemFilterInput::read($input, 'jem_map_filter_' . $name, $default)) : $default;
             $result[$name . '_options'] = [];
         }
         if ($result['show_county'] || $result['show_city']) {
@@ -232,12 +233,10 @@ class JemMapHelper
         $levels = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
         $settings = \JemHelper::config();
         $access = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
-        $ids = \JemHelper::getVisibleVenueHierarchyIds(self::levelsFromList($access));
         $query = $db->getQuery(true)
             ->select('DISTINCT ' . $db->quoteName('state') . ', ' . $db->quoteName('city'))
             ->from($db->quoteName('#__jem_venues'))
             ->where($db->quoteName('published') . ' = 1')
-            ->where($db->quoteName('id') . ' IN (' . ($ids ? implode(',', $ids) : '0') . ')')
             ->where(["latitude IS NOT NULL", "latitude <> ''", "longitude IS NOT NULL", "longitude <> ''"]);
         if ($access !== '') {
             $query->where($db->quoteName('access') . ' IN (' . $access . ')');

@@ -14,6 +14,7 @@ final class EventsMapFiltersTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         require_once JEM_TEST_ROOT . '/site/helpers/mapdate.php';
+        require_once JEM_TEST_ROOT . '/site/classes/filterinput.class.php';
         $source = file_get_contents(JEM_TEST_ROOT . '/site/helpers/map.php');
         $start = strpos($source, '    public static function getEventLocationFilters(');
         $end = strpos($source, '    /**', $start);
@@ -108,6 +109,38 @@ final class EventsMapFiltersTest extends TestCase
         self::assertSame('Region B', $result['county']);
         self::assertSame(['City B'], array_values($result['city_options']));
         self::assertSame('ES', end(LocationFixture::$calls));
+    }
+
+    /** Structured requests fall back to configured defaults; valid scalars remain usable. */
+    public function testStructuredLocationFiltersPreserveDefaults(): void
+    {
+        foreach (['county', 'city'] as $field) {
+            $params = new Values(['show_' . $field . '_filter' => 1, 'default_' . $field => 'Configured']);
+            foreach ([['Madrid'], ['nested' => ['Madrid']], new \stdClass()] as $value) {
+                $result = LocationResolver::getEventLocationFilters($params, new Values(['jem_map_filter_' . $field => $value]), 'ES');
+                self::assertSame('Configured', $result[$field]);
+            }
+            foreach (['Madrid', '', 'Unknown city', '0'] as $value) {
+                $result = LocationResolver::getEventLocationFilters($params, new Values(['jem_map_filter_' . $field => $value]), 'ES');
+                self::assertSame($value, $result[$field]);
+            }
+        }
+    }
+
+    /** The module uses the same scalar reader and keeps hidden defaults authoritative. */
+    public function testMapModuleCountryInput(): void
+    {
+        $source = file_get_contents(JEM_TEST_ROOT . '/modules/mod_jem_map/mod_jem_map.php');
+        $start = strpos($source, '$selectedCountry = $showCountryFilter');
+        $code = substr($source, $start, strpos($source, ';', $start) - $start + 1);
+        $defaultCountry = 'ES';
+        foreach ([true, false] as $showCountryFilter) {
+            foreach ([['DE'], ['nested' => ['DE']], 'DE', ''] as $value) {
+                $app = (object) ['input' => new Values(['jem_map_filter_country' => $value])];
+                eval($code);
+                self::assertSame($showCountryFilter && is_string($value) ? $value : 'ES', $selectedCountry);
+            }
+        }
     }
 }
 
