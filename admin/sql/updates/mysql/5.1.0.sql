@@ -293,3 +293,26 @@ CREATE TABLE IF NOT EXISTS `#__jem_ticket_operations` (
     KEY `idx_ticket_registration` (`registration_reference`, `id`),
     KEY `idx_ticket_event` (`event_id`, `action`)
 ) ENGINE=InnoDB;
+
+-- Invitation holders, capabilities and organiser-pool provenance (no new tables).
+ALTER TABLE `#__jem_register` MODIFY `uid` INT(11) NULL DEFAULT NULL;
+ALTER TABLE `#__jem_register` ADD COLUMN `guest_email` VARCHAR(254) NULL DEFAULT NULL /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `guest_name` VARCHAR(255) NOT NULL DEFAULT '' /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `invitation_key` CHAR(32) CHARACTER SET ascii COLLATE ascii_bin NULL DEFAULT NULL /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `invitation_scope` VARCHAR(8) NOT NULL DEFAULT 'single' /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `invitation_root` INT UNSIGNED NOT NULL DEFAULT 0 /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `invitation_kind` VARCHAR(8) NOT NULL DEFAULT '' /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `invitation_quantity` INT UNSIGNED NOT NULL DEFAULT 0 /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `invitation_free` TINYINT NOT NULL DEFAULT 0 /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `invitation_message` TEXT NULL DEFAULT NULL /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `invitation_expires` DATETIME NULL DEFAULT NULL /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `invitation_token_hash` CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL DEFAULT NULL /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `invitation_revoked` TINYINT NOT NULL DEFAULT 0 /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `invitation_actor` INT UNSIGNED NOT NULL DEFAULT 0 /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `invitation_terms` MEDIUMTEXT NULL DEFAULT NULL /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `reserved_assigned` INT UNSIGNED NOT NULL DEFAULT 0 /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD COLUMN `reserved_confirmed` INT UNSIGNED NOT NULL DEFAULT 0 /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD UNIQUE KEY `idx_register_guest` (`event`,`guest_email`) /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD KEY `idx_invitation_key` (`invitation_key`) /** CAN FAIL **/;
+ALTER TABLE `#__jem_register` ADD KEY `idx_invitation_token` (`invitation_token_hash`) /** CAN FAIL **/;
+ALTER TABLE `#__jem_register_history` ADD COLUMN `invitation_snapshot` TEXT NULL DEFAULT NULL /** CAN FAIL **/;

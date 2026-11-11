@@ -169,6 +169,7 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
             'event', 'SUM(CASE WHEN status = 1 AND waiting = 0 THEN places ELSE 0 END) AS confirmed',
             'SUM(CASE WHEN status = 1 AND waiting = 1 THEN places ELSE 0 END) AS waiting',
             'SUM(CASE WHEN status = 0 THEN places ELSE 0 END) AS invited',
+            'SUM(reserved_assigned) AS reserved_assigned', 'SUM(reserved_confirmed) AS reserved_confirmed',
         ])->from($db->quoteName('#__jem_register'))->where('event IN (' . $list . ')')->group('event');
         $db->setQuery($query);
         $counts = (array) $db->loadObjectList('event');
@@ -186,6 +187,7 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
             'a.event_id', 'a.venue_layout_id', 'a.venue_capacity_area_id',
             'SUM(CASE WHEN r.status = 1 AND r.waiting = 0 THEN a.quantity ELSE 0 END) AS confirmed',
             'SUM(CASE WHEN r.status = 1 AND r.waiting = 1 THEN a.quantity ELSE 0 END) AS waiting',
+            'SUM(CASE WHEN r.reserved_assigned > 0 THEN a.quantity ELSE 0 END) AS assigned',
             "SUM(CASE WHEN r.status = 1 AND r.waiting = 0 AND r.grand_total > 0 AND r.payment_state IN ('paid','refund_pending') THEN a.quantity ELSE 0 END) AS paid",
         ])->from($db->quoteName('#__jem_register_capacity_allocations', 'a'))
             ->join('INNER', $db->quoteName('#__jem_register', 'r') . ' ON r.id = a.register_id AND r.revision = a.registration_revision AND r.event = a.event_id')
@@ -200,6 +202,7 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
             'p.id', 'p.event_id', 'p.name', 'p.capacity',
             'SUM(CASE WHEN r.status = 1 AND r.waiting = 0 THEN i.quantity ELSE 0 END) AS confirmed',
             'SUM(CASE WHEN r.status = 1 AND r.waiting = 1 THEN i.quantity ELSE 0 END) AS waiting',
+            'SUM(CASE WHEN r.reserved_assigned > 0 THEN i.quantity ELSE 0 END) AS assigned',
             "SUM(CASE WHEN r.status = 1 AND r.waiting = 0 AND r.grand_total > 0 AND r.payment_state IN ('paid','refund_pending') THEN i.quantity ELSE 0 END) AS paid",
         ])->from($db->quoteName('#__jem_capacity_pools', 'p'))
             ->join('LEFT', $db->quoteName('#__jem_register_items', 'i') . " ON i.capacity_pool_id = p.id AND i.line_kind = 'admission'")
@@ -212,6 +215,7 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
             $commercialPools[(int) $row->event_id][] = [
                 'ticket_key' => 'pool:' . $row->id, 'name' => $row->name, 'space' => '', 'capacity' => (int) $row->capacity,
                 'confirmed' => (int) $row->confirmed, 'waiting' => (int) $row->waiting, 'paid' => (int) $row->paid,
+                'assigned' => (int) $row->assigned,
             ];
         }
         $entered = [];
@@ -227,7 +231,7 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
         $totals = [];
         foreach ($ids as $id) {
             $event = clone $events[$id];
-            foreach (['confirmed', 'waiting', 'invited'] as $name) {
+            foreach (['confirmed', 'waiting', 'invited', 'reserved_assigned', 'reserved_confirmed'] as $name) {
                 $event->$name = (int) ($counts[$id]->$name ?? 0);
             }
             $event->cancelled = (int) ($cancelled[$id]->cancelled ?? 0);
@@ -277,6 +281,7 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
                     'space_key' => (string) $layout['id'],
                     'capacity' => (int) $area['capacity'], 'confirmed' => (int) ($used[$key]->confirmed ?? 0),
                     'waiting' => (int) ($used[$key]->waiting ?? 0), 'paid' => (int) ($used[$key]->paid ?? 0),
+                    'assigned' => (int) ($used[$key]->assigned ?? 0),
                 ];
             }
         }
@@ -322,14 +327,14 @@ class JemModelRegistrationstatus extends BaseDatabaseModel
                     $spaces[$spaceKey] = count($rows);
                     $rows[] = ['key' => $spaceKey, 'parent' => $poolParent, 'depth' => $depth + ($children ? 2 : 1),
                         'kind' => 'space', 'event' => $event, 'name' => $pool['space'], 'space' => '', 'context' => false,
-                        'totals' => ['capacity' => 0, 'confirmed' => 0, 'waiting' => 0, 'paid' => 0, 'entered' => 0, 'free' => 0]];
+                        'totals' => ['capacity' => 0, 'confirmed' => 0, 'waiting' => 0, 'paid' => 0, 'entered' => 0, 'assigned' => 0, 'free' => 0]];
                 }
                 if ($spaceKey !== '') {
                     $spaceTotals = &$rows[$spaces[$spaceKey]]['totals'];
-                    foreach (['capacity', 'confirmed', 'waiting', 'paid', 'entered'] as $name) {
+                    foreach (['capacity', 'confirmed', 'waiting', 'paid', 'entered', 'assigned'] as $name) {
                         $spaceTotals[$name] += (int) $pool[$name];
                     }
-                    $spaceTotals['free'] = max(0, $spaceTotals['capacity'] - $spaceTotals['confirmed']);
+                    $spaceTotals['free'] = max(0, $spaceTotals['capacity'] - $spaceTotals['confirmed'] - $spaceTotals['assigned']);
                     if ($totals[$id]['free'] !== null) {
                         $spaceTotals['free'] = min($spaceTotals['free'], $totals[$id]['free']);
                     }

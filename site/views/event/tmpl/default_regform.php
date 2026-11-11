@@ -12,6 +12,13 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
+// A reviewed invitation has its own fixed terms and explicit session/series response.
+if (empty($this->print) && !empty($this->registration->invitation_key) && (int) $this->registration->status === 0) {
+    echo '<p><a class="btn btn-primary" href="' . htmlspecialchars(Route::_('index.php?option=com_jem&view=invitation&invitation_id='
+        . (int) $this->registration->id), ENT_QUOTES, 'UTF-8') . '">' . Text::_('COM_JEM_INV_YOUR_INVITATION') . '</a></p>';
+    return;
+}
+
 // The user is not already attending -> display registration form.
 
 if ($this->showRegForm && empty($this->print)) :

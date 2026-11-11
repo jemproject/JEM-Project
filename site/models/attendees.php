@@ -216,7 +216,7 @@ class JemModelAttendees extends BaseDatabaseModel
         $orderby = $this->_buildContentOrderBy();
         $where   = $this->_buildContentWhere();
 
-        $query = 'SELECT r.*, u.username, u.name, u.email, a.created_by, a.published,'
+        $query = 'SELECT r.*, COALESCE(u.username,r.guest_name) AS username, COALESCE(u.name,r.guest_name) AS name, COALESCE(u.email,r.guest_email) AS email, a.created_by, a.published,'
                . ' c.catname, c.id AS catid'
                . ' FROM #__jem_register AS r'
                . ' LEFT JOIN #__jem_events AS a ON r.event = a.id'

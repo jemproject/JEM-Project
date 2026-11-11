@@ -4775,6 +4775,7 @@ class JemModelEvent extends JemModelAdmin
         # Get current registrations
         $query = $db->getQuery(true);
         $query->select(array('reg.id, reg.uid, reg.status, reg.waiting'));
+        $query->where('reg.invitation_key IS NULL');
         $query->from('#__jem_register As reg');
         $query->where('reg.event = ' . $eventId);
         $db->setQuery($query);

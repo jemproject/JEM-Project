@@ -157,6 +157,8 @@ class JemController extends BaseController
                 case 'attendees':
                 case 'attendeeregistrations':
                 case 'registrationstatus':
+                case 'invitations':
+                case 'invitation':
                 case 'calendar':
                 case 'categories':
                 case 'categoriesdetailed':

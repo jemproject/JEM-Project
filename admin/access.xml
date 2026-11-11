@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <access component="com_jem">
     <section name="component">
+        <action name="jem.invitations.bulk" title="COM_JEM_INV_ACL_BULK" description="COM_JEM_INV_ACL_BULK_DESC" />
+        <action name="jem.invitations.manage" title="COM_JEM_INV_ACL_MANAGE" description="COM_JEM_INV_ACL_MANAGE_DESC" />
+        <action name="jem.invitations.free" title="COM_JEM_INV_ACL_FREE" description="COM_JEM_INV_ACL_FREE_DESC" />
         <action name="jem.tickets.pay" title="COM_JEM_TK_ACL_PAY" description="COM_JEM_TK_ACL_PAY_DESC" />
         <action name="jem.tickets.admit" title="COM_JEM_TK_ACL_ADMIT" description="COM_JEM_TK_ACL_ADMIT_DESC" />
 
@@ -42,6 +45,8 @@
         <action name="jem.tools.manage" title="COM_JEM_ACL_TOOLS_MANAGE" description="COM_JEM_ACL_TOOLS_MANAGE_DESC" />
     </section>
     <section name="category">
+        <action name="jem.invitations.manage" title="COM_JEM_INV_ACL_MANAGE" description="COM_JEM_INV_ACL_MANAGE_DESC" />
+        <action name="jem.invitations.free" title="COM_JEM_INV_ACL_FREE" description="COM_JEM_INV_ACL_FREE_DESC" />
         <action name="jem.tickets.pay" title="COM_JEM_TK_ACL_PAY" description="COM_JEM_TK_ACL_PAY_DESC" />
         <action name="jem.tickets.admit" title="COM_JEM_TK_ACL_ADMIT" description="COM_JEM_TK_ACL_ADMIT_DESC" />
 

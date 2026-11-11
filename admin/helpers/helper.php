@@ -496,6 +496,10 @@ class JemHelperBackend
             );
         }
 
+        if (Factory::getApplication()->getIdentity()->authorise('jem.invitations.manage', 'com_jem')) {
+            HTMLHelper::_('sidebar.addEntry', Text::_('COM_JEM_INV_TITLE'),
+                'index.php?option=com_jem&amp;view=invitations', $vName === 'invitations');
+        }
         if (self::canManage('jem.attendees.manage') || self::canUseTickets()) {
             JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_RS_TITLE'),

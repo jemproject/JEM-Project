@@ -1,0 +1,7 @@
+.jem-invitations { max-width: 72rem; }
+.jem-invitations fieldset { border: 1px solid var(--border-color, #aaa); border-radius: .35rem; padding: 1rem; margin: 1.25rem 0; }
+.jem-invitations legend { float: none; width: auto; font-size: 1.15rem; padding: 0 .4rem; }
+.jem-invitations label { display: block; margin: .75rem 0 .3rem; }
+.jem-invitations .form-select, .jem-invitations .form-control { max-width: 100%; }
+.jem-inv-pool, .jem-inv-actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; }
+.jem-invitations [hidden] { display: none !important; }

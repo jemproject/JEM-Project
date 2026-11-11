@@ -106,6 +106,7 @@ class plgJemMailer extends CMSPlugin
         $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
             'a.online_meeting_url', 'a.online_meeting_label', 'a.venue_snapshot',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places',
+            'r.guest_name', 'r.guest_email', 'r.invitation_key',
             'r.id AS registration_id', 'r.reference AS registration_reference', 'r.revision AS registration_revision'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city', 'v.locimage', 'v.image_path AS venue_image_path'));
@@ -124,7 +125,9 @@ class plgJemMailer extends CMSPlugin
 
         // check if currrent user handles on behalf of
         $attendeeid = $event->uid;
-        if ($attendeeid != $userid) {
+        if (empty($attendeeid) && !empty($event->guest_email)) {
+            $attendeename = $event->guest_name;
+        } elseif ($attendeeid != $userid) {
             $attendee = JemFactory::getUser($attendeeid);
             $attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
         } else {
@@ -140,6 +143,10 @@ class plgJemMailer extends CMSPlugin
         $comment = empty($event->comment) ? false : OutputFilter::cleanText($event->comment);
 
         $recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendeeid);
+        if (empty($attendeeid) && !empty($event->guest_email)) {
+            $email = filter_var($event->guest_email, FILTER_VALIDATE_EMAIL);
+            $recipients['user'] = !empty($send_to['user']) && $email ? [$email] : false;
+        }
 
         if (!empty($notificationOptions['recipient_email'])) {
             $target = filter_var(trim((string) $notificationOptions['recipient_email']), FILTER_VALIDATE_EMAIL);
@@ -390,6 +397,7 @@ class plgJemMailer extends CMSPlugin
         $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
             'a.online_meeting_url', 'a.online_meeting_label', 'a.venue_snapshot',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places',
+            'r.guest_name', 'r.guest_email', 'r.invitation_key',
             'r.id AS registration_id', 'r.reference AS registration_reference', 'r.revision AS registration_revision'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city', 'v.locimage', 'v.image_path AS venue_image_path'));
@@ -567,8 +575,10 @@ class plgJemMailer extends CMSPlugin
         }
 
         // check if currrent user handles on behalf of
-        $attendeeid = (!empty($registration->uid) ? $registration->uid : $userid);
-        if ($attendeeid != $userid) {
+        $attendeeid = !empty($registration->guest_email) ? 0 : (!empty($registration->uid) ? $registration->uid : $userid);
+        if (!empty($registration->guest_email)) {
+            $attendeename = $registration->guest_name;
+        } elseif ($attendeeid != $userid) {
             $attendee = JemFactory::getUser($attendeeid);
             $attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
         } else {
@@ -584,6 +594,10 @@ class plgJemMailer extends CMSPlugin
         $comment = empty($event->comment) ? false : OutputFilter::cleanText($event->comment);
 
         $recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendeeid);
+        if (empty($attendeeid) && !empty($registration->guest_email)) {
+            $email = filter_var($registration->guest_email, FILTER_VALIDATE_EMAIL);
+            $recipients['user'] = !empty($send_to['user']) && $email ? [$email] : false;
+        }
 
         #####################
         ## SENDMAIL - USER ##
@@ -1444,6 +1458,79 @@ class plgJemMailer extends CMSPlugin
             'resend_of' => (int) ($options['resend_of'] ?? 0),
             'force_unique' => !empty($options['force_unique']),
         );
+    }
+
+    /**
+     * Queue one personalised invitation or response, without invoking transport in the request.
+     * @param array $rows Same-recipient invitation rows, possibly covering a series.
+     * @param string $token Email capability; never a ticket locator. @param string $action Lifecycle action.
+     * @return bool Whether the notification snapshot was queued successfully.
+     */
+    public function onJemInvitationNotification(array $rows, string $token, string $action): bool
+    {
+        if (!$rows) {
+            return false;
+        }
+        $row = reset($rows);
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $owner = !empty($row->uid) ? Factory::getContainer()->get(\Joomla\CMS\User\UserFactoryInterface::class)->loadUserById((int) $row->uid) : null;
+        $email = $owner ? $owner->email : $row->guest_email;
+        $name = $owner ? $owner->name : $row->guest_name;
+        $service = new JemNotificationService();
+        $language = $service->resolveRecipientLanguage((int) $row->uid, $email);
+        $event = $db->setQuery('SELECT * FROM #__jem_events WHERE id=' . (int) $row->event)->loadObject();
+        $sessions = [];
+        $attachments = [];
+        foreach ($rows as $registration) {
+            $date = $db->setQuery('SELECT title,dates,times FROM #__jem_events WHERE id=' . (int) $registration->event)->loadObject();
+            $sessions[] = $date->title . ' — ' . $date->dates . ' ' . substr((string) $date->times, 0, 5);
+            if ($action === 'accepted' && (int) $registration->status === 1 && !$registration->waiting) {
+                require_once JPATH_SITE . '/components/com_jem/classes/ticketservice.class.php';
+                require_once JPATH_SITE . '/components/com_jem/classes/ticketpdf.class.php';
+                $ticket = (new JemTicketService($db))->invitationDocument($registration);
+                $bytes = JemTicketPdf::render($ticket, $language->resolved);
+                $attachments[] = ['name' => 'reservation-' . $registration->reference . '.pdf', 'mime' => 'application/pdf',
+                    'sha256' => hash('sha256', $bytes), 'content_base64' => base64_encode($bytes)];
+            }
+        }
+        $url = $token === '' ? JEMHelperRoute::getAbsoluteSiteRoute('index.php?option=com_jem&view=event&id=' . (int) $row->event) : JEMHelperRoute::getAbsoluteSiteRoute('index.php?option=com_jem&view=invitation&invitation_token=' . rawurlencode($token));
+        $notice = Text::_($row->invitation_kind === 'reserved' ? 'COM_JEM_INV_GUARANTEED_NOTICE' : 'COM_JEM_INV_OPEN_NOTICE')
+            . "\n" . Text::_($row->invitation_free ? 'COM_JEM_INV_FREE_NOTICE' : 'COM_JEM_INV_PRICE_NOTICE');
+        $comment = (string) $row->invitation_message;
+        $values = ['user_name' => $name, 'actor_name' => $this->_SiteName, 'comment' => $comment,
+            'invitation_message' => $comment, 'event_title' => $event->title, 'event_date' => $event->dates,
+            'event_time' => $event->times, 'venue' => '', 'city' => '', 'places' => (int) $row->invitation_quantity,
+            'event_description' => '', 'event_url' => $url, 'reservation_url' => $url, 'site_name' => $this->_SiteName];
+        $subject = 'PLG_JEM_MAILER_USER_REG_INVITATION_SUBJECT';
+        $body = 'PLG_JEM_MAILER_USER_REG_INVITATION_BODY_B';
+        if ($action === 'accepted') {
+            $subject = 'PLG_JEM_MAILER_USER_REG' . ($row->waiting ? '_WAITING' : '') . '_SUBJECT';
+            $body = 'PLG_JEM_MAILER_USER_REG_ONBEHALF' . ($row->waiting ? '_WAITING' : '') . '_BODY_B';
+        } elseif ($action === 'declined') {
+            $subject = 'PLG_JEM_MAILER_USER_REG_NOT_ATTEND_SUBJECT';
+            $body = 'PLG_JEM_MAILER_USER_REG_ONBEHALF_NOT_ATTEND_BODY_B';
+        }
+        $message = $this->_renderNotification($subject, $body, $values, null, $language->resolved);
+        $details = Text::_('COM_JEM_INV_EMAIL_SCOPE') . ":\n" . implode("\n", $sessions) . "\n\n" . $notice;
+        if ($row->invitation_expires) {
+            $details .= "\n" . Text::_('COM_JEM_INV_EXPIRES') . ': ' . $row->invitation_expires . ' UTC';
+        }
+        if ($token !== '') {
+            $details .= "\n\n" . Text::_('COM_JEM_INV_EMAIL_ACTION') . ":\n" . $url;
+        }
+        $message->body .= "\n\n" . $details;
+        if ($message->htmlbody !== '') {
+            $message->htmlbody .= '<p>' . nl2br(htmlspecialchars($details, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')) . '</p>';
+        }
+        $service->create(['registration_id' => (int) $row->id, 'registration_reference' => $row->reference,
+            'revision' => (int) $row->revision, 'event_id' => (int) $row->event,
+            'notification_type' => 'invitation_' . $action, 'recipient_type' => 'user', 'recipient_user_id' => (int) $row->uid,
+            'recipient_name' => $name, 'recipient_email' => $email, 'resolved_language' => $language->resolved,
+            'template_id' => $message->template_id, 'subject' => $message->subject,
+            'body' => $message->body, 'htmlbody' => $message->htmlbody, 'attachments' => $attachments,
+            'idempotency_key' => hash('sha256', 'invitation|' . $action . '|' . $row->invitation_key . '|' . $row->revision . '|' . implode(',', array_column($rows, 'id'))),
+            'source' => 'invitation', 'created_by' => (int) $row->invitation_actor]);
+        return true;
     }
 
     /**

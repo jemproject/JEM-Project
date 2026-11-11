@@ -1065,7 +1065,7 @@ class JemModelEvent extends ItemModel
         // usercheck
         // -1 if user will not attend, 0 if invened/unknown, 1 if registeredm 2 if on waiting list
         try {
-            $query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment, places, revision, pricing_mode'
+            $query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment, places, revision, pricing_mode, invitation_key'
                 . ' FROM #__jem_register'
                 . ' WHERE uid = ' . $this->_db->quote($userid)
                 . ' AND event = ' . $this->_db->quote($eventId);

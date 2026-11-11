@@ -2938,7 +2938,12 @@ class JemHelper
 
         $db->setQuery($query);
 
-        return $db->execute();
+        $result = $db->execute();
+        if ($result) {
+            require_once JPATH_SITE . '/components/com_jem/classes/invitationservice.class.php';
+            (new JemInvitationService($db))->propagate($sourceEventId, $targetEventId);
+        }
+        return $result;
     }
 
     /**
@@ -3133,38 +3138,50 @@ class JemHelper
                             $new_event->enddates = $recurrence_row['enddates'];
                             $new_event->_autocreate = true; // to tell table class this has to be stored AS IS (the underscore is important!)
 
-                            $storedOccurrence = $new_event->store();
-                            if (!$storedOccurrence && $recurrenceRoot > 0) {
-                                throw new RuntimeException($new_event->getError() ?: Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
-                            }
-                            if ($storedOccurrence)
-                            {
-                                $recurrence_row['counter']++;
-                                // Duplicate categories event relationships via INSERT INTO ... SELECT.
-                                // Both ids are cast to int — no user input is interpolated.
-                                $insertQuery = 'INSERT INTO #__jem_cats_event_relations (itemid, catid)'
-                                    . ' SELECT ' . (int) $new_event->id . ', catid'
-                                    . ' FROM #__jem_cats_event_relations'
-                                    . ' WHERE itemid = ' . (int) $ref_event->id;
+                            $db->transactionStart(true);
+                            try {
+                                $storedOccurrence = $new_event->store();
+                                if (!$storedOccurrence && $recurrenceRoot > 0) {
+                                    throw new RuntimeException($new_event->getError() ?: Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
+                                }
+                                if ($storedOccurrence)
+                                {
+                                    $recurrence_row['counter']++;
+                                    // Duplicate categories event relationships via INSERT INTO ... SELECT.
+                                    // Both ids are cast to int — no user input is interpolated.
+                                    $insertQuery = 'INSERT INTO #__jem_cats_event_relations (itemid, catid)'
+                                        . ' SELECT ' . (int) $new_event->id . ', catid'
+                                        . ' FROM #__jem_cats_event_relations'
+                                        . ' WHERE itemid = ' . (int) $ref_event->id;
 
-                                $db->setQuery($insertQuery);
+                                    $db->setQuery($insertQuery);
 
-                                if ($db->execute() === false) {
-                                    if ($recurrenceRoot > 0) {
-                                        throw new RuntimeException(Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
+                                    if ($db->execute() === false) {
+                                        if ($recurrenceRoot > 0) {
+                                            throw new RuntimeException(Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
+                                        }
+                                        // run query always but don't show error message to "normal" users
+                                        $user = JemFactory::getUser();
+                                        if ($user->authorise('core.manage')) {
+                                            // Escape title to prevent XSS in admin error output.
+                                            $safeTitle = htmlspecialchars($ref_event->title, ENT_QUOTES, 'UTF-8');
+                                            echo 'Error saving categories for event "' . $safeTitle . '" new recurrences' . "\n";
+                                        }
                                     }
-                                    // run query always but don't show error message to "normal" users
-                                    $user = JemFactory::getUser();
-                                    if ($user->authorise('core.manage')) {
-                                        // Escape title to prevent XSS in admin error output.
-                                        $safeTitle = htmlspecialchars($ref_event->title, ENT_QUOTES, 'UTF-8');
-                                        echo 'Error saving categories for event "' . $safeTitle . '" new recurrences' . "\n";
+
+                                    if (!self::copyEventLinks((int) $ref_event->id, (int) $new_event->id)) {
+                                        throw new RuntimeException('Error saving links for new recurrence');
                                     }
                                 }
-
-                                if (!self::copyEventLinks((int) $ref_event->id, (int) $new_event->id)) {
-                                    throw new RuntimeException('Error saving links for new recurrence');
+                                $db->transactionCommit(true);
+                            } catch (Throwable $error) {
+                                $db->transactionRollback(true);
+                                if ($recurrenceRoot > 0) {
+                                    throw $error;
                                 }
+                                self::addLogEntry('Could not create occurrence for event ' . (int) $ref_event->id
+                                    . ': ' . get_class($error), __METHOD__, Log::ERROR);
+                                break;
                             }
 
                             $nextRecurrence = JemHelper::calculate_recurrence($recurrence_row);

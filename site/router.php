@@ -98,6 +98,8 @@ class JemRouter extends RouterView
         $this->registerView(new RouterViewConfiguration('specialdays'));
         $this->registerView(new RouterViewConfiguration('attendeeregistrations'));
         $this->registerView(new RouterViewConfiguration('registrationstatus'));
+        $this->registerView(new RouterViewConfiguration('invitations'));
+        $this->registerView(new RouterViewConfiguration('invitation'));
         $this->registerView(new RouterViewConfiguration('eventsblog'));
         $this->registerView(new RouterViewConfiguration('modulepreview'));
 

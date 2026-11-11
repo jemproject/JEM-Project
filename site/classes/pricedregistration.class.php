@@ -88,6 +88,9 @@ final class JemPricedRegistrationService
             return array();
         }
 
+        $held = $this->db->setQuery('SELECT * FROM #__jem_register WHERE event=' . $eventId
+            . ' AND reserved_assigned > 0 ORDER BY id FOR UPDATE')->loadObjectList();
+        $confirmed = array_merge($confirmed, $held);
         $all = array_merge($confirmed, $candidates);
         $ids = array_values(array_unique(array_map(static fn ($row): int => (int) $row->id, $all)));
         sort($ids, SORT_NUMERIC);
@@ -401,13 +404,8 @@ final class JemPricedRegistrationService
         return $quote;
     }
 
-    /**
-     * Derive physical area quantities from the authoritative quoted admission rows.
-     *
-     * @param array $quote Locked quote containing event-owned prices and quantities.
-     * @return array<string, int> Quantities keyed by the event's physical area/layout.
-     */
-    private function quoteCapacityAllocations(array $quote): array
+    /** @param array $quote Authoritative quote. @return array Physical area quantities. */
+    public function quoteCapacityAllocations(array $quote): array
     {
         $eventId = (int) $quote['event_id'];
         $capacity = $this->registrations->capacityOptions($eventId);
@@ -434,7 +432,8 @@ final class JemPricedRegistrationService
         return $allocations;
     }
 
-    private function quoteItems(array $quote): array
+    /** @param array $quote Authoritative quote. @return array Immutable admission line snapshots. */
+    public function quoteItems(array $quote): array
     {
         return array_map(static function (array $line) use ($quote): object {
             return (object) array(

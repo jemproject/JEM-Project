@@ -373,6 +373,7 @@ final class JemNotificationTemplateCatalog
             'user_name',
             'actor_name',
             'comment',
+            'invitation_message',
             'event_title',
             'event_date',
             'event_time',

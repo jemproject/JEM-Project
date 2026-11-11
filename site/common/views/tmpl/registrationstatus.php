@@ -16,6 +16,13 @@ $filters = $report['filters'];
 $options = $report['options'];
 $escape = static fn ($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 $base = ['option' => 'com_jem', 'view' => 'registrationstatus'];
+require_once JPATH_SITE . '/components/com_jem/classes/invitationservice.class.php';
+$invitationService = new JemInvitationService(\Joomla\CMS\Factory::getContainer()->get('DatabaseDriver'));
+if ($invitationService->events(\Joomla\CMS\Factory::getApplication()->getIdentity())) {
+    echo '<p><a class="btn btn-primary" href="' . htmlspecialchars(\Joomla\CMS\Router\Route::_('index.php?option=com_jem&view=invitations'), ENT_QUOTES, 'UTF-8')
+        . '">' . \Joomla\CMS\Language\Text::_('COM_JEM_INV_TITLE') . '</a></p>';
+}
+
 if (!$report['backend'] && Factory::getApplication()->input->getInt('Itemid') > 0) {
     $base['Itemid'] = Factory::getApplication()->input->getInt('Itemid');
 }
@@ -162,7 +169,7 @@ $expanded = (bool) ($options['expand_groups'] ?? 1);
                     <?php endforeach; ?>
                     <?php foreach ($columns as $column) : ?>
                         <?php $value = $row['totals'][$column] ?? null; ?>
-                        <td class="rs-number">
+                        <td class="rs-number"<?php if ($column === 'reserved' && isset($row['totals']['organiser_total'])) : ?> title="<?php echo $escape(Text::sprintf('COM_JEM_INV_POOL_HINT', $row['totals']['organiser_total'], $row['totals']['organiser_available'], $row['totals']['organiser_assigned'], $row['totals']['organiser_confirmed'])); ?>"<?php endif; ?>>
                             <?php if (!empty($row['totals']['unknown']) && in_array($column, ['capacity', 'free'], true)) : ?>—
                             <?php elseif ($value === null) : ?>
                                 <?php echo !$isProgramme && !$row['context'] && in_array($column, ['capacity', 'free'], true) ? '∞' : '—'; ?>

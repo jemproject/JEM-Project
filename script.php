@@ -441,6 +441,8 @@ class com_jemInstallerScript
             $this->repair510NotificationSchema();
             $this->repair510PricingSchema();
             $this->repair510TicketSchema();
+            require_once JPATH_SITE . '/components/com_jem/classes/invitationschema.class.php';
+            JemInvitationSchema::ensure(Factory::getContainer()->get('DatabaseDriver'));
             $this->repair510MediaSchema();
             $this->repair510DiagnosticReportsSchema();
             $this->repair510CategoryCustomFieldsSchema();

@@ -171,7 +171,7 @@ final class JemRegistrationStatus
         foreach ($pools as $pool) {
             $boundedPools = $boundedPools && $pool['capacity'] !== null;
             $poolCapacity += (int) $pool['capacity'];
-            $poolFree += $pool['capacity'] === null ? 0 : max(0, $pool['capacity'] - $pool['confirmed']);
+            $poolFree += $pool['capacity'] === null ? 0 : max(0, $pool['capacity'] - $pool['confirmed'] - (int) ($pool['assigned'] ?? 0));
         }
         if ($boundedPools) {
             $capacity = $capacity === null ? $poolCapacity : min($capacity, $poolCapacity);
@@ -181,13 +181,17 @@ final class JemRegistrationStatus
             $free = min($free, $poolFree);
         }
         foreach ($pools as &$pool) {
-            $remaining = $pool['capacity'] === null ? null : max(0, $pool['capacity'] - $pool['confirmed']);
+            $remaining = $pool['capacity'] === null ? null : max(0, $pool['capacity'] - $pool['confirmed'] - (int) ($pool['assigned'] ?? 0));
             $pool['free'] = $free === null ? $remaining : ($remaining === null ? $free : min($free, $remaining));
         }
         unset($pool);
         return [
             'paid' => max(0, (int) ($event->paid ?? 0)), 'entered' => max(0, (int) ($event->entered ?? 0)),
             'capacity' => $capacity, 'reserved' => $reserved, 'confirmed' => $confirmed,
+            'organiser_total' => $reserved + (int) ($event->reserved_confirmed ?? 0),
+            'organiser_available' => max(0, $reserved - (int) ($event->reserved_assigned ?? 0)),
+            'organiser_assigned' => (int) ($event->reserved_assigned ?? 0),
+            'organiser_confirmed' => (int) ($event->reserved_confirmed ?? 0),
             'waiting' => max(0, (int) ($event->waiting ?? 0)), 'invited' => max(0, (int) ($event->invited ?? 0)),
             'free' => $free, 'cancelled' => max(0, (int) ($event->cancelled ?? 0)), 'pools' => $pools,
             'unknown' => ($event->capacity_mode ?? 'classic') === 'areas' && !$pools,

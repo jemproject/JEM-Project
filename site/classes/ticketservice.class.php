@@ -171,7 +171,8 @@ final class JemTicketService
             'date' => $event->dates, 'time' => $event->times, 'places' => (int) $row->places,
             'confirmed' => (int) $row->status === 1 && !(int) $row->waiting,
             'event_open' => (int) $event->published === 1 && !in_array($event->event_status, ['cancelled', 'postponed'], true),
-            'holder' => (string) $this->db->setQuery('SELECT name FROM #__users WHERE id=' . (int) $row->uid)->loadResult(),
+            'holder' => !empty($row->guest_email) ? (string) $row->guest_name
+                : (string) $this->db->setQuery('SELECT name FROM #__users WHERE id=' . (int) $row->uid)->loadResult(),
             'currency' => $row->currency, 'payment' => $payment, 'entered' => $ledger['entered'],
             'remaining' => max(0, (int) $row->places - $ledger['entered']), 'pools' => $pools, 'rights' => $rights,
             'blocked' => JemTicketPolicy::blocked($event, $row, $payment, $ledger['entered']),
@@ -305,11 +306,26 @@ final class JemTicketService
     }
 
     /**
+     * Render data for a holder already authorised by the invitation capability/session.
+     * This method is internal; controllers must never accept an arbitrary ID as authority.
+     * @param object $row Authorised stored registration. @return array Current PDF data.
+     */
+    public function invitationDocument(object $row): array
+    {
+        if (empty($row->invitation_key) || (int) $row->status !== 1 || !empty($row->waiting)) {
+            throw new DomainException('COM_JEM_TK_NOT_CONFIRMED');
+        }
+        $event = $this->db->setQuery('SELECT * FROM #__jem_events WHERE id=' . (int) $row->event)->loadObject();
+        if (!$event) {
+            throw new DomainException('COM_JEM_TK_NOT_FOUND');
+        }
+        return $this->snapshot($event, $row, ['pay' => false, 'admit' => false]);
+    }
+
+    /**
      * Load private PDF data for an authenticated owner or authorised operator.
-     * @param string $reference Reservation locator.
-     * @param int $eventId Event ID.
-     * @param object $user Current identity.
-     * @return array Safe PDF snapshot.
+     * @param string $reference Reservation locator. @param int $eventId Event ID.
+     * @param object $user Current identity. @return array Safe PDF snapshot.
      */
     public function document(string $reference, int $eventId, object $user): array
     {

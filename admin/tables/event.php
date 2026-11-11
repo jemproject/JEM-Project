@@ -730,7 +730,24 @@ class JemTableEvent extends Table
         require_once JPATH_SITE . '/components/com_jem/classes/imagemetadata.class.php';
         JemImageMetadata::prepareStore($this, 'event');
 
-        $ret = parent::store($updateNulls);
+        $db->transactionStart(true);
+        try {
+            if ((int) $this->id > 0) {
+                $db->setQuery('SELECT id FROM #__jem_events WHERE id=' . (int) $this->id . ' FOR UPDATE')->loadResult();
+                $assigned = (int) $db->setQuery('SELECT COALESCE(SUM(reserved_assigned),0) FROM #__jem_register WHERE event='
+                    . (int) $this->id)->loadResult();
+                if ((int) $this->reservedplaces < $assigned) {
+                    throw new DomainException(Text::_('COM_JEM_INV_POOL_IN_USE'));
+                }
+            }
+            $ret = parent::store($updateNulls);
+            $ret ? $db->transactionCommit(true) : $db->transactionRollback(true);
+        } catch (Throwable $error) {
+            $db->transactionRollback(true);
+            JemImageFilenamePolicy::finish($uploadedImages, $replacedImages, false);
+            $this->setError($error->getMessage());
+            return false;
+        }
         JemImageFilenamePolicy::finish($uploadedImages, $replacedImages, (bool) $ret);
         if ($ret && $images_to_delete) {
             foreach (array_filter(array_unique($images_to_delete)) as $image_to_delete) {

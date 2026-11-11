@@ -120,7 +120,7 @@ class JemModelAttendees extends ListModel
         $query->join('LEFT', '#__jem_events   AS a ON (r.event = a.id)');
 
         // Join user info
-        $query->select(array('u.username','u.name','u.email'));
+        $query->select(array('COALESCE(u.username,r.guest_name) AS username', 'COALESCE(u.name,r.guest_name) AS name', 'COALESCE(u.email,r.guest_email) AS email'));
         $query->join('LEFT', '#__users        AS u ON (u.id = r.uid)');
 
         // load only data from current event

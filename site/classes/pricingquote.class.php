@@ -51,7 +51,9 @@ final class JemPricingQuoteContext
         private readonly int $expectedPricingRevision,
         private readonly array $accessLevels,
         private readonly array $userGroups,
-        private readonly int $excludedRegisterId
+        private readonly int $excludedRegisterId,
+        private readonly int $invitationEvent = 0,
+        private readonly int $invitationCredit = 0
     ) {
     }
 
@@ -84,6 +86,31 @@ final class JemPricingQuoteContext
             self::normaliseIds($groups),
             $excludedRegisterId
         );
+    }
+
+    /**
+     * Build a context only after the invitation service has authorised the stored holder.
+     * @param object $identity Actual Joomla holder or guest. @param object $row Server-owned invitation.
+     * @param int $revision Current price configuration revision. @return self
+     */
+    public static function fromInvitation(object $identity, object $row, int $revision): self
+    {
+        $base = self::fromIdentity($identity, $revision, (int) ($row->id ?? 0));
+        return new self($base->userId, $revision, $base->accessLevels, $base->userGroups,
+            (int) ($row->id ?? 0), (int) $row->event,
+            ($row->invitation_kind ?? '') === 'reserved' ? (int) $row->invitation_quantity : 0);
+    }
+
+    /** @param int $eventId Event being quoted. @return bool Trusted invitation scope. */
+    public function isInvitation(int $eventId): bool
+    {
+        return $eventId > 0 && $this->invitationEvent === $eventId;
+    }
+
+    /** @return int Seats already withheld by this invitation's organiser pool. */
+    public function invitationCredit(): int
+    {
+        return $this->invitationCredit;
     }
 
     public function userId(): int
@@ -361,7 +388,7 @@ final class JemPricingQuoteService
 
         $this->assertBookingQuantity($event, $eventQuantity);
 
-        $eventUsed = (int) $event['reservedplaces'] + (int) $used['event'];
+        $eventUsed = (int) $event['reservedplaces'] + (int) $used['event'] - $context->invitationCredit();
         $eventAvailable = max(0, (int) $event['maxplaces'] - $eventUsed);
         if ((int) $event['maxplaces'] > 0 && $eventUsed + $eventQuantity > (int) $event['maxplaces']) {
             $inventoryFailures[] = array(
@@ -563,7 +590,7 @@ final class JemPricingQuoteService
             ->from($this->db->quoteName('#__jem_register_items', 'i'))
             ->join('INNER', $this->db->quoteName('#__jem_register', 'r') . ' ON r.id = i.register_id')
             ->where('r.event = ' . $eventId)
-            ->where($active)
+            ->where('((' . $active . ') OR r.reserved_assigned > 0)')
             ->where($currentItems)
             ->where("i.line_kind = 'admission'");
         if ($excludedRegisterId > 0) {
@@ -653,7 +680,7 @@ final class JemPricingQuoteService
         JemPricingQuoteContext $context,
         string $now
     ): void {
-        if ($context->userId() < 1) {
+        if ($context->userId() < 1 && !$context->isInvitation((int) $event['id'])) {
             throw new JemPricingQuoteException(
                 'login_required',
                 'A logged-in booking holder is required for a priced quote.'
@@ -671,7 +698,8 @@ final class JemPricingQuoteService
             );
         }
         $eventAccess = (int) ($event['access'] ?? 0);
-        if ($eventAccess > 0 && !in_array($eventAccess, $context->accessLevels(), true)) {
+        if ($eventAccess > 0 && !in_array($eventAccess, $context->accessLevels(), true)
+            && !$context->isInvitation((int) $event['id'])) {
             throw new JemPricingQuoteException(
                 'event_access',
                 'The booking holder cannot access this event.'
@@ -713,7 +741,7 @@ final class JemPricingQuoteService
             );
         }
 
-        if (!empty($event['reginvitedonly'])
+        if (!empty($event['reginvitedonly']) && !$context->isInvitation((int) $event['id'])
             && !$this->hasRegistrationIdentity((int) $event['id'], $context->userId())) {
             throw new JemPricingQuoteException(
                 'invitation_required',

@@ -12,6 +12,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 require_once __DIR__ . '/registrationquantity.class.php';
+require_once __DIR__ . '/invitationpolicy.class.php';
+require_once __DIR__ . '/invitationschema.class.php';
 require_once __DIR__ . '/registrationaccesspolicy.class.php';
 
 /**
@@ -171,7 +173,20 @@ final class JemRegistrationService
             throw new RuntimeException('The registration no longer exists.');
         }
 
-        $after = $this->normaliseRow($before, $data);
+        $after = $this->normaliseRow($before, $data, $options);
+        if (!empty($before->invitation_key)) {
+            if ((int) $after->places > (int) $before->invitation_quantity) {
+                throw new DomainException('COM_JEM_INV_QUANTITY_FIXED');
+            }
+            if (empty($options['invitationResponse']) && (int) $after->status === 1
+                && ((int) $before->status <= 0
+                    || (!empty($before->invitation_revoked) && (int) $after->places > (int) $before->places))) {
+                throw new DomainException('COM_JEM_INV_USE_RESPONSE');
+            }
+            if ($before->invitation_kind === 'reserved' && !empty($after->waiting)) {
+                throw new DomainException('COM_JEM_INV_NO_WAITING');
+            }
+        }
         if (is_object($before) && (int) ($before->event ?? 0) !== (int) $after->event) {
             throw new RuntimeException('A registration cannot be moved to another event.');
         }
@@ -196,7 +211,15 @@ final class JemRegistrationService
                 && $newStatus !== JemRegistrationTransition::NOT_ATTENDING);
 
         if ($requiresActiveUser) {
-            $this->assertActiveUser((int) $after->uid);
+            if (!empty($after->guest_email) && !empty($after->invitation_key)
+                && (!empty($options['invitationWrite']) || is_object($before))) {
+                JemInvitationPolicy::email($after->guest_email);
+                if (trim((string) $after->guest_name) === '') {
+                    throw new DomainException('COM_JEM_INV_EXTERNAL_FORMAT');
+                }
+            } else {
+                $this->assertActiveUser((int) $after->uid);
+            }
         }
 
         $expectedRevision = array_key_exists('expectedRevision', $options)
@@ -210,6 +233,9 @@ final class JemRegistrationService
         if (is_object($before)) {
             require_once __DIR__ . '/ticketservice.class.php';
             (new JemTicketService($this->db))->reconcile($before, $after);
+        }
+        if (!empty($after->invitation_key)) {
+            $this->updateInvitationPool($before, $after);
         }
         $changedFields = self::changedFields($before, $after);
         if (!empty($capacity['changed'])) {
@@ -229,7 +255,7 @@ final class JemRegistrationService
             $after->created = $before->created ?? null;
             $after->modified = $now;
             $after->revision = max(1, (int) ($before->revision ?? 1)) + 1;
-            $this->db->updateObject('#__jem_register', $after, 'id');
+            $this->db->updateObject('#__jem_register', $after, 'id', true);
         } else {
             $after->reference = $this->createUniqueReference();
             $after->created = $now;
@@ -505,6 +531,7 @@ final class JemRegistrationService
             'management_fee_net', 'management_fee_tax', 'management_fee_gross',
             'grand_total', 'payment_state', 'price_locked_at', 'external_payment_reference',
         );
+        $fields = array_merge($fields, array_keys(JemInvitationSchema::columns()));
         if (!is_object($before)) {
             return array_values(array_filter($fields, static function ($field) use ($after) {
                 return in_array($field, array('event', 'uid', 'places', 'status', 'waiting', 'comment'), true)
@@ -545,7 +572,7 @@ final class JemRegistrationService
         return 'updated';
     }
 
-    private function normaliseRow($before, $data)
+    private function normaliseRow($before, $data, array $options = [])
     {
         $input = (object) (array) $data;
         $after = is_object($before) ? clone $before : new stdClass();
@@ -562,7 +589,14 @@ final class JemRegistrationService
         }
 
         $after->event = (int) ($after->event ?? 0);
-        $after->uid = (int) ($after->uid ?? 0);
+        if (!empty($options['invitationWrite'])) {
+            foreach (array_keys(JemInvitationSchema::columns()) as $field) {
+                if (property_exists($input, $field) && !in_array($field, ['reserved_assigned', 'reserved_confirmed'], true)) {
+                    $after->$field = $input->$field;
+                }
+            }
+        }
+        $after->uid = !empty($after->guest_email) ? null : (int) ($after->uid ?? 0);
         $after->places = JemRegistrationQuantity::parse($after->places ?? 1);
         $after->status = (int) ($after->status ?? JemRegistrationTransition::ATTENDING);
         $after->waiting = !empty($after->waiting) ? 1 : 0;
@@ -754,6 +788,8 @@ final class JemRegistrationService
 
         $this->db->setQuery($query);
         $usedPlaces = max(0, (int) $event->reservedplaces) + max(0, (int) $this->db->loadResult());
+        $usedPlaces -= JemInvitationPolicy::allocation($after)['confirmed']
+            - ($before ? JemInvitationPolicy::allocation($before)['confirmed'] : 0);
         $requestedPlaces = max(1, (int) ($after->places ?? 1));
 
         if ($usedPlaces + $requestedPlaces <= (int) $event->maxplaces) {
@@ -879,7 +915,8 @@ final class JemRegistrationService
             }, $previous);
 
         $logicalStatus = JemRegistrationTransition::logicalStatus($after);
-        $requiresSelection = in_array($logicalStatus, array(
+        $requiresSelection = ((int) ($after->reserved_assigned ?? 0) > 0
+            || ($logicalStatus === 0 && ($after->invitation_kind ?? '') === 'reserved')) || in_array($logicalStatus, array(
             JemRegistrationTransition::ATTENDING,
             JemRegistrationTransition::WAITING_LIST,
         ), true);
@@ -898,7 +935,8 @@ final class JemRegistrationService
             $rows[$key] = $row;
         }
 
-        if ($logicalStatus === JemRegistrationTransition::ATTENDING) {
+        if ($logicalStatus === JemRegistrationTransition::ATTENDING
+            || ($logicalStatus === 0 && ($after->invitation_kind ?? '') === 'reserved')) {
             $used = $this->loadUsedCapacity((int) $after->event, (int) ($before->id ?? 0));
             $unavailable = false;
             foreach ($rows as $key => $row) {
@@ -1054,8 +1092,7 @@ final class JemRegistrationService
             ->join('INNER', $this->db->quoteName('#__jem_register', 'r')
                 . ' ON r.id = a.register_id AND r.revision = a.registration_revision')
             ->where('r.event = ' . (int) $eventId)
-            ->where('r.status = 1')
-            ->where('r.waiting = 0')
+            ->where('((r.status = 1 AND r.waiting = 0) OR r.reserved_assigned > 0)')
             ->group(array('a.venue_capacity_area_id', 'a.venue_layout_id'));
         if ((int) $excludedRegisterId > 0) {
             $query->where('r.id <> ' . (int) $excludedRegisterId);
@@ -1149,7 +1186,7 @@ final class JemRegistrationService
      * Joomla normally clears the activation token after verification, while
      * legacy/migrated active accounts may store the equivalent string "0".
      */
-    private static function activationRequiresVerification($activation)
+    public static function activationRequiresVerification($activation)
     {
         $activation = trim((string) $activation);
 
@@ -1225,7 +1262,42 @@ final class JemRegistrationService
             'forced'                 => !empty($options['forced']) ? 1 : 0,
             'changed_fields'         => json_encode(array_values($changedFields), JSON_UNESCAPED_SLASHES),
             'occurred'               => $now,
+            'invitation_snapshot'    => !empty($current->invitation_key) ? json_encode([
+                'before' => self::invitationAudit($before), 'after' => self::invitationAudit($after),
+            ], JSON_THROW_ON_ERROR) : null,
         );
+    }
+
+    /** @param object|null $row Registration. @return array Non-secret provenance for audit. */
+    private static function invitationAudit($row): array
+    {
+        if (!is_object($row)) {
+            return [];
+        }
+        $names = ['invitation_key', 'invitation_scope', 'invitation_root', 'invitation_kind',
+            'invitation_quantity', 'invitation_free', 'invitation_actor', 'invitation_revoked',
+            'reserved_assigned', 'reserved_confirmed', 'guest_name', 'guest_email'];
+        return array_intersect_key((array) $row, array_flip($names));
+    }
+
+    /**
+     * Transfer quantities within the organiser pool while the event lock is held.
+     * @param object|null $before Stored registration. @param object $after Proposed registration.
+     * @return void
+     */
+    private function updateInvitationPool($before, object $after): void
+    {
+        $eventId = (int) $after->event;
+        $reserved = (int) $this->db->setQuery('SELECT reservedplaces FROM #__jem_events WHERE id=' . $eventId)->loadResult();
+        $assigned = (int) $this->db->setQuery('SELECT COALESCE(SUM(reserved_assigned),0) FROM #__jem_register WHERE event='
+            . $eventId . ' AND id<>' . (int) ($before->id ?? 0))->loadResult();
+        $remaining = JemInvitationPolicy::poolAfter($reserved, $before, $after, $assigned);
+        $allocation = JemInvitationPolicy::allocation($after);
+        $after->reserved_assigned = $allocation['assigned'];
+        $after->reserved_confirmed = $allocation['confirmed'];
+        if ($remaining !== $reserved) {
+            $this->db->setQuery('UPDATE #__jem_events SET reservedplaces=' . $remaining . ' WHERE id=' . $eventId)->execute();
+        }
     }
 
     private function loadEventTitle($eventId)

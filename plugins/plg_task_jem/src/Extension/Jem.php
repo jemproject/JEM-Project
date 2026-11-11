@@ -62,6 +62,8 @@ final class Jem extends CMSPlugin implements SubscriberInterface
         require_once JPATH_SITE . '/components/com_jem/factory.php';
 
         try {
+            require_once JPATH_SITE . '/components/com_jem/classes/invitationservice.class.php';
+            (new \JemInvitationService(\Joomla\CMS\Factory::getContainer()->get('DatabaseDriver')))->expire(100);
             $service = new \JemReminderService();
             PluginHelper::importPlugin('jem');
             $result = $service->processDue(function ($notificationId) use ($application) {
