@@ -45,6 +45,7 @@ final class SeriesBookingTemplateTest extends TestCase
         ]);
         $html = $view->render($layout);
         self::assertSame($series, str_contains($html, 'COM_JEM_SERIES_BOOKING_SUSPENDED_NOTICE'));
+        self::assertSame($series, str_contains($html, 'COM_JEM_SERIES_BOOKING_AGE_NOTICE'));
         self::assertSame($series && $single === 1, str_contains($html, 'id="jem_registration_series_1"'));
         self::assertSame($series && $single === 0, str_contains($html, 'COM_JEM_I_WILL_GO_SERIES_3'));
         self::assertStringContainsString('value="event.userregister"', $html);

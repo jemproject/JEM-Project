@@ -249,6 +249,7 @@ if ($this->showRegForm && empty($this->print)) :
                             echo '<div class="px-3 pt-3">' . Text::_('COM_JEM_I_WILL_GO_SERIES_3') . '</div>';
                         }
                         echo '<div class="px-3 small">' . Text::_('COM_JEM_SERIES_BOOKING_SUSPENDED_NOTICE') . '</div>';
+                        echo '<div class="px-3 small">' . Text::_('COM_JEM_SERIES_BOOKING_AGE_NOTICE') . '</div>';
                     }
                     ?>
                 </li>

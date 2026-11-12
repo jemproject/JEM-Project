@@ -1203,6 +1203,80 @@ class JemModelEvent extends ItemModel
     }
 
     /**
+     * Omit age-ineligible secondary dates before the normal visibility loader.
+     * Age is assessed on each occurrence's own date, with its event and venue levels.
+     * Retained dates still require the complete registration and access checks.
+     *
+     * @param array $candidates Selected series dates.
+     * @param int $primaryId Date on which the participant submitted the form.
+     * @param object $user Current participant, never the event creator.
+     * @param int &$ageExcluded Count of new bookings excluded by age.
+     * @param int &$suspendedExcluded Count excluded by suspension instead of age.
+     * @return array Dates to load authoritatively; existing reservations are not changed.
+     */
+    protected function excludeSeriesAgeRestrictedEvents(
+        array $candidates,
+        int $primaryId,
+        $user,
+        int &$ageExcluded,
+        int &$suspendedExcluded
+    ): array
+    {
+        $ids = array();
+        foreach ($candidates as $candidate) {
+            $id = is_object($candidate) ? (int) ($candidate->id ?? 0) : 0;
+            if ($id > 0 && $id !== $primaryId) {
+                $ids[$id] = $id;
+            }
+        }
+        if (!$ids) {
+            return $candidates;
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                'e.id', 'e.dates', 'e.event_status',
+                'ea.min_age AS event_age_minimum', 'ea.max_age AS event_age_maximum',
+                'va.min_age AS venue_age_minimum', 'va.max_age AS venue_age_maximum',
+                'r.status AS registration_status',
+            ))
+            ->from($db->quoteName('#__jem_events', 'e'))
+            ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON v.id = e.locid')
+            ->join('LEFT', $db->quoteName('#__jem_age_levels', 'ea') . ' ON ea.id = e.age_level_id')
+            ->join('LEFT', $db->quoteName('#__jem_age_levels', 'va') . ' ON va.id = v.age_level_id')
+            ->join('LEFT', $db->quoteName('#__jem_register', 'r') . ' ON r.event = e.id AND r.uid = ' . (int) $user->get('id'))
+            ->where('e.id IN (' . implode(',', $ids) . ')');
+        $db->setQuery($query);
+        $levels = $db->loadObjectList('id');
+        $included = $seen = array();
+        foreach ($candidates as $candidate) {
+            $id = is_object($candidate) ? (int) ($candidate->id ?? 0) : 0;
+            if ($id > 0 && isset($seen[$id])) {
+                continue;
+            }
+            $seen[$id] = true;
+            if ($id !== $primaryId && isset($levels[$id])) {
+                $level = JemAgeAccess::decorateEvent($levels[$id], $user);
+                if ($level->age_access_state === JemAgeAccess::RESTRICTED) {
+                    // An existing confirmed/waiting booking is preserved, not a new exclusion.
+                    if (!in_array((int) ($level->registration_status ?? -1), array(1, 2), true)) {
+                        if (JemRegistrationAccessPolicy::eventStatusMessage($level) !== '') {
+                            ++$suspendedExcluded;
+                        } else {
+                            ++$ageExcluded;
+                        }
+                    }
+                    continue;
+                }
+            }
+            // Keep the primary date, unknown birthdays and missing rows for ordinary validation.
+            $included[] = $candidate;
+        }
+
+        return $included;
+    }
+
+    /**
      * Reload every selected occurrence through getItem() so the current user's
      * publication, category, type, venue and view-level decisions are present.
      * The recurrence query is a selector only and must never authorise writes.
@@ -1579,6 +1653,21 @@ class JemModelEvent extends ItemModel
             $events [] = clone $event;
         }
 
+        $ageExcluded = $excludedSeriesEvents = 0;
+        if ($isSeriesBooking && $status === JemRegistrationTransition::ATTENDING && count($events) > 1) {
+            try {
+                $events = $this->excludeSeriesAgeRestrictedEvents($events, $eventId, $user, $ageExcluded, $excludedSeriesEvents);
+            } catch (RuntimeException $exception) {
+                $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION'));
+                return false;
+            }
+            if (!$events) {
+                $this->setError(Text::_($ageExcluded > 0
+                    ? 'COM_JEM_AGE_ACCESS_REGISTRATION_DENIED' : 'COM_JEM_EVENT_REGISTRATION_CLOSED'));
+                return false;
+            }
+        }
+
         try {
             $events = $this->getAuthoritativeRegistrationEvents($events, $event, $uid, $isCancellation);
         } catch (RuntimeException $e) {
@@ -1599,7 +1688,6 @@ class JemModelEvent extends ItemModel
         // Cancellation skips absent rows so a partial series can be released
         // without creating forged "not attending" registrations.
         $registrations = array();
-        $excludedSeriesEvents = 0;
         $authorisedEvents = array();
         foreach ($events as $e) {
             if ($isSeriesBooking && $status === JemRegistrationTransition::ATTENDING
@@ -1778,6 +1866,9 @@ class JemModelEvent extends ItemModel
         if ($excludedSeriesEvents > 0) {
             $app->enqueueMessage(Text::sprintf('COM_JEM_SERIES_BOOKING_RESULT',
                 $seriesConfirmed, $seriesWaiting, $excludedSeriesEvents), 'notice');
+        }
+        if ($ageExcluded > 0) {
+            $app->enqueueMessage(Text::plural('COM_JEM_SERIES_BOOKING_AGE_EXCLUDED', $ageExcluded), 'notice');
         }
 
         return $result;

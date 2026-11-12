@@ -8,6 +8,12 @@ namespace Joomla\CMS {
         public static $database;
         public static $application;
 
+        /** @param string $value Date input. @return \DateTimeImmutable Isolated UTC clock. */
+        public static function getDate($value = 'now'): \DateTimeImmutable
+        {
+            return new \DateTimeImmutable($value, new \DateTimeZone('UTC'));
+        }
+
         public static function getContainer(): object
         {
             return new class {
@@ -194,10 +200,7 @@ namespace {
         }
     }
 
-    class JemAgeAccess
-    {
-        public const UNRESTRICTED = 'unrestricted';
-    }
+    require_once JEM_TEST_ROOT . '/site/classes/ageaccess.class.php';
 
     class JemLog
     {
@@ -276,8 +279,21 @@ namespace {
             return 0;
         }
 
-        public function loadObjectList(): array
+        public function loadObjectList($key = ''): array
         {
+            if (str_contains((string) $this->query, 'event_age_minimum')) {
+                if ($this->failureStage === 'age_query') {
+                    throw new RuntimeException('Sensitive age query details', 1054);
+                }
+                $rows = array();
+                foreach ($this->events as $id => $event) {
+                    $rows[$id] = clone $event;
+                    $reg = $this->registrations[$id] ?? null;
+                    $rows[$id]->registration_status = $reg && (int) $reg->uid === (int) JemFactory::$user->get('id')
+                        ? $reg->status : null;
+                }
+                return $rows;
+            }
             throw new RuntimeException('Sensitive series query details', 1054);
         }
 
