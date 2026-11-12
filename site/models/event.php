@@ -1329,6 +1329,16 @@ class JemModelEvent extends ItemModel
                 return false;
             }
 
+            // A series request fills missing bookings; other active dates stay unchanged.
+            if ($isSeriesBooking && $status === JemRegistrationTransition::ATTENDING
+                && (int) $e->id !== $eventId && is_object($reg)
+                && in_array(JemRegistrationTransition::logicalStatus($reg), array(
+                    JemRegistrationTransition::ATTENDING,
+                    JemRegistrationTransition::WAITING_LIST,
+                ), true)) {
+                continue;
+            }
+
             if ($isCancellation && !is_object($reg)) {
                 continue;
             }
