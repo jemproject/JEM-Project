@@ -79,6 +79,44 @@ final class JemRegistrationAccessPolicy
     }
 
     /**
+     * Check publication before creating or delivering an invitation.
+     *
+     * @param object|array|null $event Authoritative event, or null before its first save.
+     * @param string|null $now UTC SQL datetime; defaults to the current instant.
+     * @return string Explanation key, or an empty string when invitations are allowed.
+     */
+    public static function invitationEventMessage($event, ?string $now = null): string
+    {
+        $event = is_array($event) ? (object) $event : $event;
+        $now = $now ?? gmdate('Y-m-d H:i:s');
+        $up = (string) self::value($event, 'publish_up', '');
+        $down = (string) self::value($event, 'publish_down', '');
+        if ((int) self::value($event, 'published', 0) !== 1
+            || ($up !== '' && $up !== '0000-00-00 00:00:00' && $up > $now)
+            || ($down !== '' && $down !== '0000-00-00 00:00:00' && $down <= $now)) {
+            return 'COM_JEM_INVITATION_PUBLISH_FIRST';
+        }
+
+        return self::eventStatusMessage($event);
+    }
+
+    /**
+     * Identify new invitations without blocking withdrawal or edits to existing records.
+     *
+     * @param object|null $before Stored registration.
+     * @param object $after Proposed registration.
+     * @return bool Whether this operation creates, reactivates or extends an invitation.
+     */
+    public static function addsInvitation($before, $after): bool
+    {
+        return (int) ($after->status ?? -1) === 0 && (!is_object($before)
+            || (int) ($before->status ?? -1) !== 0
+            || (int) ($before->uid ?? 0) !== (int) ($after->uid ?? 0)
+            || (int) ($before->event ?? 0) !== (int) ($after->event ?? 0)
+            || (int) ($after->places ?? 0) > (int) ($before->places ?? 0));
+    }
+
+    /**
      * Identify new reservations, extra places, reactivations and promotions.
      * Cancellations, reductions and non-booking edits preserve existing records.
      *

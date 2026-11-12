@@ -30,6 +30,16 @@ class JFormFieldModal_Users extends FormField
      */
     protected function getInput()
     {
+        require_once JPATH_SITE . '/components/com_jem/classes/registrationaccesspolicy.class.php';
+        $eventId = (int) ($this->element['eventid'] ?? 0);
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $event = $eventId ? $db->setQuery('SELECT published,publish_up,publish_down,event_status FROM #__jem_events WHERE id=' . $eventId)->loadObject() : null;
+        $message = JemRegistrationAccessPolicy::invitationEventMessage($event);
+        if ($message !== '') {
+            return '<button type="button" class="btn btn-secondary" disabled>' . Text::_('COM_JEM_SELECT') . '</button>'
+                . '<p class="form-text">' . htmlspecialchars(Text::_($message), ENT_QUOTES, 'UTF-8') . '</p>';
+        }
+
         $app      = Factory::getApplication();
         $document = $app->getDocument();
         $wa       = $document->getWebAssetManager();

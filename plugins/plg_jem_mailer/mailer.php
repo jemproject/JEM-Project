@@ -103,7 +103,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.publish_up', 'a.publish_down', 'a.event_status', 'a.created', 'a.modified', 'a.created_by',
             'a.online_meeting_url', 'a.online_meeting_label',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
@@ -116,6 +116,12 @@ class plgJemMailer extends CMSPlugin
         $db->setQuery($query);
         if (is_null($event = $db->loadObject())) {
             return false;
+        }
+        if ((int) $event->status === 0) {
+            require_once JPATH_SITE . '/components/com_jem/classes/registrationaccesspolicy.class.php';
+            if (JemRegistrationAccessPolicy::invitationEventMessage($event) !== '') {
+                return false;
+            }
         }
         $this->_applyAssociatedArticleContent($event);
         $this->_formatEventMailDateTime($event);
