@@ -178,8 +178,11 @@ final class JemPricedRegistrationService
             }
 
             if (!$fits) {
-                if ($manual || $strategy === 'strict') {
+                if ($manual) {
                     return array();
+                }
+                if ($strategy === 'strict') {
+                    break;
                 }
                 continue;
             }
@@ -539,8 +542,13 @@ final class JemPricedRegistrationService
             ->where('id IN (' . implode(',', $ids) . ')')
             ->order('id ASC');
         $this->db->setQuery((string) $query . ' FOR UPDATE');
-        $rows = (array) $this->db->loadAssocList('id', $capacityColumn);
+        // Reading full rows preserves NULL; the two-column form falls back to the row.
+        $rows = (array) $this->db->loadAssocList('id');
+        $capacities = array();
+        foreach ($rows as $id => $row) {
+            $capacities[(int) $id] = $row[$capacityColumn] === null ? null : (int) $row[$capacityColumn];
+        }
 
-        return array_map(static fn ($value): ?int => $value === null ? null : (int) $value, $rows);
+        return $capacities;
     }
 }

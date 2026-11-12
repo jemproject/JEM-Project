@@ -43,7 +43,7 @@ final class WaitingListOwnerEligibilityTest extends TestCase
         $tables = ['jem_events', 'jem_register'];
         if ($this->priced) {
             $tables = array_merge($tables, ['jem_register_history', 'jem_register_items',
-                'jem_register_capacity_allocations', 'jem_event_prices', 'jem_capacity_pools']);
+                'jem_register_capacity_allocations', 'jem_event_prices', 'jem_capacity_pools', 'jem_ticket_operations']);
             require_once JEM_TEST_ROOT . '/site/classes/pricedregistration.class.php';
         }
         require_once JEM_TEST_ROOT . '/site/classes/registrationtransition.class.php';
@@ -289,6 +289,127 @@ final class WaitingListOwnerEligibilityTest extends TestCase
         self::assertSame('10.00', $this->db->setQuery('SELECT grand_total FROM #__jem_register WHERE id=2')->loadResult());
         self::assertSame('10.00', $this->db->setQuery('SELECT line_gross FROM #__jem_register_items WHERE register_id=2 AND registration_revision=' . $revision)->loadResult());
     }
+
+    /**
+     * @return iterable<string, array> Quota, requests, availability, queue policy and expected promotions.
+     */
+    public static function pricedQueueCases(): iterable
+    {
+        yield 'unlimited automatic' => [null, [2], 6, 'strict', false, [1], [], 0];
+        yield 'unlimited manual' => [null, [2], 6, 'strict', true, [1], [], 0];
+        yield 'strict keeps earlier requests' => [10, [1, 2, 1], 1, 'strict', false, [1], [], 0];
+        yield 'fill skips oversized request' => [10, [1, 3, 1], 2, 'fill', false, [1, 3], [], 0];
+        yield 'strict stops at first request' => [10, [3, 1], 2, 'strict', false, [], [], 0];
+        yield 'manual selection is atomic' => [10, [1, 2], 1, 'strict', true, [], [], 0];
+        yield 'numeric quota insufficient' => [1, [2], 6, 'strict', false, [], [], 0];
+        yield 'numeric quota is shared' => [3, [2, 2, 1], 6, 'fill', false, [1, 3], [], 0];
+        yield 'zero quota' => [0, [1], 6, 'strict', false, [], [], 0];
+        yield 'strict area capacity' => [10, [1, 1], 6, 'strict', false, [1], [1, 0], 0];
+        yield 'fill area capacity' => [10, [1, 1, 1], 6, 'fill', false, [1, 3], [1, 0, 1], 0];
+        yield 'manual area capacity is atomic' => [10, [1, 1], 6, 'strict', true, [], [1, 0], 0];
+        yield 'confirmed quantity consumes quota' => [3, [2], 6, 'strict', false, [], [], 2];
+        yield 'unlimited quota with confirmed quantity' => [null, [2], 6, 'strict', false, [1], [], 2];
+        yield 'missing price is rejected' => [-1, [1], 6, 'strict', false, [], [], 0];
+    }
+
+    /**
+     * Exercise actual promotion persistence, history and post-commit notification dispatch.
+     *
+     * @param int|null $quota Price quota; -1 omits the referenced price.
+     * @param array $quantities Waiting requests in FIFO order.
+     * @param int $available Free event places before promotion.
+     * @param string $strategy Strict or fill policy.
+     * @param bool $manual Whether the administrator explicitly selects all requests.
+     * @param array $expected Expected promoted registration ids.
+     * @param array $pools Optional per-request area capacities.
+     * @param int $confirmed Quantity already booked against the same price.
+     * @return void
+     */
+    #[DataProvider('pricedQueueCases')]
+    public function testPricedQueuePreservesQuotasOrderAndSnapshots(
+        ?int $quota,
+        array $quantities,
+        int $available,
+        string $strategy,
+        bool $manual,
+        array $expected,
+        array $pools,
+        int $confirmed
+    ): void {
+        if (!$this->priced) {
+            self::markTestSkipped('Priced registrations belong to JEM 5.1.0.');
+        }
+        JemHelper::$strategy = $strategy;
+        $this->sql('INSERT INTO #__users (id) VALUES (102),(103)');
+        $this->sql("UPDATE #__jem_events SET pricing_mode='priced', maxplaces=" . ($available + $confirmed) . ' WHERE id=1');
+        if ($quota !== -1) {
+            $value = $quota === null ? 'NULL' : (string) $quota;
+            $this->sql("INSERT INTO #__jem_event_prices (id,event_id,code,name,quota) VALUES (1,1,'adult','Adult',$value)");
+        }
+        foreach ($quantities as $index => $quantity) {
+            $id = $index + 1;
+            $this->registration($id, 100 + $index, $quantity);
+            $poolId = null;
+            if (array_key_exists($index, $pools)) {
+                $poolId = $id;
+                $this->sql("INSERT INTO #__jem_capacity_pools (id,event_id,code,name,capacity) VALUES ($id,1,'area$id','Area $id'," . $pools[$index] . ')');
+            }
+            $this->pricedAdmission($id, $quantity, $poolId);
+        }
+        if ($confirmed > 0) {
+            $this->registration(10, 103, $confirmed, 0);
+            $this->pricedAdmission(10, $confirmed);
+        }
+        $itemsBefore = $this->db->setQuery('SELECT * FROM #__jem_register_items ORDER BY id')->loadAssocList();
+        $options = ['notify' => true];
+        if ($manual) {
+            $options += ['mode' => 'manual', 'registrationIds' => range(1, count($quantities))];
+        }
+        $result = $this->promote($options);
+        self::assertSame(!$manual || $expected !== [], $result->success, $result->reason);
+        self::assertSame($expected, $result->promotedIds);
+        foreach ($quantities as $index => $quantity) {
+            $id = $index + 1;
+            $promoted = in_array($id, $expected, true);
+            self::assertSame($promoted ? 0 : 1, $this->waiting($id));
+            $row = $this->db->setQuery('SELECT * FROM #__jem_register WHERE id=' . $id)->loadObject();
+            self::assertSame($promoted ? 2 : 1, (int) $row->revision);
+            self::assertSame(number_format(10.90 * $quantity, 2, '.', ''), $row->grand_total);
+            $item = $this->db->setQuery('SELECT * FROM #__jem_register_items WHERE register_id=' . $id
+                . ' AND registration_revision=' . (int) $row->revision)->loadObject();
+            self::assertNotNull($item);
+            self::assertSame(number_format(0.90 * $quantity, 2, '.', ''), $item->line_tax);
+            self::assertSame(number_format(10.90 * $quantity, 2, '.', ''), $item->line_gross);
+        }
+        $history = $this->db->setQuery('SELECT registration_id FROM #__jem_register_history ORDER BY id')->loadColumn();
+        self::assertSame($expected, array_map('intval', $history));
+        self::assertSame($itemsBefore, $this->db->setQuery('SELECT * FROM #__jem_register_items WHERE registration_revision=1 ORDER BY id')->loadAssocList());
+        $mail = [];
+        foreach (JemFactory::$notifications as [$name, $arguments, $inTransaction]) {
+            self::assertSame(0, $inTransaction, 'Dispatch must happen after commit.');
+            if ($name === 'onUserOnOffWaitinglist') {
+                $mail[] = $arguments[0];
+            }
+        }
+        self::assertSame($expected, $mail);
+    }
+
+    /**
+     * @param int $id Existing fixture registration.
+     * @param int $quantity Admission quantity.
+     * @param int|null $poolId Optional capacity area.
+     * @return void Attach a commercial snapshot with 9 percent tax to the fixture.
+     */
+    private function pricedAdmission(int $id, int $quantity, ?int $poolId = null): void
+    {
+        $net = 10 * $quantity;
+        $tax = number_format(0.90 * $quantity, 2, '.', '');
+        $gross = number_format(10.90 * $quantity, 2, '.', '');
+        $pool = $poolId === null ? 'NULL' : (string) $poolId;
+        $this->sql("UPDATE #__jem_register SET pricing_mode='priced', currency='EUR', subtotal_net=$net, tax_total=$tax, grand_total=$gross WHERE id=$id");
+        $this->sql("INSERT INTO #__jem_register_items (register_id,registration_revision,line_number,line_kind,event_price_id,capacity_pool_id,item_code,item_name,currency,quantity,unit_net,unit_gross,line_net,line_tax,line_gross) VALUES ($id,1,1,'admission',1,$pool,'adult','Adult','EUR',$quantity,10,10.90,$net,$tax,$gross)");
+    }
+
 
     /**
      * @param array $options Promotion overrides.
