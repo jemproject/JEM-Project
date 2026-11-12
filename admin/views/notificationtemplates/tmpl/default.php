@@ -21,6 +21,8 @@ $workflowLabels = array(
     'cancellation' => Text::_('COM_JEM_NOTIFICATION_WORKFLOW_CANCELLATION'),
     'waiting_list_change' => Text::_('COM_JEM_NOTIFICATION_WORKFLOW_WAITING_LIST_CHANGE'),
     'reminder' => Text::_('COM_JEM_NOTIFICATION_WORKFLOW_REMINDER'),
+    'event_submission' => Text::_('COM_JEM_NOTIFICATION_WORKFLOW_EVENT_SUBMISSION'),
+    'venue_submission' => Text::_('COM_JEM_NOTIFICATION_WORKFLOW_VENUE_SUBMISSION'),
 );
 $recipientLabels = array(
     'user' => Text::_('COM_JEM_NOTIFICATION_RECIPIENT_USER'),
@@ -28,6 +30,8 @@ $recipientLabels = array(
 );
 $variantLabels = array(
     'self' => Text::_('COM_JEM_NOTIFICATION_VARIANT_SELF'),
+    'new' => Text::_('COM_JEM_NOTIFICATION_VARIANT_NEW'),
+    'edit' => Text::_('COM_JEM_NOTIFICATION_VARIANT_EDIT'),
     'on_behalf' => Text::_('COM_JEM_NOTIFICATION_VARIANT_ON_BEHALF'),
     'scheduled' => Text::_('COM_JEM_NOTIFICATION_VARIANT_SCHEDULED'),
 );

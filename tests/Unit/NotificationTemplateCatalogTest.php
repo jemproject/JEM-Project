@@ -27,12 +27,12 @@ final class NotificationTemplateCatalogTest extends TestCase
         $this->language = $language;
     }
 
-    public function testPoint2ACatalogueHasUniqueNativeTemplateIdentifiers(): void
+    public function testCatalogueHasUniqueNativeTemplateIdentifiers(): void
     {
         $definitions = JemNotificationTemplateCatalog::all();
 
-        self::assertCount(49, $definitions);
-        self::assertCount(49, array_unique(array_column($definitions, 'id')));
+        self::assertCount(57, $definitions);
+        self::assertCount(57, array_unique(array_column($definitions, 'id')));
 
         foreach ($definitions as $id => $definition) {
             self::assertSame($id, $definition['id']);
@@ -41,7 +41,7 @@ final class NotificationTemplateCatalogTest extends TestCase
         }
     }
 
-    public function testEveryDefaultKeyExistsAndLegacyOrderMatchesEnglishMarkers(): void
+    public function testEveryDefaultUsesNamedVariablesAndRetainsLegacyFieldMapping(): void
     {
         foreach (JemNotificationTemplateCatalog::all() as $definition) {
             foreach (array('subject', 'body') as $part) {
@@ -49,10 +49,15 @@ final class NotificationTemplateCatalogTest extends TestCase
                 $tokens = $definition[$part . '_legacy_tokens'];
 
                 self::assertArrayHasKey($key, $this->language, $key);
-                preg_match_all('/%(?:(?:[1-9][0-9]*)\$)?[sd]/', $this->language[$key], $matches);
-                self::assertCount(count($matches[0]), $tokens, $key);
-                if (JemNotificationTemplateRenderer::detectFormat($this->language[$key]) === 'named') {
-                    self::assertSame(array(), $tokens, $key);
+                self::assertNotContains(
+                    JemNotificationTemplateRenderer::detectFormat($this->language[$key]),
+                    array('legacy', 'mixed'),
+                    $key
+                );
+                $validation = JemNotificationTemplateRenderer::validate($this->language[$key], $definition['allowed_tokens']);
+                self::assertSame(array(), $validation['errors'], $key);
+                foreach ($tokens as $token) {
+                    self::assertContains($token, $definition['allowed_tokens'], $key);
                 }
             }
         }
@@ -115,7 +120,7 @@ final class NotificationTemplateCatalogTest extends TestCase
         self::assertFalse($definition['with_comment']);
     }
 
-    public function testRendererPreservesEveryCurrentEnglishLegacyTemplate(): void
+    public function testRendererExpandsEveryCurrentEnglishTemplate(): void
     {
         foreach (JemNotificationTemplateCatalog::all() as $definition) {
             $values = array();
@@ -155,4 +160,26 @@ final class NotificationTemplateCatalogTest extends TestCase
         self::assertSame(array(), $definition['subject_legacy_tokens']);
         self::assertSame(array(), $definition['body_legacy_tokens']);
     }
+
+    /** All eight submission variants preserve the original field positions for old translations. */
+    public function testSubmissionVariantsKeepLegacyOrderAndOfferRelevantVariables(): void
+    {
+        $submissions = array_filter(JemNotificationTemplateCatalog::all(), static fn ($item) => str_ends_with($item['workflow'], '_submission'));
+        self::assertCount(8, $submissions);
+        foreach ($submissions as $item) {
+            $event = $item['workflow'] === 'event_submission';
+            $tokens = $event
+                ? array('user_name', 'action_date', 'event_title', 'event_date', 'event_time', 'venue', 'city', 'event_description', 'publication_status')
+                : array('user_name', 'action_date', 'venue', 'venue_website', 'street', 'postal_code', 'city', 'country', 'venue_description', 'publication_status');
+            self::assertSame($tokens, $item['body_legacy_tokens']);
+            $values = array_combine($tokens, array_map(static fn ($token) => 'VALUE_' . $token, $tokens));
+            $legacy = implode(' / ', array_fill(0, count($tokens), '%s'));
+            self::assertSame(implode(' / ', $values), JemNotificationTemplateRenderer::render($legacy, $values, $tokens));
+            self::assertSame(array('site_name', $event ? 'event_title' : 'venue'), $item['subject_legacy_tokens']);
+            self::assertContains($event ? 'event_url' : 'venue_url', $item['allowed_tokens']);
+            self::assertContains('publication_status', $item['recommended_tokens']);
+            self::assertNotContains('places', $item['allowed_tokens']);
+        }
+    }
+
 }

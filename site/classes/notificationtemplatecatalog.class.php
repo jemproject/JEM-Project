@@ -17,7 +17,7 @@ final class JemNotificationTemplateCatalog
     public const SHARED_DISCLAIMER_ID = 'plg_jem_mailer.shared_privacy_disclaimer';
 
     /**
-     * Return every reservation-related template definition in Point 2A.
+     * Return every editable Mailer notification definition.
      *
      * @return array<string,array<string,mixed>>
      */
@@ -244,6 +244,8 @@ final class JemNotificationTemplateCatalog
             'reservation_url',
         );
 
+        self::addSubmissionDefinitions($definitions);
+
         return $definitions;
     }
 
@@ -365,6 +367,51 @@ final class JemNotificationTemplateCatalog
             'subject_legacy_tokens' => array('site_name'),
             'body_legacy_tokens'    => self::bodyLegacyTokens($recipient, $variant, $withComment),
         );
+    }
+
+    /**
+     * Add event and venue submission templates with their original field ordering.
+     *
+     * @param array $definitions Catalogue indexed by native template identifier.
+     * @return void
+     */
+    private static function addSubmissionDefinitions(array &$definitions): void
+    {
+        foreach (array('event', 'venue') as $kind) {
+            foreach (array('new', 'edit') as $action) {
+                foreach (array('user', 'admin') as $recipient) {
+                    $suffix = strtoupper($action . '_' . $kind);
+                    $subjectKey = 'PLG_JEM_MAILER_' . strtoupper($action) . '_'
+                        . ($recipient === 'user' ? 'USER_' : '') . strtoupper($kind) . '_MAIL';
+                    $bodyKey = 'PLG_JEM_MAILER_' . ($recipient === 'user' ? 'USER_MAIL_' : '')
+                        . $suffix . ($kind === 'event' ? '_9' : '_A');
+                    $titleToken = $kind === 'event' ? 'event_title' : 'venue';
+                    $bodyTokens = $kind === 'event'
+                        ? array('user_name', 'action_date', 'event_title', 'event_date', 'event_time',
+                            'venue', 'city', 'event_description', 'publication_status')
+                        : array('user_name', 'action_date', 'venue', 'venue_website', 'street',
+                            'postal_code', 'city', 'country', 'venue_description', 'publication_status');
+                    $id = self::templateIdForBodyKey($bodyKey);
+                    $definitions[$id] = array(
+                        'id' => $id,
+                        'subject_key' => $subjectKey,
+                        'body_key' => $bodyKey,
+                        'workflow' => $kind . '_submission',
+                        'recipient' => $recipient,
+                        'variant' => $action,
+                        'with_comment' => false,
+                        'allowed_tokens' => array_values(array_unique(array_merge($bodyTokens, array(
+                            'site_name', 'actor_name', 'event_image_url', 'venue_image_url',
+                            $kind === 'event' ? 'event_url' : 'venue_url',
+                            $kind === 'event' ? 'venue_configuration' : 'venue',
+                        )))),
+                        'recommended_tokens' => array('user_name', $titleToken, 'publication_status'),
+                        'subject_legacy_tokens' => array('site_name', $titleToken),
+                        'body_legacy_tokens' => $bodyTokens,
+                    );
+                }
+            }
+        }
     }
 
     private static function allowedTokens()

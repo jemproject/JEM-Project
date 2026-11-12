@@ -28,6 +28,14 @@ $sampleValues = array(
     'event_image_url' => $sampleRoot . '/images/jem/events/example-event.jpg',
     'venue_image_url' => $sampleRoot . '/images/jem/venues/example-venue.jpg',
     'site_name' => 'Example Site',
+    'action_date' => '15 June 2030, 12:00',
+    'publication_status' => 'Published: ' . $sampleRoot . '/event',
+    'venue_website' => 'https://example.org',
+    'venue_url' => $sampleRoot . '/venue',
+    'street' => '10 Example Street',
+    'postal_code' => '12345',
+    'country' => 'GB',
+    'venue_description' => 'Example venue description.',
 );
 ?>
 

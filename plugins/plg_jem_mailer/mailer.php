@@ -11,6 +11,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Language\LanguageFactoryInterface;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Filter\OutputFilter;
@@ -765,9 +767,9 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.event_status', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', 'a.venue_snapshot'));
+        $query->select(array('a.id', 'a.event_status', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', 'a.venue_snapshot', 'a.datimage', 'a.image_path'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
-        $query->select(array('v.venue', 'v.city'));
+        $query->select(array('v.venue', 'v.city', 'v.locimage', 'v.image_path AS venue_image_path'));
         $query->select($case_when);
         $query->from($db->quoteName('#__jem_events').' AS a');
         $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
@@ -779,87 +781,23 @@ class plgJemMailer extends CMSPlugin
         }
         $this->_applyAssociatedArticleContent($event);
         $this->_appendParentEventContext($event);
-        $this->_formatEventMailDateTime($event);
-
-        // Link for event
-        $link = JEMHelperRoute::getAbsoluteSiteRoute(JEMHelperRoute::getEventRoute($event->slug));
-
-        // Strip tags/scripts, etc. from description
-        $text_description = OutputFilter::cleanText($event->text);
-
-        // Define published-state message
-        switch ($event->published) {
-            case 1:
-                $adminstate = Text::sprintf('PLG_JEM_MAILER_EVENT_PUBLISHED', $link);
-                $userstate = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_EVENT_PUBLISHED', $link);
-                break;
-            case -2:
-                $adminstate = Text::_('PLG_JEM_MAILER_EVENT_TRASHED');
-                $userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_TRASHED');
-                break;
-            case 0:
-                $adminstate = Text::_('PLG_JEM_MAILER_EVENT_UNPUBLISHED');
-                $userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNPUBLISHED');
-                break;
-            case 2:
-                $adminstate = Text::_('PLG_JEM_MAILER_EVENT_ARCHIVED');
-                $userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_ARCHIVED');
-                break;
-            default:
-                $adminstate = Text::_('PLG_JEM_MAILER_EVENT_UNKNOWN');
-                $userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNKNOWN');
-                break;
-        }
-
-        $adminstate = $this->_appendEventStatusInfo($adminstate, $event);
-        $userstate  = $this->_appendEventStatusInfo($userstate, $event);
-        $adminstate = $this->_appendOnlineMeetingInfo($adminstate, $event);
-        $userstate  = $this->_appendOnlineMeetingInfo($userstate, $event);
-
         $recipients = $this->_getRecipients($send_to, array('user'), $event->id, ($event->created_by != $userid) ? $event->created_by : 0, $userid);
 
-        if ($event->modified == 0) {  //when state switches modified date is not updated
-            $event->modified = 'now'; //set to now to avoid confusing email message
-        }
-        #####################
-        ## SENDMAIL - USER ##
-        #####################
-
-        if (!empty($recipients['user'])) {
-            $data = new stdClass();
-
-            if ($is_new) {
-                $created = HTMLHelper::_('date', $event->created, Text::_('DATE_FORMAT_LC2'));
-                $data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_USER_EVENT_MAIL', $this->_SiteName, $event->title);
-                $data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
-            } else {
-                $modified = HTMLHelper::_('date', $event->modified, Text::_('DATE_FORMAT_LC2'));
-                $data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_USER_EVENT_MAIL', $this->_SiteName, $event->title);
-                $data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
+        $submission = (object) array(
+            'kind' => 'event',
+            'is_new' => (bool) $is_new,
+            'item' => $event,
+            'actor_name' => $username,
+        );
+        foreach (array('user', 'all') as $recipientGroup) {
+            if (empty($recipients[$recipientGroup])) {
+                continue;
             }
-
-            $data->receivers = $recipients['user'];
-            $this->_mailer($data);
-        }
-
-        #############################
-        ## SENDMAIL - ALL THE REST ##
-        #############################
-
-        if (!empty($recipients['all'])) {
             $data = new stdClass();
-
-            if ($is_new) {
-                $created = HTMLHelper::_('date', $event->created, Text::_('DATE_FORMAT_LC2'));
-                $data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName, $event->title);
-                $data->body = Text::sprintf('PLG_JEM_MAILER_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
-            } else {
-                $modified = HTMLHelper::_('date', $event->modified, Text::_('DATE_FORMAT_LC2'));
-                $data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName, $event->title);
-                $data->body = Text::sprintf('PLG_JEM_MAILER_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
-            }
-
-            $data->recipients = $recipients['all'];
+            $data->submission = clone $submission;
+            $data->submission->recipient = $recipientGroup === 'user' ? 'user' : 'admin';
+            $recipientField = $recipientGroup === 'user' ? 'receivers' : 'recipients';
+            $data->{$recipientField} = $recipients[$recipientGroup];
             $this->_mailer($data);
         }
 
@@ -910,7 +848,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('id', 'published', 'venue', 'city', 'street', 'postalCode', 'url', 'country', 'locdescription', 'created', 'created_by', 'modified' ,$case_when));
+        $query->select(array('id', 'published', 'venue', 'city', 'street', 'postalCode', 'url', 'country', 'locdescription', 'created', 'created_by', 'modified', 'locimage', 'image_path', $case_when));
         $query->from('#__jem_venues');
         $query->where(array('id = '.(int) $venue_id));
 
@@ -921,65 +859,22 @@ class plgJemMailer extends CMSPlugin
 
         # at this point we do have a result
 
-        // Define link for venue
-        $link = JEMHelperRoute::getAbsoluteSiteRoute(JEMHelperRoute::getVenueRoute($venue->slug));
-
-        // Define published-state message
-        $adminstate = $venue->published ? Text::sprintf('PLG_JEM_MAILER_VENUE_PUBLISHED', $link) : Text::_('PLG_JEM_MAILER_VENUE_UNPUBLISHED');
-        $userstate = $venue->published ? Text::sprintf('PLG_JEM_MAILER_USER_MAIL_VENUE_PUBLISHED', $link) : Text::_('PLG_JEM_MAILER_USER_MAIL_VENUE_UNPUBLISHED');
-
-        // Strip tags/scripts,etc from description
-        $text_description = OutputFilter::cleanText($venue->locdescription);
-
         $recipients = $this->_getRecipients($send_to, array('user'), 0, ($venue->created_by != $userid) ? $venue->created_by : 0, $userid, $venue_id);
-        if ($venue->modified == 0) {  //when state switches modified date is not updated
-            $venue->modified = 'now'; //set to now to avoid confusing email message
-        }
-        #####################
-        ## SENDMAIL - USER ##
-        #####################
-
-        # here we selected the option to send to a logged in user
-        # we make a selection between added/edited venue
-
-        if (!empty($recipients['user'])) {
-            $data = new stdClass();
-
-            if ($is_new) {
-                $created = HTMLHelper::_('date', $venue->created, Text::_('DATE_FORMAT_LC2'));
-                $data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_USER_VENUE_MAIL', $this->_SiteName, $venue->venue);
-                $data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
-            } else {
-                $modified = HTMLHelper::_('date', $venue->modified, Text::_('DATE_FORMAT_LC2'));
-                $data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_USER_VENUE_MAIL', $this->_SiteName, $venue->venue);
-                $data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
+        $submission = (object) array(
+            'kind' => 'venue',
+            'is_new' => (bool) $is_new,
+            'item' => $venue,
+            'actor_name' => $username,
+        );
+        foreach (array('user', 'all') as $recipientGroup) {
+            if (empty($recipients[$recipientGroup])) {
+                continue;
             }
-
-            $data->receivers = $recipients['user'];
-            $this->_mailer($data);
-        }
-
-        #############################
-        ## SENDMAIL - ALL THE REST ##
-        #############################
-
-        if (!empty($recipients['all'])) {
             $data = new stdClass();
-
-            # is the venue new or edited?
-            if ($is_new) {
-                # the venue is new and we send a mail to adminDBList
-                $created = HTMLHelper::_('date', $venue->created, Text::_('DATE_FORMAT_LC2'));
-                $data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_VENUE_MAIL', $this->_SiteName, $venue->venue);
-                $data->body = Text::sprintf('PLG_JEM_MAILER_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
-            } else {
-                # the venue is edited and we send a mail to adminDBList
-                $modified = HTMLHelper::_('date', $venue->modified, Text::_('DATE_FORMAT_LC2'));
-                $data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_VENUE_MAIL', $this->_SiteName, $venue->venue);
-                $data->body = Text::sprintf('PLG_JEM_MAILER_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
-            }
-
-            $data->recipients = $recipients['all'];
+            $data->submission = clone $submission;
+            $data->submission->recipient = $recipientGroup === 'user' ? 'user' : 'admin';
+            $recipientField = $recipientGroup === 'user' ? 'receivers' : 'recipients';
+            $data->{$recipientField} = $recipients[$recipientGroup];
             $this->_mailer($data);
         }
 
@@ -1674,6 +1569,99 @@ class plgJemMailer extends CMSPlugin
         }
     }
 
+    /**
+     * Render a submission in the recipient's language and use the existing direct delivery.
+     *
+     * @param object $submission Saved item, action, recipient class and submitting user.
+     * @param string $receiver Validated recipient email address.
+     * @param array $causes Configured reasons for notifying this recipient.
+     * @return bool Whether rendering and transport succeeded.
+     */
+    private function _sendSubmissionNotification($submission, string $receiver, array $causes = array()): bool
+    {
+        $app = Factory::getApplication();
+        $originalLanguage = $app->getLanguage();
+        $originalFactoryLanguage = Factory::$language;
+
+        try {
+            $resolved = (new JemNotificationService())->resolveRecipientLanguage(0, $receiver);
+            $language = Factory::getContainer()->get(LanguageFactoryInterface::class)->createLanguage($resolved->resolved);
+            foreach (array_unique(array('en-GB', $resolved->resolved)) as $tag) {
+                $language->load('com_jem', JPATH_ADMINISTRATOR, $tag, true, false);
+                $language->load('plg_jem_mailer', JPATH_ADMINISTRATOR, $tag, true, false)
+                    || $language->load('plg_jem_mailer', JPATH_PLUGINS . '/jem/mailer', $tag, true, false)
+                    || $language->load('plg_jem_mailer', JPATH_SITE, $tag, true, false);
+            }
+            $app->loadLanguage($language);
+            Factory::$language = $language;
+            $item = clone $submission->item;
+            $kind = $submission->kind;
+            $recipient = $submission->recipient;
+            $action = $submission->is_new ? 'new' : 'edit';
+            $subjectKey = 'PLG_JEM_MAILER_' . strtoupper($action) . '_'
+                . ($recipient === 'user' ? 'USER_' : '') . strtoupper($kind) . '_MAIL';
+            $bodyKey = 'PLG_JEM_MAILER_' . ($recipient === 'user' ? 'USER_MAIL_' : '')
+                . strtoupper($action . '_' . $kind) . ($kind === 'event' ? '_9' : '_A');
+            $timestamp = $submission->is_new ? $item->created : ($item->modified == 0 ? 'now' : $item->modified);
+            $link = JEMHelperRoute::getAbsoluteSiteRoute($kind === 'event'
+                ? JEMHelperRoute::getEventRoute($item->slug)
+                : JEMHelperRoute::getVenueRoute($item->slug));
+            $stateKey = 'PLG_JEM_MAILER_' . ($recipient === 'user' ? 'USER_MAIL_' : '') . strtoupper($kind) . '_';
+            $states = array(1 => 'PUBLISHED', -2 => 'TRASHED', 0 => 'UNPUBLISHED', 2 => 'ARCHIVED');
+            // Preserve the venue publication wording and event state rules.
+            $state = $kind === 'venue'
+                ? ($item->published ? 'PUBLISHED' : 'UNPUBLISHED')
+                : ($states[(int) $item->published] ?? 'UNKNOWN');
+            $publication = $state === 'PUBLISHED' ? Text::sprintf($stateKey . $state, $link) : Text::_($stateKey . $state);
+            $values = array(
+                'site_name' => $this->_SiteName,
+                'user_name' => $submission->actor_name,
+                'actor_name' => $submission->actor_name,
+                'action_date' => HTMLHelper::_('date', $timestamp, Text::_('DATE_FORMAT_LC2')),
+                'venue' => (string) ($item->venue ?? ''),
+                'city' => (string) ($item->city ?? ''),
+            );
+            if ($kind === 'event') {
+                $this->_formatEventMailDateTime($item);
+                $publication = $this->_appendEventStatusInfo($publication, $item);
+                $publication = $this->_appendOnlineMeetingInfo($publication, $item);
+                $values += array(
+                    'event_title' => $item->title,
+                    'event_date' => $item->dates,
+                    'event_time' => $item->times,
+                    'event_description' => OutputFilter::cleanText($item->text),
+                    'event_url' => $link,
+                );
+            } else {
+                $values += array(
+                    'venue_website' => $item->url,
+                    'street' => $item->street,
+                    'postal_code' => $item->postalCode,
+                    'country' => $item->country,
+                    'venue_description' => OutputFilter::cleanText($item->locdescription),
+                    'venue_url' => $link,
+                    'venue_image_url' => $this->_notificationImageUrl($item->locimage ?? '', 'venue', $item->image_path ?? ''),
+                );
+            }
+            $values['publication_status'] = $publication;
+            $message = $this->_renderNotification($subjectKey, $bodyKey, $values, $kind === 'event' ? $item : null, $resolved->resolved);
+            $because = $this->_recipientBecause($causes, $resolved->resolved);
+            $message->body .= $because;
+            if ($message->htmlbody !== '' && $because !== '') {
+                $message->htmlbody .= '<p>' . nl2br(htmlspecialchars($because, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')) . '</p>';
+            }
+
+            return $this->_send($receiver, $message->subject, $message->body, $message->htmlbody);
+        } catch (Throwable $e) {
+            JemHelper::addLogEntry('Submission notification failed: ' . $e->getMessage(), __METHOD__, Log::WARNING);
+
+            return false;
+        } finally {
+            $app->loadLanguage($originalLanguage);
+            Factory::$language = $originalFactoryLanguage;
+        }
+    }
+
     private function _recipientBecause(array $causes, $languageTag)
     {
         $keys = array(
@@ -1739,21 +1727,13 @@ class plgJemMailer extends CMSPlugin
                 Log::WARNING
             );
 
-            $subjectArgs = array($subjectKey);
-            foreach ($definition['subject_legacy_tokens'] as $token) {
-                $subjectArgs[] = $values[$token] ?? '';
-            }
-            $bodyArgs = array($bodyKey);
-            foreach ($definition['body_legacy_tokens'] as $token) {
-                $bodyArgs[] = $values[$token] ?? '';
-            }
-
+            $fallbackValues = $values + array_fill_keys($definition['allowed_tokens'], '');
             $message = (object) array(
                 'template_id' => $definition['id'],
                 'language'    => $languageTag ?: Factory::getApplication()->getLanguage()->getTag(),
                 'custom'      => false,
-                'subject'     => call_user_func_array(array(Text::class, 'sprintf'), $subjectArgs),
-                'body'        => call_user_func_array(array(Text::class, 'sprintf'), $bodyArgs),
+                'subject'     => JemNotificationTemplateRenderer::render(Text::_($subjectKey), $fallbackValues, $definition['subject_legacy_tokens']),
+                'body'        => JemNotificationTemplateRenderer::render(Text::_($bodyKey), $fallbackValues, $definition['body_legacy_tokens']),
                 'htmlbody'    => '',
                 'fallback_reason' => $e->getMessage(),
             );
@@ -1848,6 +1828,11 @@ class plgJemMailer extends CMSPlugin
             if ($receivers) {
                 foreach ($receivers as $receiver)
                 {
+                    if (isset($data->submission)) {
+                        $ret = $this->_sendSubmissionNotification($data->submission, $receiver);
+                        ++$sent[$ret ? 'ok' : 'failed'];
+                        continue;
+                    }
                     $ret = isset($data->notification)
                         ? $this->_deliverPersistedNotification(
                             $data,
@@ -1894,6 +1879,12 @@ class plgJemMailer extends CMSPlugin
                 }
 
                 # collect why tis user gets this email
+                if (isset($data->submission)) {
+                    $ret = $this->_sendSubmissionNotification($data->submission, $receiver, (array) $causes);
+                    ++$sent[$ret ? 'ok' : 'failed'];
+                    continue;
+                }
+
                 $why = array();
                 foreach ($causes as $cause) {
                     if (array_key_exists($cause, $txt_because)) {
