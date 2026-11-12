@@ -741,6 +741,20 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                 <?php echo empty($this->externalImportPreview) ? Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW') : Text::_('COM_JEM_IMPORT_EXTERNAL_REFRESH_PREVIEW'); ?>
                             </button>
                         </div>
+                        <fieldset class="mb-3">
+                            <legend class="h6"><?php echo Text::_('COM_JEM_IMPORT_ICS_WINDOW'); ?></legend>
+                            <p class="small"><?php echo Text::_('COM_JEM_IMPORT_ICS_WINDOW_DESC'); ?></p>
+                            <div class="jem-import-fields">
+                                <div class="jem-import-field">
+                                    <label for="external_import_ics_from"><?php echo Text::_('COM_JEM_IMPORT_ICS_FROM'); ?></label>
+                                    <input type="date" id="external_import_ics_from" name="external_import_ics_from" class="form-control" value="<?php echo $this->escape($this->externalImportPreview['ics_from'] ?? ''); ?>" />
+                                </div>
+                                <div class="jem-import-field">
+                                    <label for="external_import_ics_to"><?php echo Text::_('COM_JEM_IMPORT_ICS_TO'); ?></label>
+                                    <input type="date" id="external_import_ics_to" name="external_import_ics_to" class="form-control" value="<?php echo $this->escape($this->externalImportPreview['ics_to'] ?? ''); ?>" />
+                                </div>
+                            </div>
+                        </fieldset>
                         <details class="jem-import-columns">
                             <summary><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_EVENTS_CSV_HELP_TITLE'); ?></summary>
                             <div class="mt-2">
