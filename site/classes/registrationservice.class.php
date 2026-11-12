@@ -19,6 +19,9 @@ require_once __DIR__ . '/registrationaccesspolicy.class.php';
  */
 final class JemRegistrationService
 {
+    /** An unavailable change must leave an existing confirmed booking intact. */
+    public const CHANGE_UNAVAILABLE = 'registration_change_unavailable';
+
     private $db;
 
     public function __construct($db = null)
@@ -188,6 +191,22 @@ final class JemRegistrationService
     }
 
     /**
+     * Identify a revision that retains the same holder's confirmed registration.
+     *
+     * @param object|null $before Stored registration under the event lock.
+     * @param object $after Proposed registration.
+     * @return bool Whether automatic waiting-list fallback would lose confirmed places.
+     */
+    private function keepsConfirmedBooking($before, $after): bool
+    {
+        return is_object($before) && !empty($before->id)
+            && (int) $before->event === (int) $after->event
+            && (int) $before->uid === (int) $after->uid
+            && JemRegistrationTransition::logicalStatus($before) === JemRegistrationTransition::ATTENDING
+            && JemRegistrationTransition::logicalStatus($after) === JemRegistrationTransition::ATTENDING;
+    }
+
+    /**
      * Recalculate capacity without trusting values loaded before the lock.
      */
     private function applyCapacityPolicy($before, $after, array $options)
@@ -238,6 +257,15 @@ final class JemRegistrationService
 
         if ($usedPlaces + $requestedPlaces <= (int) $event->maxplaces) {
             return $after;
+        }
+
+        if ($this->keepsConfirmedBooking($before, $after)) {
+            // Existing overcapacity must not prevent retaining or reducing booked places.
+            if ($requestedPlaces <= max(1, (int) $before->places)) {
+                return $after;
+            }
+
+            throw new RuntimeException(self::CHANGE_UNAVAILABLE);
         }
 
         if (!empty($options['allowWaiting']) && (int) $event->waitinglist) {
