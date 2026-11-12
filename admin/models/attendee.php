@@ -632,7 +632,9 @@ class JemModelAttendee extends BaseDatabaseModel
                     'capacityAllocations' => $capacityAllocations,
                 ));
             } catch (Throwable $e) {
-                Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+                $message = $e->getMessage() === JemRegistrationService::CHANGE_UNAVAILABLE
+                    ? Text::_('COM_JEM_REGISTRATION_CHANGE_UNAVAILABLE') : $e->getMessage();
+                Factory::getApplication()->enqueueMessage($message, 'error');
                 return false;
             }
 

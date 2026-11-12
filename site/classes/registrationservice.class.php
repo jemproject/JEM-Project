@@ -21,6 +21,9 @@ require_once __DIR__ . '/registrationaccesspolicy.class.php';
  */
 final class JemRegistrationService
 {
+    /** An unavailable change must leave an existing confirmed booking intact. */
+    public const CHANGE_UNAVAILABLE = 'registration_change_unavailable';
+
     private $db;
 
     public function __construct($db = null)
@@ -741,6 +744,22 @@ final class JemRegistrationService
     }
 
     /**
+     * Identify a revision that retains the same holder's confirmed registration.
+     *
+     * @param object|null $before Stored registration under the event lock.
+     * @param object $after Proposed registration.
+     * @return bool Whether automatic waiting-list fallback would lose confirmed places.
+     */
+    private function keepsConfirmedBooking($before, $after): bool
+    {
+        return is_object($before) && !empty($before->id)
+            && (int) $before->event === (int) $after->event
+            && (int) $before->uid === (int) $after->uid
+            && JemRegistrationTransition::logicalStatus($before) === JemRegistrationTransition::ATTENDING
+            && JemRegistrationTransition::logicalStatus($after) === JemRegistrationTransition::ATTENDING;
+    }
+
+    /**
      * Recalculate capacity under the event lock instead of trusting a value
      * calculated by a controller before the transaction began.
      */
@@ -794,6 +813,15 @@ final class JemRegistrationService
 
         if ($usedPlaces + $requestedPlaces <= (int) $event->maxplaces) {
             return $after;
+        }
+
+        if ($this->keepsConfirmedBooking($before, $after)) {
+            // Existing overcapacity must not prevent retaining or reducing booked places.
+            if ($requestedPlaces <= max(1, (int) $before->places)) {
+                return $after;
+            }
+
+            throw new RuntimeException(self::CHANGE_UNAVAILABLE);
         }
 
         if (!empty($options['allowWaiting']) && (int) $event->waitinglist) {
@@ -946,11 +974,19 @@ final class JemRegistrationService
             || ($logicalStatus === 0 && ($after->invitation_kind ?? '') === 'reserved')) {
             $used = $this->loadUsedCapacity((int) $after->event, (int) ($before->id ?? 0));
             $unavailable = false;
+            $keepsConfirmed = $this->keepsConfirmedBooking($before, $after);
             foreach ($rows as $key => $row) {
+                // Protect existing allocations, but check every increased destination area.
+                if ($keepsConfirmed && (int) $row['quantity'] <= (int) ($previous[$key]['quantity'] ?? 0)) {
+                    continue;
+                }
                 if ((int) ($used[$key] ?? 0) + (int) $row['quantity'] > (int) $row['capacity']) {
                     $unavailable = true;
                     break;
                 }
+            }
+            if ($unavailable && $keepsConfirmed) {
+                throw new RuntimeException(self::CHANGE_UNAVAILABLE);
             }
             if ($unavailable && !empty($options['allowWaiting']) && !empty($event->waitinglist)) {
                 JemRegistrationTransition::applyLogicalStatus($after, JemRegistrationTransition::WAITING_LIST);

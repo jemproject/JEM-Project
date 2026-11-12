@@ -325,6 +325,8 @@ namespace {
 
     class JemRegistrationService
     {
+        public const CHANGE_UNAVAILABLE = 'registration_change_unavailable';
+        public static ?string $failure = null;
         public static array $writes = [];
         public static array $writeOptions = [];
         public static array $capacities = [];
@@ -338,8 +340,17 @@ namespace {
         {
         }
 
+        /** @param object $row Single proposed row. @param array $options Writer options. @return object Stored result. */
+        public function save(object $row, array $options): object
+        {
+            return $this->saveMany([$row], $options)[0];
+        }
+
         public function saveMany(array $rows, array $options): array
         {
+            if (self::$failure !== null) {
+                throw new RuntimeException(self::$failure);
+            }
             self::$writes[] = $rows;
             self::$writeOptions[] = $options;
 

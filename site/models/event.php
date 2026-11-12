@@ -1507,6 +1507,10 @@ class JemModelEvent extends ItemModel
             $result = (int) $stored->after->id;
         }
         catch (Throwable $e) {
+            if ($e->getMessage() === JemRegistrationService::CHANGE_UNAVAILABLE) {
+                $errMsg = Text::_('COM_JEM_REGISTRATION_CHANGE_UNAVAILABLE');
+                return false;
+            }
             // we have a unique user-event key so registering twice will fail
             $errMsg = Text::_(($e->getCode() == 1062) ? 'COM_JEM_ALREADY_REGISTERED' : 'COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $eventId  .']';
             return false;
@@ -1837,6 +1841,10 @@ class JemModelEvent extends ItemModel
                 'capacityAllocations' => $status < 0 && !$isCancellation ? array() : $capacityAllocations,
             ));
         } catch (Throwable $e) {
+            if ($e->getMessage() === JemRegistrationService::CHANGE_UNAVAILABLE) {
+                $this->setError(Text::_('COM_JEM_REGISTRATION_CHANGE_UNAVAILABLE'));
+                return false;
+            }
             $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION') . ': ' . $e->getMessage());
             return false;
         }
