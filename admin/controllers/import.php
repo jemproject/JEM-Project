@@ -19,6 +19,7 @@ use Joomla\Filesystem\Folder;
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importics.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importencoding.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importbudget.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/remotesource.php';
@@ -561,6 +562,8 @@ class JemControllerImport extends BaseController
             'catid' => $catid,
             'category_label' => $this->getCategoryLabel($catid),
             'mode' => $input->post->getCmd('external_ics_mode', 'standard'),
+            'ics_from' => $input->post->getString('external_ics_from', ''),
+            'ics_to' => $input->post->getString('external_ics_to', ''),
             'type_id' => $input->post->getInt('external_ics_type_id', 0),
             'locid' => $input->post->getInt('external_ics_locid', 0),
             'published' => $input->post->getInt('external_ics_published', 1),
@@ -751,6 +754,8 @@ class JemControllerImport extends BaseController
             'catid' => $catid,
             'category_label' => $this->getCategoryLabel($catid),
             'mode' => $input->post->getCmd('external_import_mode', 'standard'),
+            'ics_from' => $input->post->getString('external_import_ics_from', ''),
+            'ics_to' => $input->post->getString('external_import_ics_to', ''),
             'type_id' => $input->post->getInt('external_import_type_id', 0),
             'locid' => $input->post->getInt('external_import_locid', 0),
             'published' => $input->post->getInt('external_import_published', 1),
@@ -775,6 +780,9 @@ class JemControllerImport extends BaseController
         $options['language_label'] = $this->getLanguageLabel($options['language']);
 
         try {
+            if (!$hasUpload && $sourceMode !== 'url' && $extension === 'ics') {
+                throw new RuntimeException(Text::_('COM_JEM_IMPORT_ICS_REUPLOAD'));
+            }
             if (!$hasUpload && $sourceMode !== 'url') {
                 $preview = $this->buildExternalStructuredPreviewFromRecords(
                     (array) ($existingPreview['source_records'] ?? array()),
@@ -795,7 +803,11 @@ class JemControllerImport extends BaseController
                 unlink($downloadedFile);
             }
 
-            $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
+            if ($extension === 'ics') {
+                $app->setUserState('com_jem.import.external_import.preview', null);
+                JemImportPreviewHelper::deletePreview($previousPayloadToken, (int) $app->getIdentity()->id);
+            }
+            $msg = $extension === 'ics' ? $e->getMessage() : Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
             $this->addImportLogEntry('external_csv', $msg, Log::WARNING);
             $this->setRedirect('index.php?option=com_jem&view=import#event-import', $msg, 'error');
             return;
@@ -3291,6 +3303,12 @@ class JemControllerImport extends BaseController
             );
         }
 
+        $events = JemImportIcsHelper::expand(
+            $events, $options,
+            new \DateTimeZone((string) Factory::getApplication()->get('offset', 'UTC')),
+            fn (string $tzid): \DateTimeZone => $this->resolveExternalIcsTimezone($tzid)
+        );
+
         $rows = array();
         $records = array();
         $sourceRecords = $this->buildExternalIcsEventSourceRecords($events);
@@ -3332,6 +3350,8 @@ class JemControllerImport extends BaseController
             'has_errors' => $errors > 0,
             'catid' => (int) $options['catid'],
             'mode' => $options['mode'] ?? 'standard',
+            'ics_from' => (string) ($options['ics_from'] ?? ''),
+            'ics_to' => (string) ($options['ics_to'] ?? ''),
             'type_id' => (int) $options['type_id'],
             'locid' => (int) $options['locid'],
             'published' => (int) ($options['published'] ?? 1),
@@ -3348,7 +3368,9 @@ class JemControllerImport extends BaseController
             'static_values' => $this->normaliseImportStaticValues($options['static_values'] ?? array()),
             'record_fields' => $this->getExternalEventRecordFields($mapping),
             'profile_title' => $options['profile_title'] ?? '',
-            'summary' => Text::sprintf('COM_JEM_IMPORT_EXTERNAL_PREVIEW_SUMMARY', $valid, $errors),
+            'summary' => Text::sprintf('COM_JEM_IMPORT_EXTERNAL_PREVIEW_SUMMARY', $valid, $errors)
+                . ' ' . Text::_('COM_JEM_IMPORT_ICS_CONCRETE')
+                . (!empty($options['ics_from']) ? ' ' . Text::sprintf('COM_JEM_IMPORT_ICS_SELECTED_RANGE', $options['ics_from'], $options['ics_to']) : ''),
         );
     }
 
@@ -3829,6 +3851,7 @@ class JemControllerImport extends BaseController
         $lines = explode("\n", $content);
         $events = array();
         $current = null;
+        $depth = 0;
 
         foreach ($lines as $line) {
             $line = trim($line);
@@ -3839,6 +3862,7 @@ class JemControllerImport extends BaseController
 
             if (strcasecmp($line, 'BEGIN:VEVENT') === 0) {
                 $current = array();
+                $depth = 0;
                 continue;
             }
 
@@ -3848,6 +3872,18 @@ class JemControllerImport extends BaseController
                     JemImportBudgetHelper::assertRecordCount(count($events));
                 }
                 $current = null;
+                continue;
+            }
+
+            if ($current !== null && str_starts_with(strtoupper($line), 'BEGIN:')) {
+                ++$depth;
+                continue;
+            }
+            if ($current !== null && str_starts_with(strtoupper($line), 'END:')) {
+                --$depth;
+                continue;
+            }
+            if ($depth > 0) {
                 continue;
             }
 
@@ -3903,11 +3939,23 @@ class JemControllerImport extends BaseController
         $description = JemImportSecurityHelper::sanitiseValue('introtext', $description, 'events', $line);
         $location = JemImportSecurityHelper::sanitiseValue('location', $location, 'events', $line);
         $uid = JemImportSecurityHelper::sanitiseValue('uid', $uid, 'events', $line);
-        $recurrenceId = trim((string) $this->getExternalIcsValue($event, 'RECURRENCE-ID'));
+        $recurrenceId = (string) ($event['_jem_ics_identity'] ?? trim((string) $this->getExternalIcsValue($event, 'RECURRENCE-ID')));
         $recurrenceId = JemImportSecurityHelper::sanitiseValue('uid', $recurrenceId, 'events', $line);
         $metadata = $uid !== ''
             ? json_encode(array('jem_ics_uid_hash' => hash('sha256', $uid . "\n" . $recurrenceId)))
             : '{}';
+        // Preserve explicit instants in the existing metadata: the repeated DST hour
+        // cannot be reconstructed from JEM's local date/time fields alone.
+        if (($options['mode'] ?? '') !== 'openday' && isset($event['_jem_ics_identity'])
+            && str_ends_with((string) ($event['DTSTART'][0]['raw'] ?? ''), 'Z')) {
+            $values = json_decode($metadata, true);
+            $values['jem_ics_time'] = array(
+                'zone' => (string) Factory::getApplication()->get('offset', 'UTC'),
+                'start' => $event['DTSTART'][0]['raw'],
+                'end' => $event['DTEND'][0]['raw'] ?? null,
+            );
+            $metadata = json_encode($values);
+        }
         $start = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTSTART'));
         $end = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTEND'));
 
@@ -3915,7 +3963,7 @@ class JemControllerImport extends BaseController
             $endTimestamp = strtotime($end['date']);
             $startTimestamp = strtotime($start['date']);
 
-            if ($endTimestamp && $startTimestamp && $endTimestamp > $startTimestamp) {
+            if ($endTimestamp !== false && $startTimestamp !== false && $endTimestamp > $startTimestamp) {
                 $end['date'] = date('Y-m-d', strtotime('-1 day', $endTimestamp));
             }
         }

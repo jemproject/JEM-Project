@@ -174,6 +174,105 @@ final class IcalendarTimezoneExportTest extends TestCase
         self::assertStringNotContainsString('layout=ics', $relative);
     }
 
+    /** @return void Malformed imported metadata cannot break an otherwise valid event export. */
+    public function testExportIgnoresNonStringImportedInstants(): void
+    {
+        $event = $this->event(['metadata' => json_encode(['jem_ics_time' => [
+            'zone' => 'Europe/Berlin', 'start' => [], 'end' => ['invalid'],
+        ]])]);
+        $ics = $this->export([$event], 1);
+        self::assertStringContainsString('DTSTART:20261107T130000Z', $ics);
+        self::assertStringContainsString('DTEND:20261107T150000Z', $ics);
+    }
+
+    /** @return void Editing an event's dates/hours makes mismatching source UTC hints inapplicable. */
+    public function testExportIgnoresChangedImportedWallTime(): void
+    {
+        $event = $this->event(['metadata' => json_encode(['jem_ics_time' => [
+            'zone' => 'Europe/Berlin', 'start' => '20261107T120000Z', 'end' => '20261107T140000Z',
+        ]])]);
+        $ics = $this->export([$event], 1);
+        self::assertStringContainsString('DTSTART:20261107T130000Z', $ics);
+        self::assertStringContainsString('DTEND:20261107T150000Z', $ics);
+    }
+
+    /** @return iterable Supported schedules whose concrete dates must survive import/export/import. */
+    public static function importedSchedules(): iterable
+    {
+        yield 'documentation overrides and all day' => [null];
+        yield 'monthly positional' => ["DTSTART:20260130T100000Z\nDTEND:20260130T110000Z\nRRULE:FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1;COUNT=3"];
+        yield 'source DST transition' => ["DTSTART;TZID=Europe/Madrid:20260322T100000\nDURATION:PT2H\nRRULE:FREQ=WEEKLY;COUNT=3"];
+        yield 'all day leap recurrence' => ["DTSTART;VALUE=DATE:20240229\nDURATION:P2D\nRRULE:FREQ=YEARLY;COUNT=3"];
+        yield 'no end time' => ["DTSTART:20261203T200000Z\nRRULE:FREQ=WEEKLY;COUNT=2"];
+        yield 'autumn repeated hour' => ["DTSTART;TZID=Europe/Madrid:20261018T023000\nDURATION:PT1H\nRRULE:FREQ=WEEKLY;COUNT=3"];
+        yield 'explicit midnight end' => ["DTSTART:20261203T220000Z\nDTEND:20261203T230000Z\nRRULE:FREQ=WEEKLY;COUNT=2"];
+    }
+
+    /**
+     * Use production import and export paths; compare concrete event times, not source bytes or UIDs.
+     *
+     * @param string|null $properties Event properties, or the documented multi-event fixture.
+     * @return void
+     */
+    #[DataProvider('importedSchedules')]
+    public function testImportedRecurrencesRoundTripAsConcreteEvents(?string $properties): void
+    {
+        define('JPATH_COMPONENT_ADMINISTRATOR', JEM_TEST_ROOT . '/admin');
+        require_once JEM_TEST_ROOT . '/admin/controllers/import.php';
+        $controller = new class extends JemControllerImport {
+            public function __construct() {}
+            protected function addImportLogEntry($key, $message, $priority = \Joomla\CMS\Log\Log::INFO, $normaliseHeader = true) {}
+        };
+        $preview = static function (string $ics) use ($controller): array {
+            $file = tempnam(sys_get_temp_dir(), 'ics-roundtrip');
+            file_put_contents($file, $ics);
+            try {
+                return (new ReflectionMethod($controller, 'buildExternalIcsPreview'))->invoke($controller,
+                    ['tmp_name' => $file], ['mode' => 'standard', 'published' => 1, 'publish_up' => '',
+                        'locid' => 0, 'type_id' => 0, 'language' => '*', 'catid' => 1,
+                        'category_label' => 'Tests', 'type_label' => '', 'venue_label' => '', 'language_label' => 'All']);
+            } finally {
+                unlink($file);
+            }
+        };
+        $source = $properties === null
+            ? file_get_contents(JEM_TEST_ROOT . '/tests/Fixtures/ics/third-party-calendar.ics')
+            : "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:roundtrip@example.test\r\nSUMMARY:Round trip\r\n"
+                . str_replace("\n", "\r\n", $properties) . "\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n";
+        $before = $preview($source);
+        self::assertSame(0, $before['error_count']);
+        $events = [];
+        foreach ($before['records'] as $index => $row) {
+            $events[] = $this->event(['id' => 500 + $index, 'slug' => (500 + $index) . ':roundtrip',
+                'title' => $row[0], 'dates' => $row[1], 'enddates' => $row[2],
+                'times' => $row[3], 'endtimes' => $row[4], 'metadata' => $row[7], 'timezone_mode' => 'joomla', 'timezone' => '']);
+        }
+        $exported = $this->export($events, 1);
+        self::assertSame(count($events), substr_count($exported, 'BEGIN:VEVENT'));
+        self::assertStringNotContainsString('RRULE:', $exported);
+        self::assertStringNotContainsString('RECURRENCE-ID:', $exported);
+        $after = $preview($exported);
+        self::assertSame(0, $after['error_count']);
+        $schedule = static function (array $rows): array {
+            $values = array_map(static fn (array $row): array => array_slice($row, 0, 5), $rows);
+            sort($values);
+            return $values;
+        };
+        self::assertSame($schedule($before['records']), $schedule($after['records']));
+        // Also compare instants: equal wall-clock text alone can hide a DST-fold shift.
+        $instants = static function (string $ics) use ($controller): array {
+            $parsed = (new ReflectionMethod($controller, 'parseExternalIcsEvents'))->invoke($controller, $ics);
+            $concrete = JemImportIcsHelper::expand($parsed, [], new DateTimeZone('Europe/Madrid'),
+                static fn (string $id): DateTimeZone => new DateTimeZone($id));
+            $values = array_map(static fn (array $event): array => [
+                $event['SUMMARY'][0]['value'], $event['DTSTART'][0]['raw'], $event['DTEND'][0]['raw'] ?? null,
+            ], $concrete);
+            sort($values);
+            return $values;
+        };
+        self::assertSame($instants($source), $instants($exported));
+    }
+
     private function event(array $overrides = []): object
     {
         return (object) array_replace([

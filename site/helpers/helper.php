@@ -4123,6 +4123,19 @@ class JemHelper
         Factory::getApplication()->close();
     }
 
+    /**
+     * Export a concrete event using RFC 5545 VEVENT date/time semantics.
+     *
+     * Recurrence dates (including imported ICS occurrences) are separate VEVENTs.
+     * Do not reconstruct RRULE/RDATE/EXDATE from JEM rows: exceptions have already
+     * been applied. Round-trip equivalence concerns selected occurrence dates and
+     * durations, not original UIDs, file bytes or a recurring calendar subscription.
+     *
+     * @param \Kigkonsult\Icalcreator\Vcalendar &$calendartool Destination calendar.
+     * @param object $event Concrete JEM event with export data.
+     * @return bool Whether a valid dated event was added.
+     * @see https://www.rfc-editor.org/rfc/rfc5545.html#section-3.6.1
+     */
     static public function icalAddEvent(&$calendartool, $event)
     {
         // Export must not mutate the source record's dates or end time.
@@ -4199,11 +4212,23 @@ class JemHelper
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
             }
 
-            $tz           = $timezone_name ? new \DateTimeZone($timezone_name) : null;
-            $dtStart      = new \DateTime($event->dates . ' ' . $event->times, $tz);
+            require_once JPATH_SITE . '/components/com_jem/classes/icalendar/datetime.php';
+            $tz = new \DateTimeZone($timezone_name ?: date_default_timezone_get());
+            $metadata = new Registry($event->metadata ?? '{}');
+            $imported = (array) $metadata->get('jem_ics_time', array());
+            if (($imported['zone'] ?? '') !== $tz->getName()) {
+                $imported = array();
+            }
+            $stamp = str_replace(array('-', ':', ' '), array('', '', 'T'), $event->dates . ' ' . $event->times);
+            $instant = \Jem\Calendar\DateTimeValue::local($stamp, $tz, is_string($imported['start'] ?? null) ? $imported['start'] : null);
+            if ($instant === null) {
+                return false;
+            }
+            $dtStart = \DateTime::createFromImmutable($instant);
             $dtStartParams = ['VALUE' => 'DATE-TIME'];
 
-            if (!$event->endtimes || ($event->endtimes == '00:00:00' && JemEventSchedule::definition($event) === null)) {
+            // Midnight is an explicit end time, not an absent value.
+            if (!$event->endtimes) {
                 $event->endtimes = $event->times;
             }
 
@@ -4222,7 +4247,12 @@ class JemHelper
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
             }
 
-            $dtEnd       = new \DateTime($event->enddates . ' ' . $event->endtimes, $tz);
+            $stamp = str_replace(array('-', ':', ' '), array('', '', 'T'), $event->enddates . ' ' . $event->endtimes);
+            $instant = \Jem\Calendar\DateTimeValue::local($stamp, $tz, is_string($imported['end'] ?? null) ? $imported['end'] : null);
+            if ($instant === null) {
+                return false;
+            }
+            $dtEnd = \DateTime::createFromImmutable($instant);
             $dtEndParams = ['VALUE' => 'DATE-TIME'];
             // Floating times are only meaningful in the site's timezone.
             // Preserve the instant of events in another timezone using UTC.
