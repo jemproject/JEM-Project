@@ -536,6 +536,8 @@ class JemModelAttendee extends BaseDatabaseModel
                 );
                 $service = new JemPricedRegistrationService($db);
                 $quote = $service->quote($eventid, $selections, $context);
+                require_once JPATH_SITE . '/components/com_jem/classes/registrationrelocation.class.php';
+                JemRegistrationRelocation::requireReview($db, $before, (int) $status, $service->quoteCapacityAllocations($quote));
                 $options = array(
                     'actorId' => (int) Factory::getApplication()->getIdentity()->id,
                     'source' => $id > 0 ? 'administrator.attendee.order_edit' : 'administrator.attendee.order_add',
@@ -560,8 +562,8 @@ class JemModelAttendee extends BaseDatabaseModel
 
                 return $result->after;
             } catch (Throwable $e) {
-                $this->setError($e->getMessage());
-                Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+                $this->setError(Text::_($e->getMessage()));
+                Factory::getApplication()->enqueueMessage(Text::_($e->getMessage()), 'error');
                 return false;
             }
         }
@@ -624,6 +626,10 @@ class JemModelAttendee extends BaseDatabaseModel
             }
 
             try {
+                require_once JPATH_SITE . '/components/com_jem/classes/registrationrelocation.class.php';
+                $stored = $db->setQuery('SELECT * FROM #__jem_register WHERE id=' . (int) $row->id)->loadObject();
+                JemRegistrationRelocation::requireReview($db, $stored ?: null,
+                    JemRegistrationTransition::logicalStatus($row), $capacityAllocations);
                 $result = (new JemRegistrationService($db))->save($row, array(
                     'actorId' => (int) Factory::getApplication()->getIdentity()->id,
                     'source'  => 'administrator.attendee.edit',
@@ -633,7 +639,7 @@ class JemModelAttendee extends BaseDatabaseModel
                 ));
             } catch (Throwable $e) {
                 $message = $e->getMessage() === JemRegistrationService::CHANGE_UNAVAILABLE
-                    ? Text::_('COM_JEM_REGISTRATION_CHANGE_UNAVAILABLE') : $e->getMessage();
+                    ? Text::_('COM_JEM_REGISTRATION_CHANGE_UNAVAILABLE') : Text::_($e->getMessage());
                 Factory::getApplication()->enqueueMessage($message, 'error');
                 return false;
             }

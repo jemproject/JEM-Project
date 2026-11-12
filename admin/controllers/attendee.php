@@ -34,11 +34,111 @@ class JemControllerAttendee extends BaseController
         $this->registerTask('save2copy', 'save');
     }
 
-    /**
-     * Check whether the current user can manage attendees in the backend.
-     *
-     * @return void
-     */
+    /** @return void Build and retain an authorised relocation review; never trust browser totals. */
+    public function relocationPreview(): void
+    {
+        $this->relocationResponse(false);
+    }
+
+    /** @return void Confirm the retained review, then queue its notification after commit. */
+    public function relocationConfirm(): void
+    {
+        $this->relocationResponse(true);
+    }
+
+    /** @param bool $confirm Whether to commit the reviewed change. @return void JSON response for the attendee editor. */
+    private function relocationResponse(bool $confirm): void
+    {
+        $app = Factory::getApplication();
+        try {
+            if (!Session::checkToken('post')) {
+                throw new DomainException('JINVALID_TOKEN');
+            }
+            $this->assertCanManageAttendees();
+            require_once JPATH_SITE . '/components/com_jem/classes/registrationrelocation.class.php';
+            $service = new JemRegistrationRelocation(Factory::getContainer()->get('DatabaseDriver'));
+            $id = $app->input->post->getInt('id');
+            $actor = $app->getIdentity();
+            $session = $app->getSession();
+            $key = 'com_jem.relocation.' . $id;
+            if (!$confirm) {
+                $input = ['areas' => $app->input->post->get('capacity_areas', [], 'array'),
+                    'admissions' => $app->input->post->get('admissions', [], 'array'),
+                    'reason' => $app->input->post->getString('relocation_reason'),
+                    'choice' => $app->input->post->getCmd('relocation_choice', 'standard'),
+                    'accepted' => $app->input->post->getBool('relocation_accepted')];
+                $review = $service->preview($id, $input, $actor);
+                $token = bin2hex(random_bytes(24));
+                $session->set($key, ['input' => $input, 'review' => $review, 'token' => $token,
+                    'actor' => (int) $actor->id, 'expires' => time() + 900,
+                    'operation' => JemRegistrationIdentity::generateOperationReference()]);
+                echo new JsonResponse(['review' => $review, 'token' => $token]);
+            } else {
+                $saved = $session->get($key);
+                if (!is_array($saved) || $saved['expires'] < time() || $saved['actor'] !== (int) $actor->id
+                    || !hash_equals($saved['token'], $app->input->post->getString('relocation_token'))) {
+                    throw new DomainException('COM_JEM_RELOCATION_REVIEW_EXPIRED');
+                }
+                $result = $service->confirm($id, $saved['input'], $actor, $saved['review']['fingerprint'], $saved['operation']);
+                // Released areas may allow a queued reservation to be promoted by the existing policy.
+                try {
+                    JemHelper::reconcileWaitingList((int) $result->after->event, ['source' => 'administrator.attendee.relocation']);
+                } catch (Throwable $waitingError) {
+                    $app->enqueueMessage(Text::_('COM_JEM_RELOCATION_WAITING_REVIEW'), 'warning');
+                }
+                $notified = false;
+                try {
+                    PluginHelper::importPlugin('jem');
+                    if (PluginHelper::isEnabled('jem', 'mailer')) {
+                        $responses = JemFactory::getDispatcher()->triggerEvent('onJemRegistrationRelocated', [$id]);
+                        $notified = in_array(true, (array) $responses, true);
+                    }
+                } catch (Throwable $notificationError) {
+                    // The reservation has committed. A delivery problem must not repeat or reverse it.
+                    $notified = false;
+                }
+                $app->enqueueMessage(Text::_('COM_JEM_RELOCATION_SAVED'), 'message');
+                $app->enqueueMessage(Text::_($notified ? 'COM_JEM_RELOCATION_QUEUED' : 'COM_JEM_RELOCATION_NOTIFICATION_FAILED'),
+                    $notified ? 'message' : 'warning');
+                try {
+                    Factory::getCache('com_jem')->clean();
+                } catch (Throwable $cacheError) {
+                    // A cache failure must not report the committed relocation as failed.
+                }
+                echo new JsonResponse(['saved' => true, 'notified' => $notified]);
+            }
+        } catch (Throwable $exception) {
+            $message = $exception->getMessage() === 'registration_change_unavailable'
+                ? 'COM_JEM_REGISTRATION_CHANGE_UNAVAILABLE' : $exception->getMessage();
+            echo new JsonResponse(null, Text::_($message), true);
+        }
+        $app->close();
+    }
+
+    /** @return void Retry queuing the latest saved relocation notice without moving any places. */
+    public function relocationNotify(): void
+    {
+        Session::checkToken('post') or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanManageAttendees();
+        if (!JemHelperBackend::canManage('jem.notifications.resend')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+        $app = Factory::getApplication();
+        $id = $app->input->post->getInt('id');
+        $queued = false;
+        try {
+            PluginHelper::importPlugin('jem');
+            if (PluginHelper::isEnabled('jem', 'mailer')) {
+                $queued = in_array(true, (array) JemFactory::getDispatcher()->triggerEvent('onJemRegistrationRelocated', [$id]), true);
+            }
+        } catch (Throwable $error) {
+            $queued = false;
+        }
+        $app->enqueueMessage(Text::_($queued ? 'COM_JEM_RELOCATION_QUEUED' : 'COM_JEM_RELOCATION_NOTIFICATION_FAILED'), $queued ? 'message' : 'warning');
+        $this->setRedirect('index.php?option=com_jem&view=attendee&id=' . $id);
+    }
+
+    /** @return void Enforce backend attendee management permission. */
     private function assertCanManageAttendees()
     {
         if (!JemHelperBackend::canManage('jem.attendees.manage')) {

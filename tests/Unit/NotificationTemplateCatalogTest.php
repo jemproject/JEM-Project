@@ -31,8 +31,8 @@ final class NotificationTemplateCatalogTest extends TestCase
     {
         $definitions = JemNotificationTemplateCatalog::all();
 
-        self::assertCount(57, $definitions);
-        self::assertCount(57, array_unique(array_column($definitions, 'id')));
+        self::assertCount(58, $definitions);
+        self::assertCount(58, array_unique(array_column($definitions, 'id')));
 
         foreach ($definitions as $id => $definition) {
             self::assertSame($id, $definition['id']);

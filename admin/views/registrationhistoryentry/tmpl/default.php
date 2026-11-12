@@ -75,6 +75,30 @@ $changed = is_array($changed) ? $changed : array();
         </div>
     </div>
 
+    <?php $relocation = json_decode((string) ($this->item->change_snapshot ?? ''), true); ?>
+    <?php if (is_array($relocation) && ($relocation['schema'] ?? '') === 'jem-registration-relocation/v1') : ?>
+        <h2><?php echo Text::_('COM_JEM_RELOCATION_TITLE'); ?></h2>
+        <p><?php echo $this->escape($relocation['reason']); ?></p>
+        <div class="table-responsive"><table class="table table-striped">
+            <thead><tr><th><?php echo Text::_('COM_JEM_RELOCATION_AREA'); ?></th><th><?php echo Text::_('COM_JEM_RELOCATION_BEFORE'); ?></th><th><?php echo Text::_('COM_JEM_RELOCATION_AFTER'); ?></th></tr></thead>
+            <tbody><?php foreach ($relocation['before'] as $index => $area) : ?>
+                <?php if ($area['quantity'] || $relocation['after'][$index]['quantity']) : ?>
+                <tr><td><?php echo $this->escape($area['label']); ?></td><td><?php echo (int) $area['quantity']; ?></td><td><?php echo (int) $relocation['after'][$index]['quantity']; ?></td></tr>
+                <?php endif; ?>
+            <?php endforeach; ?></tbody>
+        </table></div>
+        <p><?php echo Text::_('COM_JEM_RELOCATION_' . strtoupper($relocation['financial']['choice'])); ?>
+            <?php if (!empty($relocation['financial']['accepted'])) : ?><br><?php echo Text::_('COM_JEM_RELOCATION_ACCEPT'); ?><?php endif; ?></p>
+        <?php if ($relocation['currency'] !== '') : ?>
+            <?php require_once JPATH_SITE . '/components/com_jem/classes/money.class.php'; ?>
+            <dl class="row">
+            <?php foreach (['old', 'quoted', 'difference', 'adjustment', 'total', 'paid', 'due', 'refund'] as $key) : ?>
+                <dt class="col-sm-4"><?php echo Text::_('COM_JEM_RELOCATION_' . strtoupper($key)); ?></dt>
+                <dd class="col-sm-8"><?php echo $this->escape(JemMoney::fromMinorUnits((int) $relocation['financial'][$key], $relocation['currency'])->decimal() . ' ' . $relocation['currency']); ?></dd>
+            <?php endforeach; ?>
+            </dl>
+        <?php endif; ?>
+    <?php endif; ?>
     <h2><?php echo Text::_('COM_JEM_REGISTRATION_HISTORY_TIMELINE'); ?></h2>
     <div class="table-responsive">
         <table class="table table-striped">

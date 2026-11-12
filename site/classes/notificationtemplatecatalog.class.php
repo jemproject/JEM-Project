@@ -244,6 +244,12 @@ final class JemNotificationTemplateCatalog
             'reservation_url',
         );
 
+        self::addDefinition($definitions, 'PLG_JEM_MAILER_RELOCATION_SUBJECT', 'PLG_JEM_MAILER_RELOCATION_BODY',
+            'relocation', 'user', 'on_behalf', true);
+        $relocationId = self::templateIdForBodyKey('PLG_JEM_MAILER_RELOCATION_BODY');
+        $definitions[$relocationId]['subject_legacy_tokens'] = [];
+        $definitions[$relocationId]['body_legacy_tokens'] = [];
+        $definitions[$relocationId]['recommended_tokens'] = ['user_name', 'event_title', 'comment'];
         self::addSubmissionDefinitions($definitions);
 
         return $definitions;

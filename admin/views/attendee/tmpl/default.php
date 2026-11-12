@@ -423,6 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </table>
     </fieldset>
 
+    <?php require __DIR__ . '/relocation.php'; ?>
     <?php echo HTMLHelper::_('form.token'); ?>
     <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
     <input type="hidden" name="event" value="<?php echo ($this->row->event ? $this->row->event : $this->event); ?>" />
@@ -436,7 +437,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <h4><?php echo Text::_('COM_JEM_REGISTRATION_CHANGES'); ?></h4>
         <div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th><?php echo Text::_('COM_JEM_REGISTRATION_HISTORY_OCCURRED'); ?></th><th><?php echo Text::_('COM_JEM_REGISTRATION_HISTORY_ACTION'); ?></th><th><?php echo Text::_('COM_JEM_REGISTRATION_HISTORY_CHANGE'); ?></th><th><?php echo Text::_('COM_JEM_REGISTRATION_HISTORY_ACTOR'); ?></th></tr></thead><tbody>
         <?php if (!$this->registrationChanges) : ?><tr><td colspan="4"><?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?></td></tr><?php endif; ?>
-        <?php foreach ($this->registrationChanges as $change) : ?><tr><td><?php echo HTMLHelper::_('date', $change->occurred, Text::_('DATE_FORMAT_LC5')); ?></td><td><?php echo $this->escape($change->action); ?></td><td><?php echo $this->escape((string) $change->old_status . ' → ' . (string) $change->new_status . ' / ' . (string) $change->old_places . ' → ' . (string) $change->new_places); ?>
+        <?php foreach ($this->registrationChanges as $change) : ?><tr><td><?php echo HTMLHelper::_('date', $change->occurred, Text::_('DATE_FORMAT_LC5')); ?></td><td><a href="<?php echo Route::_('index.php?option=com_jem&view=registrationhistoryentry&id=' . (int) $change->id); ?>"><?php echo $this->escape($change->action); ?></a></td><td><?php echo $this->escape((string) $change->old_status . ' → ' . (string) $change->new_status . ' / ' . (string) $change->old_places . ' → ' . (string) $change->new_places); ?>
             <?php if ((int) $change->new_status === -1 && $change->old_status !== null && (int) $change->old_status !== -1 && (int) $change->old_places > 0) : ?>
                 <br><small><?php echo Text::sprintf('COM_JEM_REGISTRATION_HISTORY_CANCELLED_PLACES', (int) $change->old_places); ?></small>
             <?php endif; ?></td><td><?php echo $this->escape($change->actor_name ?: Text::_('COM_JEM_REGISTRATION_HISTORY_SYSTEM')); ?></td></tr><?php endforeach; ?>

@@ -86,6 +86,12 @@ class JemViewAttendee extends HtmlView {
             Text::script($key);
         }
 
+        $wa->registerScript('jem.registration-relocation', 'com_jem/registration-relocation.js', [], ['defer' => true], ['core'])
+            ->useScript('jem.registration-relocation');
+        foreach (['AREA', 'BEFORE', 'AFTER', 'OLD', 'QUOTED', 'DIFFERENCE', 'ADJUSTMENT', 'TOTAL', 'PAID', 'DUE', 'REFUND', 'CONFIRM_NOTICE', 'FAILED'] as $key) {
+            Text::script('COM_JEM_RELOCATION_' . $key);
+        }
+
         // add toolbar
         $this->addToolbar();
 

@@ -1305,6 +1305,7 @@ final class JemRegistrationService
             'forced'                 => !empty($options['forced']) ? 1 : 0,
             'changed_fields'         => json_encode(array_values($changedFields), JSON_UNESCAPED_SLASHES),
             'occurred'               => $now,
+            ...(!empty($options['changeSnapshot']) ? ['change_snapshot' => json_encode($options['changeSnapshot'], JSON_THROW_ON_ERROR)] : []),
             'invitation_snapshot'    => !empty($current->invitation_key) ? json_encode([
                 'before' => self::invitationAudit($before), 'after' => self::invitationAudit($after),
             ], JSON_THROW_ON_ERROR) : null,

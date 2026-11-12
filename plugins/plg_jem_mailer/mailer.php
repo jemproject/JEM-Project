@@ -1362,6 +1362,58 @@ class plgJemMailer extends CMSPlugin
     }
 
     /**
+     * Queue a relocation notice from immutable audit data through the normal Mailer pipeline.
+     * @param int $id Current reservation ID.
+     * @return bool Whether the notification was queued, including an idempotent retry.
+     */
+    public function onJemRegistrationRelocated(int $id): bool
+    {
+        require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $row = $db->setQuery('SELECT * FROM #__jem_register WHERE id=' . $id)->loadObject();
+        if (!$row) {
+            return false;
+        }
+        $history = $db->setQuery('SELECT * FROM #__jem_register_history WHERE registration_id=' . $id
+            . ' AND revision=' . (int) $row->revision . " AND action='relocated' ORDER BY id DESC")->loadObject();
+        if (!$history || !$history->change_snapshot) {
+            return false;
+        }
+        $change = json_decode($history->change_snapshot, true, 512, JSON_THROW_ON_ERROR);
+        $service = new JemNotificationService($db);
+        $owner = !empty($row->uid) ? Factory::getContainer()->get(\Joomla\CMS\User\UserFactoryInterface::class)->loadUserById((int) $row->uid) : null;
+        $email = $owner ? $owner->email : $row->guest_email;
+        $name = $owner ? $owner->name : $row->guest_name;
+        $language = $service->resolveRecipientLanguage((int) $row->uid, $email);
+        $lang = \Joomla\CMS\Language\Language::getInstance($language->resolved);
+        $lang->load('com_jem', JPATH_SITE, 'en-GB', true);
+        $lang->load('com_jem', JPATH_SITE, $language->resolved, true);
+        require_once JPATH_SITE . '/components/com_jem/classes/relocationnotice.class.php';
+        $values = ['user_name' => $name, 'event_title' => $change['event_title'], 'places' => $row->places,
+            'comment' => JemRelocationNotice::details($change, static fn ($key) => $lang->_($key)), 'site_name' => $this->_SiteName];
+        $message = $this->_renderNotification('PLG_JEM_MAILER_RELOCATION_SUBJECT', 'PLG_JEM_MAILER_RELOCATION_BODY', $values, null, $language->resolved);
+        $spec = (object) ['recipient_user_id' => (int) $row->uid, 'registration_id' => $id, 'revision' => (int) $row->revision];
+        $attachments = $this->_ticketAttachments($spec, 'user', $email, $language->resolved);
+        if (!$owner && !empty($row->invitation_key)) {
+            require_once JPATH_SITE . '/components/com_jem/classes/ticketservice.class.php';
+            require_once JPATH_SITE . '/components/com_jem/classes/ticketpdf.class.php';
+            $bytes = JemTicketPdf::render((new JemTicketService($db))->invitationDocument($row), $language->resolved);
+            $attachments = [['name' => 'reservation-' . $row->reference . '.pdf', 'mime' => 'application/pdf',
+                'sha256' => hash('sha256', $bytes), 'content_base64' => base64_encode($bytes)]];
+        }
+        $service->create(['registration_id' => $id, 'registration_reference' => $row->reference,
+            'revision' => (int) $row->revision, 'event_id' => (int) $row->event,
+            'notification_type' => 'relocation', 'recipient_type' => 'user', 'recipient_user_id' => (int) $row->uid,
+            'recipient_name' => $name, 'recipient_email' => $email, 'resolved_language' => $language->resolved,
+            'template_id' => $message->template_id, 'subject' => $message->subject,
+            'body' => $message->body, 'htmlbody' => $message->htmlbody, 'attachments' => $attachments,
+            'idempotency_key' => hash('sha256', 'relocation|' . $row->reference . '|' . $row->revision),
+            'payload' => ['relocation' => $change], 'source' => 'administrator.attendee.relocation',
+            'created_by' => (int) $history->actor_user_id]);
+        return true;
+    }
+
+    /**
      * Queue one personalised invitation or response, without invoking transport in the request.
      * @param array $rows Same-recipient invitation rows, possibly covering a series.
      * @param string $token Email capability; never a ticket locator. @param string $action Lifecycle action.

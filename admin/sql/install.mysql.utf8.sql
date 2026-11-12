@@ -634,6 +634,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_register_history` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_history_registration_revision` (`registration_id`,`revision`),
     `invitation_snapshot` TEXT NULL DEFAULT NULL,
+    `change_snapshot` MEDIUMTEXT NULL DEFAULT NULL,
     UNIQUE KEY `idx_history_operation_registration` (`operation_reference`,`registration_id`),
     KEY `idx_history_reference_occurred` (`registration_reference`,`occurred`),
     KEY `idx_history_operation` (`operation_reference`),

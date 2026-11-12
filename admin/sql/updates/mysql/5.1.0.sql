@@ -316,3 +316,6 @@ ALTER TABLE `#__jem_register` ADD UNIQUE KEY `idx_register_guest` (`event`,`gues
 ALTER TABLE `#__jem_register` ADD KEY `idx_invitation_key` (`invitation_key`) /** CAN FAIL **/;
 ALTER TABLE `#__jem_register` ADD KEY `idx_invitation_token` (`invitation_token_hash`) /** CAN FAIL **/;
 ALTER TABLE `#__jem_register_history` ADD COLUMN `invitation_snapshot` TEXT NULL DEFAULT NULL /** CAN FAIL **/;
+
+-- Reviewed administrative reservation relocations (also checked for earlier 5.1 betas).
+ALTER TABLE `#__jem_register_history` ADD COLUMN `change_snapshot` MEDIUMTEXT NULL DEFAULT NULL /** CAN FAIL **/;

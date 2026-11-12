@@ -399,6 +399,20 @@ final class JemPricedRegistrationService
         }
         unset($line);
 
+        // A relocation agreement is an explicit fixed order adjustment, not a payment.
+        // Preserve its snapshot on later edits; never silently charge a waived supplement again.
+        foreach ($stored as $item) {
+            if ($item->line_kind === 'relocation_adjustment') {
+                $quote['adjustment_items'][] = $item;
+                $subtotal = $subtotal->plus(JemMoney::fromDecimal($item->line_net, $currency));
+                $taxTotal = $taxTotal->plus(JemMoney::fromDecimal($item->line_tax, $currency));
+                $grandTotal = $grandTotal->plus(JemMoney::fromDecimal($item->line_gross, $currency));
+            }
+        }
+        if (min($subtotal->minorUnits(), $taxTotal->minorUnits(), $grandTotal->minorUnits()) < 0) {
+            throw new DomainException('COM_JEM_RELOCATION_AMOUNT_INVALID');
+        }
+
         $quote['currency'] = $currency;
         $quote['subtotal_net'] = $subtotal->decimal();
         $quote['tax_total'] = $taxTotal->decimal();
@@ -435,10 +449,10 @@ final class JemPricedRegistrationService
         return $allocations;
     }
 
-    /** @param array $quote Authoritative quote. @return array Immutable admission line snapshots. */
+    /** @param array $quote Authoritative quote. @return array Immutable admission and agreed adjustment snapshots. */
     public function quoteItems(array $quote): array
     {
-        return array_map(static function (array $line) use ($quote): object {
+        $items = array_map(static function (array $line) use ($quote): object {
             return (object) array(
                 'line_kind' => 'admission',
                 'event_price_id' => (int) $line['event_price_id'],
@@ -472,6 +486,7 @@ final class JemPricedRegistrationService
                 ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),
             );
         }, (array) $quote['lines']);
+        return array_merge($items, $quote['adjustment_items'] ?? []);
     }
 
     private function loadRegistrationForUpdate(int $eventId, int $userId, int $registerId): ?object
