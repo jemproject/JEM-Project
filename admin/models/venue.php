@@ -526,12 +526,7 @@ class JemModelVenue extends JemModelAdmin
                             $capacityProfileName,
                             $capacityProfileCode,
                             $capacityProfileSetDefault,
-                            $capacityProfileOrdering
-                        );
-                        JemVenueCapacityService::saveConfigurationMedia(
-                            (int) $pk,
-                            $savedCapacityConfiguration,
-                            $capacityConfiguration,
+                            $capacityProfileOrdering,
                             (array) $jinput->files->get('capacity_space_image', array(), 'array'),
                             (array) $jinput->files->get('capacity_layout_image', array(), 'array')
                         );

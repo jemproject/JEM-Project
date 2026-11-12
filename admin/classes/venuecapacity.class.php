@@ -432,7 +432,7 @@ class JemVenueCapacityService
             throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_PROFILE_OWNERSHIP'));
         }
 
-        $db->transactionStart();
+        $db->transactionStart(true);
         try {
             $db->setQuery(
                 'SELECT ' . $db->quoteName('id')
@@ -454,9 +454,9 @@ class JemVenueCapacityService
                     ->where($db->quoteName('id') . ' = ' . $profileId)
                     ->where($db->quoteName('venue_id') . ' = ' . $venueId)
             )->execute();
-            $db->transactionCommit();
+            $db->transactionCommit(true);
         } catch (Throwable $error) {
-            $db->transactionRollback();
+            $db->transactionRollback(true);
             throw $error;
         }
     }
@@ -513,6 +513,20 @@ class JemVenueCapacityService
     /**
      * Save one profile and create immutable Layout revisions only after an
      * effective physical change. A zero profile ID creates a reusable profile.
+     * Optional upload arrays include media in the same database transaction;
+     * null preserves the configuration-only API used by existing callers.
+     *
+     * @param int $venueId Owner venue ID.
+     * @param int $profileId Existing profile ID, or zero to create one.
+     * @param array $configuration Normalised spaces, layouts and capacity areas.
+     * @param string|null $profileName Display name of the profile.
+     * @param string|null $requestedCode Legacy alias argument; aliases are generated.
+     * @param bool $setDefault Whether to select this profile as the default.
+     * @param int $ordering Profile display position.
+     * @param array|null $spaceFiles Uploaded space images, or null to skip media.
+     * @param array|null $layoutFiles Uploaded layout images, or null to skip media.
+     * @return array Saved profile configuration.
+     * @throws Throwable When saving fails; profile database changes are rolled back.
      */
     public static function saveProfileConfiguration(
         int $venueId,
@@ -521,59 +535,64 @@ class JemVenueCapacityService
         ?string $profileName = null,
         ?string $requestedCode = null,
         bool $setDefault = false,
-        int $ordering = 0
+        int $ordering = 0,
+        ?array $spaceFiles = null,
+        ?array $layoutFiles = null
     ): array
     {
-        if ($profileId < 1) {
-            $profileId = self::createProfile(
-                $venueId,
-                self::normaliseProfileName($profileName),
-                $requestedCode,
-                $setDefault,
-                $ordering
-            );
-        }
-        $current = self::getConfiguration($venueId, $profileId);
-        $profileName = self::normaliseProfileName($profileName ?? (string) $current['profile_name']);
-        $profileCapacity = (int) ($configuration['profile_capacity'] ?? $current['profile_capacity']);
-        $configuration['profile_capacity'] = $profileCapacity;
-        $currentBySpaceId = array();
-        foreach ($current['spaces'] as $space) {
-            $currentBySpaceId[(int) $space['space_id']] = $space;
-        }
-        foreach ($configuration['spaces'] as &$space) {
-            $spaceId = (int) ($space['space_id'] ?? 0);
-            $ownedSpace = $spaceId > 0
-                ? self::loadOwnedSpaceConfiguration($venueId, $spaceId, (int) ($space['layout_id'] ?? 0))
-                : array();
-            if ($spaceId > 0 && !$ownedSpace) {
-                throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_SPACE_OWNERSHIP'));
-            }
-            if ($ownedSpace) {
-                // Physical spaces and their immutable layout revision chains keep
-                // their aliases for their whole lifetime.
-                $space['space_code'] = (string) $ownedSpace['space_code'];
-                $space['layout_code'] = (string) $ownedSpace['layout_code'];
-            }
-        }
-        unset($space);
-
-        $configurationChanged = self::configurationFingerprint($current)
-            !== self::configurationFingerprint($configuration);
-        $profileNameChanged = $profileName !== (string) $current['profile_name'];
-        $orderingChanged = $ordering !== (int) ($current['profile_ordering'] ?? 0);
-
-        if (!$configurationChanged && !$profileNameChanged && !$orderingChanged && !$setDefault) {
-            return $current;
-        }
-
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $now = Factory::getDate()->toSql();
-        $identity = Factory::getApplication()->getIdentity();
-        $userId = (int) ($identity->id ?? 0);
-        $db->transactionStart();
+        $fileChanges = array('created' => array(), 'obsolete' => array());
+        $db->transactionStart(true);
 
         try {
+            if ($profileId < 1) {
+                $profileId = self::createProfile(
+                    $venueId,
+                    self::normaliseProfileName($profileName),
+                    $requestedCode,
+                    $setDefault,
+                    $ordering
+                );
+            }
+            $current = self::getConfiguration($venueId, $profileId);
+            $profileName = self::normaliseProfileName($profileName ?? (string) $current['profile_name']);
+            $profileCapacity = (int) ($configuration['profile_capacity'] ?? $current['profile_capacity']);
+            $configuration['profile_capacity'] = $profileCapacity;
+            $currentBySpaceId = array();
+            foreach ($current['spaces'] as $space) {
+                $currentBySpaceId[(int) $space['space_id']] = $space;
+            }
+            foreach ($configuration['spaces'] as &$space) {
+                $spaceId = (int) ($space['space_id'] ?? 0);
+                $ownedSpace = $spaceId > 0
+                    ? self::loadOwnedSpaceConfiguration($venueId, $spaceId, (int) ($space['layout_id'] ?? 0))
+                    : array();
+                if ($spaceId > 0 && !$ownedSpace) {
+                    throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_SPACE_OWNERSHIP'));
+                }
+                if ($ownedSpace) {
+                    // Physical spaces and their immutable layout revision chains keep
+                    // their aliases for their whole lifetime.
+                    $space['space_code'] = (string) $ownedSpace['space_code'];
+                    $space['layout_code'] = (string) $ownedSpace['layout_code'];
+                }
+            }
+            unset($space);
+
+            $configurationChanged = self::configurationFingerprint($current)
+                !== self::configurationFingerprint($configuration);
+            $profileNameChanged = $profileName !== (string) $current['profile_name'];
+            $orderingChanged = $ordering !== (int) ($current['profile_ordering'] ?? 0);
+
+            if (!$configurationChanged && !$profileNameChanged && !$orderingChanged && !$setDefault && $spaceFiles === null && $layoutFiles === null) {
+                $db->transactionCommit(true);
+
+                return $current;
+            }
+
+            $now = Factory::getDate()->toSql();
+            $identity = Factory::getApplication()->getIdentity();
+            $userId = (int) ($identity->id ?? 0);
             $profileId = (int) $current['profile_id'];
             $keptAssignmentIds = array();
 
@@ -691,17 +710,34 @@ class JemVenueCapacityService
                 'modified_by' => $userId,
             );
             $db->updateObject('#__jem_venue_capacity_profiles', $profile, 'id');
-            $db->transactionCommit();
+            if ($setDefault) {
+                self::setDefaultProfile($venueId, $profileId);
+            }
+            $saved = self::getConfiguration($venueId, $profileId);
+            if ($spaceFiles !== null || $layoutFiles !== null) {
+                self::saveConfigurationMedia(
+                    $venueId,
+                    $saved,
+                    $configuration,
+                    $spaceFiles ?? array(),
+                    $layoutFiles ?? array(),
+                    $fileChanges
+                );
+                $saved = self::getConfiguration($venueId, $profileId);
+            }
+            $db->transactionCommit(true);
         } catch (Throwable $e) {
-            $db->transactionRollback();
+            try {
+                $db->transactionRollback(true);
+            } finally {
+                self::finishMediaChanges($fileChanges, false);
+            }
             throw $e;
         }
 
-        if ($setDefault) {
-            self::setDefaultProfile($venueId, $profileId);
-        }
+        self::finishMediaChanges($fileChanges, true);
 
-        return self::getConfiguration($venueId, $profileId);
+        return $saved;
     }
 
     /**
@@ -823,77 +859,128 @@ class JemVenueCapacityService
     /**
      * Store mutable Space and Layout media after their stable identifiers are
      * known. Media changes never create a physical layout revision.
+     *
+     * @param int $venueId Owner venue ID.
+     * @param array $savedConfiguration Configuration containing persisted IDs.
+     * @param array $submittedConfiguration Submitted media values and removal flags.
+     * @param array $spaceFiles Uploaded images indexed by space position.
+     * @param array $layoutFiles Uploaded images indexed by layout position.
+     * @param array|null $fileChanges Optional journal owned by the enclosing save.
+     * @return void
+     * @throws Throwable When media storage fails.
      */
     public static function saveConfigurationMedia(
         int $venueId,
         array $savedConfiguration,
         array $submittedConfiguration,
         array $spaceFiles = array(),
-        array $layoutFiles = array()
+        array $layoutFiles = array(),
+        ?array &$fileChanges = null
     ): void {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $settings = JemHelper::config();
         $savedSpaces = array_values((array) ($savedConfiguration['spaces'] ?? array()));
         $submittedSpaces = array_values((array) ($submittedConfiguration['spaces'] ?? array()));
 
-        foreach ($savedSpaces as $index => $savedSpace) {
-            $submitted = (array) ($submittedSpaces[$index] ?? array());
-            $spaceId = (int) ($savedSpace['space_id'] ?? 0);
-            $layoutId = (int) ($savedSpace['layout_id'] ?? 0);
-            if ($spaceId < 1 || $layoutId < 1) {
-                continue;
-            }
+        $ownsChanges = $fileChanges === null;
+        if ($ownsChanges) {
+            $fileChanges = array('created' => array(), 'obsolete' => array());
+            $db->transactionStart(true);
+        }
 
-            $spaceImage = self::storeMediaFile(
-                JemVenueImagePath::spaceFolder($venueId, $spaceId),
-                (array) ($spaceFiles[$index] ?? array()),
-                (string) ($savedSpace['space_image'] ?? $submitted['space_image'] ?? ''),
-                !empty($submitted['space_image_remove']),
-                $settings
-            );
-            $db->updateObject('#__jem_venue_spaces', (object) array(
-                'id' => $spaceId,
-                'image' => $spaceImage,
-                'image_alt' => $spaceImage !== '' ? self::normaliseAltText($submitted['space_image_alt'] ?? '') : '',
-            ), 'id', true);
+        try {
+            foreach ($savedSpaces as $index => $savedSpace) {
+                $submitted = (array) ($submittedSpaces[$index] ?? array());
+                $spaceId = (int) ($savedSpace['space_id'] ?? 0);
+                $layoutId = (int) ($savedSpace['layout_id'] ?? 0);
+                if ($spaceId < 1 || $layoutId < 1) {
+                    continue;
+                }
 
-            $oldLayoutId = (int) ($submitted['layout_id'] ?? 0);
-            $layoutImage = File::makeSafe((string) ($submitted['layout_image'] ?? ''));
-            if ($oldLayoutId === $layoutId) {
-                $layoutImage = File::makeSafe((string) ($savedSpace['layout_image'] ?? $layoutImage));
+                $spaceImage = self::storeMediaFile(
+                    JemVenueImagePath::spaceFolder($venueId, $spaceId),
+                    (array) ($spaceFiles[$index] ?? array()),
+                    (string) ($savedSpace['space_image'] ?? $submitted['space_image'] ?? ''),
+                    !empty($submitted['space_image_remove']),
+                    $settings,
+                    $fileChanges
+                );
+                $spaceMedia = (object) array(
+                    'id' => $spaceId,
+                    'image' => $spaceImage,
+                    'image_alt' => $spaceImage !== '' ? self::normaliseAltText($submitted['space_image_alt'] ?? '') : '',
+                );
+                $db->updateObject('#__jem_venue_spaces', $spaceMedia, 'id', true);
+
+                $oldLayoutId = (int) ($submitted['layout_id'] ?? 0);
+                $layoutImage = File::makeSafe((string) ($submitted['layout_image'] ?? ''));
+                if ($oldLayoutId === $layoutId) {
+                    $layoutImage = File::makeSafe((string) ($savedSpace['layout_image'] ?? $layoutImage));
+                }
+                $layoutFile = (array) ($layoutFiles[$index] ?? array());
+                if (empty($layoutFile['name']) && empty($submitted['layout_image_remove'])
+                    && $layoutImage !== '' && $oldLayoutId > 0 && $oldLayoutId !== $layoutId) {
+                    $sourceFolder = JemVenueImagePath::layoutFolder($venueId, $spaceId, $oldLayoutId);
+                    $targetFolder = JemVenueImagePath::layoutFolder($venueId, $spaceId, $layoutId);
+                    $sourcePath = Path::clean(JPATH_SITE . '/' . JemVenueImagePath::imagePath($sourceFolder, $layoutImage));
+                    if (File::exists($sourcePath)) {
+                        self::trackNewMediaFiles($targetFolder, $layoutImage, $fileChanges);
+                        if (!JemVenueImagePath::relocateImages($sourceFolder, $targetFolder, array($layoutImage), $settings, false)) {
+                            throw new RuntimeException(Text::_('COM_JEM_UPLOAD_FAILED'));
+                        }
+                    } else {
+                        $layoutImage = '';
+                    }
+                }
+                $layoutImage = self::storeMediaFile(
+                    JemVenueImagePath::layoutFolder($venueId, $spaceId, $layoutId),
+                    $layoutFile,
+                    $layoutImage,
+                    !empty($submitted['layout_image_remove']),
+                    $settings,
+                    $fileChanges
+                );
+                $layoutMedia = (object) array(
+                    'id' => $layoutId,
+                    'image' => $layoutImage,
+                    'image_alt' => $layoutImage !== '' ? self::normaliseAltText($submitted['layout_image_alt'] ?? '') : '',
+                );
+                $db->updateObject('#__jem_venue_layouts', $layoutMedia, 'id', true);
             }
-            $layoutFile = (array) ($layoutFiles[$index] ?? array());
-            if (empty($layoutFile['name']) && empty($submitted['layout_image_remove'])
-                && $layoutImage !== '' && $oldLayoutId > 0 && $oldLayoutId !== $layoutId) {
-                $sourceFolder = JemVenueImagePath::layoutFolder($venueId, $spaceId, $oldLayoutId);
-                $targetFolder = JemVenueImagePath::layoutFolder($venueId, $spaceId, $layoutId);
-                $sourcePath = Path::clean(JPATH_SITE . '/' . JemVenueImagePath::imagePath($sourceFolder, $layoutImage));
-                if (File::exists($sourcePath)) {
-                    JemVenueImagePath::relocateImages($sourceFolder, $targetFolder, array($layoutImage), $settings, false);
-                } else {
-                    $layoutImage = '';
+            if ($ownsChanges) {
+                $db->transactionCommit(true);
+            }
+        } catch (Throwable $e) {
+            if ($ownsChanges) {
+                try {
+                    $db->transactionRollback(true);
+                } finally {
+                    self::finishMediaChanges($fileChanges, false);
                 }
             }
-            $layoutImage = self::storeMediaFile(
-                JemVenueImagePath::layoutFolder($venueId, $spaceId, $layoutId),
-                $layoutFile,
-                $layoutImage,
-                !empty($submitted['layout_image_remove']),
-                $settings
-            );
-            $db->updateObject('#__jem_venue_layouts', (object) array(
-                'id' => $layoutId,
-                'image' => $layoutImage,
-                'image_alt' => $layoutImage !== '' ? self::normaliseAltText($submitted['layout_image_alt'] ?? '') : '',
-            ), 'id', true);
+            throw $e;
+        }
+        if ($ownsChanges) {
+            self::finishMediaChanges($fileChanges, true);
         }
     }
 
-    private static function storeMediaFile(string $folder, array $file, string $current, bool $remove, object $settings): string
+    /**
+     * Store a replacement image without deleting the previous file before commit.
+     *
+     * @param string $folder Relative JEM venue media folder.
+     * @param array $file Uploaded file attributes.
+     * @param string $current Previous filename.
+     * @param bool $remove Whether to remove the previous image.
+     * @param object $settings JEM image settings.
+     * @param array $fileChanges New and obsolete paths for commit or rollback.
+     * @return string Stored filename, or an empty string after removal.
+     */
+    private static function storeMediaFile(string $folder, array $file, string $current, bool $remove, object $settings, array &$fileChanges): string
     {
         $current = File::makeSafe($current);
         if ($remove) {
-            self::deleteMediaFile($folder, $current);
+            $fileChanges['obsolete'] = array_merge($fileChanges['obsolete'], self::mediaFilePaths($folder, $current));
             $current = '';
         }
 
@@ -910,31 +997,73 @@ class JemVenueCapacityService
         $targetFolder = JemVenueImagePath::absoluteImageFolder($folder);
         $filename = JemImage::sanitize($targetFolder, (string) $file['name']);
         $target = Path::clean($targetFolder . $filename);
+        self::trackNewMediaFiles($folder, $filename, $fileChanges);
         if (!File::upload((string) $file['tmp_name'], $target)) {
             throw new RuntimeException(Text::_('COM_JEM_UPLOAD_FAILED'));
         }
 
         JemVenueImagePath::createThumbnail($folder, $filename, $target, $settings);
         if ($current !== '' && $current !== $filename) {
-            self::deleteMediaFile($folder, $current);
+            $fileChanges['obsolete'] = array_merge($fileChanges['obsolete'], self::mediaFilePaths($folder, $current));
         }
 
         return $filename;
     }
 
-    private static function deleteMediaFile(string $folder, string $filename): void
+    /**
+     * Resolve an image and its thumbnail for scoped cleanup.
+     *
+     * @param string $folder Relative JEM venue media folder.
+     * @param string $filename Image filename.
+     * @return array Absolute image and thumbnail paths, or no paths for no image.
+     */
+    private static function mediaFilePaths(string $folder, string $filename): array
     {
         $filename = File::makeSafe($filename);
         if ($filename === '') {
-            return;
+            return array();
         }
-        foreach (array(
-            JemVenueImagePath::imagePath($folder, $filename),
-            JemVenueImagePath::thumbPath($folder, $filename),
-        ) as $relative) {
-            $path = Path::clean(JPATH_SITE . '/' . $relative);
-            if (File::exists($path)) {
-                File::delete($path);
+
+        return array(
+            Path::clean(JPATH_SITE . '/' . JemVenueImagePath::imagePath($folder, $filename)),
+            Path::clean(JPATH_SITE . '/' . JemVenueImagePath::thumbPath($folder, $filename)),
+        );
+    }
+
+    /**
+     * Record only paths that this save may create; existing files are preserved.
+     *
+     * @param string $folder Relative destination folder.
+     * @param string $filename New image filename.
+     * @param array $fileChanges Journal updated with paths absent before writing.
+     * @return void
+     */
+    private static function trackNewMediaFiles(string $folder, string $filename, array &$fileChanges): void
+    {
+        foreach (self::mediaFilePaths($folder, $filename) as $path) {
+            if (!File::exists($path)) {
+                $fileChanges['created'][] = $path;
+            }
+        }
+    }
+
+    /**
+     * Remove obsolete files after commit, or newly written files after rollback.
+     * Cleanup failure must not report a successfully committed save as failed.
+     *
+     * @param array $fileChanges Paths recorded during this save only.
+     * @param bool $committed Whether database changes were committed.
+     * @return void
+     */
+    private static function finishMediaChanges(array $fileChanges, bool $committed): void
+    {
+        foreach (array_unique($fileChanges[$committed ? 'obsolete' : 'created']) as $path) {
+            try {
+                if (File::exists($path) && !File::delete($path)) {
+                    error_log('JEM: venue profile media cleanup failed.');
+                }
+            } catch (Throwable $error) {
+                error_log('JEM: venue profile media cleanup failed.');
             }
         }
     }
