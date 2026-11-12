@@ -2777,15 +2777,15 @@ class JemControllerImport extends BaseController
             fseek($handle, 0);
         }
 
-        $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
+        $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '\\');
         if (is_array($header) && count($header) === 1 && strpos((string) $header[0], ',') !== false && $separator !== ',') {
             $separator = ',';
             fseek($handle, $hasBom ? 3 : 0);
-            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '\\');
         } elseif (is_array($header) && count($header) === 1 && strpos((string) $header[0], ';') !== false && $separator !== ';') {
             $separator = ';';
             fseek($handle, $hasBom ? 3 : 0);
-            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '\\');
         }
 
         if ($header === false) {
@@ -2825,7 +2825,7 @@ class JemControllerImport extends BaseController
         $rowOptions['record_fields'] = $this->mergeImportRecordFields($this->getExternalEventRecordFields($effectiveMapping), $staticValues);
         $line = 1;
 
-        while (($raw = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter)) !== false) {
+        while (($raw = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '\\')) !== false) {
             $line++;
             JemImportBudgetHelper::assertRecordCount($line - 1);
             JemImportBudgetHelper::assertTabularRow($raw, $totalValueBytes);
@@ -5185,16 +5185,37 @@ class JemControllerImport extends BaseController
         $startTime = $this->normaliseExternalCsvTime($data['times'] ?? '');
         $endTime = $this->normaliseExternalCsvTime($data['endtimes'] ?? '');
 
-        if (!empty($data['start_datetime'])) {
-            $startParts = $this->normaliseExternalCsvDateTime($data['start_datetime']);
-            $startDate = $startParts['date'] ?: $startDate;
-            $startTime = $startParts['time'] ?: $startTime;
+        $valid = true;
+        foreach (array('dates' => $startDate, 'enddates' => $endDate, 'times' => $startTime, 'endtimes' => $endTime) as $field => $parsed) {
+            $raw = trim((string) ($data[$field] ?? ''));
+            $isTime = in_array($field, array('times', 'endtimes'), true);
+            if (($isTime && $options['mode'] === 'openday') || $raw === '' || strtoupper($raw) === 'NULL'
+                || (!$isTime && $raw === '0000-00-00')) {
+                continue;
+            }
+            if ($parsed === null) {
+                $valid = false;
+                $notes[] = Text::sprintf($isTime ? 'COM_JEM_IMPORT_EXTERNAL_ERROR_INVALID_TIME' : 'COM_JEM_IMPORT_EXTERNAL_ERROR_INVALID_DATE', $field, $raw);
+            }
         }
-
-        if (!empty($data['end_datetime'])) {
-            $endParts = $this->normaliseExternalCsvDateTime($data['end_datetime']);
-            $endDate = $endParts['date'] ?: $endDate;
-            $endTime = $endParts['time'] ?: $endTime;
+        foreach (array('start_datetime', 'end_datetime') as $field) {
+            $raw = trim((string) ($data[$field] ?? ''));
+            if ($raw === '' || strtoupper($raw) === 'NULL') {
+                continue;
+            }
+            $parts = $this->normaliseExternalCsvDateTime($raw, $options['mode'] === 'openday');
+            if (!$parts['valid']) {
+                $valid = false;
+                $notes[] = Text::sprintf('COM_JEM_IMPORT_EXTERNAL_ERROR_INVALID_DATETIME', $field, $raw);
+                continue;
+            }
+            if ($field === 'start_datetime') {
+                $startDate = $parts['date'];
+                $startTime = $parts['time'] ?? $startTime;
+            } else {
+                $endDate = $parts['date'];
+                $endTime = $parts['time'] ?? $endTime;
+            }
         }
 
         if ($options['mode'] === 'openday') {
@@ -5204,14 +5225,13 @@ class JemControllerImport extends BaseController
         }
 
         if ($endTime && !$startTime) {
+            $valid = false;
             $notes[] = Text::_('COM_JEM_IMPORT_EXTERNAL_ERROR_END_TIME_WITHOUT_START');
         }
 
         if ($endTime && !$endDate) {
             $endDate = $startDate;
         }
-
-        $valid = true;
 
         if ($title === '') {
             $valid = false;
@@ -5222,7 +5242,7 @@ class JemControllerImport extends BaseController
             $rawStart = trim((string) ($data['dates'] ?? ''));
             $rawDateTime = trim((string) ($data['start_datetime'] ?? ''));
 
-            if (array_key_exists('dates', $data) && $rawStart === '' && $rawDateTime === '' && !$endDate) {
+            if (array_key_exists('dates', $data) && in_array(strtoupper($rawStart), array('', 'NULL', '0000-00-00'), true) && in_array(strtoupper($rawDateTime), array('', 'NULL'), true) && !$endDate) {
                 $notes[] = Text::_('COM_JEM_IMPORT_EXTERNAL_OPEN_DATE_NOTE');
             } else {
                 $valid = false;
@@ -5412,53 +5432,91 @@ class JemControllerImport extends BaseController
         return number_format((float) $value, 6, '.', '');
     }
 
+    /** @param mixed $date External date. @return string|null Strict ISO or day-first date; null when absent/invalid. */
     protected function normaliseExternalCsvDate($date)
     {
         $date = trim((string) $date);
-
-        if ($date === '' || strtoupper($date) === 'NULL' || $date === '0000-00-00') {
-            return null;
-        }
-
-        if (preg_match('/^\d{1,2}[\/-]\d{1,2}[\/-]\d{4}$/', $date)) {
-            $format = strpos($date, '/') !== false ? '!d/m/Y' : '!d-m-Y';
-            $dateValue = \DateTime::createFromFormat($format, $date);
-            $errors = \DateTime::getLastErrors();
-
-            if ($dateValue && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))) {
-                return $dateValue->format('Y-m-d');
+        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D', $date, $parts)) {
+            [$year, $month, $day] = [(int) $parts[1], (int) $parts[2], (int) $parts[3]];
+        } elseif (preg_match('/^(\d{1,2})([\/.-])(\d{1,2})\2(\d{2}|\d{4})$/D', $date, $parts)) {
+            [$year, $month, $day] = [(int) $parts[4], (int) $parts[3], (int) $parts[1]];
+            // Fixed century pivot, independent of today's date. Four-digit years are preferred.
+            if (strlen($parts[4]) === 2) {
+                $year += $year <= 69 ? 2000 : 1900;
             }
-
+        } else {
             return null;
         }
-
-        $timestamp = strtotime($date);
-
-        return $timestamp ? date('Y-m-d', $timestamp) : null;
+        return checkdate($month, $day, $year) ? sprintf('%04d-%02d-%02d', $year, $month, $day) : null;
     }
 
+    /** @param mixed $time External clock value. @return string|null Valid 24-hour time; no relative-date interpretation. */
     protected function normaliseExternalCsvTime($time)
     {
         $time = trim((string) $time);
-
-        if ($time === '' || strtoupper($time) === 'NULL') {
+        if (!preg_match('/^(\d{1,2})(?:([:.])(\d{2})(?:\2(\d{2}))?)?\s*(AM|PM)?$/iD', $time, $parts)) {
             return null;
         }
-
-        $timestamp = strtotime($time);
-
-        return $timestamp ? date('H:i:s', $timestamp) : null;
+        $hour = (int) $parts[1];
+        $minute = (int) ($parts[3] ?? 0);
+        $second = (int) ($parts[4] ?? 0);
+        $meridiem = strtoupper($parts[5] ?? '');
+        if ($minute > 59 || $second > 59 || ($meridiem === '' && (!isset($parts[3]) || $hour > 23))) {
+            return null;
+        }
+        if ($meridiem !== '') {
+            if ($hour < 1 || $hour > 12) {
+                return null;
+            }
+            $hour = $hour % 12 + ($meridiem === 'PM' ? 12 : 0);
+        }
+        return sprintf('%02d:%02d:%02d', $hour, $minute, $second);
     }
 
-    protected function normaliseExternalCsvDateTime($value)
+    /**
+     * Parse a combined external date/time with the same rules as separate fields.
+     *
+     * @param mixed $value Combined ISO/day-first value, optionally carrying a numeric UTC offset.
+     * @param bool $ignoreTime Open-day mode deliberately discards the clock component.
+     * @return array Date, time and explicit validity; invalid input must never trigger silent fallback.
+     */
+    protected function normaliseExternalCsvDateTime($value, $ignoreTime = false)
     {
         $value = trim((string) $value);
-        $timestamp = $value !== '' ? strtotime($value) : false;
-
-        return array(
-            'date' => $timestamp ? date('Y-m-d', $timestamp) : null,
-            'time' => $timestamp ? date('H:i:s', $timestamp) : null,
-        );
+        $invalid = array('date' => null, 'time' => null, 'valid' => false);
+        if (!preg_match('/^(\d{4}-\d{2}-\d{2}|\d{1,2}[\/.-]\d{1,2}[\/.-](?:\d{4}|\d{2}))(?:[Tt ](.+))?$/D', $value, $parts)) {
+            return $invalid;
+        }
+        $date = $this->normaliseExternalCsvDate($parts[1]);
+        if ($date === null) {
+            return $invalid;
+        }
+        if ($ignoreTime || !isset($parts[2])) {
+            return array('date' => $date, 'time' => null, 'valid' => true);
+        }
+        $clock = trim($parts[2]);
+        $offset = null;
+        if (preg_match('/(Z|[+-]\d{2}:?\d{2})$/iD', $clock, $suffix)) {
+            $offset = strtoupper($suffix[1]);
+            $clock = trim(substr($clock, 0, -strlen($suffix[1])));
+            if ($offset !== 'Z') {
+                $digits = str_replace(':', '', substr($offset, 1));
+                if ((int) substr($digits, 0, 2) > 23 || (int) substr($digits, 2, 2) > 59) {
+                    return $invalid;
+                }
+            }
+        }
+        $time = $this->normaliseExternalCsvTime($clock);
+        if ($time === null) {
+            return $invalid;
+        }
+        if ($offset !== null) {
+            $moment = new \DateTimeImmutable($date . 'T' . $time . $offset);
+            $moment = $moment->setTimezone(new \DateTimeZone((string) Factory::getApplication()->get('offset', 'UTC')));
+            $date = $moment->format('Y-m-d');
+            $time = $moment->format('H:i:s');
+        }
+        return array('date' => $date, 'time' => $time, 'valid' => true);
     }
 
     protected function normaliseExternalPublishUp($value)

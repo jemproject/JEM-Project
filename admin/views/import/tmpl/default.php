@@ -746,6 +746,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                         </div>
+                        <p class="small"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_DATE_TIME_HELP'); ?></p>
                         <fieldset class="mb-3">
                             <legend class="h6"><?php echo Text::_('COM_JEM_IMPORT_ICS_WINDOW'); ?></legend>
                             <p class="small"><?php echo Text::_('COM_JEM_IMPORT_ICS_WINDOW_DESC'); ?></p>
