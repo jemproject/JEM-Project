@@ -39,6 +39,18 @@ class JemModelEditevent extends JemModelEvent
             return false;
         }
 
+        require_once dirname(__DIR__) . '/classes/eventparentpolicy.class.php';
+        try {
+            $copying = Factory::getApplication()->input->get('task', '', 'cmd') === 'save2copy';
+            $data['parent_event_id'] = JemEventParentPolicy::resolveSubmission(
+                JemFactory::getUser(), $copying ? 0 : (int) ($data['id'] ?? 0), $data['parent_event_id'] ?? null
+            );
+        } catch (RuntimeException $e) {
+            $this->setError(Text::_($e->getMessage()));
+
+            return false;
+        }
+
         return parent::save($data);
     }
 

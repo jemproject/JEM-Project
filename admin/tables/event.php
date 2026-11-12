@@ -392,7 +392,7 @@ class JemTableEvent extends Table
      */
     protected function getScheduleBounds($event, $isParent)
     {
-        $startTime = !empty($event->times) ? $event->times : '00:00:00';
+        $startTime = $this->normaliseScheduleTime(!empty($event->times) ? $event->times : '00:00:00');
         $endDate = !empty($event->enddates) ? $event->enddates : $event->dates;
 
         if (!empty($event->endtimes)) {
@@ -405,8 +405,22 @@ class JemTableEvent extends Table
 
         return array(
             $event->dates . ' ' . $startTime,
-            $endDate . ' ' . $endTime,
+            $endDate . ' ' . $this->normaliseScheduleTime($endTime),
         );
+    }
+
+    /**
+     * The form stores times as HH:MM, the database returns HH:MM:SS. The bounds
+     * are compared as strings, so both sides must use the same format.
+     *
+     * @param string $time Local schedule time.
+     * @return string Time with seconds, preserving existing precision.
+     */
+    protected function normaliseScheduleTime($time)
+    {
+        $time = trim((string) $time);
+
+        return preg_match('/^\d{2}:\d{2}$/', $time) ? $time . ':00' : $time;
     }
 
     /**
