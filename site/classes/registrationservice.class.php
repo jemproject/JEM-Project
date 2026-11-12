@@ -816,7 +816,7 @@ final class JemRegistrationService
     private function assertQuantityPolicy($registration, $before = null)
     {
         $query = $this->db->getQuery(true)
-            ->select(array('minbookeduser', 'maxbookeduser', 'event_status'))
+            ->select(array('minbookeduser', 'maxbookeduser', 'event_status', 'published', 'publish_up', 'publish_down'))
             ->from($this->db->quoteName('#__jem_events'))
             ->where($this->db->quoteName('id') . ' = ' . (int) $registration->event);
         $this->db->setQuery($query);
@@ -824,6 +824,13 @@ final class JemRegistrationService
 
         if (!$event) {
             throw new RuntimeException('Registration event does not exist.');
+        }
+
+        if (JemRegistrationAccessPolicy::addsInvitation($before, $registration)) {
+            $message = JemRegistrationAccessPolicy::invitationEventMessage($event);
+            if ($message !== '') {
+                throw new RuntimeException(Text::_($message));
+            }
         }
 
         $statusMessage = JemRegistrationAccessPolicy::eventStatusMessage($event);

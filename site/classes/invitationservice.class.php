@@ -190,6 +190,12 @@ final class JemInvitationService
                 if (!$events[$id] || !$this->can($actor, (int) $id)) {
                     throw new DomainException('COM_JEM_INV_INVALID_EVENT');
                 }
+                $message = $this->availabilityMessage($events[$id]);
+                if ($message !== '') {
+                    throw new DomainException(\Joomla\CMS\Language\Text::sprintf(
+                        'COM_JEM_EVENT_REGISTRATION_EVENT_MESSAGE', (int) $id, \Joomla\CMS\Language\Text::_($message)
+                    ));
+                }
             }
             foreach ($resolved['recipients'] as $holder) {
                 $key = bin2hex(random_bytes(16));
@@ -286,9 +292,24 @@ final class JemInvitationService
         return Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($id);
     }
 
+    /**
+     * Explain why an event cannot currently receive invitations.
+     * @param object $event Stored event. @return string Language key, or an empty string.
+     */
+    public function availabilityMessage(object $event): string
+    {
+        $message = JemRegistrationAccessPolicy::invitationEventMessage($event);
+        return $message !== '' ? $message
+            : (JemHelper::getEventRegistrationWindowState($event) === 'open' ? '' : 'COM_JEM_INV_EVENT_CLOSED');
+    }
+
     /** @param object $event Event under examination. @return void Reject unavailable/suspended/closed dates. */
     private function assertOpen(object $event): void
     {
+        $message = $this->availabilityMessage($event);
+        if ($message !== '') {
+            throw new DomainException($message);
+        }
         $now = gmdate('Y-m-d H:i:s');
         if ((int) $event->published !== 1 || JemRegistrationAccessPolicy::eventStatusMessage($event) !== ''
             || JemHelper::getEventRegistrationWindowState($event) !== 'open'
@@ -515,6 +536,9 @@ final class JemInvitationService
                     $after->status = -1;
                 }
                 $event = $this->db->setQuery('SELECT * FROM #__jem_events WHERE id=' . (int) $item->event)->loadObject();
+                if (!$revoke) {
+                    $this->assertOpen($event);
+                }
                 $results[] = (new JemRegistrationService($this->db))->saveLocked($before, $after, [
                     'invitationWrite' => true, 'invitationResponse' => true, 'actorId' => (int) $actor->id,
                     'source' => 'invitation', 'action' => $revoke ? 'invitation_revoked' : 'invitation_resent'])->after;
@@ -546,6 +570,9 @@ final class JemInvitationService
         $target = $this->db->setQuery('SELECT * FROM #__jem_events WHERE id=' . $targetId)->loadObject();
         if (!$source || !$target) {
             throw new DomainException('COM_JEM_INV_INVALID_EVENT');
+        }
+        if ($this->availabilityMessage($target) !== '') {
+            return; // An unpublished occurrence requires an explicit invitation after approval.
         }
         if (!isset($dates[$targetId])) {
             return; // Copying links to an unrelated event does not copy invitations.

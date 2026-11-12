@@ -51,6 +51,7 @@ trait JemInvitationView
         $confirmed = array_sum(array_map(static fn ($row) => (int) $row->reserved_confirmed, $rows));
         $this->invitationData = [
             'events' => $events, 'event' => $event, 'form' => $form, 'rows' => $rows,
+            'unavailable' => $event ? $service->availabilityMessage($event) : '',
             'users' => $id ? $db->setQuery("SELECT id,name FROM #__users WHERE block=0 AND (activation IS NULL OR activation IN ('','0')) ORDER BY name")->loadObjectList() : [],
             'groups' => $actor->authorise('jem.invitations.bulk', 'com_jem') ? $db->setQuery('SELECT id,title FROM #__usergroups ORDER BY lft')->loadObjectList() : [],
             'prices' => $id ? $db->setQuery('SELECT code,name,amount FROM #__jem_event_prices WHERE published=1 AND event_id=' . $id . ' ORDER BY ordering,id')->loadObjectList() : [],

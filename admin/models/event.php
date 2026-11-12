@@ -22,6 +22,7 @@ use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
 
 require_once __DIR__ . '/admin.php';
+require_once JPATH_SITE . '/components/com_jem/classes/registrationaccesspolicy.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/helper.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
@@ -1445,6 +1446,11 @@ class JemModelEvent extends JemModelAdmin
             }
         }
 
+        if (!$backend && (int) $jemsettings->regallowinvitation === 1
+            && !$this->validateInvitationSubmission($data, $new || $task === 'save2copy')) {
+            return false;
+        }
+
         $finderCommitted = false;
         $seriesDb = null;
         $seriesTransactionActive = false;
@@ -1624,7 +1630,7 @@ class JemModelEvent extends JemModelAdmin
                 }
 
                 // Store invited users (frontend only, on backend no attendees on editevent view)
-                if (!$backend && ($jemsettings->regallowinvitation == 1)) {
+                if (!$backend && ($jemsettings->regallowinvitation == 1) && array_key_exists('invited', $data)) {
                     if (!$this->_storeUsersInvited($pk, $invitedusers, !$backend, $new)) {
                         //    JemHelper::addLogEntry('Error storing users invited for event ' . $pk, __METHOD__, Log::ERROR);
                         $this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
@@ -4744,6 +4750,44 @@ class JemModelEvent extends JemModelAdmin
     }
 
     /**
+     * Reject new frontend invitations before saving an event awaiting publication.
+     * Existing selections remain editable without creating or resending invitations.
+     *
+     * @param array $data Validated event form data.
+     * @param bool $new Whether the operation creates a new event, including a copy.
+     * @return bool Whether the invitation selection may be saved.
+     */
+    protected function validateInvitationSubmission(array $data, bool $new): bool
+    {
+        $users = $data['invited'] ?? array();
+        $users = is_array($users) ? $users : explode(',', (string) $users);
+        $users = array_filter(array_unique(array_map('intval', $users)));
+        if (!$users) {
+            return true;
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $id = $new ? 0 : (int) ($data['id'] ?? 0);
+        $regs = $id ? $db->setQuery('SELECT uid,status FROM #__jem_register WHERE event=' . $id)->loadObjectList('uid') : array();
+        $added = array_filter($users, static function ($uid) use ($regs) {
+            return !isset($regs[$uid]) || (int) $regs[$uid]->status === -1;
+        });
+        if (!$added) {
+            return true;
+        }
+        $stored = $id ? $db->setQuery('SELECT * FROM #__jem_events WHERE id=' . $id)->loadObject() : null;
+        $message = JemRegistrationAccessPolicy::invitationEventMessage($stored);
+        if ($message === '') {
+            $message = JemRegistrationAccessPolicy::invitationEventMessage(array_replace((array) $stored, $data));
+        }
+        if ($message !== '') {
+            $this->setError(Text::_($message));
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Method to update cats_event_selections table.
      * Records of previously selected categories will be removed
      * and newly selected categories will be stored.
@@ -4771,6 +4815,11 @@ class JemModelEvent extends JemModelAdmin
         }
 
         $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $event = $db->setQuery('SELECT published,publish_up,publish_down,event_status FROM #__jem_events WHERE id=' . $eventId)->loadObject();
+        if (JemRegistrationAccessPolicy::invitationEventMessage($event) !== '') {
+            return true; // Publication changes never remove or send existing invitations.
+        }
 
         # Get current registrations
         $query = $db->getQuery(true);

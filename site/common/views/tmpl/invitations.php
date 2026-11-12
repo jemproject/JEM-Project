@@ -27,6 +27,9 @@ $selected = static fn ($value, $current) => (string) $value === (string) $curren
         <button class="btn btn-secondary" type="submit"><?php echo $label('OPEN'); ?></button>
     </form>
     <?php if ($data['event']) : ?>
+        <?php if ($data['unavailable'] !== '') : ?>
+            <div class="alert alert-warning"><?php echo $escape(Text::_($data['unavailable'])); ?></div>
+        <?php endif; ?>
         <div class="alert alert-info jem-inv-pool">
             <?php foreach ($data['pool'] as $name => $quantity) : ?>
                 <span><?php echo $label('POOL_' . strtoupper($name)); ?>: <strong><?php echo (int) $quantity; ?></strong></span>
@@ -34,6 +37,7 @@ $selected = static fn ($value, $current) => (string) $value === (string) $curren
         </div>
         <form method="post" action="<?php echo $escape(Route::_('index.php?option=com_jem')); ?>" id="jem-invitation-form">
             <input type="hidden" name="invitation[event_id]" value="<?php echo (int) $data['event']->id; ?>">
+            <fieldset<?php echo $data['unavailable'] !== '' ? ' disabled' : ''; ?>>
             <fieldset><legend><?php echo $label('SCOPE'); ?></legend>
                 <select name="invitation[scope]" class="form-select">
                     <option value="single"<?php echo $selected('single', $form['scope'] ?? 'single'); ?>><?php echo $label('SINGLE'); ?></option>
@@ -126,6 +130,7 @@ $selected = static fn ($value, $current) => (string) $value === (string) $curren
                 <button class="btn btn-secondary" type="submit" name="task" value="invitations.preview"><?php echo $label('PREVIEW'); ?></button>
                 <button class="btn btn-primary" type="submit" name="task" value="invitations.send" data-inv-send<?php echo !$data['reviewed'] ? ' disabled' : ''; ?>><?php echo $label('SEND'); ?></button>
             </div>
+            </fieldset>
             <?php echo HTMLHelper::_('form.token'); ?>
         </form>
         <h2><?php echo $label('EXISTING'); ?></h2>
@@ -140,7 +145,7 @@ $selected = static fn ($value, $current) => (string) $value === (string) $curren
                     : ((int) $row->status < 0 ? 'DECLINED' : ($row->waiting ? 'WAITING' : 'ACCEPTED')))); ?></td>
                 <td><form method="post" action="<?php echo $escape(Route::_('index.php?option=com_jem')); ?>">
                     <input type="hidden" name="id" value="<?php echo (int) $row->id; ?>"><input type="hidden" name="event_id" value="<?php echo (int) $row->event; ?>">
-                    <?php if ((int) $row->status === 0 && !$row->invitation_revoked && !JemInvitationPolicy::expired($row, gmdate('Y-m-d H:i:s'))) : ?>
+                    <?php if ($data['unavailable'] === '' && (int) $row->status === 0 && !$row->invitation_revoked && !JemInvitationPolicy::expired($row, gmdate('Y-m-d H:i:s'))) : ?>
                         <button class="btn btn-sm btn-secondary" name="task" value="invitations.resend"><?php echo $label('RESEND'); ?></button>
                     <?php endif; ?>
                     <?php if (!$row->invitation_revoked) : ?><button class="btn btn-sm btn-warning" name="task" value="invitations.revoke"><?php echo $label('REVOKE'); ?></button><?php endif; ?>

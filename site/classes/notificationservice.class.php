@@ -218,6 +218,40 @@ final class JemNotificationService
     }
 
     /**
+     * Recheck invitations immediately before delivery; publication never resumes a cancelled email.
+     * @param object $notification Immutable queued snapshot.
+     * @return bool Whether every included pending invitation still belongs to an available event.
+     */
+    private function invitationStillDeliverable(object $notification): bool
+    {
+        if (!in_array($notification->notification_type, array('invitation', 'invitation_invitation'), true)) {
+            return true;
+        }
+        require_once __DIR__ . '/registrationaccesspolicy.class.php';
+        $payload = json_decode((string) ($notification->payload_json ?? ''), true);
+        $rows = $payload['invitation_rows'] ?? array(array(
+            'id' => (int) $notification->registration_id,
+            'revision' => (int) $notification->registration_revision,
+        ));
+        if (!$rows) {
+            return false;
+        }
+        foreach ($rows as $expected) {
+            $row = $this->db->setQuery('SELECT r.*,e.published,e.publish_up,e.publish_down,e.event_status'
+                . ' FROM #__jem_register AS r INNER JOIN #__jem_events AS e ON e.id=r.event'
+                . ' WHERE r.id=' . (int) ($expected['id'] ?? 0))->loadObject();
+            if (!$row || (int) $row->status !== 0 || !empty($row->invitation_revoked)
+                || (int) $row->revision !== (int) ($expected['revision'] ?? 0)
+                || (!empty($row->invitation_expires) && $row->invitation_expires <= gmdate('Y-m-d H:i:s'))
+                || JemRegistrationAccessPolicy::invitationEventMessage($row) !== '') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Atomically claim a queued/failed snapshot and append its attempt row.
      */
     public function beginAttempt($notificationId, $source = 'automatic', $actorId = 0)
@@ -226,6 +260,18 @@ final class JemNotificationService
         if (!$notification
             || !in_array($notification->state, array(self::STATE_QUEUED, self::STATE_FAILED), true)
             || (int) $notification->attempt_count >= (int) $notification->max_attempts) {
+            return false;
+        }
+
+        if (!$this->invitationStillDeliverable($notification)) {
+            $query = $this->db->getQuery(true)
+                ->update($this->db->quoteName('#__jem_notifications'))
+                ->set($this->db->quoteName('state') . ' = ' . $this->db->quote(self::STATE_CANCELLED))
+                ->set($this->db->quoteName('cancelled_at') . ' = ' . $this->db->quote(Factory::getDate()->toSql()))
+                ->set($this->db->quoteName('next_attempt_at') . ' = NULL')
+                ->where('id = ' . (int) $notificationId)
+                ->where('state IN (' . $this->db->quote(self::STATE_QUEUED) . ',' . $this->db->quote(self::STATE_FAILED) . ')');
+            $this->db->setQuery($query)->execute();
             return false;
         }
 

@@ -105,7 +105,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.publish_up', 'a.publish_down', 'a.event_status', 'a.created', 'a.modified', 'a.created_by',
             'a.online_meeting_url', 'a.online_meeting_label', 'a.venue_snapshot',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places',
             'r.guest_name', 'r.guest_email', 'r.invitation_key',
@@ -120,6 +120,12 @@ class plgJemMailer extends CMSPlugin
         $db->setQuery($query);
         if (is_null($event = $db->loadObject())) {
             return false;
+        }
+        if ((int) $event->status === 0) {
+            require_once JPATH_SITE . '/components/com_jem/classes/registrationaccesspolicy.class.php';
+            if (JemRegistrationAccessPolicy::invitationEventMessage($event) !== '') {
+                return false;
+            }
         }
         $this->_applyAssociatedArticleContent($event);
         $this->_appendParentEventContext($event);
@@ -1366,6 +1372,16 @@ class plgJemMailer extends CMSPlugin
         if (!$rows) {
             return false;
         }
+        if ($action === 'invitation') {
+            require_once JPATH_SITE . '/components/com_jem/classes/registrationaccesspolicy.class.php';
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            foreach ($rows as $registration) {
+                $event = $db->setQuery('SELECT * FROM #__jem_events WHERE id=' . (int) $registration->event)->loadObject();
+                if (JemRegistrationAccessPolicy::invitationEventMessage($event) !== '') {
+                    return false;
+                }
+            }
+        }
         $row = reset($rows);
         $db = Factory::getContainer()->get('DatabaseDriver');
         $owner = !empty($row->uid) ? Factory::getContainer()->get(\Joomla\CMS\User\UserFactoryInterface::class)->loadUserById((int) $row->uid) : null;
@@ -1424,6 +1440,9 @@ class plgJemMailer extends CMSPlugin
             'template_id' => $message->template_id, 'subject' => $message->subject,
             'body' => $message->body, 'htmlbody' => $message->htmlbody, 'attachments' => $attachments,
             'idempotency_key' => hash('sha256', 'invitation|' . $action . '|' . $row->invitation_key . '|' . $row->revision . '|' . implode(',', array_column($rows, 'id'))),
+            'payload' => ['invitation_rows' => array_map(static fn ($item) => [
+                'id' => (int) $item->id, 'revision' => (int) $item->revision,
+            ], $rows)],
             'source' => 'invitation', 'created_by' => (int) $row->invitation_actor]);
         return true;
     }
