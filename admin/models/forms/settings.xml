@@ -15,6 +15,7 @@
         >
             <option value="essential">COM_JEM_OPERATING_PROFILE_ESSENTIAL</option>
             <option value="advanced">COM_JEM_OPERATING_PROFILE_ADVANCED</option>
+            <option value="ticketing">COM_JEM_OPERATING_PROFILE_TICKETING</option>
         </field>
         <field name="operating_profile_configured" type="hidden" default="0" filter="integer" />
     </fieldset>

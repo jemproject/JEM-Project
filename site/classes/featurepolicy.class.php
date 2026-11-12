@@ -33,6 +33,7 @@ final class JemFeaturePolicy
     private const SELECTABLE_PROFILES = array(
         self::PROFILE_ESSENTIAL,
         self::PROFILE_ADVANCED,
+        self::PROFILE_TICKETING,
     );
 
     private const CAPABILITIES = array(

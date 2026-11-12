@@ -12,7 +12,7 @@ final class FeaturePolicyTest extends TestCase
     {
         self::assertTrue(JemFeaturePolicy::isSelectable(JemFeaturePolicy::PROFILE_ESSENTIAL));
         self::assertTrue(JemFeaturePolicy::isSelectable(JemFeaturePolicy::PROFILE_ADVANCED));
-        self::assertFalse(JemFeaturePolicy::isSelectable(JemFeaturePolicy::PROFILE_TICKETING));
+        self::assertTrue(JemFeaturePolicy::isSelectable(JemFeaturePolicy::PROFILE_TICKETING));
         self::assertFalse(JemFeaturePolicy::isSelectable(JemFeaturePolicy::PROFILE_COMMERCE));
     }
 
@@ -43,12 +43,12 @@ final class FeaturePolicyTest extends TestCase
         self::assertFalse($policy->allows(JemFeaturePolicy::FEATURE_TICKETING));
     }
 
-    public function testTicketingCannotBeActivatedBySubmittedConfiguration(): void
+    public function testTicketingCanBeSelectedAndNormalised(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('COM_JEM_OPERATING_PROFILE_NOT_AVAILABLE');
-
-        JemFeaturePolicy::normaliseSelectableProfile(JemFeaturePolicy::PROFILE_TICKETING);
+        self::assertSame(
+            JemFeaturePolicy::PROFILE_TICKETING,
+            JemFeaturePolicy::normaliseSelectableProfile(' Ticketing ')
+        );
     }
 
     public function testCommerceCannotBeActivatedBySubmittedConfiguration(): void
@@ -76,15 +76,19 @@ final class FeaturePolicyTest extends TestCase
         self::assertFalse($policy->allows(JemFeaturePolicy::FEATURE_TICKETING));
     }
 
-    public function testStoredTicketingProfileIsFailClosed(): void
+    public function testTicketingInheritsAdvancedFeaturesWithoutOnlinePayments(): void
     {
         $policy = new JemFeaturePolicy(JemFeaturePolicy::PROFILE_TICKETING);
 
         self::assertSame(JemFeaturePolicy::PROFILE_TICKETING, $policy->getProfile());
-        self::assertFalse($policy->isAdvanced());
-        self::assertFalse($policy->isTicketing());
-        self::assertFalse($policy->allows(JemFeaturePolicy::FEATURE_PRICING));
-        self::assertFalse($policy->allows(JemFeaturePolicy::FEATURE_TICKETING));
+        self::assertTrue($policy->isAdvanced());
+        self::assertTrue($policy->isTicketing());
+        self::assertTrue($policy->allows(JemFeaturePolicy::FEATURE_PRICING));
+        self::assertTrue($policy->allows(JemFeaturePolicy::FEATURE_TICKETING));
+        self::assertTrue($policy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION));
+        self::assertTrue($policy->allows(JemFeaturePolicy::FEATURE_CAPACITY_REGISTRATION));
+        self::assertTrue($policy->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY));
         self::assertFalse($policy->allows(JemFeaturePolicy::FEATURE_PAYMENTS));
+        self::assertFalse($policy->isCommerce());
     }
 }

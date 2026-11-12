@@ -38,13 +38,13 @@ $configured = (int) $this->form->getValue('operating_profile_configured', null, 
             </span>
         </label>
 
-        <div class="jem-operating-profile-card is-disabled" aria-disabled="true">
-            <input type="radio" disabled aria-describedby="jem-operating-profile-ticketing-desc">
+        <label class="jem-operating-profile-card<?php echo $profile === JemFeaturePolicy::PROFILE_TICKETING ? ' is-selected' : ''; ?>">
+            <input type="radio" name="jform[operating_profile]" value="ticketing" aria-describedby="jem-operating-profile-ticketing-desc"<?php echo $profile === JemFeaturePolicy::PROFILE_TICKETING ? ' checked' : ''; ?>>
             <span class="jem-operating-profile-card-copy">
                 <strong><?php echo Text::_('COM_JEM_OPERATING_PROFILE_TICKETING'); ?></strong>
                 <span id="jem-operating-profile-ticketing-desc" class="form-text"><?php echo Text::_('COM_JEM_OPERATING_PROFILE_TICKETING_DESC'); ?></span>
             </span>
-        </div>
+        </label>
 
         <div class="jem-operating-profile-card is-disabled" aria-disabled="true">
             <input type="radio" disabled aria-describedby="jem-operating-profile-commerce-desc">
