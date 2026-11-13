@@ -14,6 +14,8 @@ use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
+
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
 require_once dirname(__DIR__) . '/classes/registrationcomment.class.php';
 /**
  * Event-Model
@@ -46,7 +48,7 @@ class JemModelEvent extends ItemModel
         $pk = $app->input->getInt('id', 0);
         $this->setState('event.id', $pk);
 
-        $offset = $app->input->getInt('limitstart', 0);
+        $offset = (int) \JemFilterInput::read($app->input, 'limitstart', 0, 'int');
         $this->setState('list.offset', $offset);
 
         // Load the parameters.

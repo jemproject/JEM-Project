@@ -15,6 +15,7 @@ final class EventsBlogPaginationTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         require_once JEM_TEST_ROOT . '/tests/Support/eventsblog_pagination_environment.php';
+        require_once JEM_TEST_ROOT . '/site/classes/filterinput.class.php';
         $methods = '';
         foreach ([
             'eventslist' => ['normaliseParamIds', 'normaliseParamStrings'],

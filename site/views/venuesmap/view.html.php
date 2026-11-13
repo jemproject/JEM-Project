@@ -143,7 +143,7 @@ class JemViewVenuesMap extends JemView
 
         // Pagination over the filtered venueslist
         $listLimit   = max(1, (int) $params->get('venues_list_limit', $app->get('list_limit', 20)));
-        $limitstart  = max(0, $jinput->getInt('limitstart', 0));
+        $limitstart  = max(0, (int) \JemFilterInput::read($jinput, 'limitstart', 0, 'int'));
         $totalVenues = count($venueslist);
         if ($limitstart >= $totalVenues && $totalVenues > 0) {
             $limitstart = 0;

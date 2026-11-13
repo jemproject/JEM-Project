@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
 
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
 require_once __DIR__ . '/eventslist.php';
 
 /**
@@ -105,7 +106,7 @@ class JemModelEventsblog extends JemModelEventslist
 
         // Blog page size belongs to the menu; request input only selects the page offset.
         $limit   = max(1, min(100, (int) $params->get('blog_events_per_page', 12)));
-        $startAt = max(0, $input->getInt('limitstart', 0));
+        $startAt = max(0, (int) \JemFilterInput::read($input, 'limitstart', 0, 'int'));
 
         $this->setState('list.limit', $limit);
         $this->setState('list.start', (int) (floor($startAt / $limit) * $limit));

@@ -413,7 +413,7 @@ class JemModelSearch extends BaseDatabaseModel
 
         //$filter            = $app->input->getString('filter', '');
         $filter            = $this->getSearchFilter('filter_search', '', 'string');
-        $filter_type       = $app->input->get('filter_type', '');
+        $filter_type       = (string) JemFilterInput::read($app->input, 'filter_type', 'title');
         $filter_continent  = $this->getSearchFilter('filter_continent', '', 'string');
         $filter_country    = $this->getSearchFilter('filter_country', '', 'string');
         $filter_city       = $this->getSearchFilter('filter_city', '', 'string');
