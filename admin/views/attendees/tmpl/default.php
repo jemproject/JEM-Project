@@ -197,8 +197,8 @@ $wa->addInlineScript('
                         <?php echo (int) $row->places; ?>
                     </td>
                     <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-                    <?php $cmnt = (StringHelper::strlen($row->comment) > 16) ? (rtrim(StringHelper::substr($row->comment, 0, 14)).'&hellip;') : $row->comment; ?>
-                    <td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $this->escape($row->comment), null, null, $this->escape($cmnt), null, null); } ?></td>
+                    <?php $cmnt = (StringHelper::strlen($row->comment) > 16) ? (rtrim(StringHelper::substr($row->comment, 0, 14)).'…') : $row->comment; ?>
+                    <td><?php if ($cmnt !== '') { echo '<span title="' . $this->escape((string) $row->comment) . '">' . $this->escape($cmnt) . '</span>'; } ?></td>
                     <?php endif; ?>
                     <td class="center">
                         <a href="javascript: void(0);" onclick="return Joomla.listItemTask('cb<?php echo $i;?>','attendees.remove')">

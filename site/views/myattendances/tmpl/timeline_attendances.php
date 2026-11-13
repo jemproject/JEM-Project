@@ -250,9 +250,9 @@ $showAxisDate = (int) $this->params->get('timeline_show_axis_date', 1);
                 }
 
                 $comment = '';
-                if (!empty($this->jemsettings->regallowcomments) && !empty($row->comment)) {
+                if (!empty($this->jemsettings->regallowcomments) && (string) ($row->comment ?? '') !== '') {
                     $len = $this->print ? 256 : 48;
-                    $comment = (StringHelper::strlen($row->comment) > $len) ? (StringHelper::substr($row->comment, 0, $len - 2) . '&hellip;') : $row->comment;
+                    $comment = (StringHelper::strlen($row->comment) > $len) ? (StringHelper::substr($row->comment, 0, $len - 2) . '…') : $row->comment;
                 }
                 ?>
                 <article class="jem-myattendances-timeline-row<?php echo !empty($row->featured) ? ' featured' : ''; ?> event_id<?php echo $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
@@ -317,7 +317,7 @@ $showAxisDate = (int) $this->params->get('timeline_show_axis_date', 1);
 
                         <?php if ($comment !== '') : ?>
                             <div class="jem-myattendances-timeline-comment">
-                                <?php echo $this->print ? $comment : HTMLHelper::_('tooltip', $row->comment, null, null, $comment, null, null); ?>
+                                <?php echo $this->print ? $this->escape($comment) : '<span title="' . $this->escape((string) $row->comment) . '">' . $this->escape($comment) . '</span>'; ?>
                             </div>
                         <?php endif; ?>
                     </div>

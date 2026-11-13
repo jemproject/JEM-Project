@@ -9,12 +9,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
+require_once dirname(__DIR__) . '/classes/registrationcomment.class.php';
 /**
  * Event-Model
  */
@@ -1189,8 +1189,12 @@ class JemModelEvent extends ItemModel
 
         $status  = $app->input->getInt('reg_check', 0);
         //    $noreg   = ($status == -1) ? 'on' : 'off';//$app->input->getString('noreg_check', 'off');
-        $comment = $app->input->getString('reg_comment', '');
-        $comment = OutputFilter::cleanText($comment);
+        try {
+            $comment = JemRegistrationComment::normalise($app->input->get('reg_comment', '', 'raw'));
+        } catch (InvalidArgumentException $exception) {
+            $this->setError(Text::_($exception->getMessage()));
+            return false;
+        }
         $regid   = $app->input->getInt('regid', 0);
         try {
             $addplaces = JemRegistrationQuantity::parseOptional($app->input->get('addplaces', null, 'raw'));
