@@ -1696,6 +1696,9 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
                 if (!JemHelper::copyEventLinks($rootEventId, (int) $copy->id)) {
                     throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_SAVE_LINKS'));
                 }
+                if (!JemHelper::copyEventInvitations($rootEventId, (int) $copy->id)) {
+                    throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
+                }
             }
 
             if ($manageTransaction) {
@@ -1787,6 +1790,9 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
                 if (!$eventId && !JemHelper::copyEventLinks($sourceEventId, (int) $event->id)) {
                     throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_SAVE_LINKS'));
                 }
+                if (!$eventId && !JemHelper::copyEventInvitations($sourceEventId, (int) $event->id)) {
+                    throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
+                }
             }
             if ($manageTransaction) {
                 $db->transactionCommit();
@@ -1848,6 +1854,10 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
             if (isset($data['event_links']) && !$this->saveLinks($eventId, $data['event_links'])) {
                 $this->setError(Text::_('COM_JEM_EVENT_ERROR_SAVE_LINKS'));
 
+                return false;
+            }
+            if (!JemHelper::copyEventInvitations($sourceEventId, $eventId)) {
+                $this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
                 return false;
             }
         }

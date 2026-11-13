@@ -63,6 +63,7 @@ final class JemRegistrationService
      *
      * Event locks are acquired in numeric order to prevent deadlocks between
      * concurrent series submissions. Capacity is recalculated under the locks.
+     * Set options['useSavepoint'] to retain a caller-owned occurrence transaction.
      */
     public function saveMany(array $rows, array $options = array())
     {
@@ -86,7 +87,8 @@ final class JemRegistrationService
 
         $eventIds = array_values(array_unique($eventIds));
         sort($eventIds, SORT_NUMERIC);
-        $this->db->transactionStart();
+        $useSavepoint = !empty($options['useSavepoint']);
+        $this->db->transactionStart($useSavepoint);
 
         try {
             foreach ($eventIds as $eventId) {
@@ -99,11 +101,11 @@ final class JemRegistrationService
                 $results[] = $this->saveLocked($before, $row, $options);
             }
 
-            $this->db->transactionCommit();
+            $this->db->transactionCommit($useSavepoint);
 
             return $results;
         } catch (Throwable $e) {
-            $this->db->transactionRollback();
+            $this->db->transactionRollback($useSavepoint);
             throw $e;
         }
     }

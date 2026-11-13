@@ -2597,6 +2597,74 @@ class JemHelper
     }
 
     /**
+     * Copy pending invitations to an occurrence without changing existing responses.
+     * Only eligible recipients of the same series are copied; no mail is dispatched.
+     * The batch uses a savepoint to preserve the caller's occurrence transaction.
+     *
+     * @param int $sourceEventId Source occurrence holding pending invitations.
+     * @param int $targetEventId Target occurrence in the same series.
+     * @return bool True on success (including no eligible invitations), false on failure.
+     */
+    public static function copyEventInvitations($sourceEventId, $targetEventId)
+    {
+        $sourceEventId = (int) $sourceEventId;
+        $targetEventId = (int) $targetEventId;
+        if ($sourceEventId <= 0 || $targetEventId <= 0 || $sourceEventId === $targetEventId) {
+            return false;
+        }
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $events = $db->setQuery('SELECT * FROM #__jem_events WHERE id IN ('
+                . $sourceEventId . ',' . $targetEventId . ')')->loadObjectList('id');
+            if (!isset($events[$sourceEventId], $events[$targetEventId])) {
+                return false;
+            }
+            $source = $events[$sourceEventId];
+            $target = $events[$targetEventId];
+            $sameSeries = !empty($source->series_id)
+                ? (int) $source->series_id === (int) $target->series_id
+                : empty($target->series_id)
+                    && (int) ($source->recurrence_first_id ?: $source->id)
+                        === (int) ($target->recurrence_first_id ?: $target->id);
+            if (!$sameSeries) {
+                return false;
+            }
+            if (JemRegistrationAccessPolicy::invitationEventMessage($target) !== '') {
+                return true;
+            }
+
+            $invited = $db->setQuery('SELECT r.uid,r.places FROM #__jem_register r'
+                . ' LEFT JOIN #__jem_register existing ON existing.uid=r.uid AND existing.event=' . $targetEventId
+                . ' WHERE r.event=' . $sourceEventId . ' AND r.status=0 AND existing.id IS NULL ORDER BY r.uid')->loadObjectList();
+            $access = new JemInvitationAccess($db);
+            $pending = array();
+            foreach ($invited as $invitation) {
+                if ($access->message($targetEventId, (int) $invitation->uid) !== '') {
+                    continue;
+                }
+                $pending[] = (object) array(
+                    'event' => $targetEventId,
+                    'uid' => (int) $invitation->uid,
+                    'status' => 0,
+                    'waiting' => 0,
+                    'places' => (int) $invitation->places,
+                );
+            }
+            if ($pending) {
+                (new JemRegistrationService($db))->saveMany($pending, array(
+                    'requireNew' => true,
+                    'useSavepoint' => true,
+                ));
+            }
+            return true;
+        } catch (Throwable $error) {
+            self::addLogEntry('Invitation propagation failed: ' . $error->getMessage(), __METHOD__, Log::ERROR);
+            return false;
+        }
+    }
+
+    /**
      * Performs daily scheduled cleanups
      *
      * Currently it archives and removes outdated events
@@ -2748,38 +2816,30 @@ class JemHelper
                             $new_event->enddates = $recurrence_row['enddates'];
                             $new_event->_autocreate = true; // to tell table class this has to be stored AS IS (the underscore is important!)
 
-                            $storedOccurrence = $new_event->store();
-                            if (!$storedOccurrence && $recurrenceRoot > 0) {
-                                throw new RuntimeException($new_event->getError() ?: Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
-                            }
-                            if ($storedOccurrence)
-                            {
-                                $recurrence_row['counter']++;
-                                // Duplicate categories event relationships via INSERT INTO ... SELECT.
-                                // Both ids are cast to int — no user input is interpolated.
+                            // Keep the complete occurrence atomic, also during daily generation.
+                            $db->transactionStart(true);
+                            try {
+                                if (!$new_event->store()) {
+                                    throw new RuntimeException($new_event->getError() ?: Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
+                                }
                                 $insertQuery = 'INSERT INTO #__jem_cats_event_relations (itemid, catid)'
                                     . ' SELECT ' . (int) $new_event->id . ', catid'
                                     . ' FROM #__jem_cats_event_relations'
                                     . ' WHERE itemid = ' . (int) $ref_event->id;
-
-                                $db->setQuery($insertQuery);
-
-                                if ($db->execute() === false) {
-                                    if ($recurrenceRoot > 0) {
-                                        throw new RuntimeException(Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
-                                    }
-                                    // run query always but don't show error message to "normal" users
-                                    $user = JemFactory::getUser();
-                                    if ($user->authorise('core.manage')) {
-                                        // Escape title to prevent XSS in admin error output.
-                                        $safeTitle = htmlspecialchars($ref_event->title, ENT_QUOTES, 'UTF-8');
-                                        echo 'Error saving categories for event "' . $safeTitle . '" new recurrences' . "\n";
-                                    }
+                                if (!$db->setQuery($insertQuery)->execute()) {
+                                    throw new RuntimeException(Text::_('COM_JEM_RECURRENCE_CHANGE_FAILED'));
                                 }
-
                                 if (!self::copyEventLinks((int) $ref_event->id, (int) $new_event->id)) {
                                     throw new RuntimeException('Error saving links for new recurrence');
                                 }
+                                if (!self::copyEventInvitations((int) $ref_event->id, (int) $new_event->id)) {
+                                    throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
+                                }
+                                $db->transactionCommit(true);
+                                $recurrence_row['counter']++;
+                            } catch (Throwable $error) {
+                                $db->transactionRollback(true);
+                                throw $error;
                             }
 
                             $nextRecurrence = JemHelper::calculate_recurrence($recurrence_row);
