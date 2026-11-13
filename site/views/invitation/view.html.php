@@ -15,6 +15,7 @@ class JemViewInvitation extends JemView
     public int $invitationId = 0;
     public bool $answered = false;
     public bool $canAccept = true;
+    public bool $accessDenied = false;
 
     /** @param string|null $tpl Layout suffix. @return void */
     public function display($tpl = null)
@@ -50,6 +51,7 @@ class JemViewInvitation extends JemView
                     }
                 } catch (Throwable $error) {
                     $this->canAccept = false;
+                    $this->accessDenied = $error instanceof DomainException && $error->getMessage() === JemInvitationAccess::ACCESS_CHANGED;
                     $app->enqueueMessage(Text::_($error instanceof DomainException ? $error->getMessage() : 'COM_JEM_INV_ERROR'), 'warning');
                 }
             } else {
@@ -61,7 +63,22 @@ class JemViewInvitation extends JemView
                 $rows = $db->setQuery('SELECT * FROM #__jem_register WHERE id IN (' . implode(',', $ids) . ') ORDER BY event')->loadObjectList();
                 $this->answered = true;
             }
+            $recipientAccess = new JemInvitationAccess($db);
             foreach ($rows as $row) {
+                if ($row->uid && $recipientAccess->message((int) $row->event, (int) $row->uid) !== '') {
+                    if (!$this->accessDenied) {
+                        $app->enqueueMessage(Text::_(JemInvitationAccess::ACCESS_CHANGED), 'warning');
+                    }
+                    $this->accessDenied = true;
+                    $this->canAccept = false;
+                    break;
+                }
+            }
+            foreach ($rows as $row) {
+                if ($this->accessDenied) {
+                    $this->invitationRows[] = ['registration' => $row, 'event' => null];
+                    continue;
+                }
                 $event = $db->setQuery('SELECT title,dates,times FROM #__jem_events WHERE id=' . (int) $row->event)->loadObject();
                 if ($event) {
                     $this->invitationRows[] = ['registration' => $row, 'event' => $event];

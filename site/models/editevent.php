@@ -817,6 +817,11 @@ class JemModelEditevent extends JemModelEvent
         $where = array();
         $where[] = 'usr.block = 0';
         $where[] = 'NOT usr.activation > 0';
+        require_once JPATH_SITE . '/components/com_jem/classes/invitationaccess.class.php';
+        $candidates = $db->setQuery("SELECT id FROM #__users WHERE block=0 AND (activation IS NULL OR activation IN ('','0'))")->loadObjectList();
+        $eligible = (new JemInvitationAccess($db))->filterUsers($candidates, [(int) $this->getState('event.id')]);
+        $ids = array_map(static fn ($user) => (int) $user->id, $eligible);
+        $where[] = $ids ? 'usr.id IN (' . implode(',', $ids) . ')' : '1=0';
 
         /* something to search for? (we like to search for "0" too) */
         if ($search || ($search === "0")) {

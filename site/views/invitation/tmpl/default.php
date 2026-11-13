@@ -11,6 +11,7 @@ $escape = static fn ($value) => htmlspecialchars((string) $value, ENT_QUOTES | E
 <div class="jem-invitation-portal">
     <h1><?php echo Text::_('COM_JEM_INV_YOUR_INVITATION'); ?></h1>
     <?php if ($this->invitationRows) : $first = $this->invitationRows[0]['registration']; ?>
+        <?php if (!$this->accessDenied) : ?>
         <p><?php echo nl2br($escape($first->invitation_message)); ?></p>
         <p><?php echo Text::_($first->invitation_kind === 'reserved' ? 'COM_JEM_INV_GUARANTEED_NOTICE' : 'COM_JEM_INV_OPEN_NOTICE'); ?></p>
         <p><?php echo Text::_($first->invitation_free ? 'COM_JEM_INV_FREE_NOTICE' : 'COM_JEM_INV_PRICE_NOTICE'); ?></p>
@@ -35,6 +36,7 @@ $escape = static fn ($value) => htmlspecialchars((string) $value, ENT_QUOTES | E
             </li>
         <?php endforeach; ?>
         </ul>
+        <?php endif; ?>
         <?php if (!$this->answered) : ?>
             <form method="post" action="<?php echo $escape(Route::_('index.php?option=com_jem&task=invitations.respond')); ?>">
                 <input type="hidden" name="invitation_id" value="<?php echo (int) $this->invitationId; ?>">

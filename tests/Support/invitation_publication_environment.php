@@ -98,6 +98,10 @@ $db->setQuery("INSERT INTO #__users VALUES (42,'Test participant','participant@e
 /** Only the registration clock is replaced; policy, SQL and mutation methods are production code. */
 final class JemHelper
 {
+    /** @return object Venue-lock defaults used by event-detail access. */
+    public static function config(): object { return (object) ['access_level_locked_venues' => '["1"]']; }
+    /** @param object $event Ancestor. @return bool Fixture publication state. */
+    public static function isEventPublishedNow($event): bool { return (int) $event->published === 1; }
     /** @param object $event Fixture date. @return string Registration availability. */
     public static function getEventRegistrationWindowState($event): string
     {
@@ -107,3 +111,5 @@ final class JemHelper
 require_once JEM_TEST_ROOT . '/site/classes/registrationaccesspolicy.class.php';
 require_once JEM_TEST_ROOT . '/site/classes/registrationservice.class.php';
 require_once JEM_TEST_ROOT . '/admin/models/event.php';
+
+require_once __DIR__ . '/invitation_recipient_environment.php';

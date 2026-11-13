@@ -11,6 +11,7 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\UserFactoryInterface;
 
 require_once __DIR__ . '/invitationpolicy.class.php';
+require_once __DIR__ . '/invitationaccess.class.php';
 require_once __DIR__ . '/registrationservice.class.php';
 require_once __DIR__ . '/registrationidentity.class.php';
 require_once __DIR__ . '/registrationtransition.class.php';
@@ -197,11 +198,13 @@ final class JemInvitationService
                     ));
                 }
             }
+            $recipientAccess = new JemInvitationAccess($this->db);
             foreach ($resolved['recipients'] as $holder) {
                 $key = bin2hex(random_bytes(16));
                 $token = JemInvitationPolicy::token();
                 $rows = [];
                 $existing = false;
+                $accessDenied = false;
                 foreach ($events as $event) {
                     $identity = '(guest_email=' . $this->db->quote($holder['email'])
                         . ($holder['uid'] ? ' OR uid=' . (int) $holder['uid'] : '') . ')';
@@ -210,15 +213,15 @@ final class JemInvitationService
                         break;
                     }
                     if ($holder['uid']) {
-                        $user = $this->user((int) $holder['uid']);
-                        if (!in_array((int) $event->access, $user->getAuthorisedViewLevels(), true)) {
+                        if ($recipientAccess->message((int) $event->id, (int) $holder['uid']) !== '') {
+                            $accessDenied = true;
                             $existing = true;
                             break;
                         }
                     }
                 }
                 if ($existing) {
-                    $report['excluded'][] = ['name' => $holder['name'], 'reason' => 'COM_JEM_INV_EXISTING_OR_ACCESS'];
+                    $report['excluded'][] = ['name' => $holder['name'], 'reason' => $accessDenied ? JemInvitationAccess::NO_ACCESS : 'COM_JEM_INV_EXISTING_OR_ACCESS'];
                     continue;
                 }
                 foreach ($events as $event) {
@@ -252,7 +255,8 @@ final class JemInvitationService
                     ], $rows)];
             }
             if (!$report['recipients']) {
-                throw new DomainException('COM_JEM_INV_NO_RECIPIENTS');
+                $denied = array_filter($report['excluded'], static fn ($row) => $row['reason'] === JemInvitationAccess::NO_ACCESS);
+                throw new DomainException($denied ? JemInvitationAccess::NO_ACCESS : 'COM_JEM_INV_NO_RECIPIENTS');
             }
             $report['fingerprint'] = hash('sha256', json_encode([
                 $fingerprint, $report['rows'], $report['excluded'],
@@ -468,6 +472,9 @@ final class JemInvitationService
                 }
                 $event = $this->db->setQuery('SELECT * FROM #__jem_events WHERE id=' . (int) $row->event)->loadObject();
                 if ($accept) {
+                    if ($row->uid && (new JemInvitationAccess($this->db))->message((int) $row->event, (int) $row->uid) !== '') {
+                        throw new DomainException(JemInvitationAccess::ACCESS_CHANGED);
+                    }
                     if ($row->uid) {
                         $user = $this->db->setQuery('SELECT block,activation FROM #__users WHERE id=' . (int) $row->uid)->loadObject();
                         if (!$user || $user->block || JemRegistrationService::activationRequiresVerification($user->activation)) {
@@ -538,6 +545,9 @@ final class JemInvitationService
                 $event = $this->db->setQuery('SELECT * FROM #__jem_events WHERE id=' . (int) $item->event)->loadObject();
                 if (!$revoke) {
                     $this->assertOpen($event);
+                    if ($before->uid && (new JemInvitationAccess($this->db))->message((int) $before->event, (int) $before->uid) !== '') {
+                        throw new DomainException(JemInvitationAccess::NO_ACCESS);
+                    }
                 }
                 $results[] = (new JemRegistrationService($this->db))->saveLocked($before, $after, [
                     'invitationWrite' => true, 'invitationResponse' => true, 'actorId' => (int) $actor->id,
@@ -595,8 +605,12 @@ final class JemInvitationService
             $target->reservedplaces = (int) $source->reservedplaces + $confirmed;
             $this->db->setQuery('UPDATE #__jem_events SET reservedplaces=' . (int) $target->reservedplaces . ' WHERE id=' . $targetId)->execute();
         }
+        $recipientAccess = new JemInvitationAccess($this->db);
         foreach ($byKey as $original) {
             if ($original->invitation_revoked || JemInvitationPolicy::expired($original, gmdate('Y-m-d H:i:s'))) {
+                continue;
+            }
+            if ($original->uid && $recipientAccess->message($targetId, (int) $original->uid) !== '') {
                 continue;
             }
             if ($original->uid) {

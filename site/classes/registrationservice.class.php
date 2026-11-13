@@ -15,6 +15,7 @@ require_once __DIR__ . '/registrationquantity.class.php';
 require_once __DIR__ . '/invitationpolicy.class.php';
 require_once __DIR__ . '/invitationschema.class.php';
 require_once __DIR__ . '/registrationaccesspolicy.class.php';
+require_once __DIR__ . '/invitationaccess.class.php';
 
 /**
  * Authoritative transactional writer for JEM registrations.
@@ -856,6 +857,17 @@ final class JemRegistrationService
 
         if (JemRegistrationAccessPolicy::addsInvitation($before, $registration)) {
             $message = JemRegistrationAccessPolicy::invitationEventMessage($event);
+            if ($message !== '') {
+                throw new RuntimeException(Text::_($message));
+            }
+        }
+
+        // Recheck the recipient for new invitations and acceptance of an existing one.
+        // Declines, withdrawals and unrelated booking edits must remain possible.
+        if ((int) ($registration->uid ?? 0) > 0
+            && (JemRegistrationAccessPolicy::addsInvitation($before, $registration)
+                || ($before && (int) $before->status === 0 && (int) $registration->status === 1))) {
+            $message = (new JemInvitationAccess($this->db))->message((int) $registration->event, (int) $registration->uid);
             if ($message !== '') {
                 throw new RuntimeException(Text::_($message));
             }

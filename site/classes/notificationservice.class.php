@@ -236,6 +236,8 @@ final class JemNotificationService
         if (!$rows) {
             return false;
         }
+        require_once __DIR__ . '/invitationaccess.class.php';
+        $recipientAccess = new JemInvitationAccess($this->db);
         foreach ($rows as $expected) {
             $row = $this->db->setQuery('SELECT r.*,e.published,e.publish_up,e.publish_down,e.event_status'
                 . ' FROM #__jem_register AS r INNER JOIN #__jem_events AS e ON e.id=r.event'
@@ -243,7 +245,8 @@ final class JemNotificationService
             if (!$row || (int) $row->status !== 0 || !empty($row->invitation_revoked)
                 || (int) $row->revision !== (int) ($expected['revision'] ?? 0)
                 || (!empty($row->invitation_expires) && $row->invitation_expires <= gmdate('Y-m-d H:i:s'))
-                || JemRegistrationAccessPolicy::invitationEventMessage($row) !== '') {
+                || JemRegistrationAccessPolicy::invitationEventMessage($row) !== ''
+                || ((int) $row->uid > 0 && $recipientAccess->message((int) $row->event, (int) $row->uid) !== '')) {
                 return false;
             }
         }

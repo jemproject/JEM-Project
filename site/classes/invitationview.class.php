@@ -47,12 +47,17 @@ trait JemInvitationView
         $rows = $id ? $db->setQuery('SELECT r.*,COALESCE(u.name,r.guest_name) AS holder_name,
             COALESCE(u.email,r.guest_email) AS holder_email FROM #__jem_register r LEFT JOIN #__users u ON u.id=r.uid
             WHERE r.event=' . $id . ' AND r.invitation_key IS NOT NULL ORDER BY r.id DESC')->loadObjectList() : [];
+        $recipientAccess = new JemInvitationAccess($db);
+        $candidates = $id ? $db->setQuery("SELECT id,name FROM #__users WHERE block=0 AND (activation IS NULL OR activation IN ('','0')) ORDER BY name")->loadObjectList() : [];
+        $users = $recipientAccess->filterUsers($candidates, $id ? [$id] : []);
+        $seriesUsers = $id ? $recipientAccess->filterUsers($users, array_keys($service->dates($id, 'series'))) : [];
         $assigned = array_sum(array_map(static fn ($row) => (int) $row->reserved_assigned, $rows));
         $confirmed = array_sum(array_map(static fn ($row) => (int) $row->reserved_confirmed, $rows));
         $this->invitationData = [
             'events' => $events, 'event' => $event, 'form' => $form, 'rows' => $rows,
             'unavailable' => $event ? $service->availabilityMessage($event) : '',
-            'users' => $id ? $db->setQuery("SELECT id,name FROM #__users WHERE block=0 AND (activation IS NULL OR activation IN ('','0')) ORDER BY name")->loadObjectList() : [],
+            'users' => $users,
+            'series_users' => array_map(static fn ($user) => (int) $user->id, $seriesUsers),
             'groups' => $actor->authorise('jem.invitations.bulk', 'com_jem') ? $db->setQuery('SELECT id,title FROM #__usergroups ORDER BY lft')->loadObjectList() : [],
             'prices' => $id ? $db->setQuery('SELECT code,name,amount FROM #__jem_event_prices WHERE published=1 AND event_id=' . $id . ' ORDER BY ordering,id')->loadObjectList() : [],
             'areas' => $id ? (new JemRegistrationService($db))->capacityOptions($id)->options : [],

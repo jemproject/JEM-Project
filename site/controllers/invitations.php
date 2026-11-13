@@ -134,6 +134,9 @@ class JemControllerInvitations extends BaseController
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
         $row = $db->setQuery('SELECT * FROM #__jem_register WHERE id=' . $id)->loadObject();
+        if ($row && $row->uid && (new JemInvitationAccess($db))->message((int) $row->event, (int) $row->uid) !== '') {
+            throw new RuntimeException(Text::_(JemInvitationAccess::ACCESS_CHANGED), 403);
+        }
         require_once JPATH_SITE . '/components/com_jem/classes/ticketservice.class.php';
         require_once JPATH_SITE . '/components/com_jem/classes/ticketpdf.class.php';
         $ticket = (new JemTicketService($db))->invitationDocument($row);

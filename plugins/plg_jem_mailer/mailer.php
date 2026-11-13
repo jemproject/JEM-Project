@@ -126,6 +126,11 @@ class plgJemMailer extends CMSPlugin
             if (JemRegistrationAccessPolicy::invitationEventMessage($event) !== '') {
                 return false;
             }
+            require_once JPATH_SITE . '/components/com_jem/classes/invitationaccess.class.php';
+            if ((int) $event->uid > 0
+                && (new JemInvitationAccess($db))->message((int) $event->id, (int) $event->uid) !== '') {
+                return false;
+            }
         }
         $this->_applyAssociatedArticleContent($event);
         $this->_appendParentEventContext($event);
@@ -1429,9 +1434,12 @@ class plgJemMailer extends CMSPlugin
         if ($action === 'invitation') {
             require_once JPATH_SITE . '/components/com_jem/classes/registrationaccesspolicy.class.php';
             $db = Factory::getContainer()->get('DatabaseDriver');
+            require_once JPATH_SITE . '/components/com_jem/classes/invitationaccess.class.php';
+            $recipientAccess = new JemInvitationAccess($db);
             foreach ($rows as $registration) {
                 $event = $db->setQuery('SELECT * FROM #__jem_events WHERE id=' . (int) $registration->event)->loadObject();
-                if (JemRegistrationAccessPolicy::invitationEventMessage($event) !== '') {
+                if (JemRegistrationAccessPolicy::invitationEventMessage($event) !== ''
+                    || ((int) $registration->uid > 0 && $recipientAccess->message((int) $registration->event, (int) $registration->uid) !== '')) {
                     return false;
                 }
             }

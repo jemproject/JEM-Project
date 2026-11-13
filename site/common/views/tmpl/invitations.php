@@ -39,7 +39,7 @@ $selected = static fn ($value, $current) => (string) $value === (string) $curren
             <input type="hidden" name="invitation[event_id]" value="<?php echo (int) $data['event']->id; ?>">
             <fieldset<?php echo $data['unavailable'] !== '' ? ' disabled' : ''; ?>>
             <fieldset><legend><?php echo $label('SCOPE'); ?></legend>
-                <select name="invitation[scope]" class="form-select">
+                <select id="inv-scope" name="invitation[scope]" class="form-select">
                     <option value="single"<?php echo $selected('single', $form['scope'] ?? 'single'); ?>><?php echo $label('SINGLE'); ?></option>
                     <option value="series"<?php echo $selected('series', $form['scope'] ?? 'single'); ?>><?php echo $label('SERIES'); ?></option>
                 </select>
@@ -51,10 +51,13 @@ $selected = static fn ($value, $current) => (string) $value === (string) $curren
                         <option value="<?php echo $option; ?>"<?php echo $selected($option, $form['audience'] ?? 'users'); ?>><?php echo $label(strtoupper($option)); ?></option>
                     <?php endforeach; ?>
                 </select>
+                <p class="form-text"><?php echo $escape(Text::_('COM_JEM_INVITATION_ELIGIBLE_USERS')); ?></p>
                 <div data-inv-audience="users"><label for="inv-users"><?php echo $label('USERS'); ?></label>
                     <select id="inv-users" name="invitation[users][]" multiple class="form-select" size="6">
-                        <?php foreach ($data['users'] as $user) : ?>
-                            <option value="<?php echo (int) $user->id; ?>"<?php echo in_array((string) $user->id, array_map('strval', (array) ($form['users'] ?? [])), true) ? ' selected' : ''; ?>><?php echo $escape($user->name); ?></option>
+                        <?php foreach ($data['users'] as $user) :
+                            $seriesEligible = in_array((int) $user->id, $data['series_users'], true);
+                            $excluded = ($form['scope'] ?? 'single') === 'series' && !$seriesEligible; ?>
+                            <option value="<?php echo (int) $user->id; ?>" data-inv-series="<?php echo $seriesEligible ? '1' : '0'; ?>"<?php echo $excluded ? ' hidden disabled' : ''; ?><?php echo !$excluded && in_array((string) $user->id, array_map('strval', (array) ($form['users'] ?? [])), true) ? ' selected' : ''; ?>><?php echo $escape($user->name); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
