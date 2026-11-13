@@ -81,6 +81,46 @@ final class JemNotificationTemplateService
     }
 
     /**
+     * Format canonical event-local values in the effective recipient language.
+     *
+     * @param string|null $date Event date, without a timezone conversion.
+     * @param string|null $time Event wall-clock time, or no time.
+     * @param string|null $languageTag Resolved recipient language; null uses the request language.
+     * @return array<string, string> Date/time template values using JEM display settings.
+     */
+    public static function formatEventDateTime($date, $time, $languageTag = null): array
+    {
+        require_once __DIR__ . '/output.class.php';
+
+        $app = Factory::getApplication();
+        $languageTag = self::normaliseLanguageTag($languageTag);
+        static $languages = array();
+        if (!isset($languages[$languageTag])) {
+            $language = Factory::getContainer()->get(LanguageFactoryInterface::class)->createLanguage($languageTag);
+            $language->load('joomla', JPATH_SITE, 'en-GB', true, false);
+            if ($languageTag !== 'en-GB') {
+                $language->load('joomla', JPATH_SITE, $languageTag, true, false);
+            }
+            $languages[$languageTag] = $language;
+        }
+
+        $originalLanguage = $app->getLanguage();
+        $originalFactoryLanguage = Factory::$language;
+        try {
+            $app->loadLanguage($languages[$languageTag]);
+            Factory::$language = $languages[$languageTag];
+
+            return array(
+                'event_date' => (string) JemOutput::formatdate($date),
+                'event_time' => (string) JemOutput::formattime($time),
+            );
+        } finally {
+            $app->loadLanguage($originalLanguage);
+            Factory::$language = $originalFactoryLanguage;
+        }
+    }
+
+    /**
      * Resolve and render the template selected by an existing Mailer branch.
      */
     public static function renderByLanguageKeys($subjectKey, $bodyKey, array $values, $languageTag = null)

@@ -371,8 +371,6 @@ final class JemReminderService
         $values = array(
             'user_name' => (string) $registration->user_name,
             'event_title' => (string) $registration->event_title,
-            'event_date' => class_exists('JemOutput') ? (string) JemOutput::formatdate($registration->dates) : (string) $registration->dates,
-            'event_time' => class_exists('JemOutput') ? (string) JemOutput::formattime($registration->times) : (string) $registration->times,
             'venue' => (string) $registration->venue,
             'venue_configuration' => JemVenueSnapshot::summary($registration),
             'city' => (string) $registration->city,
@@ -385,6 +383,11 @@ final class JemReminderService
             'site_name' => (string) Factory::getApplication()->get('sitename'),
             'reminder_interval' => $definitionTitle,
         );
+        $values = array_replace($values, JemNotificationTemplateService::formatEventDateTime(
+            $registration->dates,
+            $registration->times,
+            $language->resolved
+        ));
         $message = JemNotificationTemplateService::renderByLanguageKeys(
             'PLG_JEM_MAILER_USER_REMINDER_SUBJECT',
             'PLG_JEM_MAILER_USER_REMINDER_BODY',

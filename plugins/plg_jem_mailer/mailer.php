@@ -134,7 +134,6 @@ class plgJemMailer extends CMSPlugin
         }
         $this->_applyAssociatedArticleContent($event);
         $this->_appendParentEventContext($event);
-        $this->_formatEventMailDateTime($event);
 
         // check if currrent user handles on behalf of
         $attendeeid = $event->uid;
@@ -426,7 +425,6 @@ class plgJemMailer extends CMSPlugin
         }
         $this->_applyAssociatedArticleContent($event);
         $this->_appendParentEventContext($event);
-        $this->_formatEventMailDateTime($event);
 
         $attendee     = JemFactory::getUser($event->uid);
         $attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
@@ -574,7 +572,6 @@ class plgJemMailer extends CMSPlugin
         }
         $this->_applyAssociatedArticleContent($event);
         $this->_appendParentEventContext($event);
-        $this->_formatEventMailDateTime($event);
 
         if (empty($registration)) {
             $registration = $event;
@@ -1048,22 +1045,6 @@ class plgJemMailer extends CMSPlugin
     }
 
     /**
-     * Format event date/time fields for mail output using JEM display settings.
-     *
-     * @param   object  $event  Event data object.
-     *
-     * @return  void
-     */
-    private function _formatEventMailDateTime($event)
-    {
-        $date = JemOutput::formatdate($event->dates ?? '');
-        $time = JemOutput::formattime($event->times ?? '');
-
-        $event->dates = $date ?: '';
-        $event->times = $time ?: '';
-    }
-
-    /**
      * Returns array of all the different email recipients.
      */
     private function _getRecipients(array $send_to, array $skip, $eventid, $creatorid, $userid, $venueid = 0)
@@ -1354,6 +1335,10 @@ class plgJemMailer extends CMSPlugin
             'subject_key' => (string) $subjectKey,
             'body_key' => (string) $bodyKey,
             'values' => $values,
+            'event_datetime' => $event === null ? null : array(
+                'date' => $event->dates ?? '',
+                'time' => $event->times ?? '',
+            ),
             'registration_id' => (int) ($event->registration_id ?? 0),
             'registration_reference' => (string) ($event->registration_reference ?? ''),
             'revision' => max(1, (int) ($event->registration_revision ?? 1)),
@@ -1554,10 +1539,18 @@ class plgJemMailer extends CMSPlugin
         $recipientUserId = $recipientType === 'user'
             ? (int) $spec->recipient_user_id
             : (int) ($recipientUser->id ?? 0);
+        $values = (array) $spec->values;
+        if (isset($spec->event_datetime)) {
+            $values = array_replace($values, JemNotificationTemplateService::formatEventDateTime(
+                $spec->event_datetime['date'],
+                $spec->event_datetime['time'],
+                $language->resolved
+            ));
+        }
         $message = $this->_renderNotification(
             $spec->subject_key,
             $spec->body_key,
-            (array) $spec->values,
+            $values,
             null,
             $language->resolved
         );
@@ -1603,7 +1596,7 @@ class plgJemMailer extends CMSPlugin
                 'payload' => array(
                     'subject_key' => (string) $spec->subject_key,
                     'body_key' => (string) $spec->body_key,
-                    'values' => (array) $spec->values,
+                    'values' => $values,
                     'recipient_causes' => array_values($causes),
                     'revision' => (int) $spec->revision,
                 ),
@@ -1703,7 +1696,6 @@ class plgJemMailer extends CMSPlugin
                 'city' => (string) ($item->city ?? ''),
             );
             if ($kind === 'event') {
-                $this->_formatEventMailDateTime($item);
                 $publication = $this->_appendEventStatusInfo($publication, $item);
                 $publication = $this->_appendOnlineMeetingInfo($publication, $item);
                 $values += array(
@@ -1770,6 +1762,11 @@ class plgJemMailer extends CMSPlugin
     private function _renderNotification($subjectKey, $bodyKey, array $values, $event = null, $languageTag = null)
     {
         if ($event !== null) {
+            $values = array_replace($values, JemNotificationTemplateService::formatEventDateTime(
+                $event->dates ?? '',
+                $event->times ?? '',
+                $languageTag
+            ));
             $values['event_image_url'] = $this->_notificationImageUrl($event->datimage ?? '', 'event', $event->image_path ?? '');
             $values['venue_image_url'] = $this->_notificationImageUrl($event->locimage ?? '', 'venue', $event->venue_image_path ?? '');
             $values['venue_configuration'] = JemVenueSnapshot::summary($event);
