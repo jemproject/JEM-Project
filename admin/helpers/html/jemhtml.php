@@ -23,6 +23,26 @@ use Joomla\Utilities\ArrayHelper;
 class JemHtml
 {
     /**
+     * Return a translated notification state without changing its stored code.
+     *
+     * @param string $state Stored notification state.
+     * @return string Plain label, or the original unknown state; callers escape output.
+     */
+    public static function getNotificationStateText(string $state): string
+    {
+        $keys = array(
+            'scheduled' => 'COM_JEM_NOTIFICATION_STATE_SCHEDULED',
+            'queued' => 'COM_JEM_NOTIFICATION_STATE_QUEUED',
+            'processing' => 'COM_JEM_NOTIFICATION_STATE_PROCESSING',
+            'sent' => 'COM_JEM_NOTIFICATION_STATE_SENT',
+            'failed' => 'COM_JEM_NOTIFICATION_STATE_FAILED',
+            'cancelled' => 'COM_JEM_NOTIFICATION_STATE_CANCELLED',
+        );
+
+        return isset($keys[$state]) ? Text::_($keys[$state]) : $state;
+    }
+
+    /**
      *
      * @param int $i
      * @param int $value state value
