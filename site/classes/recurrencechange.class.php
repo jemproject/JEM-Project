@@ -9,6 +9,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
+require_once __DIR__ . '/seriesinheritance.class.php';
+
 /** Explicit decisions for replacing an arithmetic recurrence, shared by both editors. */
 final class JemRecurrenceChange
 {
@@ -69,6 +71,12 @@ final class JemRecurrenceChange
         if (!$root) {
             throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
         }
+        if (!empty($root['series_id'])) {
+            $seriesRoot = (int) $db->setQuery('SELECT root_event_id FROM #__jem_event_series WHERE id = '
+                . (int) $root['series_id'])->loadResult();
+            $root['series_parent_id'] = $seriesRoot !== $id ? $seriesRoot : 0;
+            $root['recurrence_type'] = 7; // Custom dates are stored as type 0 but edited as mode 7.
+        }
         $children = [];
         if (!(int) $root['recurrence_first_id']) {
             $db->setQuery('SELECT * FROM #__jem_events WHERE recurrence_first_id = ' . $id . ' ORDER BY id' . $suffix);
@@ -97,8 +105,17 @@ final class JemRecurrenceChange
     {
         $root = $snapshot['root'];
         $oldType = (int) $root['recurrence_type'];
-        $required = ($oldType >= 1 && $oldType <= 6 || (int) $root['recurrence_first_id'] > 0 || $snapshot['children'])
-            && self::rule($root) !== self::rule($candidate);
+        $child = (int) $root['recurrence_first_id'] > 0 || !empty($root['series_parent_id']);
+        $oldRule = self::rule($root);
+        $newRule = self::rule($candidate);
+        if ($child) {
+            // Individual session hours are a content override, not a replacement series.
+            unset($oldRule['times'], $oldRule['endtimes'], $newRule['times'], $newRule['endtimes']);
+        }
+        $required = ($oldType >= 1 && $oldType <= 6 || $child || $snapshot['children']) && $oldRule !== $newRule;
+        if ($required && $child && JemSeriesInheritance::policy($candidate)['inherit']) {
+            throw new RuntimeException(Text::_('COM_JEM_SERIES_INHERIT_RULE_LOCKED'));
+        }
         if (!$required) {
             return ['required' => false];
         }
@@ -116,7 +133,6 @@ final class JemRecurrenceChange
             return (string) ($row['status'] ?? '') !== '-1';
         }));
         $count = count($snapshot['children']);
-        $child = (int) $root['recurrence_first_id'] > 0;
         return [
             'required' => true,
             'fingerprint' => hash('sha256', json_encode([$snapshot, self::rule($candidate)], JSON_THROW_ON_ERROR)),

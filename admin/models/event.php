@@ -35,6 +35,7 @@ require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/reminderservice.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrencevalidator.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrencechange.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrenceexclusions.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/venueaccess.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/eventpricingcapacity.class.php';
@@ -735,6 +736,101 @@ class JemModelEvent extends JemModelAdmin
     protected $replacingRecurrence = false;
 
     /**
+     * Load the recurrence parent, independently of the programme hierarchy.
+     *
+     * @param array $event Stored occurrence.
+     * @return array Parent and its categories, or an empty array for a root.
+     */
+    protected function inheritanceParent(array $event): array
+    {
+        $parentId = (int) ($event['recurrence_first_id'] ?? 0);
+        if (!$parentId && !empty($event['series_id'])) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $parentId = (int) $db->setQuery('SELECT root_event_id FROM #__jem_event_series WHERE id = '
+                . (int) $event['series_id'])->loadResult();
+        }
+        if (!$parentId || $parentId === (int) ($event['id'] ?? 0)) {
+            return [];
+        }
+        $parent = $this->getTable();
+        if (!$parent->load($parentId)) {
+            throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
+        }
+        $result = $parent->getProperties();
+        $result['cats'] = $this->getEventCategoryIds($parentId);
+        return $result;
+    }
+
+    /**
+     * Resolve inheritance choices before venue, category and schedule validation.
+     *
+     * @param array $data Submitted editor values.
+     * @param array $stored Current persisted event; empty when creating/copying.
+     * @return array Validated policy metadata and effective editor values.
+     */
+    protected function prepareSeriesSubmission(array $data, array $stored): array
+    {
+        $attribs = new Registry($data['attribs'] ?? []);
+        $previous = new Registry($stored['attribs'] ?? []);
+        // These keys cannot be written directly through attribs or an old override.
+        foreach (['series_inheritance', 'series_detached_dates'] as $key) {
+            $attribs->remove($key);
+            if ($previous->exists($key)) {
+                $attribs->set($key, $previous->get($key));
+            }
+        }
+        $data['attribs'] = $attribs->toArray();
+        $data['inherit'] = (int) ($stored['inherit'] ?? 0);
+        $parent = $this->inheritanceParent($stored);
+        if (!$parent) {
+            $data['inherit'] = 0;
+            unset($data['series_inheritance_present'], $data['series_inherit'], $data['series_inherit_fields']);
+            return $data;
+        }
+        $stored['cats'] = $this->getEventCategoryIds((int) $stored['id']);
+        if (isset($data['articletext'])) {
+            $parts = preg_split('#<hr\s+id=["\x27]system-readmore["\x27]\s*/?>#i', $data['articletext'], 2);
+            $data['introtext'] = $parts[0];
+            $data['fulltext'] = $parts[1] ?? '';
+        }
+        $input = Factory::getApplication()->input;
+        foreach (['start' => 'times', 'end' => 'endtimes'] as $prefix => $field) {
+            if ($input->getString($prefix . 'hours', '__missing__') !== '__missing__') {
+                $data[$field] = JemEventSchedule::editorTime(
+                    $input->getString($prefix . 'hours', ''), $input->getString($prefix . 'minutes', '')
+                );
+            }
+        }
+        return JemSeriesInheritance::submission($data, $stored, $parent);
+    }
+
+    /**
+     * Remember a removed occurrence in its original root so cleanup cannot recreate it.
+     * The caller owns the save transaction; a failed edit rolls this marker back too.
+     *
+     * @param array $stored Original event before detachment.
+     * @return void
+     */
+    protected function rememberDetachedOccurrence(array $stored): void
+    {
+        $parentId = (int) ($stored['recurrence_first_id'] ?? 0);
+        if (!$parentId) {
+            return; // Custom-date schedules contain explicit IDs; they do not generate missing dates.
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $parent = $db->setQuery('SELECT attribs FROM #__jem_events WHERE id = ' . $parentId . ' FOR UPDATE')->loadResult();
+        if ($parent === null) {
+            throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
+        }
+        $attribs = new Registry($parent);
+        $dates = array_map('strval', (array) $attribs->get('series_detached_dates', []));
+        $dates[] = (string) $stored['dates'];
+        $attribs->set('series_detached_dates', array_values(array_unique($dates)));
+        $update = (object) ['id' => $parentId, 'attribs' => (string) $attribs];
+        $db->updateObject('#__jem_events', $update, 'id');
+    }
+
+    /**
      * Prepare the effective rule from either editor without writing any data.
      *
      * @param array $data Submitted form fields.
@@ -775,8 +871,8 @@ class JemModelEvent extends JemModelAdmin
                 $attribs->set('recurrence_exclusions', $submitted->get('recurrence_exclusions'));
             }
         }
-        $candidate['attribs'] = (string) $attribs;
-
+        $candidate['attribs'] = $attribs->toArray();
+        $candidate = $this->prepareSeriesSubmission($candidate, $stored->getProperties());
         return $candidate;
     }
 
@@ -806,6 +902,7 @@ class JemModelEvent extends JemModelAdmin
     public function previewRecurrenceChange(array $data, bool $lock = false): array
     {
         require_once JPATH_SITE . '/components/com_jem/classes/recurrencechange.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.php';
         if (empty($data['id'])) {
             return ['required' => false];
         }
@@ -921,6 +1018,23 @@ class JemModelEvent extends JemModelAdmin
             } else {
                 $existingEvent = null;
             }
+        }
+        require_once JPATH_SITE . '/components/com_jem/classes/eventschedule.class.php';
+        $seriesSourceBefore = $existingEvent ? $existingEvent->getProperties() : [];
+        if ($seriesSourceBefore) {
+            $seriesSourceBefore['cats'] = $this->getEventCategoryIds((int) $data['id']);
+        }
+        try {
+            $data = $this->prepareSeriesSubmission($data, $task === 'save2copy' ? [] : $seriesSourceBefore);
+            if ($existingSeriesId > 0 && !$customSeriesIsRoot && !$customSeriesRequested && $task !== 'save2copy') {
+                // The preview will require an explicit decision before this membership is removed.
+                $data['series_id'] = null;
+                $data['series_order'] = 0;
+                $existingSeriesId = 0;
+            }
+        } catch (Throwable $error) {
+            $this->setError($error->getMessage());
+            return false;
         }
         $customSeriesCreate = $customSeriesRequested && ($new || $existingSeriesId === 0);
 
@@ -1343,6 +1457,14 @@ class JemModelEvent extends JemModelAdmin
 
             // Get the fields changed
             // Parameters contain the exclusion selection; compare their serialised values.
+            if (!empty($seriesSourceBefore['recurrence_first_id'])) {
+                $effective = $this->prepareSeriesSubmission($recurrenceSubmission, $seriesSourceBefore);
+                foreach (['times', 'endtimes'] as $field) {
+                    if (array_key_exists($field, $effective)) {
+                        $data[$field] = $effective[$field];
+                    }
+                }
+            }
             $comparisonData = $data;
             $comparisonData['attribs'] = (string) new Registry($data['attribs']);
             $diff = array_diff_assoc($comparisonData, $eventdb);
@@ -1456,7 +1578,7 @@ class JemModelEvent extends JemModelAdmin
         $seriesTransactionActive = false;
         $pricingDb = null;
         $pricingTransactionActive = false;
-        if ($recurrencePlan['required'] || $customSeriesCreate || ($existingSeriesId > 0 && $customSeriesScope !== 'occurrence')) {
+        if (!$isInitialEvent || $recurrencePlan['required'] || $customSeriesCreate || ($existingSeriesId > 0 && $customSeriesScope !== 'occurrence')) {
             $seriesDb = Factory::getContainer()->get('DatabaseDriver');
             $seriesDb->transactionStart();
             $seriesTransactionActive = true;
@@ -1474,6 +1596,10 @@ class JemModelEvent extends JemModelAdmin
         try {
         if ($recurrencePlan['required']) {
             $this->applyRecurrenceChange($recurrenceSubmission);
+            $this->rememberDetachedOccurrence($seriesSourceBefore);
+            // This event is now independent, or the root of a replacement series.
+            unset($data['attribs']['series_inheritance'], $data['attribs']['series_detached_dates']);
+            $data['inherit'] = 0;
         }
         if($isInitialEvent) {
             // event maybe first of recurrence set -> dissolve complete set
@@ -1657,88 +1783,69 @@ class JemModelEvent extends JemModelAdmin
                 $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $pk);
             }
         } else {
-            // This event is part of a recurrence series. Check if it is the root event to apply changes to all occurrences in the series.
-            if (!$data["recurrence_first_id"]) {
-                // the event is root
-                $events = [];
-                // retrieve all recurrence events associated with this root ID
-                $allRecurrenceEvents = $this->getListRecurrenceEventsbyId($data['id'], $data['id'], time());
-
-                // convert them to an array of objects each event and update the events with the data fields
-                foreach ($allRecurrenceEvents as $recurrenceEvent){
-                    $event = (array) $recurrenceEvent;
-                    // update only the fields that were changed
-                    foreach ($diff as $field => $value) {
-                        if (array_key_exists($field, $event)) {
-                            $event[$field] = $value;
-                        }
-                    }
-                    $events[] = $event;
-                }
-                // A past root may be outside the normal future-occurrence update set.
-                // Its exclusion policy and programme govern future generation too.
-                if (($exclusionsSubmitted || $scheduleTimes !== null || $articlePolicyChanged)
-                    && !in_array((int) $data['id'], array_map('intval', array_column($events, 'id')), true)) {
-                    $events[] = $data;
-                }
-            } else {
-                // the event is a child
-                $events[] = $data;
-            }
-
-            // A later occurrence may cross a DST gap or have an incompatible date range.
-            // Reject that programme before partially applying it to the series.
-            if (!$this->validateEventScheduleBatch($events)) {
-                return false;
-            }
-
-            //Fields allowed to update
+            // Prepare complete rows before saving: a projected list is not an event record.
             $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'timezone_mode', 'timezone', 'parent_event_id', 'event_tree_order', 'show_in_calendar', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage', 'image_path', 'image_metadata', 'fullimage_layout', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'reginvitedonly', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'type_id', 'age_level_id', 'article_id', 'online_meeting_url', 'online_meeting_label', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
-            $saved = false;
-
-            // get the fields update
-            foreach ($events as $event) {
-                if (!$backend && !$this->protectFrontendFeaturedData($event, $cats)) {
-                    return false;
+            $events = [$data];
+            if (empty($data['recurrence_first_id'])) {
+                $previousRoot = $this->getTable();
+                if (!$previousRoot->load((int) $data['id'])) {
+                    throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
                 }
-
-                $fieldsupdated = "";
-
-                if (!$this->validateSpecialDayEventDates($event)) {
-                    $saved = false;
-                    Factory::getApplication()->enqueueMessage($this->getError() . ' [ID:' . (int) ($event['id'] ?? 0) . ']', 'error');
-                    continue;
+                $rootBefore = $previousRoot->getProperties();
+                $rootBefore['cats'] = $this->getEventCategoryIds((int) $data['id']);
+                $changes = array_intersect_key($diff, array_flip($fieldAllow));
+                $allRecurrenceEvents = $this->getListRecurrenceEventsbyId($data['id'], $data['id'], time());
+                if ($allRecurrenceEvents === false) {
+                    throw new RuntimeException((string) $this->getError());
                 }
-
-                // A series can contain distinct source articles and write policies.
-                $this->normaliseAssociatedArticleSyncMode(
-                    $event,
-                    $this->getAssociatedArticleSyncEventData((int) $event['id'])
-                );
-
-                // save the event
-                $saved = parent::save($event);
-
-                if ($saved){
-                    if (isset($data['event_links']) && !$this->saveLinks((int) $event['id'], $data['event_links'])) {
-                        $this->setError(Text::_('COM_JEM_EVENT_ERROR_SAVE_LINKS'));
-
-                        return false;
+                foreach ($allRecurrenceEvents as $row) {
+                    if ((int) $row->id === (int) $data['id']) {
+                        continue;
                     }
-
-                    foreach ($diff as $d => $value) {
-                        // update only the fields that were changed
-                        if (in_array($d, $fieldAllow)) {
-                            $this->updateField($data['id'], $d, $value);
-                            $fieldsupdated = $fieldsupdated . ($fieldsupdated != '' ? ', ' : '') . $d;
+                    $occurrence = $this->getTable();
+                    if (!$occurrence->load((int) $row->id)) {
+                        throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
+                    }
+                    $event = $occurrence->getProperties();
+                    if (JemSeriesInheritance::policy($event)['inherit']) {
+                        if (!$this->canReplaceRecurrenceChild('edit', $event)) {
+                            throw new RuntimeException(Text::_('COM_JEM_CUSTOM_SERIES_ACCESS_ERROR'));
                         }
                     }
-                    if ($fieldsupdated != '') {
-                        Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_FIELDS_EVENT_UPDATED') . ' ' . $fieldsupdated . ' [ID:' . $event['id'] . ']', 'info');
+                    $event['cats'] = $this->getEventCategoryIds((int) $row->id);
+                    $event = JemSeriesInheritance::propagate($event, $rootBefore, $changes, true);
+                    if (JemSeriesInheritance::policy($event)['inherit']) {
+                        if (isset($data['event_links'])) {
+                            $event['event_links'] = $data['event_links'];
+                        }
+                        $events[] = $event;
                     }
-                } else {
-                    Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ERROR_EVENT_UPDATED') . ' ' . implode(", ", array_keys($diff)) . ' [ID:' . $event['id'] . ']', 'info');
                 }
+            }
+            if (!$this->validateEventScheduleBatch($events)) {
+                throw new RuntimeException((string) $this->getError());
+            }
+            $saved = false;
+            foreach ($events as $event) {
+                $eventCats = $this->normaliseEventCategoryIds($event['cats'] ?? $cats);
+                if (!$this->canReplaceRecurrenceChild('edit', $event)
+                    || !$this->validateEventCategoryIds($eventCats, $backend, false, (int) $event['id'])
+                    || ($backend && !$this->protectBackendEventAclData($event, $eventCats, false, ''))
+                    || (!$backend && !$this->protectFrontendFeaturedData($event, $eventCats))) {
+                    throw new RuntimeException(Text::_('COM_JEM_CUSTOM_SERIES_ACCESS_ERROR'));
+                }
+                if (!$this->validateSpecialDayEventDates($event)) {
+                    throw new RuntimeException((string) $this->getError());
+                }
+                $this->normaliseAssociatedArticleSyncMode(
+                    $event, $this->getAssociatedArticleSyncEventData((int) $event['id'])
+                );
+                if (!parent::save($event)
+                    || !$this->_storeCategoriesSelected((int) $event['id'], $eventCats, !$backend, false)
+                    || (isset($event['event_links']) && !$this->saveLinks((int) $event['id'], $event['event_links']))) {
+                    throw new RuntimeException($this->getError() ?: Text::_('COM_JEM_EVENT_ERROR_EVENT_UPDATED'));
+                }
+                $saved = true;
             }
 
             $table->load($data['id']);
@@ -1817,7 +1924,7 @@ class JemModelEvent extends JemModelAdmin
             } elseif ($saved && $existingSeriesId > 0 && $customSeriesScope !== 'occurrence') {
                 $saved = $this->synchroniseCustomSeriesSchedule($existingSeriesId, $savedId, $completeCustomSchedule, $cats, $backend, false);
                 if ($saved && $customSeriesScope === 'all') {
-                    $saved = $this->propagateCustomSeriesFields($existingSeriesId, $savedId, $data, $cats, $backend);
+                    $saved = $this->propagateCustomSeriesFields($existingSeriesId, $savedId, $data, $cats, $backend, $seriesSourceBefore);
                 }
             }
         }
@@ -1855,7 +1962,7 @@ class JemModelEvent extends JemModelAdmin
                     Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_RECURRENCE_CHANGE_SAVED'), 'success');
                 } elseif ($customSeriesCreate) {
                     Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JEM_CUSTOM_SERIES_CREATED', count($completeCustomSchedule)), 'success');
-                } else {
+                } elseif ($existingSeriesId > 0) {
                     Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_CUSTOM_SERIES_SCHEDULE_UPDATED'), 'success');
                 }
             } else {
@@ -1993,6 +2100,10 @@ class JemModelEvent extends JemModelAdmin
         foreach ($occurrenceIds as $occurrenceId) {
             $occurrence = $this->getTable();
             if (!$occurrence->load($occurrenceId)) {
+                continue;
+            }
+            $policy = JemSeriesInheritance::policy($occurrence->getProperties());
+            if (!$policy['inherit'] || in_array('venue', $policy['overrides'], true)) {
                 continue;
             }
             $snapshotChanged = (string) ($occurrence->venue_snapshot ?? '') !== (string) ($source->venue_snapshot ?? '');
@@ -2156,6 +2267,10 @@ class JemModelEvent extends JemModelAdmin
                 $copyData['checked_out'] = null;
                 $copyData['checked_out_time'] = null;
                 $copyData['series_id'] = $seriesId;
+                $copyData['inherit'] = 1;
+                $copyAttribs = new Registry($copyData['attribs'] ?? []);
+                $copyAttribs->set('series_inheritance', ['overrides' => []]);
+                $copyData['attribs'] = (string) $copyAttribs;
                 $copyData['series_order'] = $index + 2;
                 $this->applyCustomScheduleRow($copyData, $row);
                 if (!$this->normaliseEventDates($copyData)) {
@@ -2250,7 +2365,14 @@ class JemModelEvent extends JemModelAdmin
                 }
                 $eventData['series_id'] = $seriesId;
                 $eventData['series_order'] = $index + 1;
-                $this->applyCustomScheduleRow($eventData, $row);
+                $policy = JemSeriesInheritance::policy($eventData);
+                if ($eventId === $sourceEventId || $policy['inherit']) {
+                    $ownTimes = array_intersect_key($eventData, array_flip(['times', 'endtimes']));
+                    $this->applyCustomScheduleRow($eventData, $row);
+                    if ($eventId !== $sourceEventId && in_array('times', $policy['overrides'], true)) {
+                        $eventData = array_replace($eventData, $ownTimes);
+                    }
+                }
                 if (!$backend && !$this->protectFrontendFeaturedData($eventData, $categories)) {
                     throw new RuntimeException($this->getError());
                 }
@@ -2280,10 +2402,10 @@ class JemModelEvent extends JemModelAdmin
         }
     }
 
-    protected function propagateCustomSeriesFields($seriesId, $sourceEventId, array $data, $categories, $backend)
+    protected function propagateCustomSeriesFields($seriesId, $sourceEventId, array $data, $categories, $backend, array $sourceBefore = [])
     {
         $allowed = array(
-            'title', 'locid', 'timezone_mode', 'timezone', 'introtext', 'fulltext', 'article_id',
+            'title', 'published', 'event_status', 'ticket_availability', 'locid', 'timezone_mode', 'timezone', 'introtext', 'fulltext', 'article_id',
             'online_meeting_url', 'online_meeting_label', 'meta_keywords', 'meta_description',
             'datimage', 'fullimage', 'image_path', 'image_metadata', 'fullimage_layout', 'registra', 'registra_from', 'registra_until',
             'unregistra', 'unregistra_until', 'reginvitedonly', 'maxplaces', 'minbookeduser',
@@ -2310,15 +2432,23 @@ class JemModelEvent extends JemModelAdmin
                 $this->setError(Text::_('COM_JEM_CUSTOM_SERIES_ACCESS_ERROR'));
                 return false;
             }
-            $eventData = array_merge($event->getProperties(1), $shared);
-            if (!$backend && !$this->protectFrontendFeaturedData($eventData, $categories)) {
+            $stored = $event->getProperties(1);
+            $stored['cats'] = $this->getEventCategoryIds($eventId);
+            $shared['cats'] = $categories;
+            $eventData = JemSeriesInheritance::propagate($stored, $sourceBefore, $shared);
+            if (!JemSeriesInheritance::policy($eventData)['inherit']) {
+                continue;
+            }
+            $eventCategories = $this->normaliseEventCategoryIds($eventData['cats']);
+            if (($backend && !$this->protectBackendEventAclData($eventData, $eventCategories, false, ''))
+                || (!$backend && !$this->protectFrontendFeaturedData($eventData, $eventCategories))) {
                 return false;
             }
             if (!$this->normaliseEventDates($eventData) || !$event->bind($eventData) || !$event->store()) {
                 $this->setError($event->getError() ?: $this->getError());
                 return false;
             }
-            if (!$this->_storeCategoriesSelected($eventId, $categories, !$backend, false)) {
+            if (!$this->_storeCategoriesSelected($eventId, $eventCategories, !$backend, false)) {
                 return false;
             }
             if (isset($data['event_links']) && !$this->saveLinks($eventId, $data['event_links'])) {
@@ -4601,7 +4731,7 @@ class JemModelEvent extends JemModelAdmin
             } else {
                 $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($pk?$pk:$id) . ') OR a.recurrence_first_id = ' . (int)($pk?$pk:$id) . ')');
             }
-            $query->where("(a.dates > '" . $dateFrom . "' OR a.dates = '" . $dateFrom . "' AND dates >= '" . $timeFrom . "')");
+            $query->where("(a.dates > '" . $dateFrom . "' OR a.dates = '" . $dateFrom . "' AND (a.times IS NULL OR a.times >= '" . $timeFrom . "'))");
             $query->order('a.dates ASC');
 
             $db->setQuery($query);

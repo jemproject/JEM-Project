@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `recurrence_bylastday` varchar(20) NULL DEFAULT NULL,
     `series_id` int(11) unsigned NULL DEFAULT NULL,
     `series_order` int(11) unsigned NOT NULL DEFAULT '0',
+    `inherit` tinyint(1) unsigned NOT NULL DEFAULT '0',
     `parent_event_id` int(11) unsigned NULL DEFAULT NULL,
     `event_tree_order` int(11) unsigned NOT NULL DEFAULT '0',
     `show_in_calendar` tinyint(1) unsigned NOT NULL DEFAULT '0',

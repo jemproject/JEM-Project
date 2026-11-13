@@ -98,6 +98,7 @@ final class RecurrenceChangeTest extends TestCase
     {
         $snapshot=$this->snapshot();
         $snapshot['root']=$snapshot['children'][0];
+        $snapshot['root']['inherit']=0;
         $snapshot['children']=[];
         $plan=$this->plan($snapshot,['recurrence_type'=>1]);
         self::assertTrue($plan['child']);

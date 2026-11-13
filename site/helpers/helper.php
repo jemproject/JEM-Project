@@ -3044,6 +3044,19 @@ class JemHelper
                         $db->setQuery($query);
                         $reference = $db->loadAssoc();
 
+                        // New sessions inherit the root, never an arbitrarily selected customized child.
+                        $rootRecord = $db->setQuery('SELECT * FROM #__jem_events WHERE id = '
+                            . (int) $recurrence_row['first_id'])->loadAssoc();
+                        if ($rootRecord) {
+                            $reference = $rootRecord;
+                            $ref_event->load((int) $rootRecord['id']);
+                        }
+                        $generationAttribs = new Registry($reference['attribs'] ?? '');
+                        $detachedDates = (array) $generationAttribs->get('series_detached_dates', []);
+                        $generationAttribs->set('series_inheritance', ['overrides' => []]);
+                        $generationAttribs->remove('series_detached_dates');
+                        $reference['attribs'] = (string) $generationAttribs;
+
                         // Read the root policy, not the arbitrary row selected by GROUP BY.
                         // If legacy cleanup removed the root, use the surviving occurrence copy.
                         try {
@@ -3121,7 +3134,7 @@ class JemHelper
                                 self::addLogEntry('Invalid recurrence exclusions for series ' . (int) $recurrence_row['first_id'], __METHOD__, Log::ERROR);
                                 break;
                             }
-                            if ($excluded) {
+                            if ($excluded || in_array((string) $recurrence_row['dates'], $detachedDates, true)) {
                                 // Advance without storing, counting or moving the skipped occurrence.
                                 $nextRecurrence = JemHelper::calculate_recurrence($recurrence_row);
                                 if ($nextRecurrence === false) {
@@ -3133,6 +3146,7 @@ class JemHelper
                             $new_event = Table::getInstance('Event', 'JemTable');
                             $new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
                             $new_event->recurrence_first_id = $recurrence_row['first_id'];
+                            $new_event->inherit = 1;
                             $new_event->recurrence_counter = $recurrence_row['counter'] + 1;
                             $new_event->dates = $recurrence_row['dates'];
                             $new_event->enddates = $recurrence_row['enddates'];
@@ -3431,7 +3445,7 @@ class JemHelper
         try {
             $db = Factory::getContainer()->get('DatabaseDriver');
             $db->setQuery('UPDATE #__jem_events'
-                        . ' SET recurrence_first_id = 0, recurrence_type = 0'
+                        . ' SET recurrence_first_id = 0, recurrence_type = 0, inherit = 0'
                         . '   , recurrence_counter = 0, recurrence_number = 0'
                         . '   , recurrence_limit = 0, recurrence_limit_date = null'
                         . '   , recurrence_byday = ' . $db->quote('')

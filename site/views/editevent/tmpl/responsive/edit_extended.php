@@ -16,6 +16,7 @@ use Joomla\CMS\Date\Date;
 <fieldset class="panelform" style="margin:0">
     <legend><?php echo Text::_('COM_JEM_RECURRENCE'); ?></legend>
     <dl class="adminformlist jem-dl">
+        <dd><?php require JPATH_SITE . '/components/com_jem/common/views/tmpl/series_inheritance.php'; ?></dd>
         <dt><?php echo $this->form->getLabel('recurrence_type'); ?></dt>
         <dd><?php echo $this->form->getInput('recurrence_type', null, $this->item->recurrence_type); ?></dd>
         <dt> </dt>

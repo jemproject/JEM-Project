@@ -394,6 +394,7 @@ class com_jemInstallerScript
 
                 // Check columns in database
                 $this->checkColumnsIntoDatabase();
+                $this->ensureSeriesInheritanceColumn();
 
                 // Ensure css files are (over)writable
                 $this->makeFilesWritable();
@@ -454,6 +455,7 @@ class com_jemInstallerScript
             $this->installEuropeanTaxRateCatalogue();
             $this->registerNotificationTemplates();
             $this->repairLegacyRecurrenceRoots();
+            $this->ensureSeriesInheritanceColumn();
             $this->ensureEventScheduleStorage();
             $this->repairNullEventAttribs();
             $this->rebuildEventUtcDates();
@@ -2352,6 +2354,30 @@ SQL
             if ($changes !== []) {
                 $db->setQuery('ALTER TABLE ' . $db->quoteName($table) . ' ' . implode(', ', $changes))->execute();
             }
+        }
+    }
+
+    /**
+     * Add content inheritance once, preserving existing recurrence membership.
+     * Reinstallation must not reset an administrator's independent occurrences.
+     *
+     * @return void
+     */
+    private function ensureSeriesInheritanceColumn(): void
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        if (!in_array($db->replacePrefix('#__jem_events'), $db->getTableList(), true)) {
+            return;
+        }
+        $columns = $db->getTableColumns('#__jem_events');
+        if (isset($columns['inherit'])) {
+            return;
+        }
+        $db->setQuery("ALTER TABLE #__jem_events ADD COLUMN `inherit` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0'")->execute();
+        $db->setQuery('UPDATE #__jem_events SET `inherit` = 1 WHERE recurrence_first_id > 0')->execute();
+        if (isset($columns['series_id']) && in_array($db->replacePrefix('#__jem_event_series'), $db->getTableList(), true)) {
+            $db->setQuery('UPDATE #__jem_events AS e INNER JOIN #__jem_event_series AS s ON s.id = e.series_id'
+                . ' SET e.`inherit` = 1 WHERE e.id <> s.root_event_id')->execute();
         }
     }
 

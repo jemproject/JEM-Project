@@ -823,6 +823,7 @@ $this->document->addStyleDeclaration('
                     <div id="recurrence" class="accordion-collapse collapse" aria-labelledby="recurrence-header" data-bs-parent="#accordionEventForm">
                         <div class="accordion-body">
                             <ul class="adminformlist">
+                                <li><?php require JPATH_SITE . '/components/com_jem/common/views/tmpl/series_inheritance.php'; ?></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('recurrence_type', null, $recurr->recurrence_type); ?></div></li>
                                 <li id="recurrence_output" class="m-3">
                                     <?php if ($recurr->recurrence_number){ ?>

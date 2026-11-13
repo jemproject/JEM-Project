@@ -4,6 +4,17 @@
         <inlinehelp button="show"/>
     </config>
     <fieldset name="details" addfieldpath="/administrator/components/com_jem/models/fields">
+        <field name="series_inheritance_present" type="hidden" filter="integer" />
+        <field name="series_inherit" type="hidden" filter="integer" />
+        <field name="series_inherit_fields" type="list" multiple="true" filter="array">
+            <option value="title">title</option>
+            <option value="description">description</option>
+            <option value="images">images</option>
+            <option value="categories">categories</option>
+            <option value="venue">venue</option>
+            <option value="times">times</option>
+            <option value="online">online</option>
+        </field>
         <field name="articletext" type="editor"
             class="inputbox"
             label="COM_JEM_EVENT_FIELD_ARTICLETEXT_LABEL"

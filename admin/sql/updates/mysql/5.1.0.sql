@@ -319,3 +319,6 @@ ALTER TABLE `#__jem_register_history` ADD COLUMN `invitation_snapshot` TEXT NULL
 
 -- Reviewed administrative reservation relocations (also checked for earlier 5.1 betas).
 ALTER TABLE `#__jem_register_history` ADD COLUMN `change_snapshot` MEDIUMTEXT NULL DEFAULT NULL /** CAN FAIL **/;
+
+-- Preflight initializes existing children once; repeat installations preserve individual choices.
+ALTER TABLE `#__jem_events` ADD COLUMN `inherit` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `series_order` /** CAN FAIL **/;
