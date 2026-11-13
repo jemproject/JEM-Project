@@ -58,6 +58,16 @@ final class Uri
     }
 }
 
+/** The event-status notice is independent of reservation/notification labels. */
+final class JemOutput
+{
+    /** @param object $event Event fixture. @return string No unrelated notice markup. */
+    public static function eventStatusNotice(object $event): string
+    {
+        return '';
+    }
+}
+
 final class JemHelperBackend
 {
     /** @param string $action Navigation permission. @return bool Hide unrelated navigation links. */
@@ -87,6 +97,7 @@ final class View
     public $latestSent = null;
     public $resendPolicy = null;
     public bool $canResend = true;
+    public bool $canNotificationResend = true;
     public object $pagination;
     public object $state;
 
@@ -129,6 +140,26 @@ final class View
             $code = str_replace('use Joomla\\CMS\\' . $class . ';', '', $code);
         }
         $code = str_replace('\\Joomla\\CMS\\Uri\\Uri', 'Uri', $code);
+        return $this->renderCode($code);
+    }
+
+    /** @return \DOMXPath Actual attendee notification table, excluding unrelated edit-form controls. */
+    public function renderAttendee(): \DOMXPath
+    {
+        $source = file_get_contents(JEM_TEST_ROOT . '/admin/views/attendee/tmpl/default.php');
+        $start = strpos($source, '<h4 class="mt-4"><?php echo Text::_(\'COM_JEM_NOTIFICATION_HISTORY\');');
+        $closing = '</tbody></table></div>';
+        $end = $start === false ? false : strpos($source, $closing, $start);
+        if ($start === false || $end === false) {
+            throw new \RuntimeException('Attendee notification table boundaries changed.');
+        }
+
+        return $this->renderCode('<?php ?>' . substr($source, $start, $end + strlen($closing) - $start));
+    }
+
+    /** @param string $code Native template source. @return \DOMXPath Rendered markup for assertions. */
+    private function renderCode(string $code): \DOMXPath
+    {
         ob_start();
         try {
             eval('namespace ' . __NAMESPACE__ . ';' . substr($code, 5));

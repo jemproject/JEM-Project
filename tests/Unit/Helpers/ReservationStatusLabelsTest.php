@@ -86,6 +86,11 @@ final class ReservationStatusLabelsTest extends TestCase
         self::assertSame(0, $backend->query('//img')->length);
         self::assertSame(in_array($state, ['queued', 'failed'], true) ? 1 : 0, $backend->query('//button[@value="notification.retry"]')->length);
         self::assertSame($state === 'sent' ? 1 : 0, $backend->query('//button[@value="notification.resend"]')->length);
+        $attendee = $view->renderAttendee();
+        self::assertSame($label . ' (0)', trim($attendee->query('//tbody/tr/td[2]/text()[1]')->item(0)->textContent));
+        self::assertSame(0, $attendee->query('//img')->length);
+        self::assertSame(in_array($state, ['queued', 'failed'], true) ? 1 : 0, $attendee->query('//button[@value="notification.retry"]')->length);
+        self::assertSame($state === 'sent' ? 1 : 0, $attendee->query('//button[@value="notification.resend"]')->length);
         self::assertSame($state, $notification->state);
     }
 
@@ -102,5 +107,51 @@ final class ReservationStatusLabelsTest extends TestCase
         self::assertSame('<b>Asiste</b> & confirmado', $xpath->query('//dl/dd')->item(1)->textContent);
         self::assertSame('<b>En cola</b> & pendiente', $xpath->query('//tbody/tr/td[2]')->item(0)->textContent);
         self::assertSame(0, $xpath->query('//dl//b | //tbody//b')->length);
+    }
+
+    /** @return iterable Action eligibility remains based on permissions and stored attempt limits. */
+    public static function attendeeActions(): iterable
+    {
+        yield 'retry queued' => ['queued', true, 1, 3, 1, 0];
+        yield 'retry failed' => ['failed', true, 1, 3, 1, 0];
+        yield 'attempts exhausted' => ['failed', true, 3, 3, 0, 0];
+        yield 'no retry permission' => ['queued', false, 1, 3, 0, 0];
+        yield 'resend sent' => ['sent', true, 3, 3, 0, 1];
+        yield 'no resend permission' => ['sent', false, 0, 3, 0, 0];
+    }
+
+    /**
+     * Keep audit counters, revisions, escaping and action eligibility unchanged.
+     *
+     * @param string $state Stored notification code.
+     * @param bool $allowed Permission to retry/resend.
+     * @param int $attempts Attempts for the current delivery cycle.
+     * @param int $maximum Maximum attempts for that cycle.
+     * @param int $retry Expected retry buttons.
+     * @param int $resend Expected resend buttons.
+     * @return void
+     */
+    #[DataProvider('attendeeActions')]
+    public function testAttendeeCountersTranslationsAndActions(string $state, bool $allowed, int $attempts, int $maximum, int $retry, int $resend): void
+    {
+        Text::$strings = parse_ini_file(JEM_TEST_ROOT . '/admin/language/en-GB/com_jem.ini', false, INI_SCANNER_RAW);
+        Text::$strings['COM_JEM_NOTIFICATION_STATE_' . strtoupper($state)] = '<b>Translated</b> & text';
+        $view = new View();
+        $view->canNotificationResend = $allowed;
+        $notification = (object) ['id' => 3, 'state' => $state, 'created' => '2026-11-13',
+            'registration_revision' => 7, 'recipient_email' => 'test@example.invalid',
+            'resolved_language' => 'en-GB', 'subject' => 'Test', 'body' => 'Test body',
+            'last_error' => '<img src=x>', 'attempts_total' => 12,
+            'attempt_count' => $attempts, 'max_attempts' => $maximum];
+        $before = clone $notification;
+        $view->notifications = [$notification];
+        $xpath = $view->renderAttendee();
+        self::assertSame('<b>Translated</b> & text (12)', trim($xpath->query('//tbody/tr/td[2]/text()[1]')->item(0)->textContent));
+        self::assertSame(Text::_('COM_JEM_REGISTRATION_HISTORY_REVISION') . ' 7', $xpath->query('//tbody/tr/td[2]/small[1]')->item(0)->textContent);
+        self::assertSame('<img src=x>', $xpath->query('//small[@class="text-danger"]')->item(0)->textContent);
+        self::assertSame(0, $xpath->query('//img | //b')->length);
+        self::assertSame($retry, $xpath->query('//button[@value="notification.retry"]')->length);
+        self::assertSame($resend, $xpath->query('//button[@value="notification.resend"]')->length);
+        self::assertEquals($before, $notification);
     }
 }
