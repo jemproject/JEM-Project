@@ -21,6 +21,7 @@ use Joomla\String\StringHelper;
 
 use Joomla\Utilities\ArrayHelper;
 require_once __DIR__ . '/admin.php';
+require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/helper.php';
 require_once JPATH_SITE . '/components/com_jem/classes/registrationaccesspolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
