@@ -10,32 +10,24 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 
+JemHelper::loadCss('event-editor-advanced');
+
 $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields', -1); // default to All
 $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), ENT_QUOTES, 'UTF-8');
 ?>
 <!--START PUBLISHING FIELDSET -->
-<fieldset class="adminform">
-    <legend><?php echo Text::_('COM_JEM_ADVANCED'); ?></legend>
-    <dl class="jem-dl">
-
-        <dt><?php echo $this->form->getLabel('event_status'); ?></dt>
-        <dd><?php echo $this->form->getInput('event_status'); ?></dd>
-        <dt><?php echo $this->form->getLabel('ticket_availability'); ?></dt>
-        <dd><?php echo $this->form->getInput('ticket_availability'); ?></dd>
-        <dt><?php echo $this->form->getLabel('online_meeting_url'); ?></dt>
-        <dd><?php echo $this->form->getInput('online_meeting_url'); ?></dd>
-        <dt><?php echo $this->form->getLabel('online_meeting_label'); ?></dt>
-        <dd><?php echo $this->form->getInput('online_meeting_label'); ?></dd>
-        <dt><?php echo $this->form->getLabel('online_meeting_access', 'attribs'); ?></dt>
-        <dd><?php echo $this->form->getInput('online_meeting_access', 'attribs'); ?></dd>
-        <dt><?php echo $this->form->getLabel('online_meeting_registered', 'attribs'); ?></dt>
-        <dd><input type="hidden" name="jform[attribs][online_meeting_registered]" value="0"><?php echo $this->form->getInput('online_meeting_registered', 'attribs'); ?></dd>
-        <dt><?php echo $this->form->getLabel('publish_up'); ?></dt>
-        <dd><?php echo $this->form->getInput('publish_up'); ?></dd>
-        <dt><?php echo $this->form->getLabel('publish_down'); ?></dt>
-        <dd><?php echo $this->form->getInput('publish_down'); ?></dd>
-    </dl>
+<div class="jem-event-advanced">
+<fieldset class="jem-event-advanced-section">
+    <legend><?php echo Text::_('COM_JEM_EVENT_PUBLICATION_HEADING'); ?></legend>
+    <p class="jem-event-advanced-description"><?php echo Text::_('COM_JEM_EVENT_PUBLICATION_DESCRIPTION'); ?></p>
+    <div class="jem-event-advanced-fields">
+        <div class="jem-event-advanced-field"><?php echo $this->form->renderField('event_status'); ?></div>
+        <div class="jem-event-advanced-field"><?php echo $this->form->renderField('ticket_availability'); ?></div>
+        <div class="jem-event-advanced-field"><?php echo $this->form->renderField('publish_up'); ?></div>
+        <div class="jem-event-advanced-field"><?php echo $this->form->renderField('publish_down'); ?></div>
+    </div>
 </fieldset>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var articleActionSelect = document.getElementById('jform_create_article');
@@ -53,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 <!-- START META FIELDSET -->
-<fieldset class="">
+<fieldset class="jem-event-advanced-section jem-event-advanced-metadata">
     <legend><?php echo Text::_('COM_JEM_META_HANDLING'); ?></legend>
     <div class="formelm-area">
         <input class="inputbox btn" type="button" onclick="insert_keyword('[title]')" value="<?php echo Text::_ ( 'COM_JEM_TITLE' );    ?>" />
@@ -101,3 +93,15 @@ document.addEventListener('DOMContentLoaded', function () {
 </fieldset>
 <!--  END META FIELDSET -->
 
+<hr class="jem-event-advanced-separator">
+<fieldset class="jem-event-advanced-section jem-event-advanced-online">
+    <legend><?php echo Text::_('COM_JEM_ONLINE_MEETING'); ?></legend>
+    <p class="jem-event-advanced-description"><?php echo Text::_('COM_JEM_EVENT_ONLINE_ACCESS_DESCRIPTION'); ?></p>
+    <div class="jem-event-advanced-fields">
+        <div class="jem-event-advanced-field jem-event-advanced-field--wide"><?php echo $this->form->renderField('online_meeting_url'); ?></div>
+        <div class="jem-event-advanced-field"><?php echo $this->form->renderField('online_meeting_label'); ?></div>
+        <div class="jem-event-advanced-field"><?php echo $this->form->renderField('online_meeting_access', 'attribs'); ?></div>
+        <div class="jem-event-advanced-field jem-event-advanced-field--wide jem-event-advanced-confirmation"><input type="hidden" name="jform[attribs][online_meeting_registered]" value="0"><?php echo $this->form->renderField('online_meeting_registered', 'attribs'); ?></div>
+    </div>
+</fieldset>
+</div>
