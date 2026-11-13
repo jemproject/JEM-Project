@@ -195,3 +195,9 @@ body.site .bs-popover-top > .popover-arrow::after,
 body.site .bs-popover-auto[data-popper-placement^="right"] > .popover-arrow::after {
   left: 1.5px;
 }
+
+/* A boundary remains visible and explains why it cannot be followed. */
+.mod_jemcalq_calendar-month [data-jem-navigation-limit] {
+    opacity: .45;
+    cursor: not-allowed;
+}

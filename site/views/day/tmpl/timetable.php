@@ -250,25 +250,25 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
 
     <nav class="jem-calendar-navigation jem-timetable-navigation" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_DAY_NAVIGATION'); ?>">
         <?php if ($showWeekNavigation) : ?>
-            <a class="jem-calendar-nav-link jem-timetable-nav-link" href="<?php echo $previousWeekLink; ?>" rel="prev" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_PREVIOUS_WEEK'); ?>">
+            <a class="jem-calendar-nav-link jem-timetable-nav-link" <?php echo JemHelper::calendarNavigationAttributes($previousWeekLink, $previousWeekDate, null, 'prev'); ?> aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_PREVIOUS_WEEK'); ?>">
                 <?php echo jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angles-left jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_PREVIOUS_WEEK'), array('class' => 'jem-calendar-nav-icon')); ?>
             </a>
         <?php endif; ?>
-        <a class="jem-calendar-nav-link jem-timetable-nav-link" href="<?php echo $previousLink; ?>" rel="prev" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_PREVIOUS_DAY'); ?>">
+        <a class="jem-calendar-nav-link jem-timetable-nav-link" <?php echo JemHelper::calendarNavigationAttributes($previousLink, $previousDate, null, 'prev'); ?> aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_PREVIOUS_DAY'); ?>">
             <?php echo jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angle-left jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_PREVIOUS_DAY'), array('class' => 'jem-calendar-nav-icon')); ?>
         </a>
         <div class="jem-calendar-nav-title jem-timetable-nav-title">
             <span><?php echo $this->daydate; ?></span>
             <?php echo $specialDayBadges; ?>
         </div>
-        <a class="jem-calendar-nav-link jem-timetable-nav-link jem-timetable-nav-today" href="<?php echo $todayLink; ?>" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_TODAY'); ?>">
+        <a class="jem-calendar-nav-link jem-timetable-nav-link jem-timetable-nav-today" <?php echo JemHelper::calendarNavigationAttributes($todayLink, JemHelper::getJoomlaDate()); ?> aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_TODAY'); ?>">
             <?php echo Text::_('COM_JEM_TIMETABLE_TODAY'); ?>
         </a>
-        <a class="jem-calendar-nav-link jem-timetable-nav-link" href="<?php echo $nextLink; ?>" rel="next" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_NEXT_DAY'); ?>">
+        <a class="jem-calendar-nav-link jem-timetable-nav-link" <?php echo JemHelper::calendarNavigationAttributes($nextLink, $nextDate, null, 'next'); ?> aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_NEXT_DAY'); ?>">
             <?php echo jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angle-right jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_NEXT_DAY'), array('class' => 'jem-calendar-nav-icon')); ?>
         </a>
         <?php if ($showWeekNavigation) : ?>
-            <a class="jem-calendar-nav-link jem-timetable-nav-link" href="<?php echo $nextWeekLink; ?>" rel="next" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_NEXT_WEEK'); ?>">
+            <a class="jem-calendar-nav-link jem-timetable-nav-link" <?php echo JemHelper::calendarNavigationAttributes($nextWeekLink, $nextWeekDate, null, 'next'); ?> aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_NEXT_WEEK'); ?>">
                 <?php echo jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angles-right jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_NEXT_WEEK'), array('class' => 'jem-calendar-nav-icon')); ?>
             </a>
         <?php endif; ?>

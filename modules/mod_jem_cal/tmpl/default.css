@@ -199,3 +199,9 @@
 .eventcalq table.mod_jemcalq_calendar span.hasTip {
     margin: 0;
 }
+
+/* A boundary remains visible and explains why it cannot be followed. */
+.mod_jemcalq_calendar-month [data-jem-navigation-limit] {
+    opacity: .45;
+    cursor: not-allowed;
+}

@@ -121,6 +121,8 @@ class JemModelVenueCal extends JemModelEventslist
      */
     public function getItems()
     {
+        $period = $this->getCalendarMonthDate($this->_date);
+        $this->prepareCalendarNavigation($period->format('Y-m-01'), $period->format('Y-m-t'));
         $items = parent::getItems();
 
         if ($items) {

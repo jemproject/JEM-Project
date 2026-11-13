@@ -86,7 +86,7 @@ class JemCalendarAgendaHelper
 
         return '<span class="jem-calendar-layout-toggle">'
             . '<a class="jem-layout-toggle" href="' . htmlspecialchars((string) $uri, ENT_QUOTES, 'UTF-8')
-            . '" title="' . $escapedLabel . '" aria-label="' . $escapedLabel . '">'
+            . '" rel="nofollow" title="' . $escapedLabel . '" aria-label="' . $escapedLabel . '">'
             . '<i class="fa fa-fw fa-lg ' . $icons[$nextMode] . '" aria-hidden="true"></i>'
             . '<span class="jem-layout-toggle-label">' . $escapedLabel . '</span>'
             . '</a></span>';
@@ -113,7 +113,7 @@ class JemCalendarAgendaHelper
         $icon = $isAgenda ? 'fa-calendar-days' : 'fa-list';
 
         return '<span class="jem-calendar-layout-toggle">'
-            . '<a class="jem-layout-toggle" href="' . htmlspecialchars($link, ENT_COMPAT, 'UTF-8') . '" title="' . htmlspecialchars($label, ENT_COMPAT, 'UTF-8') . '" aria-label="' . htmlspecialchars($label, ENT_COMPAT, 'UTF-8') . '">'
+            . '<a class="jem-layout-toggle" href="' . htmlspecialchars($link, ENT_COMPAT, 'UTF-8') . '" rel="nofollow" title="' . htmlspecialchars($label, ENT_COMPAT, 'UTF-8') . '" aria-label="' . htmlspecialchars($label, ENT_COMPAT, 'UTF-8') . '">'
             . '<i class="fa fa-fw fa-lg ' . $icon . '" aria-hidden="true"></i>'
             . '<span class="jem-layout-toggle-label">' . htmlspecialchars($label, ENT_COMPAT, 'UTF-8') . '</span>'
             . '</a>'

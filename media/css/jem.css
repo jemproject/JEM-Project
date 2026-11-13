@@ -4163,4 +4163,9 @@ div#jem.jem_specialday_edit .jem-specialday-type-preview {
     }
 }
 
-
+/* Keep the boundary explanation available on hover and keyboard focus. */
+#jem [data-jem-navigation-limit] {
+    opacity: .45;
+    cursor: not-allowed;
+    pointer-events: auto;
+}

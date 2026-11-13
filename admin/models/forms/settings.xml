@@ -27,6 +27,9 @@
             default="1"
             multiple="true"
         />
+        <field name="calendar_empty_months" type="number" default="3" min="1" max="120"
+            label="COM_JEM_CALENDAR_EMPTY_MONTHS_LABEL" description="COM_JEM_CALENDAR_EMPTY_MONTHS_DESC"
+            filter="integer" validate="number" class="form-control w-auto" />
         <field name="backend_events_order" type="list"
             label="COM_JEM_SETTINGS_BACKEND_EVENT_ORDER"
             description="COM_JEM_SETTINGS_BACKEND_EVENT_ORDER_DESC"

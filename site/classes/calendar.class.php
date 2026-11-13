@@ -791,7 +791,7 @@ class JemCalendar
                     $linktext="<a href=\"javascript:".$this->javaScriptDay."(".$this->actyear.",".$this->actmonth.",".$var.")\">".$var."</a>";
                 } elseif (!empty($this->url)) {
                     $dayurl= Route::_($this->url.(strpos($this->url,"?") === false ? '?' : '&').'id='.sprintf('%04d%02d%02d',$this->actyear,$this->actmonth,$var));
-                    $linktext="<a href=\"".$dayurl."\">".$var."</a>";
+                    $linktext="<a href=\"".$dayurl."\" rel=\"nofollow\">".$var."</a>";
                 }
             }
         }
@@ -881,9 +881,12 @@ class JemCalendar
         } else {
             $glueNav="&amp;";
         }
-        $yearNavLink  = empty($this->urlNav) ? '' : "<a class=\"jem-calendar-nav-link\" href=\"".Route::_($this->urlNav.$glueNav.$this->yearID."=".$year)."\" rel=\"noindex, nofollow\">";
-        $monthNavLink = empty($this->urlNav) ? '' : "<a class=\"jem-calendar-nav-link\" href=\"".Route::_($this->urlNav.$glueNav.$this->yearID."=".$year."&amp;".$this->monthID."=".$month)."\" rel=\"noindex, nofollow\">";
-        $dayLink      = empty($this->url)  ? $day : "<a href=\"".Route::_($this->url.$glue.$this->yearID."=".$year."&amp;".$this->monthID."=".$month."&amp;".$this->dayID."=".$day)."\">".$day."</a>";
+        // Navigation stays within the range around the events (#2538).
+        $navStart = sprintf('%04d-%02d-01', (int) $year, $month ? (int) $month : 1);
+        $navEnd   = $month ? date('Y-m-t', strtotime($navStart)) : sprintf('%04d-12-31', (int) $year);
+        $yearNavLink  = empty($this->urlNav) ? '' : "<a class=\"jem-calendar-nav-link\"".JemHelper::calendarNavigationAttributes(Route::_($this->urlNav.$glueNav.$this->yearID."=".$year), $navStart, $navEnd).">";
+        $monthNavLink = empty($this->urlNav) ? '' : "<a class=\"jem-calendar-nav-link\"".JemHelper::calendarNavigationAttributes(Route::_($this->urlNav.$glueNav.$this->yearID."=".$year."&amp;".$this->monthID."=".$month), $navStart, $navEnd).">";
+        $dayLink      = empty($this->url)  ? $day : "<a href=\"".Route::_($this->url.$glue.$this->yearID."=".$year."&amp;".$this->monthID."=".$month."&amp;".$this->dayID."=".$day)."\" rel=\"nofollow\">".$day."</a>";
         if ($year &&  $month &&  $day) return $dayLink;
         if ($year && !$month && !$day) return $yearNavLink;
         if ($year &&  $month && !$day) return $monthNavLink;
@@ -974,7 +977,14 @@ class JemCalendar
         if ($this->weekUrl) {
             if (strpos($this->weekUrl,"?") === false) $glue="?";
             else $glue="&amp;";
-            $out.="<a href=\"".$this->weekUrl.$glue.$this->yearID."=".$year."&amp;".$this->weekID."=".$week."\">".$week."</a>";
+            $weekStart = (new \DateTimeImmutable('today'))->setISODate((int) $year, (int) $week, 1);
+            if ($this->startOnSun) {
+                $weekStart = $weekStart->modify('-1 day');
+            }
+            $out .= '<a' . JemHelper::calendarNavigationAttributes(
+                $this->weekUrl . $glue . $this->yearID . '=' . $year . '&amp;' . $this->weekID . '=' . $week,
+                $weekStart, $weekStart->modify('+6 days')
+            ) . '>' . $week . '</a>';
         }
         elseif ($this->javaScriptWeek) $out.="<a href=\"javascript:".$this->javaScriptWeek."(".$year.",".$week.")\">".$week."</a>";
         else $out.=$week;

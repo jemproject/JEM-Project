@@ -74,10 +74,16 @@ function calendarMonthOffsetProbe(string $root, mixed $raw, array $input = [], a
     $source = file_get_contents($root . '/modules/mod_jem_cal/mod_jem_cal.php');
     $start = strpos($source, '# Parameters');
     $code = substr($source, $start, strpos($source, '# Requested URL') - $start);
+    // Isolate the existing offset calculation; bounded navigation is tested against Joomla.
+    $code = preg_replace('~\$navigationRange = ModJemCalHelper::getNavigationRange\(\$params\);~', '', $code);
+    $code = preg_replace('~\$displayedMonth = ModJemCalHelper::navigationMonth[^;]+;~',
+        '$displayedMonth = new DateTimeImmutable(sprintf("%04d-%02d-01", $offset_year, $offset_month));', $code);
     $code = str_replace("new DateTimeImmutable('now',", "new DateTimeImmutable('2026-11-08 12:00:00',", $code);
     eval('use CalendarMonthOffsetFactory as Factory; use CalendarMonthOffsetHelper as JemHelper; use CalendarMonthOffsetText as Text;' . $code);
     $start = strpos($source, '# Create link params');
-    eval(substr($source, $start, strpos($source, '# Get data', $start) - $start));
+    $linkCode = substr($source, $start, strpos($source, '# Get data', $start) - $start);
+    $linkCode = preg_replace('~// Disabled controls retain.*~s', '', $linkCode);
+    eval($linkCode);
 
     return compact('offset_year', 'offset_month', 'prev_month', 'next_month', 'prev_month_year',
         'next_month_year', 'today_month', 'today_year', 'prev_year', 'next_year',

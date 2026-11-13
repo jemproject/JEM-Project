@@ -125,11 +125,11 @@ class JemViewCalendar extends JemView
             $print_link = Route::_(JemOutput::prepareExportLink($url_base . $partItemid. $partDate . '&task=archive&print=1&tmpl=component'));
             $pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
             $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
-            $archive_link = Route::_($url_base . $partItemid . $partDate);
+            $archive_link = Route::_($url_base . $partItemid);
             $params->set('page_heading', $pageheading);
         } else {
             $print_link = Route::_(JemOutput::prepareExportLink($url_base . $partItemid. $partDate . '&print=1&tmpl=component'));
-            $archive_link = Route::_($url_base . $partItemid . $partDate);
+            $archive_link = Route::_($url_base . $partItemid);
         }
 
         // Add site name to title if param is set

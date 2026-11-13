@@ -352,6 +352,7 @@ class JemModelDay extends JemModelEventslist
      */
     public function getItems()
     {
+        $this->prepareCalendarNavigation($this->getDay(), $this->getDayEnd());
         $items = parent::getItems();
 
         if ($items) {
@@ -410,6 +411,9 @@ class JemModelDay extends JemModelEventslist
         $query = parent::getListQuery();
 
         $this->applyDayScope($query);
+        if ($this->getState('filter.calendar_bounds', false)) {
+            return $query;
+        }
         if ($this->getState('filter.calendar_startdayonly', false)) {
             $query->where('a.dates >= ' . $this->_db->quote($this->_date));
         }

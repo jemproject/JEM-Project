@@ -102,40 +102,20 @@ abstract class ModJemCalHelper extends ModuleHelper
         return $end !== '' ? Text::sprintf('MOD_JEM_CAL_TIME_UNTIL', $end) : '';
     }
 
-    public static function getDays($greq_year, $greq_month, &$params)
+    /**
+     * Use identical publication, ACL, category and venue scope for items and bounds.
+     *
+     * @param object $params Module parameters.
+     * @param string $daylinkparams Receives the matching day-view filter query.
+     * @return object Configured Eventslist model, without a displayed date restriction.
+     */
+    protected static function createCalendarModel($params, string &$daylinkparams = '')
     {
         # Retrieve Eventslist model for the data
         $model = BaseDatabaseModel::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
 
         # Set params for the model
         $model->setState('params', $params);
-
-        $db       = Factory::getDbo();
-        $user     = JemFactory::getUser();
-        $levels   = $user->getAuthorisedViewLevels();
-        $settings = JemHelper::globalattribs();
-
-        $StraightToDetails = $params->get('StraightToDetails', '1');
-        $DisplayLink       = $params->get('DisplayLink', '0');
-        $DisplayTime       = $params->get('DisplayTime', '0');
-        $DisplayCat        = $params->get('DisplayCat', '0');
-        $DisplayVenue      = $params->get('DisplayVenue', '0');
-        $ArchivedEvents    = $params->get('ArchivedEvents', '0');
-        $CurrentEvents     = $params->get('CurrentEvents', '1');
-        $FixItemID         = $params->get('FixItemID', '0');
-        $defaultItemid     = $settings->get('default_Itemid', '');
-        $daylinkparams     = ''; // collects additional params for link to day view
-        $max_title_len     = (int)$params->get('event_cut_title', '25');
-
-        # Only select events within specified date range. (choosen month)
-        $monthstart = mktime(0, 0,  1, $greq_month,     1, $greq_year);
-        $monthend   = mktime(0, 0, -1, $greq_month + 1, 1, $greq_year);
-        $filter_date_from = $db->Quote(date('Y-m-d', $monthstart));
-        $filter_date_to   = $db->Quote(date('Y-m-d', $monthend));
-        $where_from = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $filter_date_from . ') >= 0';
-        $model->setState('filter.calendar_from', $where_from);
-        $where_to = ' DATEDIFF(a.dates, ' . $filter_date_to . ') <= 0';
-        $model->setState('filter.calendar_to', $where_to);
 
         # Clean parameter data
         $catids   = JemHelper::getValidIds($params->get('catid'));
@@ -154,6 +134,9 @@ abstract class ModJemCalHelper extends ModuleHelper
             $model->setState('filter.venue_id.include', true);
             $daylinkparams .= '&locids=' . implode(',', $venids);
         }
+
+        $CurrentEvents = $params->get('CurrentEvents', '1');
+        $ArchivedEvents = $params->get('ArchivedEvents', '0');
 
         # Filter published
         #  0: unpublished
@@ -178,6 +161,103 @@ abstract class ModJemCalHelper extends ModuleHelper
         }
 
         $model->setState('filter.groupby','a.id');
+
+        return $model;
+    }
+
+    /**
+     * Obtain this module's visible month bounds without changing the component's range.
+     *
+     * @param object $params Module parameters.
+     * @return array{start: string, end: string} Inclusive month bounds.
+     */
+    public static function getNavigationRange($params): array
+    {
+        return self::createCalendarModel($params)->getCalendarNavigationRange();
+    }
+
+    /**
+     * Resolve the displayed month, rejecting explicit out-of-range navigation.
+     *
+     * Initial or remembered months outside the interval use its nearest boundary.
+     * Month_offset is applied before checking, so it cannot bypass the limits.
+     *
+     * @param int $year Requested base year.
+     * @param int $month Requested base month.
+     * @param int $offset Configured whole-month offset.
+     * @param array $range This module's filtered bounds.
+     * @param bool $explicit Whether the visitor requested this module's month.
+     * @return DateTimeImmutable First day of the allowed displayed month.
+     * @throws RuntimeException HTTP 404 for explicit invalid/out-of-range months.
+     */
+    public static function navigationMonth(int $year, int $month, int $offset, array $range, bool $explicit): DateTimeImmutable
+    {
+        require_once JPATH_SITE . '/components/com_jem/helpers/calendarnavigation.php';
+        $date = $year >= 1000 && $year <= 9999 && checkdate($month, 1, $year)
+            ? (new DateTimeImmutable(sprintf('%04d-%02d-01', $year, $month)))->modify(sprintf('%+d months', $offset))
+            : null;
+
+        if ($date !== null && JemCalendarNavigation::overlaps($range, $date->format('Y-m-01'), $date->format('Y-m-t'))) {
+            return $date;
+        }
+
+        if ($explicit) {
+            throw new RuntimeException(Text::_('COM_JEM_CALENDAR_NO_MORE_EVENTS'), 404);
+        }
+
+        return (new DateTimeImmutable($date !== null && $date->format('Y-m-d') > $range['end']
+            ? $range['end'] : $range['start']))->modify('first day of this month');
+    }
+
+    /**
+     * Check one module link using its own range and configured month offset.
+     *
+     * @param int $year Destination base year.
+     * @param int $month Destination base month.
+     * @param int $offset Configured whole-month offset.
+     * @param array $range This module's filtered bounds.
+     * @return bool Whether the link may navigate to that displayed month.
+     */
+    public static function allowsMonth(int $year, int $month, int $offset, array $range): bool
+    {
+        try {
+            self::navigationMonth($year, $month, $offset, $range, true);
+            return true;
+        } catch (RuntimeException $error) {
+            return false;
+        }
+    }
+
+    public static function getDays($greq_year, $greq_month, &$params)
+    {
+        $daylinkparams = '';
+        $model = self::createCalendarModel($params, $daylinkparams);
+
+        $db       = Factory::getDbo();
+        $user     = JemFactory::getUser();
+        $levels   = $user->getAuthorisedViewLevels();
+        $settings = JemHelper::globalattribs();
+
+        $StraightToDetails = $params->get('StraightToDetails', '1');
+        $DisplayLink       = $params->get('DisplayLink', '0');
+        $DisplayTime       = $params->get('DisplayTime', '0');
+        $DisplayCat        = $params->get('DisplayCat', '0');
+        $DisplayVenue      = $params->get('DisplayVenue', '0');
+        $ArchivedEvents    = $params->get('ArchivedEvents', '0');
+        $CurrentEvents     = $params->get('CurrentEvents', '1');
+        $FixItemID         = $params->get('FixItemID', '0');
+        $defaultItemid     = $settings->get('default_Itemid', '');
+        $max_title_len     = (int)$params->get('event_cut_title', '25');
+
+        # Only select events within specified date range. (choosen month)
+        $monthstart = mktime(0, 0,  1, $greq_month,     1, $greq_year);
+        $monthend   = mktime(0, 0, -1, $greq_month + 1, 1, $greq_year);
+        $filter_date_from = $db->Quote(date('Y-m-d', $monthstart));
+        $filter_date_to   = $db->Quote(date('Y-m-d', $monthend));
+        $where_from = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $filter_date_from . ') >= 0';
+        $model->setState('filter.calendar_from', $where_from);
+        $where_to = ' DATEDIFF(a.dates, ' . $filter_date_to . ') <= 0';
+        $model->setState('filter.calendar_to', $where_to);
 
         # Retrieve the available Items
         $events = $model->getItems();

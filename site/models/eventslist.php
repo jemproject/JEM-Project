@@ -578,7 +578,63 @@ class JemModelEventslist extends ListModel
     }
 
     /**
-     * Build the query
+     * Find navigation bounds using this calendar's ACL, publication and menu filters.
+     *
+     * Only the displayed date window and ordering are removed on an isolated model.
+     * The aggregate does not load event descriptions or expand recurring/multi-day items.
+     *
+     * @return array{start: string, end: string} Inclusive first/last navigable months.
+     */
+    public function getCalendarNavigationRange(): array
+    {
+        require_once __DIR__ . '/../helpers/calendarnavigation.php';
+        $this->getState();
+        $scope = clone $this;
+        $scope->state = clone $this->state;
+        $scope->setState('filter.calendar_bounds', true);
+        $scope->setState('filter.calendar_from', '1 = 1');
+        $scope->setState('filter.calendar_to', null);
+        $scope->setState('filter.orderby', null);
+        $scope->setState('list.compact_select', true);
+        $query = $scope->getListQuery();
+        // The annual template omits locked event announcements altogether.
+        if (strtolower($this->getName()) === 'annualcalendar') {
+            $levels = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
+            $query->where($levels ? 'a.access IN (' . implode(',', $levels) . ')' : '1 = 0');
+        }
+        // getItems also removes rows with no visible categories after loading.
+        // Mirror that step even when the category query returns an empty set.
+        $categories = array_map('intval', $scope->getCategories('all'));
+        $query->where($categories ? 'c.id IN (' . implode(',', $categories) . ')' : '1 = 0');
+        $eventEnd = $scope->getState('filter.calendar_startdayonly', false)
+            ? 'a.dates' : 'IF(a.enddates >= a.dates, a.enddates, a.dates)';
+        $query->clear('select')->clear('group')->clear('order')
+            ->select('MIN(a.dates) AS first_date, MAX(' . $eventEnd . ') AS last_date')
+            ->where('a.dates IS NOT NULL AND a.dates > ' . $this->_db->quote('0000-00-00'));
+        $bounds = $this->_db->setQuery($query)->loadObject();
+        return JemCalendarNavigation::bounds(
+            $bounds->first_date ?? null,
+            $bounds->last_date ?? null,
+            JemHelper::getJoomlaDate(),
+            (int) (JemHelper::config()->calendar_empty_months ?? 3)
+        );
+    }
+
+    /**
+     * Prepare bounded navigation and validate the requested period before loading items.
+     *
+     * @param string $start First displayed civil date.
+     * @param string $end Last displayed civil date.
+     * @return void Throws HTTP 404 for an explicit date outside the calendar's interval.
+     */
+    protected function prepareCalendarNavigation(string $start, string $end): void
+    {
+        require_once __DIR__ . '/../helpers/calendarnavigation.php';
+        JemCalendarNavigation::checkRequest($this->getCalendarNavigationRange(), $start, $end, strtolower($this->getName()));
+    }
+
+    /**
+     * @return JDatabaseQuery
      */
     protected function getListQuery()
     {

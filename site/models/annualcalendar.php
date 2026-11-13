@@ -109,6 +109,8 @@ class JemModelAnnualcalendar extends JemModelEventslist
      */
     public function getItems()
     {
+        $period = $this->getCalendarPeriod();
+        $this->prepareCalendarNavigation($period['start']->format('Y-m-d'), $period['end']->format('Y-m-d'));
         $items = parent::getItems();
 
         return $items ?: array();

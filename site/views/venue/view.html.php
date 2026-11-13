@@ -181,7 +181,7 @@ class JemViewVenue extends JemView
             $print_link = Route::_(JemOutput::prepareExportLink(JemOutput::buildPrintLink($url_base . $partDate, $task === 'archive')));
             $pdf_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=venue&layout=pdf' . $partVenid
                 . $partItemid . $partDate . $partArchive . '&venue_calendar_pdf=1&format=raw'));
-            $archive_link = Route::_($url_base . $partDate);
+            $archive_link = Route::_($url_base);
 
             // init calendar
             $cal = new JemCalendar($year, $month, 0);
