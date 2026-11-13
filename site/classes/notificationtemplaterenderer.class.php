@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/maillocation.class.php';
+
 /**
  * Pure renderer for legacy and named JEM notification templates.
  */
@@ -72,14 +74,25 @@ final class JemNotificationTemplateRenderer
 
     /**
      * Render one resolved subject or body.
+     *
+     * @param string $template Resolved template.
+     * @param array $values Scalar placeholder values.
+     * @param array $legacyTokens Positional translation mapping.
+     * @param bool $html Escape inserted values for HTML.
+     * @param bool $optionalLocation Handle empty location rows in default bodies only.
+     * @return string Rendered subject or body.
      */
-    public static function render($template, array $values, array $legacyTokens = array(), $html = false)
+    public static function render($template, array $values, array $legacyTokens = array(), $html = false, $optionalLocation = false)
     {
         $template = (string) $template;
         $format = self::detectFormat($template);
 
         if ($format === self::FORMAT_LEGACY || $format === self::FORMAT_MIXED) {
             $template = self::normaliseLegacy($template, $legacyTokens);
+        }
+
+        if ($optionalLocation && array_key_exists('venue', $values) && array_key_exists('city', $values)) {
+            $template = JemMailLocation::prepare($template, $values['venue'], $values['city']);
         }
 
         return (string) preg_replace_callback(

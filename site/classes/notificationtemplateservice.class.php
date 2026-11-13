@@ -155,7 +155,9 @@ final class JemNotificationTemplateService
                 'body'        => JemNotificationTemplateRenderer::render(
                     $bodyTemplate,
                     $values,
-                    $definition['body_legacy_tokens']
+                    $definition['body_legacy_tokens'],
+                    false,
+                    !$isCustom
                 ),
                 'htmlbody'    => $htmlTemplate === '' ? '' : JemNotificationTemplateRenderer::render(
                     $htmlTemplate,
@@ -185,7 +187,9 @@ final class JemNotificationTemplateService
                 'body'        => JemNotificationTemplateRenderer::render(
                     $fallbackBody,
                     $values,
-                    $definition['body_legacy_tokens']
+                    $definition['body_legacy_tokens'],
+                    false,
+                    true
                 ),
                 'htmlbody'    => '',
                 'fallback_reason' => $e->getMessage(),
