@@ -236,6 +236,46 @@ document.addEventListener('DOMContentLoaded', function () {
             : Array.from(root.querySelectorAll('.jem-event-price-options .subform-repeatable-group'));
     };
 
+    /**
+     * Match the server's ASCII normalisation and 64-character admission-code limit.
+     * @param {string} value Submitted admission code.
+     * @returns {string} Normalised code.
+     */
+    const normalisePriceCode = function (value) {
+        return String(value).replace(/^[ \t\n\r\0\v]+|[ \t\n\r\0\v]+$/g, '')
+            .replace(/[A-Z]/g, function (letter) { return letter.toLowerCase(); })
+            .replace(/[^a-z0-9_-]+/g, '-').slice(0, 64).replace(/^[-_]+|[-_]+$/g, '');
+    };
+
+    // Keep stored codes reserved even when their rows are removed from the form.
+    const storedPriceCodes = new Set(<?php echo json_encode(array_column((array) ($this->item->event_prices ?? array()), 'code'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>.map(normalisePriceCode));
+
+    /**
+     * Allocate a code for Add or Copy, preserving space for its suffix.
+     * @param {string} value Base code, before any copy suffix.
+     * @param {HTMLElement} target New row excluded from the current-code check.
+     * @param {boolean} copy Whether to append the copy suffix.
+     * @returns {string} Code unused by stored prices and other form rows.
+     */
+    const uniquePriceCode = function (value, target, copy = false) {
+        const base = normalisePriceCode(value) || 'admission';
+        const usedCodes = new Set(storedPriceCodes);
+        priceRows().forEach(function (row) {
+            const code = row.querySelector('[name$="[code]"]');
+            if (row !== target && code) {
+                usedCodes.add(normalisePriceCode(code.value));
+            }
+        });
+        let tail = copy ? '-copy' : '';
+        let candidate = base.slice(0, 64 - tail.length) + tail;
+        let suffix = 2;
+        while (usedCodes.has(candidate)) {
+            tail = (copy ? '-copy-' : '-') + suffix++;
+            candidate = base.slice(0, 64 - tail.length) + tail;
+        }
+        return candidate;
+    };
+
     const updateMode = function () {
         const classic = mode.value === 'classic';
         details.hidden = classic;
@@ -701,18 +741,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (key === 'id') {
                 control.value = '0';
             } else if (key === 'code') {
-                const baseCode = (sourceControl.value || 'admission').replace(/(?:-copy(?:-\d+)?)$/, '');
-                const usedCodes = priceRows().map(function (row) {
-                    const code = row.querySelector('[name$="[code]"]');
-                    return code ? code.value.toLowerCase() : '';
-                });
-                let candidate = baseCode + '-copy';
-                let suffix = 2;
-                while (usedCodes.indexOf(candidate.toLowerCase()) !== -1) {
-                    candidate = baseCode + '-copy-' + suffix;
-                    suffix += 1;
-                }
-                control.value = candidate;
+                const baseCode = normalisePriceCode(sourceControl.value).replace(/(?:-copy(?:-\d+)?)$/, '');
+                control.value = uniquePriceCode(baseCode, target, true);
             } else if (key === 'name') {
                 control.value = (sourceControl.value || '') + copySuffix;
             }
@@ -744,6 +774,11 @@ document.addEventListener('DOMContentLoaded', function () {
     root.addEventListener('subform-row-add', function (event) {
         if (!event.detail || !event.detail.row || !event.detail.row.closest('.jem-event-price-options')) {
             return;
+        }
+        const addedCode = event.detail.row.querySelector('[name$="[code]"]');
+        if (addedCode && !addedCode.value.trim()) {
+            addedCode.value = uniquePriceCode('admission', event.detail.row);
+            addedCode.dispatchEvent(new Event('input', {bubbles: true}));
         }
         const defaultTax = document.getElementById('jform_default_tax_rate_id');
         const rowTax = event.detail.row.querySelector('[name$="[tax_rate_id]"]');

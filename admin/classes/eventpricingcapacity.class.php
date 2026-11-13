@@ -884,6 +884,17 @@ class JemEventPricingCapacityService
             self::loadPoolRows($eventId)
         ), true);
         $codes = array();
+        $storedCodes = array();
+        foreach ($existingRows as $stored) {
+            $storedCodes[self::normaliseCode($stored['code'])] = true;
+        }
+        $reservedCodes = $storedCodes;
+        // Reserve explicit codes before generating any, regardless of row order.
+        foreach ($rows as $row) {
+            if (is_array($row)) {
+                $reservedCodes[self::normaliseCode($row['code'] ?? '')] = true;
+            }
+        }
         $taxIds = array();
         $normalised = array();
 
@@ -902,11 +913,14 @@ class JemEventPricingCapacityService
             }
             $code = $id > 0
                 ? (string) $stored['code']
-                : self::normaliseCode($row['code'] ?? $name);
-            if ($code === '' || isset($codes[$code])) {
+                : (trim((string) ($row['code'] ?? '')) === ''
+                    ? self::uniquePriceCode($name, $reservedCodes)
+                    : self::normaliseCode($row['code']));
+            if ($code === '' || isset($codes[$code]) || ($id <= 0 && isset($storedCodes[$code]))) {
                 throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_PRICE_CODE'));
             }
             $codes[$code] = true;
+            $reservedCodes[$code] = true;
 
             $poolReference = trim((string) ($row['capacity_pool_id'] ?? ''));
             $poolSourceCode = str_starts_with($poolReference, 'source:')
@@ -1619,6 +1633,27 @@ class JemEventPricingCapacityService
         }
 
         return Factory::getDate('now', 'UTC')->format('Y-m-d');
+    }
+
+    /**
+     * Generate a new admission code without reusing stored or submitted codes.
+     *
+     * @param string $name Admission name used when the submitted code is blank.
+     * @param array $reservedCodes Set of normalised codes already reserved in this event.
+     * @return string Unique ASCII code within the 64-character storage limit.
+     */
+    private static function uniquePriceCode(string $name, array $reservedCodes): string
+    {
+        $base = self::normaliseCode($name);
+        $base = $base !== '' ? $base : 'admission';
+        $candidate = $base;
+        $suffix = 2;
+        while (isset($reservedCodes[$candidate])) {
+            $tail = '-' . $suffix++;
+            $candidate = substr($base, 0, 64 - strlen($tail)) . $tail;
+        }
+
+        return $candidate;
     }
 
     private static function normaliseCode($value): string
