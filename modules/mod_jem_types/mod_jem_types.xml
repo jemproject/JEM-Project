@@ -28,6 +28,12 @@
     <config>
         <fields name="params">
             <fieldset name="basic">
+                <field name="show_status_indicators" type="radio" default="1" showon="display_mode:topn"
+                    label="MOD_JEM_TYPES_SHOW_STATUS_INDICATORS" description="MOD_JEM_TYPES_SHOW_STATUS_INDICATORS_DESC"
+                    class="btn-group btn-group-yesno">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
                 <field name="display_mode" type="list"
                     label="MOD_JEM_TYPES_DISPLAY_MODE"
                     description="MOD_JEM_TYPES_DISPLAY_MODE_DESC"

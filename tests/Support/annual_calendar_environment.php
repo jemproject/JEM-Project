@@ -100,6 +100,12 @@ final class Application
 /** Export snapshot boundary; these fixtures test periods/navigation, not snapshot persistence. */
 final class JemOutput
 {
+    /** @param object $event Row. @return string Neutral indicator in this unrelated rendering fixture. */
+    public static function eventStatusLabel($event): string { return ''; }
+
+    /** @param object $event Row. @return string Neutral indicator in this unrelated rendering fixture. */
+    public static function moduleEventStatusBadge($event): string { return ''; }
+
     /** @param string $link Export URL. @return string URL for period assertions. */
     public static function prepareExportLink(string $link): string
     {

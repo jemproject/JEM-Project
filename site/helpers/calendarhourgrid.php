@@ -382,14 +382,14 @@ final class JemCalendarHourGridHelper
         $label = trim((string) ($row->day_schedule['label'] ?? ''));
         $title = trim((string) ($row->title ?? ''));
         $venue = trim((string) ($row->venue ?? ''));
-        $accessible = trim($label . ' ' . $title . ' ' . $venue);
+        $accessible = trim($label . ' ' . $title . ' ' . $venue . ' ' . JemOutput::eventStatusLabel($row));
 
         return '<a' . JemCalendarFilterHelper::attributes($row, $class . ' event-filter')
             . ' href="' . self::escape($href) . '" style="' . self::escape($style)
             . '" aria-label="' . self::escape($accessible) . '">'
             . ($label !== '' && empty($row->day_schedule['all_day'])
                 ? '<span class="jem-hourgrid-event-time">' . self::escape($label) . '</span>' : '')
-            . '<span class="jem-hourgrid-event-title">' . self::escape($title) . '</span>'
+            . '<span class="jem-hourgrid-event-title">' . JemOutput::moduleEventStatusBadge($row) . self::escape($title) . '</span>'
             . ($venue !== '' ? '<span class="jem-hourgrid-event-venue">' . self::escape($venue) . '</span>' : '')
             . '</a>';
     }

@@ -5,6 +5,9 @@ declare(strict_types=1);
 // Only date/footer presentation is stubbed; the print layouts themselves are real.
 final class JemOutput
 {
+    /** @param object $event Row. @return string Neutral indicator in this unrelated rendering fixture. */
+    public static function eventStatusNotice($event): string { return ''; }
+
     public static function formatLongDateTime(...$arguments): string
     {
         return 'Test date';

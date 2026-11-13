@@ -181,6 +181,8 @@ abstract class ModJemCalHelper extends ModuleHelper
 
         # Retrieve the available Items
         $events = $model->getItems();
+        JemOutput::prepareEventStatusItems((array) $events, (int) $params->get('show_status_indicators', 1) === 1);
+        JemHelper::loadModuleStatusAssets();
 
         // sort events by time
         array_multisort(array_column($events, 'times'), SORT_NUMERIC, $events);
@@ -272,6 +274,7 @@ abstract class ModJemCalHelper extends ModuleHelper
                             $title .= '</a>';
                         }
 
+                        $title .= JemOutput::moduleEventStatusBadge($event);
                         $stod = 1;
                     } else {
                         // Other events on the same day
@@ -294,6 +297,7 @@ abstract class ModJemCalHelper extends ModuleHelper
                             $newTitle .= '</a>';
                         }
 
+                        $newTitle .= JemOutput::moduleEventStatusBadge($event);
                         $title = $days[$count][1] . '+%+%+' . $newTitle;
                         $stod  = 0;
                     }

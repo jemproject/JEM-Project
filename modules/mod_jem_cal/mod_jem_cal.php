@@ -29,6 +29,8 @@ require_once __DIR__ . '/helper.php';
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
+require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
+JemHelper::loadComponentLanguage();
 
 HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
 

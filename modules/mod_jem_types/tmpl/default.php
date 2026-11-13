@@ -75,7 +75,7 @@ $mode = $params->get('display_mode', 'summary');
                         <?php foreach ($type->events as $event) : ?>
                             <li class="mod-jem-types__event">
                                 <a href="<?php echo htmlspecialchars(Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($event->slug), $params), false), ENT_QUOTES, 'UTF-8'); ?>">
-                                    <?php echo htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8'); ?>
+                                    <?php echo htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8') . JemOutput::moduleEventStatusBadge($event); ?>
                                 </a>
                                 <small class="mod-jem-types__date text-muted ms-1">
                                     <?php echo JemOutput::formatShortDateTime($event->dates, $event->times, $event->enddates, $event->endtimes, 0); ?>

@@ -216,14 +216,14 @@ $showAttendeeColumn = ((int) $this->params->get('displayattendeecolumn', 0) === 
                             <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
                             <td headers="jem_title" style="text-align: left; vertical-align: top;">
                                 <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
-                                    <?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
+                                    <?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::moduleEventStatusBadge($row); ?>
                                 </a>
                             </td>
                             <?php endif; ?>
 
                             <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
                             <td headers="jem_title" style="text-align: left; vertical-align: top;">
-                                <?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
+                                <?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::moduleEventStatusBadge($row); ?>
                             </td>
                             <?php endif; ?>
 

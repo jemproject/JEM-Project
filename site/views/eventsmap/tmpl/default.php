@@ -237,6 +237,7 @@ foreach ((array) $events as $event) {
 
     $eventMarkers[$key]['events'][] = [
         'title' => htmlspecialchars((string) $event->title, ENT_QUOTES, 'UTF-8'),
+        'status_html' => JemOutput::moduleEventStatusBadge($event),
         'link' => htmlspecialchars($link, ENT_QUOTES, 'UTF-8'),
         'date' => htmlspecialchars(trim($dateText . ' ' . $timeText), ENT_QUOTES, 'UTF-8'),
     ];
@@ -452,7 +453,7 @@ foreach ((array) $events as $event) {
                             <td><?php echo JemOutput::formatShortDateTime($event->dates ?? '', $event->times ?? '', $event->enddates ?? '', $event->endtimes ?? ''); ?></td>
                             <td>
                                 <a href="<?php echo htmlspecialchars($eventLink, ENT_QUOTES, 'UTF-8'); ?>">
-                                    <?php echo htmlspecialchars((string) ($event->title ?? ''), ENT_QUOTES, 'UTF-8'); ?>
+                                    <?php echo htmlspecialchars((string) ($event->title ?? ''), ENT_QUOTES, 'UTF-8') . JemOutput::moduleEventStatusBadge($event); ?>
                                 </a>
                             </td>
                             <td>
@@ -722,7 +723,7 @@ foreach ((array) $events as $event) {
         $popupEvents = [];
 
         foreach ($visibleEvents as $event) {
-            $eventLine = '<li><a href="' . $event['link'] . '"><strong>' . $event['title'] . '</strong></a>';
+            $eventLine = '<li><a href="' . $event['link'] . '"><strong>' . $event['title'] . '</strong></a>' . $event['status_html'];
 
             if ($event['date'] !== '') {
                 $eventLine .= '<br><small>' . $event['date'] . '</small>';
@@ -970,7 +971,7 @@ foreach ((array) $events as $event) {
         $popupEvents = [];
 
         foreach ($visibleEvents as $event) {
-            $eventLine = '<li><a href="' . $event['link'] . '"><strong>' . $event['title'] . '</strong></a>';
+            $eventLine = '<li><a href="' . $event['link'] . '"><strong>' . $event['title'] . '</strong></a>' . $event['status_html'];
 
             if ($event['date'] !== '') {
                 $eventLine .= '<br><small>' . $event['date'] . '</small>';

@@ -145,7 +145,7 @@ class ModJemTypesHelper
 
             $eventQuery = $db->getQuery(true)
                 ->select(array(
-                    'a.id', 'a.title', 'a.alias', 'a.attribs', 'a.dates', 'a.times', 'a.enddates', 'a.endtimes', 'a.article_id',
+                    'a.id', 'a.title', 'a.alias', 'a.attribs', 'a.dates', 'a.times', 'a.enddates', 'a.endtimes', 'a.article_id', 'a.event_status', 'a.created', 'a.timezone_mode', 'a.timezone', 'a.start_utc', 'a.end_utc', 'a.ticket_availability', 'a.registra', 'a.registra_from', 'a.registra_until', 'a.maxplaces', 'a.reservedplaces', 'a.waitinglist',
                     '(' . $caseSlug . ') AS slug',
                 ))
                 ->from($db->quoteName('#__jem_events', 'a'))
@@ -160,7 +160,7 @@ class ModJemTypesHelper
                 ->where($db->quoteName('c.published') . ' = 1')
                 ->where($db->quoteName('c.access') . ' IN (' . $levelsList . ')')
                 ->where('(' . $db->quoteName('a.locid') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' = 0 OR (' . $db->quoteName('v.published') . ' = 1 AND ' . $db->quoteName('v.access') . ' IN (' . $levelsList . ')))')
-                ->group('a.id, a.title, a.alias, a.attribs, a.dates, a.times, a.enddates, a.endtimes, a.article_id')
+                ->group('a.id, a.title, a.alias, a.attribs, a.dates, a.times, a.enddates, a.endtimes, a.article_id, a.event_status, a.created, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.ticket_availability, a.registra, a.registra_from, a.registra_until, a.maxplaces, a.reservedplaces, a.waitinglist')
                 // NULL times (all-day or unspecified) come before timed events on the same date.
                 ->order(array(
                     $db->quoteName('a.dates') . ' ASC',

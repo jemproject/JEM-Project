@@ -69,7 +69,7 @@ if (!function_exists('jem_attendeeregistrations_cell')) {
                 return $view->escape($row->uregdate ?? '');
             case 'event':
                 $slug = !empty($row->event_alias) ? (int) $row->eventid . ':' . $row->event_alias : (int) ($row->eventid ?? 0);
-                $title = $view->escape($row->event_title ?? '');
+                $title = $view->escape($row->event_title ?? '') . JemOutput::eventStatusNotice($row);
 
                 return $slug ? '<a href="' . Route::_(JemHelperRoute::getEventRoute($slug)) . '">' . $title . '</a>' : $title;
             case 'event_date':

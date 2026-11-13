@@ -104,6 +104,12 @@ namespace {
 
     final class JemOutput
     {
+        /** @param object $event Row. @return string Neutral indicator in this unrelated rendering fixture. */
+        public static function eventStatusLabel($event): string { return ''; }
+
+        /** @param object $event Row. @return string Neutral indicator in this unrelated rendering fixture. */
+        public static function moduleEventStatusBadge($event): string { return ''; }
+
         public static function formatdate(string $date, string $format = ''): string
         {
             return $format === '' ? $date : (new \DateTimeImmutable($date))->format($format);

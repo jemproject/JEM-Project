@@ -269,10 +269,10 @@ $showAxisDate = (int) $this->params->get('timeline_show_axis_date', 1);
                         <h3>
                             <?php if ($this->jemsettings->showdetails == 1) : ?>
                                 <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
-                                    <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                    <span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::moduleEventStatusBadge($row); ?></span>
                                 </a>
                             <?php else : ?>
-                                <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                <span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::moduleEventStatusBadge($row); ?></span>
                             <?php endif; ?>
                             <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                         </h3>
