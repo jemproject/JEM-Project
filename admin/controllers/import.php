@@ -4434,6 +4434,8 @@ class JemControllerImport extends BaseController
             'enddates',
             'times',
             'endtimes',
+            'start_datetime',
+            'end_datetime',
             'introtext',
             'fulltext',
             'metadata',
