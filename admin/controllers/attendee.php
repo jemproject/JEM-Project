@@ -190,6 +190,10 @@ class JemControllerAttendee extends BaseController
 
         // Retrieving $post
         $post = $jinput->post->getArray(/*get them all*/);
+        // This field is plain text; the model validates it before any write.
+        if ($jinput->post->exists('comment')) {
+            $post['comment'] = $jinput->post->get('comment', '', 'raw');
+        }
 
         // Retrieving email-setting
         $sendemail = $jinput->getInt('sendemail','0');

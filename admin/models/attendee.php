@@ -409,6 +409,16 @@ class JemModelAttendee extends BaseDatabaseModel
      */
     public function store($data)
     {
+        if (array_key_exists('comment', $data)) {
+            require_once JPATH_SITE . '/components/com_jem/classes/registrationcomment.class.php';
+            try {
+                $data['comment'] = JemRegistrationComment::normalise($data['comment']);
+            } catch (InvalidArgumentException $exception) {
+                $this->setError(Text::_($exception->getMessage()));
+                return false;
+            }
+        }
+
         $eventid = (int)($data['event'] ?? 0);
         $userid  = (int)($data['uid'] ?? 0);
         $id      = !empty($data['id']) ? (int)$data['id'] : 0;

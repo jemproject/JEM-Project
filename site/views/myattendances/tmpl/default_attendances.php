@@ -286,9 +286,9 @@ if (!function_exists('jem_myattendances_country_flag')) {
                         <td>
                             <?php
                             $len  = ($this->print) ? 256 : 16;
-                            $cmnt = (StringHelper::strlen($row->comment) > $len) ? (StringHelper::substr($row->comment, 0, $len - 2).'&hellip;') : $row->comment;
-                            if (!empty($cmnt)) :
-                                echo ($this->print) ? $cmnt : HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null);
+                            $cmnt = (StringHelper::strlen($row->comment) > $len) ? (StringHelper::substr($row->comment, 0, $len - 2).'…') : $row->comment;
+                            if ($cmnt !== '') :
+                                echo ($this->print) ? $this->escape($cmnt) : '<span title="' . $this->escape((string) $row->comment) . '">' . $this->escape($cmnt) . '</span>';
                             endif;
                             ?>
                         </td>

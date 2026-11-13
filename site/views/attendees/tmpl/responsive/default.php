@@ -282,9 +282,9 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                     </div>
 
                     <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-                        <?php $cmnt = (StringHelper::strlen($row->comment) > 16) ? (StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
+                        <?php $cmnt = (StringHelper::strlen($row->comment) > 16) ? (StringHelper::substr($row->comment, 0, 14).'…') : $row->comment; ?>
                         <div class="jem-event-info-small jem-attendee-comment">
-                            <?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $this->escape($row->comment), null, null, $this->escape($cmnt), null, null); } ?>
+                            <?php if ($cmnt !== '') { echo '<span title="' . $this->escape((string) $row->comment) . '">' . $this->escape($cmnt) . '</span>'; } ?>
                         </div>
                     <?php endif;?>
 

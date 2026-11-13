@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </td>
                 <td>
                     <textarea name="comment" id="reg_comment" rows="3" cols="30" maxlength="255"
-                        ><?php if (!empty($this->row->comment)) { echo $this->row->comment; }
+                        ><?php echo $this->escape((string) ($this->row->comment ?? ''));
                         /* looks crazy, but required to prevent unwanted white spaces within textarea content! */
                     ?></textarea>
                 </td>

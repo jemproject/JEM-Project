@@ -328,8 +328,8 @@ if ($this->showRegForm && empty($this->print)) :
             <?php if (!empty($this->jemsettings->regallowcomments)) { ?>
                 <p><?php echo Text::_('COM_JEM_OPTIONAL_COMMENT') . ':'; ?></p>
                 <p><textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255" <?php echo ($disabledOptions ? 'disabled="disabled"':'');?>><?php
-                        if (is_object($this->registration) && !empty($this->registration->comment)) {
-                            echo htmlspecialchars($this->registration->comment);
+                        if (is_object($this->registration) && isset($this->registration->comment)) {
+                            echo $this->escape((string) $this->registration->comment);
                         } ?></textarea></p>
             <?php } ?>
             <p>

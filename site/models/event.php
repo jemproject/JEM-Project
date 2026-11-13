@@ -9,7 +9,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
@@ -17,6 +16,7 @@ use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
 require_once dirname(__DIR__) . '/classes/registrationcancellation.class.php';
+require_once dirname(__DIR__) . '/classes/registrationcomment.class.php';
 /**
  * Event-Model
  */
@@ -1539,8 +1539,12 @@ class JemModelEvent extends ItemModel
             return false;
         }
         //    $noreg   = ($status == -1) ? 'on' : 'off';//$app->input->getString('noreg_check', 'off');
-        $comment = $app->input->getString('reg_comment', '');
-        $comment = OutputFilter::cleanText($comment);
+        try {
+            $comment = JemRegistrationComment::normalise($app->input->get('reg_comment', '', 'raw'));
+        } catch (InvalidArgumentException $exception) {
+            $this->setError(Text::_($exception->getMessage()));
+            return false;
+        }
         $regid   = $app->input->getInt('regid', 0);
         try {
             $addplaces = JemRegistrationQuantity::parseOptional($app->input->get('addplaces', null, 'raw'));
@@ -1896,8 +1900,12 @@ class JemModelEvent extends ItemModel
         $app = Factory::getApplication();
         $uid = (int) JemFactory::getUser()->get('id');
         $requestedAreas = (array) $app->input->post->get('cancel_capacity_areas', array(), 'array');
-        $comment = $app->input->getString('reg_comment', '');
-        $comment = OutputFilter::cleanText($comment);
+        try {
+            $comment = JemRegistrationComment::normalise($app->input->get('reg_comment', '', 'raw'));
+        } catch (InvalidArgumentException $exception) {
+            $this->setError(Text::_($exception->getMessage()));
+            return false;
+        }
         $service = new JemRegistrationService($this->_db);
         $rows = $revisions = $allocations = $summary = $identity = array();
         $unchangedResponseId = 0;

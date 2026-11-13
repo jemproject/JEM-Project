@@ -146,9 +146,10 @@ class plgJemMailer extends CMSPlugin
         //create link to event
         $link = $this->_appendOnlineMeetingInfo(JEMHelperRoute::getAbsoluteSiteRoute(JEMHelperRoute::getEventRoute($event->slug)), $event);
 
-        // Strip tags/scripts, etc. from description and comment
+        // Strip tags/scripts, etc. from description
         $text_description = OutputFilter::cleanText($event->text);
-        $comment = empty($event->comment) ? false : OutputFilter::cleanText($event->comment);
+        $comment = (string) ($event->comment ?? '');
+        $hasComment = $comment !== '';
 
         $recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendeeid);
         if (empty($attendeeid) && !empty($event->guest_email)) {
@@ -177,38 +178,38 @@ class plgJemMailer extends CMSPlugin
                 case -1: // not attanding
                     $txt_subject = 'PLG_JEM_MAILER_USER_REG_NOT_ATTEND_SUBJECT';
                     if ($attendeeid != $userid) {
-                        $txt_body = 'PLG_JEM_MAILER_USER_REG_ONBEHALF_NOT_ATTEND_BODY_' . ($comment ? 'B' : 'A');
+                        $txt_body = 'PLG_JEM_MAILER_USER_REG_ONBEHALF_NOT_ATTEND_BODY_' . ($hasComment ? 'B' : 'A');
                     } else {
-                        $txt_body = 'PLG_JEM_MAILER_USER_REG_NOT_ATTEND_BODY_' . ($comment ? 'A' : '9');
+                        $txt_body = 'PLG_JEM_MAILER_USER_REG_NOT_ATTEND_BODY_' . ($hasComment ? 'A' : '9');
                     }
                     break;
                 case  1: // attending
                     $txt_subject = 'PLG_JEM_MAILER_USER_REG'.$waiting.'_SUBJECT';
                     if ($attendeeid != $userid) {
-                        $txt_body = 'PLG_JEM_MAILER_USER_REG_ONBEHALF'.$waiting.'_BODY_' . ($comment ? 'B' : 'A');
+                        $txt_body = 'PLG_JEM_MAILER_USER_REG_ONBEHALF'.$waiting.'_BODY_' . ($hasComment ? 'B' : 'A');
                     } else {
-                        $txt_body = 'PLG_JEM_MAILER_USER_REG'.$waiting.'_BODY_' . ($comment ? 'A' : '9');
+                        $txt_body = 'PLG_JEM_MAILER_USER_REG'.$waiting.'_BODY_' . ($hasComment ? 'A' : '9');
                     }
                     break;
                 case  0: // invited, not answered yet
                     if ($attendeeid != $userid) {
                         $txt_subject = 'PLG_JEM_MAILER_USER_REG_INVITATION_SUBJECT';
-                        $txt_body = 'PLG_JEM_MAILER_USER_REG_INVITATION_BODY_' . ($comment ? 'B' : 'A');
+                        $txt_body = 'PLG_JEM_MAILER_USER_REG_INVITATION_BODY_' . ($hasComment ? 'B' : 'A');
                     } else {
                         $txt_subject = 'PLG_JEM_MAILER_USER_REG_INVITATION_SUBJECT';
-                        $txt_body = 'PLG_JEM_MAILER_USER_REG_SELF_INVITATION_BODY_' . ($comment ? 'A' : '9');
+                        $txt_body = 'PLG_JEM_MAILER_USER_REG_SELF_INVITATION_BODY_' . ($hasComment ? 'A' : '9');
                     }
                     break;
                 default: // defensive fallback for an unexpected stored status
                     $txt_subject = 'PLG_JEM_MAILER_USER_REG_UNKNOWN_SUBJECT';
-                    $txt_body = 'PLG_JEM_MAILER_USER_REG_UNKNOWN_BODY_' . ($comment ? 'A' : '9');
+                    $txt_body = 'PLG_JEM_MAILER_USER_REG_UNKNOWN_BODY_' . ($hasComment ? 'A' : '9');
                     $bodyUsesActor = false;
                     break;
             }
             $notificationValues = array(
                 'user_name'        => $attendeename,
                 'actor_name'       => $username,
-                'comment'          => $comment ?: '',
+                'comment'          => $comment,
                 'event_title'      => $event->title,
                 'event_date'       => $event->dates,
                 'event_time'       => $event->times,
@@ -240,38 +241,38 @@ class plgJemMailer extends CMSPlugin
                 case -1: // not attanding
                     $txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_NOT_ATTEND_SUBJECT';
                     if ($attendeeid != $userid) {
-                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_ONBEHALF_NOT_ATTEND_BODY_' . ($comment ? 'A' : '9');
+                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_ONBEHALF_NOT_ATTEND_BODY_' . ($hasComment ? 'A' : '9');
                     } else {
-                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_NOT_ATTEND_BODY_' . ($comment ? '9' : '8');
+                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_NOT_ATTEND_BODY_' . ($hasComment ? '9' : '8');
                     }
                     break;
                 case  1: // attending
                     $txt_subject = 'PLG_JEM_MAILER_ADMIN_REG'.$waiting.'_SUBJECT';
                     if ($attendeeid != $userid) {
-                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_ONBEHALF'.$waiting.'_BODY_' . ($comment ? 'A' : '9');
+                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_ONBEHALF'.$waiting.'_BODY_' . ($hasComment ? 'A' : '9');
                     } else {
-                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG'.$waiting.'_BODY_' . ($comment ? '9' : '8');
+                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG'.$waiting.'_BODY_' . ($hasComment ? '9' : '8');
                     }
                     break;
                 case  0: // invited, not answered yet
                     if ($attendeeid != $userid) {
                         $txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_INVITATION_SUBJECT';
-                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_INVITATION_BODY_' . ($comment ? 'A' : '9');
+                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_INVITATION_BODY_' . ($hasComment ? 'A' : '9');
                     } else {
                         $txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_INVITATION_SUBJECT';
-                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_SELF_INVITATION_BODY_' . ($comment ? '9' : '8');
+                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_SELF_INVITATION_BODY_' . ($hasComment ? '9' : '8');
                     }
                     break;
                 default: // defensive fallback for an unexpected stored status
                     $txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_UNKNOWN_SUBJECT';
-                    $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_UNKNOWN_BODY_' . ($comment ? '9' : '8');
+                    $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_UNKNOWN_BODY_' . ($hasComment ? '9' : '8');
                     $bodyUsesActor = false;
                     break;
             }
             $notificationValues = array(
                 'user_name'         => $attendeename,
                 'actor_name'        => $username,
-                'comment'           => $comment ?: '',
+                'comment'           => $comment,
                 'event_title'       => $event->title,
                 'event_date'        => $event->dates,
                 'event_time'        => $event->times,
@@ -599,7 +600,8 @@ class plgJemMailer extends CMSPlugin
 
         // Strip tags/scripts, etc. from description
         $text_description = OutputFilter::cleanText($event->text);
-        $comment = empty($event->comment) ? false : OutputFilter::cleanText($event->comment);
+        $comment = (string) ($event->comment ?? '');
+        $hasComment = $comment !== '';
 
         $recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendeeid);
         if (empty($attendeeid) && !empty($registration->guest_email)) {
@@ -614,13 +616,13 @@ class plgJemMailer extends CMSPlugin
         if (!empty($recipients['user'])) {
             $data            = new stdClass();
             if ($attendeeid != $userid) {
-                if ($comment) {
+                if ($hasComment) {
                     $txt_body = 'PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_B';
                 } else {
                     $txt_body = 'PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_A';
                 }
             } else {
-                if ($comment) {
+                if ($hasComment) {
                     $txt_body = 'PLG_JEM_MAILER_USER_UNREG_BODY_A';
                 } else {
                     $txt_body = 'PLG_JEM_MAILER_USER_UNREG_BODY_9';
@@ -630,7 +632,7 @@ class plgJemMailer extends CMSPlugin
             $notificationValues = array(
                 'user_name'         => $attendeename,
                 'actor_name'        => $username,
-                'comment'           => $comment ?: '',
+                'comment'           => $comment,
                 'event_title'       => $event->title,
                 'event_date'        => $event->dates,
                 'event_time'        => $event->times,
@@ -658,13 +660,13 @@ class plgJemMailer extends CMSPlugin
         if (!empty($recipients['all'])) {
             $data             = new stdClass();
             if ($attendeeid != $userid) {
-                if ($comment) {
+                if ($hasComment) {
                     $txt_body = 'PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_A';
                 } else {
                     $txt_body = 'PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_9';
                 }
             } else {
-                if ($comment) {
+                if ($hasComment) {
                     $txt_body = 'PLG_JEM_MAILER_ADMIN_UNREG_BODY_9';
                 } else {
                     $txt_body = 'PLG_JEM_MAILER_ADMIN_UNREG_BODY_8';
@@ -674,7 +676,7 @@ class plgJemMailer extends CMSPlugin
             $notificationValues = array(
                 'user_name'         => $attendeename,
                 'actor_name'        => $username,
-                'comment'           => $comment ?: '',
+                'comment'           => $comment,
                 'event_title'       => $event->title,
                 'event_date'        => $event->dates,
                 'event_time'        => $event->times,
