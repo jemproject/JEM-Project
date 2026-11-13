@@ -129,10 +129,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const details = root.querySelector('.jem-event-capacity-details');
     const configurationFieldset = root.querySelector('.jem-event-venue-configuration');
-    const configurationSelect = document.getElementById('jem-event-venue-configuration-select');
+    const configurationSelect = root.querySelector('#jem-event-venue-configuration-select');
     const configurationCustom = root.querySelector('.jem-event-venue-custom');
     const configurationCustomGrid = root.querySelector('.jem-event-venue-custom-grid');
-    const configurationCustomProfile = document.getElementById('jem-event-venue-custom-profile');
+    const configurationCustomProfile = root.querySelector('#jem-event-venue-custom-profile');
     const configurationPreview = root.querySelector('.jem-event-venue-configuration-preview');
     const configurationKeyInput = document.getElementById('jform_venue_configuration_key');
     const assignmentIdsInput = document.getElementById('jform_venue_assignment_ids');
@@ -141,6 +141,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const eventId = <?php echo (int) ($this->item->id ?? 0); ?>;
     const savedAssignmentIds = <?php echo json_encode(array_values(array_map('intval', $selectedAssignmentIds))); ?>;
     const savedSnapshotLabel = <?php echo json_encode(Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION_SAVED')); ?>;
+    let venueRequirements = <?php echo json_encode($requirements, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+    let venueRequest = 0;
     let configurationState = {
         options: <?php echo json_encode($configurationOptions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
         profiles: <?php echo json_encode($configurationProfiles, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
@@ -165,12 +167,30 @@ document.addEventListener('DOMContentLoaded', function () {
         return option ? option.assignment_ids.map(Number) : [];
     };
 
+    /**
+     * Describe the shared selection without changing the stored snapshot.
+     * @param {boolean} changed Whether the user requested a configuration change.
+     * @returns {object} State used by the Pricing panel.
+     */
+    const selectionState = function (changed = false) {
+        return {
+            key: configurationSelect.value,
+            assignmentIds: allocationMode.value === 'none' ? [] : selectedIds(),
+            profileId: configurationCustomProfile.value,
+            options: Array.from(configurationSelect.options).map(function (option) {
+                return {key: option.value, label: option.textContent};
+            }),
+            requirements: venueRequirements,
+            changed: changed
+        };
+    };
+
     const updateSelection = function (changed) {
         if (!configurationSelect) {
             return;
         }
-        const ids = selectedIds();
-        configurationKeyInput.value = configurationSelect.value;
+        const ids = allocationMode.value === 'none' ? [] : selectedIds();
+        configurationKeyInput.value = allocationMode.value === 'none' ? '' : configurationSelect.value;
         assignmentIdsInput.value = JSON.stringify(ids);
         configurationCustom.hidden = configurationSelect.value !== 'custom';
         if (configurationCustomProfile) {
@@ -178,9 +198,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 element.hidden = Number(element.dataset.profileId || 0) !== Number(configurationCustomProfile.value || 0);
             });
         }
-        allocationMode.value = configurationSelect.value === 'custom' ? 'custom' : allocationMode.value;
         const assignments = configurationState.assignments.filter(function (assignment) { return ids.indexOf(Number(assignment.id)) !== -1; });
         const capacity = assignments.reduce(function (sum, assignment) { return sum + Number(assignment.capacity || 0); }, 0);
+        if (changed && eventId === 0 && allocationMode.value !== 'none') {
+            const maxPlaces = document.getElementById('jform_maxplaces');
+            if (maxPlaces) {
+                maxPlaces.value = capacity || '';
+            }
+        }
         const savedSnapshot = configurationSelect.value === 'saved';
         configurationPreview.className = 'jem-event-venue-configuration-preview mt-3 alert ' + (assignments.length || savedSnapshot ? 'alert-success' : 'alert-warning');
         configurationPreview.textContent = assignments.length
@@ -192,6 +217,9 @@ document.addEventListener('DOMContentLoaded', function () {
             reloadInput.checked = true;
             reloadInput.value = '1';
         }
+        root.dispatchEvent(new CustomEvent('jem:venue-configuration-change', {
+            bubbles: true, detail: selectionState(changed)
+        }));
     };
 
     const renderCustomAssignments = function () {
@@ -212,6 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const applyVenuePayload = function (payload) {
+        venueRequirements = payload;
         configurationState = {
             options: Array.isArray(payload.configuration_options) ? payload.configuration_options : [],
             profiles: Array.isArray(payload.configuration_profiles) ? payload.configuration_profiles : [],
@@ -252,12 +281,18 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const loadVenueConfigurations = function () {
+        const request = ++venueRequest;
         const venueId = Number(venueInput ? venueInput.value : 0);
         const query = new URLSearchParams({option: 'com_jem', task: 'event.venueConfigurations', format: 'json', venue_id: String(venueId), id: String(eventId)});
         fetch('index.php?' + query.toString(), {headers: {'Accept': 'application/json'}})
             .then(function (response) { if (!response.ok) { throw new Error('HTTP ' + response.status); } return response.json(); })
-            .then(function (response) { if (!response.success || !response.data) { throw new Error(response.message || 'Invalid response'); } applyVenuePayload(response.data); })
+            .then(function (response) {
+                if (request !== venueRequest) { return; }
+                if (!response.success || !response.data) { throw new Error(response.message || 'Invalid response'); }
+                applyVenuePayload(response.data);
+            })
             .catch(function (error) {
+                if (request !== venueRequest) { return; }
                 configurationFieldset.hidden = false;
                 configurationPreview.className = 'jem-event-venue-configuration-preview mt-3 alert alert-warning';
                 configurationPreview.textContent = <?php echo json_encode(Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION_LOAD_ERROR')); ?> + ' ' + error.message;
@@ -274,6 +309,33 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    /**
+     * Apply either panel's choice through the sole owner of submitted capacity fields.
+     * @param {string} key Configuration key, including saved/custom.
+     * @param {number[]|null} ids Custom assignments, or null to retain the current selection.
+     * @param {string|null} profileId Custom profile, or null to retain it.
+     * @returns {void}
+     */
+    const selectConfiguration = function (key, ids = null, profileId = null) {
+        if (!Array.from(configurationSelect.options).some(function (option) { return option.value === key; })) {
+            return;
+        }
+        configurationSelect.value = key;
+        if (profileId !== null) {
+            configurationCustomProfile.value = profileId;
+        }
+        if (ids !== null) {
+            configurationCustomGrid.querySelectorAll('input').forEach(function (input) {
+                input.checked = ids.indexOf(Number(input.value)) !== -1;
+            });
+        }
+        allocationMode.value = key === 'custom' ? 'custom' : 'profile';
+        updateMode();
+        updateSelection(true);
+    };
+
+    root.jemVenueConfiguration = {read: selectionState, select: selectConfiguration};
+
     allocationMode.addEventListener('change', function () {
         if (allocationMode.value === 'custom' && configurationSelect) {
             configurationSelect.value = 'custom';
@@ -286,9 +348,7 @@ document.addEventListener('DOMContentLoaded', function () {
     capacityMode.addEventListener('change', function () { if (reloadInput) { reloadInput.checked = true; reloadInput.value = '1'; } });
     if (configurationSelect) {
         configurationSelect.addEventListener('change', function () {
-            allocationMode.value = configurationSelect.value === 'custom' ? 'custom' : 'profile';
-            updateMode();
-            updateSelection(true);
+            selectConfiguration(configurationSelect.value);
         });
     }
     configurationCustomGrid.addEventListener('change', function () { updateSelection(true); });

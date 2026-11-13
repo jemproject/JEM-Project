@@ -28,6 +28,7 @@ if (!$parsedEffectiveDate || $parsedEffectiveDate->format('Y-m-d') !== $effectiv
 $poolCandidates = array_values((array) ($requirements['pool_candidates'] ?? array()));
 $configurationOptions = array_values((array) ($requirements['configuration_options'] ?? array()));
 $configurationAssignments = array_values((array) ($requirements['configuration_assignments'] ?? array()));
+$configurationProfiles = array_values((array) ($requirements['configuration_profiles'] ?? array()));
 $configurationCustomRequired = !empty($requirements['configuration_custom_required']);
 $eventCurrency = strtoupper(trim((string) ($this->item->currency ?? '')));
 if (preg_match('/^[A-Z]{3}$/D', $eventCurrency) !== 1) {
@@ -77,10 +78,10 @@ if (!is_array($selectedAssignmentIds)) {
         <fieldset class="adminform jem-event-venue-configuration" <?php echo $capacityReady ? '' : 'hidden'; ?>>
             <legend><?php echo Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION'); ?></legend>
             <p class="text-muted"><?php echo Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION_DESC'); ?></p>
-            <label for="jem-event-venue-configuration-select" class="form-label">
+            <label for="jem-event-price-venue-configuration-select" class="form-label">
                 <?php echo Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION_SELECT'); ?>
             </label>
-            <select id="jem-event-venue-configuration-select" class="form-select">
+            <select id="jem-event-price-venue-configuration-select" class="form-select">
                 <?php if ($selectedConfigurationKey === 'saved') : ?>
                     <option value="saved" selected><?php echo Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION_SAVED'); ?></option>
                 <?php endif; ?>
@@ -98,11 +99,17 @@ if (!is_array($selectedAssignmentIds)) {
             </select>
             <div class="jem-event-venue-custom mt-3" <?php echo $selectedConfigurationKey === 'custom' ? '' : 'hidden'; ?>>
                 <p class="form-text"><?php echo Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION_CUSTOM_DESC'); ?></p>
+                <label class="form-label" for="jem-event-price-venue-custom-profile"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE'); ?></label>
+                <select class="form-select mb-3" id="jem-event-price-venue-custom-profile">
+                    <?php foreach ($configurationProfiles as $profile) : ?>
+                        <option value="<?php echo (int) $profile['profile_id']; ?>"><?php echo htmlspecialchars((string) $profile['profile_name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                    <?php endforeach; ?>
+                </select>
                 <div class="jem-event-venue-custom-grid">
                     <?php foreach ($configurationAssignments as $assignment) : ?>
                         <?php $assignmentId = (int) $assignment['id']; ?>
-                        <label class="jem-event-venue-custom-option">
-                            <input type="checkbox" value="<?php echo $assignmentId; ?>"
+                        <label class="jem-event-venue-custom-option" data-profile-id="<?php echo (int) ($assignment['profile_id'] ?? 0); ?>">
+                            <input type="checkbox" value="<?php echo $assignmentId; ?>" data-profile-id="<?php echo (int) ($assignment['profile_id'] ?? 0); ?>"
                                 <?php echo in_array($assignmentId, array_map('intval', $selectedAssignmentIds), true) ? 'checked' : ''; ?>>
                             <span>
                                 <strong><?php echo htmlspecialchars((string) $assignment['space_name'], ENT_QUOTES, 'UTF-8'); ?></strong>
@@ -131,11 +138,6 @@ if (!is_array($selectedAssignmentIds)) {
 
         <?php echo $this->form->getInput('management_fee_mode'); ?>
         <?php echo $this->form->getInput('management_fee_basis'); ?>
-        <?php echo $this->form->getInput('venue_profile_id'); ?>
-        <?php echo $this->form->getInput('venue_profile_revision'); ?>
-        <?php echo $this->form->getInput('venue_snapshot'); ?>
-        <?php echo $this->form->getInput('venue_configuration_key'); ?>
-        <?php echo $this->form->getInput('venue_assignment_ids'); ?>
 
         <fieldset class="adminform jem-event-pricing-policy">
             <legend><?php echo Text::_('COM_JEM_EVENT_PRICING_POLICY'); ?></legend>
@@ -153,9 +155,6 @@ if (!is_array($selectedAssignmentIds)) {
                 <?php echo $this->form->renderField('management_fee_value'); ?>
                 <?php echo $this->form->renderField('management_fee_tax_rate_id'); ?>
                 <?php echo $this->form->renderField('management_fee_refundable'); ?>
-                <?php if ($isSaved) : ?>
-                    <?php echo $this->form->renderField('reload_venue_capacity'); ?>
-                <?php endif; ?>
             </div>
         </fieldset>
 
@@ -205,15 +204,13 @@ document.addEventListener('DOMContentLoaded', function () {
         customRequired: <?php echo $configurationCustomRequired ? 'true' : 'false'; ?>
     };
     const configurationFieldset = root.querySelector('.jem-event-venue-configuration');
-    const configurationSelect = document.getElementById('jem-event-venue-configuration-select');
+    const configurationSelect = root.querySelector('#jem-event-price-venue-configuration-select');
     const configurationCustom = root.querySelector('.jem-event-venue-custom');
     const configurationCustomGrid = root.querySelector('.jem-event-venue-custom-grid');
+    const configurationCustomProfile = root.querySelector('#jem-event-price-venue-custom-profile');
     const configurationPreview = root.querySelector('.jem-event-venue-configuration-preview');
-    const configurationKeyInput = document.getElementById('jform_venue_configuration_key');
-    const assignmentIdsInput = document.getElementById('jform_venue_assignment_ids');
-    const venueInput = document.getElementById('jform_locid_id');
-    const reloadInput = document.getElementById('jform_reload_venue_capacity');
-    const eventId = <?php echo (int) ($this->item->id ?? 0); ?>;
+    const capacityRoot = document.querySelector('.jem-event-capacity');
+    const configurationController = capacityRoot ? capacityRoot.jemVenueConfiguration : null;
     let configurationDirty = false;
     const advancedToggle = root.querySelector('.jem-price-advanced-toggle');
     const copyText = <?php echo json_encode(Text::_('COM_JEM_EVENT_PRICE_COPY')); ?>;
@@ -327,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const selectedCustomIds = function () {
         return sortedAssignmentIds(Array.from(configurationCustomGrid.querySelectorAll('input:checked')).map(function (input) {
-            return input.value;
+            return input.dataset.profileId === configurationCustomProfile.value ? input.value : 0;
         }));
     };
 
@@ -362,42 +359,10 @@ document.addEventListener('DOMContentLoaded', function () {
         configurationPreview.append(heading, list, summary);
     };
 
-    const syncConfigurationSelection = function (markDirty) {
-        if (!configurationSelect || !assignmentIdsInput || !configurationKeyInput) {
-            return;
-        }
-        const option = selectedConfigurationOption();
-        const custom = configurationSelect.value === 'custom';
-        const saved = configurationSelect.value === 'saved';
-        configurationCustom.hidden = !custom;
-        let savedIds = [];
-        if (saved) {
-            try {
-                savedIds = JSON.parse(assignmentIdsInput.value || '[]');
-            } catch (error) {
-                savedIds = [];
-            }
-        }
-        const ids = custom
-            ? selectedCustomIds()
-            : (saved ? sortedAssignmentIds(savedIds) : sortedAssignmentIds(option ? option.assignment_ids : []));
-        assignmentIdsInput.value = JSON.stringify(ids);
-        configurationKeyInput.value = configurationSelect.value;
-        poolCandidates = option && Array.isArray(option.pool_candidates) ? option.pool_candidates : [];
-        renderConfigurationPreview(ids, option);
-        if (markDirty) {
-            configurationDirty = true;
-            if (isSaved && reloadInput) {
-                reloadInput.checked = true;
-                reloadInput.dispatchEvent(new Event('change', {bubbles: true}));
-            }
-            const maxPlaces = document.getElementById('jform_maxplaces');
-            if (!isSaved && maxPlaces) {
-                const capacity = option ? Number(option.capacity || 0) : configurationState.assignments
-                    .filter(function (assignment) { return ids.indexOf(Number(assignment.id)) !== -1; })
-                    .reduce(function (total, assignment) { return total + Number(assignment.capacity || 0); }, 0);
-                maxPlaces.value = capacity || '';
-            }
+    /** Send a Pricing choice to the shared Capacity controller. @returns {void} */
+    const syncConfigurationSelection = function () {
+        if (configurationController) {
+            configurationController.select(configurationSelect.value, selectedCustomIds(), configurationCustomProfile.value);
         }
     };
 
@@ -419,7 +384,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const populateCapacityOptions = function () {
-        if ((isSaved && !configurationDirty) || !poolCandidates.length) {
+        if ((isSaved && !configurationDirty) || !poolCandidates.length || !allocationMode || allocationMode.value === 'none') {
             return;
         }
         priceRows().forEach(function (row) {
@@ -431,18 +396,25 @@ document.addEventListener('DOMContentLoaded', function () {
             const selectedCodeMatch = selectedOption ? selectedOption.textContent.match(/\[([^\]]+)\]/) : null;
             const selectedCode = selectedCodeMatch ? selectedCodeMatch[1] : '';
             Array.from(select.options).forEach(function (option) {
-                if (option.value.indexOf('source:') === 0) {
+                if (option.value.indexOf('source:') === 0 && !poolCandidates.some(function (pool) {
+                    return option.value === 'source:' + pool.code;
+                })) {
                     option.remove();
                 }
             });
             poolCandidates.forEach(function (pool) {
                 const value = 'source:' + pool.code;
-                if (Array.from(select.options).some(function (option) { return option.value === value; })) {
+                const label = pool.name + ' [' + pool.code + '] - ' + pool.capacity;
+                const existing = Array.from(select.options).find(function (option) { return option.value === value; });
+                if (existing) {
+                    if (existing.textContent !== label) {
+                        existing.textContent = label;
+                    }
                     return;
                 }
                 const option = document.createElement('option');
                 option.value = value;
-                option.textContent = pool.name + ' [' + pool.code + '] - ' + pool.capacity;
+                option.textContent = label;
                 select.appendChild(option);
             });
             if (selectedCode && poolCandidates.some(function (pool) { return pool.code === selectedCode; })) {
@@ -460,8 +432,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = document.createElement('input');
             const text = document.createElement('span');
             label.className = 'jem-event-venue-custom-option';
+            label.dataset.profileId = assignment.profile_id;
             input.type = 'checkbox';
             input.value = assignment.id;
+            input.dataset.profileId = assignment.profile_id;
             input.checked = checkedIds.indexOf(Number(assignment.id)) !== -1;
             text.textContent = assignment.space_name + ' · ' + assignment.layout_name + ' · ' + assignment.capacity;
             label.append(input, text);
@@ -504,70 +478,65 @@ document.addEventListener('DOMContentLoaded', function () {
         filterTaxRates();
     };
 
-    const applyVenuePayload = function (payload) {
-        venueRequirements = payload;
+    /**
+     * Reflect the sole Capacity state without writing a second set of submitted fields.
+     * @param {object} state Shared configuration and venue requirements.
+     * @returns {void}
+     */
+    const applySharedConfiguration = function (state) {
+        const requirementsChanged = venueRequirements !== state.requirements;
+        venueRequirements = state.requirements;
         configurationState = {
-            options: Array.isArray(payload.configuration_options) ? payload.configuration_options : [],
-            assignments: Array.isArray(payload.configuration_assignments) ? payload.configuration_assignments : [],
-            customRequired: Boolean(payload.configuration_custom_required)
+            options: venueRequirements.configuration_options || [],
+            assignments: venueRequirements.configuration_assignments || [],
+            customRequired: Boolean(venueRequirements.configuration_custom_required)
         };
-        updateRequirement('venue', Boolean(payload.venue_exists), <?php echo json_encode(Text::_('JYES')); ?>);
-        updateRequirement('configuration', Boolean(payload.capacity_ready), payload.configuration_summary || <?php echo json_encode(Text::_('JYES')); ?>);
-        updatePricingReadiness();
-        configurationSelect.replaceChildren();
-        configurationState.options.forEach(function (configuration) {
-            const option = document.createElement('option');
-            option.value = configuration.key;
-            option.textContent = configuration.label;
-            configurationSelect.appendChild(option);
+        if (requirementsChanged) {
+            configurationSelect.replaceChildren();
+            state.options.forEach(function (configuration) {
+                const option = document.createElement('option');
+                option.value = configuration.key;
+                option.textContent = configuration.label;
+                configurationSelect.appendChild(option);
+            });
+            configurationCustomProfile.replaceChildren();
+            (venueRequirements.configuration_profiles || []).forEach(function (profile) {
+                const option = document.createElement('option');
+                option.value = profile.profile_id;
+                option.textContent = profile.profile_name;
+                configurationCustomProfile.appendChild(option);
+            });
+            renderCustomAssignments(state.assignmentIds);
+        }
+        configurationSelect.value = state.key;
+        configurationCustomProfile.value = state.profileId;
+        configurationCustom.hidden = state.key !== 'custom';
+        configurationCustomGrid.querySelectorAll('input').forEach(function (input) {
+            input.checked = state.assignmentIds.indexOf(Number(input.value)) !== -1;
+            input.closest('label').hidden = input.dataset.profileId !== state.profileId;
         });
-        if (configurationState.customRequired) {
-            const custom = document.createElement('option');
-            custom.value = 'custom';
-            custom.textContent = <?php echo json_encode(Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION_CUSTOM')); ?>;
-            configurationSelect.appendChild(custom);
+        configurationDirty = configurationDirty || state.changed;
+        const option = selectedConfigurationOption();
+        poolCandidates = option && Array.isArray(option.pool_candidates) ? option.pool_candidates : [];
+        if (state.key === 'custom') {
+            configurationState.options.forEach(function (configuration) {
+                (configuration.pool_candidates || []).forEach(function (pool) {
+                    const selected = configurationState.assignments.some(function (assignment) {
+                        return state.assignmentIds.indexOf(Number(assignment.id)) !== -1
+                            && Number(pool.venue_layout_id) === Number(assignment.layout_id);
+                    });
+                    if (selected && !poolCandidates.some(function (candidate) { return candidate.code === pool.code; })) {
+                        poolCandidates.push(pool);
+                    }
+                });
+            });
         }
-        renderCustomAssignments([]);
-        if (configurationSelect.options.length) {
-            configurationSelect.selectedIndex = 0;
-        }
-        syncConfigurationSelection(true);
-        filterTaxRates();
+        renderConfigurationPreview(state.assignmentIds, option);
+        updateRequirement('venue', Boolean(venueRequirements.venue_exists), <?php echo json_encode(Text::_('JYES')); ?>);
+        updateRequirement('configuration', Boolean(venueRequirements.capacity_ready), venueRequirements.configuration_summary || <?php echo json_encode(Text::_('JYES')); ?>);
+        updatePricingReadiness();
         populateCapacityOptions();
         updatePreviews();
-    };
-
-    const loadVenueConfigurations = function () {
-        const venueId = Number(venueInput ? venueInput.value : 0);
-        const query = new URLSearchParams({
-            option: 'com_jem',
-            task: 'event.venueConfigurations',
-            format: 'json',
-            venue_id: String(venueId),
-            id: String(eventId)
-        });
-        configurationFieldset.setAttribute('aria-busy', 'true');
-        fetch('index.php?' + query.toString(), {headers: {'Accept': 'application/json'}})
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error('HTTP ' + response.status);
-                }
-                return response.json();
-            })
-            .then(function (response) {
-                if (!response.success || !response.data) {
-                    throw new Error(response.message || 'Invalid venue configuration response');
-                }
-                applyVenuePayload(response.data);
-            })
-            .catch(function (error) {
-                configurationFieldset.hidden = false;
-                configurationPreview.className = 'jem-event-venue-configuration-preview mt-3 alert alert-warning';
-                configurationPreview.textContent = <?php echo json_encode(Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION_LOAD_ERROR')); ?> + ' ' + error.message;
-            })
-            .finally(function () {
-                configurationFieldset.removeAttribute('aria-busy');
-            });
     };
 
     const fieldKey = function (control) {
@@ -821,35 +790,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if (configurationSelect) {
-        configurationSelect.addEventListener('change', function () {
-            syncConfigurationSelection(true);
-            populateCapacityOptions();
-            updatePreviews();
+    if (configurationController) {
+        configurationSelect.addEventListener('change', syncConfigurationSelection);
+        configurationCustomGrid.addEventListener('change', syncConfigurationSelection);
+        configurationCustomProfile.addEventListener('change', syncConfigurationSelection);
+        capacityRoot.addEventListener('jem:venue-configuration-change', function (event) {
+            applySharedConfiguration(event.detail);
         });
-    }
-    if (configurationCustomGrid) {
-        configurationCustomGrid.addEventListener('change', function () {
-            syncConfigurationSelection(true);
-            const ids = selectedCustomIds();
-            poolCandidates = [];
-            configurationState.options.forEach(function (option) {
-                (option.pool_candidates || []).forEach(function (pool) {
-                    const assignment = configurationState.assignments.find(function (candidate) {
-                        return ids.indexOf(Number(candidate.id)) !== -1
-                            && Number(pool.venue_layout_id || 0) === Number(candidate.layout_id || 0);
-                    });
-                    if (assignment && !poolCandidates.some(function (candidate) { return candidate.code === pool.code; })) {
-                        poolCandidates.push(pool);
-                    }
-                });
-            });
-            populateCapacityOptions();
-            updatePreviews();
-        });
-    }
-    if (venueInput) {
-        venueInput.addEventListener('change', loadVenueConfigurations);
+    } else {
+        configurationFieldset.disabled = true;
     }
 
     if (allocationMode) {
@@ -865,7 +814,9 @@ document.addEventListener('DOMContentLoaded', function () {
     updateMode();
     decorateRows();
     filterTaxRates();
-    syncConfigurationSelection(false);
+    if (configurationController) {
+        applySharedConfiguration(configurationController.read());
+    }
     updatePricingReadiness();
     populateCapacityOptions();
     updatePreviews();
