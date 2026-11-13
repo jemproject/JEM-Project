@@ -77,9 +77,6 @@ if ($Remember == 1) {
     if ($req_month == 0) {
         $req_month = $app->getUserState("modjemcal.month.".$module->id);
         $req_year  = $app->getUserState("modjemcal.year.".$module->id);
-    } else {
-        $app->setUserState("modjemcal.month.".$module->id, $req_month);
-        $app->setUserState("modjemcal.year.".$module->id, $req_year);
     }
 }
 
@@ -106,6 +103,21 @@ if ($Month_offset < $minimumMonthOffset || $Month_offset > $maximumMonthOffset) 
 $offset_index = (int) $req_month - 1 + $Month_offset;
 $offset_year  = (int) $req_year + (int) floor($offset_index / 12);
 $offset_month = (($offset_index % 12 + 12) % 12) + 1;
+
+// The displayed month and every navigation link use this module's actual scope.
+$navigationRange = ModJemCalHelper::getNavigationRange($params);
+$explicitNavigation = (int) $module->id === $req_modid
+    && ($app->input->getInt('modjemcal_month') !== 0 || $app->input->getInt('modjemcal_year') !== 0);
+$displayedMonth = ModJemCalHelper::navigationMonth((int) $req_year, (int) $req_month, $Month_offset, $navigationRange, $explicitNavigation);
+$baseMonth = $displayedMonth->modify(sprintf('%+d months', -$Month_offset));
+$req_year = (int) $baseMonth->format('Y');
+$req_month = (int) $baseMonth->format('n');
+$offset_year = (int) $displayedMonth->format('Y');
+$offset_month = (int) $displayedMonth->format('n');
+if ($Remember == 1 && ($explicitNavigation || $app->getUserState("modjemcal.month.".$module->id))) {
+    $app->setUserState("modjemcal.month.".$module->id, $req_month);
+    $app->setUserState("modjemcal.year.".$module->id, $req_year);
+}
 
 # Setting the previous and next month numbers
 $prev_month_year = $req_year;
@@ -152,6 +164,20 @@ $props_next = '&modjemcal_month='.$next_month.'&modjemcal_year='.$next_month_yea
 $props_home = '&modjemcal_month='.$today_month.'&modjemcal_year='.$today_year;
 $props_prev_year = '&modjemcal_month='.$req_month.'&modjemcal_year='.$prev_year;
 $props_next_year = '&modjemcal_month='.$req_month.'&modjemcal_year='.$next_year;
+
+// Disabled controls retain their label and explanation, without an HTML or AJAX link.
+foreach ([
+    'props_prev' => [$prev_month_year, $prev_month],
+    'props_next' => [$next_month_year, $next_month],
+    'props_home' => [$today_year, $today_month],
+    'props_prev_year' => [$prev_year, $req_month],
+    'props_next_year' => [$next_year, $req_month],
+] as $property => [$year, $month]) {
+    if (!ModJemCalHelper::allowsMonth((int) $year, (int) $month, $Month_offset, $navigationRange)) {
+        $$property = '';
+    }
+}
+$disabledNavigation = JemCalendarNavigation::disabledAttributes();
 
 # Get data
 $params->set('module_id', $module->id); // used for debug log

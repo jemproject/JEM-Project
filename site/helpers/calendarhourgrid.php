@@ -97,12 +97,23 @@ final class JemCalendarHourGridHelper
         $navigationLabel = $view === 'weekcal' ? 'COM_JEM_TIMETABLE_WEEK_NAVIGATION'
             : 'COM_JEM_TIMETABLE_DAY_NAVIGATION';
 
+        // Navigation stays within the range around the events (#2538).
+        $periodDays = max(1, $view === 'weekcal' ? $step : 1) - 1;
+        $navigation = static function (DateTimeImmutable $target, string $rel) use ($makeLink, $periodDays): string {
+            return JemHelper::calendarNavigationAttributes(
+                self::escape($makeLink($target)),
+                $target,
+                $target->modify('+' . $periodDays . ' days'),
+                $rel
+            );
+        };
+
         return '<nav class="jem-hourgrid-navigation" aria-label="' . self::escape(Text::_($navigationLabel)) . '">'
-            . '<a href="' . self::escape($makeLink($previous)) . '" aria-label="' . self::escape($previousLabel)
+            . '<a' . $navigation($previous, 'prev') . ' aria-label="' . self::escape($previousLabel)
             . '"><span class="fa fa-angle-left" aria-hidden="true"></span></a>'
-            . '<a href="' . self::escape($makeLink($today)) . '">' . self::escape(Text::_('COM_JEM_TIMETABLE_TODAY')) . '</a>'
+            . '<a' . $navigation($today, '') . '>' . self::escape(Text::_('COM_JEM_TIMETABLE_TODAY')) . '</a>'
             . '<strong>' . self::escape($title) . '</strong>'
-            . '<a href="' . self::escape($makeLink($next)) . '" aria-label="' . self::escape($nextLabel)
+            . '<a' . $navigation($next, 'next') . ' aria-label="' . self::escape($nextLabel)
             . '"><span class="fa fa-angle-right" aria-hidden="true"></span></a></nav>';
     }
 

@@ -202,12 +202,12 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>
         <?php if ($this->displayMode === 'agenda') : ?>
-            <a class="jem-layout-toggle" href="<?php echo $this->calendar_link; ?>" title="<?php echo Text::_('COM_JEM_ANNUALCALENDAR_SHOW_CALENDAR'); ?>" aria-label="<?php echo Text::_('COM_JEM_ANNUALCALENDAR_SHOW_CALENDAR'); ?>">
+            <a class="jem-layout-toggle" href="<?php echo $this->calendar_link; ?>" rel="nofollow" title="<?php echo Text::_('COM_JEM_ANNUALCALENDAR_SHOW_CALENDAR'); ?>" aria-label="<?php echo Text::_('COM_JEM_ANNUALCALENDAR_SHOW_CALENDAR'); ?>">
                 <i class="fa fa-fw fa-calendar-days" aria-hidden="true"></i>
                 <span><?php echo Text::_('COM_JEM_ANNUALCALENDAR_SHOW_CALENDAR'); ?></span>
             </a>
         <?php else : ?>
-            <a class="jem-layout-toggle" href="<?php echo $this->agenda_link; ?>" title="<?php echo Text::_('COM_JEM_ANNUALCALENDAR_SHOW_AGENDA'); ?>" aria-label="<?php echo Text::_('COM_JEM_ANNUALCALENDAR_SHOW_AGENDA'); ?>">
+            <a class="jem-layout-toggle" href="<?php echo $this->agenda_link; ?>" rel="nofollow" title="<?php echo Text::_('COM_JEM_ANNUALCALENDAR_SHOW_AGENDA'); ?>" aria-label="<?php echo Text::_('COM_JEM_ANNUALCALENDAR_SHOW_AGENDA'); ?>">
                 <i class="fa fa-fw fa-list" aria-hidden="true"></i>
                 <span><?php echo Text::_('COM_JEM_ANNUALCALENDAR_SHOW_AGENDA'); ?></span>
             </a>
@@ -230,11 +230,11 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
 
     <div class="jem-annual-nav">
         <?php if ($this->previous_link !== null) : ?>
-            <a class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-prev" href="<?php echo $this->previous_link; ?>" aria-label="<?php echo Text::_('JPREV'); ?>">
+            <a class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-prev" href="<?php echo $this->previous_link; ?>" rel="prev nofollow" aria-label="<?php echo Text::_('JPREV'); ?>">
                 <span class="jem-annual-nav-text" aria-hidden="true">&lt;&lt;</span>
             </a>
         <?php else : ?>
-            <span class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-prev disabled" aria-disabled="true" aria-label="<?php echo Text::_('JPREV'); ?>">
+            <span class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-prev" <?php echo JemCalendarNavigation::disabledAttributes(); ?> aria-label="<?php echo Text::_('JPREV'); ?>">
                 <span class="jem-annual-nav-text" aria-hidden="true">&lt;&lt;</span>
             </span>
         <?php endif; ?>
@@ -247,11 +247,11 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
             </span>
         </div>
         <?php if ($this->next_link !== null) : ?>
-            <a class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-next" href="<?php echo $this->next_link; ?>" aria-label="<?php echo Text::_('JNEXT'); ?>">
+            <a class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-next" href="<?php echo $this->next_link; ?>" rel="next nofollow" aria-label="<?php echo Text::_('JNEXT'); ?>">
                 <span class="jem-annual-nav-text" aria-hidden="true">&gt;&gt;</span>
             </a>
         <?php else : ?>
-            <span class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-next disabled" aria-disabled="true" aria-label="<?php echo Text::_('JNEXT'); ?>">
+            <span class="btn btn-outline-primary jem-annual-nav-button jem-annual-nav-next" <?php echo JemCalendarNavigation::disabledAttributes(); ?> aria-label="<?php echo Text::_('JNEXT'); ?>">
                 <span class="jem-annual-nav-text" aria-hidden="true">&gt;&gt;</span>
             </span>
         <?php endif; ?>
@@ -301,7 +301,7 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                 ?>
                 <section class="jem-annual-agenda-month">
                     <h2 class="jem-annual-agenda-month-title">
-                        <a href="<?php echo Route::_('index.php?option=com_jem&view=calendar&yearID=' . (int) $monthStart->format('Y') . '&monthID=' . (int) $monthStart->format('n') . $dayLinkItemid . $dayLinkArchived); ?>">
+                        <a<?php echo JemHelper::calendarNavigationAttributes(Route::_('index.php?option=com_jem&view=calendar&yearID=' . (int) $monthStart->format('Y') . '&monthID=' . (int) $monthStart->format('n') . $dayLinkItemid . $dayLinkArchived), $monthStart, $monthStart->modify('last day of this month')); ?>>
                             <?php echo HTMLHelper::_('date', $monthStart->format('Y-m-d'), 'F Y'); ?>
                         </a>
                     </h2>
@@ -335,7 +335,7 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                             $dayLink = $createDayLink($dayDate);
                             ?>
                             <div class="jem-annual-agenda-day<?php echo empty($dayEvents) ? ' is-empty' : ' has-events'; ?><?php echo $specialClass; ?>"<?php echo $specialStyle ? ' style="' . $this->escape($specialStyle) . '"' : ''; ?><?php echo $dayTitle ? ' title="' . $this->escape($dayTitle) . '"' : ''; ?><?php echo $specialLayerData; ?>>
-                                <a class="jem-annual-agenda-date" href="<?php echo $dayLink; ?>">
+                                <a class="jem-annual-agenda-date" href="<?php echo $dayLink; ?>" rel="nofollow">
                                     <span class="jem-annual-agenda-day-number"><?php echo (int) $dayDate->format('j'); ?></span>
                                     <span class="jem-annual-agenda-weekday"><?php echo HTMLHelper::_('date', $date, 'D'); ?></span>
                                 </a>
@@ -392,7 +392,7 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
             ?>
             <section class="jem-annual-month">
                 <h2 class="jem-annual-month-title">
-                    <a href="<?php echo $monthLink; ?>">
+                    <a <?php echo JemHelper::calendarNavigationAttributes($monthLink, $monthStart, $monthStart->modify('last day of this month')); ?>>
                         <?php echo HTMLHelper::_('date', $monthStart->format('Y-m-d'), 'F Y'); ?>
                     </a>
                 </h2>
@@ -416,7 +416,7 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                             $weekNumber = (int) $weekDate->format('W');
                             $weekLink = Route::_('index.php?option=com_jem&view=weekcal&yearID=' . $weekYear . '&weekID=' . $weekNumber . $dayLinkItemid . $dayLinkArchived);
                             ?>
-                            <a class="jem-annual-week-number" href="<?php echo $weekLink; ?>" aria-label="<?php echo Text::_('COM_JEM_WKCAL_WEEK') . ' ' . $weekNumber; ?>">
+                            <a class="jem-annual-week-number" <?php echo JemHelper::calendarNavigationAttributes($weekLink, $cellDate, $cellDate->modify('+6 days')); ?> aria-label="<?php echo Text::_('COM_JEM_WKCAL_WEEK') . ' ' . $weekNumber; ?>">
                                 <span class="jem-annual-week-number-label"><?php echo $weekNumber; ?></span>
                             </a>
                         <?php endif; ?>
@@ -453,8 +453,8 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                             $popoverAttributes = ' data-bs-content="' . htmlspecialchars($popoverHtml, ENT_QUOTES, 'UTF-8') . '" data-bs-custom-class="jem-annual-popover"';
                         }
                         ?>
-                        <div class="<?php echo $dayClass; ?>" data-day-link="<?php echo $dayLink; ?>" role="link" tabindex="0" aria-label="<?php echo $this->escape($date); ?>"<?php echo $specialStyle ? ' style="' . $this->escape($specialStyle) . '"' : ''; ?><?php echo $dayTitle ? ' title="' . $this->escape($dayTitle) . '"' : ''; ?><?php echo $specialLayerData; ?>>
-                            <a class="jem-annual-day-number" href="<?php echo $dayLink; ?>" aria-label="<?php echo $this->escape($date); ?>">
+                        <div class="<?php echo $dayClass; ?>" <?php if (JemHelper::isCalendarPeriodNavigable($cellDate)) : ?>data-day-link="<?php echo $dayLink; ?>" role="link" tabindex="0"<?php endif; ?> aria-label="<?php echo $this->escape($date); ?>"<?php echo $specialStyle ? ' style="' . $this->escape($specialStyle) . '"' : ''; ?><?php echo $dayTitle ? ' title="' . $this->escape($dayTitle) . '"' : ''; ?><?php echo $specialLayerData; ?>>
+                            <a class="jem-annual-day-number" <?php echo JemHelper::calendarNavigationAttributes($dayLink, $cellDate); ?> aria-label="<?php echo $this->escape($date); ?>">
                                 <?php echo (int) $cellDate->format('j'); ?>
                             </a>
                             <?php if (!empty($dayEvents)) : ?>

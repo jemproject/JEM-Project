@@ -4448,3 +4448,10 @@ div#jem .jem-custom-field-group__field-value {
     inset-inline-start: .55rem;
     position: absolute;
 }
+
+/* Keep the boundary explanation available on hover and keyboard focus. */
+#jem [data-jem-navigation-limit] {
+    opacity: .45;
+    cursor: not-allowed;
+    pointer-events: auto;
+}

@@ -166,7 +166,7 @@ class JemViewCategory extends JemView
             $url_base .= $partMode;
             $navigationBase = $url_base . $partArchive . ($print ? '&print=1&tmpl=component' : '');
             $print_link = Route::_(JemOutput::prepareExportLink(JemOutput::buildPrintLink($url_base . $partDate, $task === 'archive')));
-            $archive_link = Route::_($url_base . $partDate);
+            $archive_link = Route::_($url_base);
 
             // init calendar
             $cal = new JemCalendar($year, $month, 0);

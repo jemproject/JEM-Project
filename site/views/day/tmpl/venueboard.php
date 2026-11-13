@@ -50,11 +50,11 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($this->day);
     <?php endif; ?>
 
     <nav class="jem-venueboard-navigation" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_DAY_NAVIGATION'); ?>">
-        <a href="<?php echo $this->escape($dayLink($currentDate->modify('-1 day'))); ?>" rel="prev" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_PREVIOUS_DAY'); ?>">&larr;</a>
+        <a<?php echo JemHelper::calendarNavigationAttributes($this->escape($dayLink($currentDate->modify('-1 day'))), $currentDate->modify('-1 day'), null, 'prev'); ?> aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_PREVIOUS_DAY'); ?>">&larr;</a>
         <strong><?php echo $this->escape($this->daydate); ?></strong>
         <?php echo $specialDayBadges; ?>
-        <a href="<?php echo $this->escape($todayLink); ?>"><?php echo Text::_('COM_JEM_TIMETABLE_TODAY'); ?></a>
-        <a href="<?php echo $this->escape($dayLink($currentDate->modify('+1 day'))); ?>" rel="next" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_NEXT_DAY'); ?>">&rarr;</a>
+        <a <?php echo JemHelper::calendarNavigationAttributes($this->escape($todayLink), JemHelper::getJoomlaDate()); ?>><?php echo Text::_('COM_JEM_TIMETABLE_TODAY'); ?></a>
+        <a<?php echo JemHelper::calendarNavigationAttributes($this->escape($dayLink($currentDate->modify('+1 day'))), $currentDate->modify('+1 day'), null, 'next'); ?> aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_NEXT_DAY'); ?>">&rarr;</a>
     </nav>
 
     <?php echo JemHelper::renderCalendarContactFilterContext($this->params); ?>

@@ -449,6 +449,36 @@ class JemHelper
     }
 
     /**
+     * Test navigation against the range prepared by the current calendar model.
+     *
+     * @param string|\DateTimeInterface $start Destination period start.
+     * @param string|\DateTimeInterface|null $end Destination period end.
+     * @return bool Whether the destination intersects the visible event months.
+     */
+    public static function isCalendarPeriodNavigable($start, $end = null): bool
+    {
+        require_once __DIR__ . '/calendarnavigation.php';
+
+        return JemCalendarNavigation::allows($start, $end);
+    }
+
+    /**
+     * Build enabled or disabled attributes for a calendar navigation link.
+     *
+     * @param string $href HTML-escaped URL.
+     * @param string|\DateTimeInterface $start Destination period start.
+     * @param string|\DateTimeInterface|null $end Destination period end.
+     * @param string $rel Optional previous/next relationship.
+     * @return string Link attributes with an explanation at the boundary.
+     */
+    public static function calendarNavigationAttributes($href, $start, $end = null, $rel = ''): string
+    {
+        require_once __DIR__ . '/calendarnavigation.php';
+
+        return JemCalendarNavigation::attributes($href, $start, $end, $rel);
+    }
+
+    /**
      * Validate a requested calendar month and fall back to the current Joomla month.
      *
      * @param   mixed  $year   Requested calendar year.

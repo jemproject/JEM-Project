@@ -111,7 +111,7 @@ class JemViewAnnualcalendar extends JemView
         $print_link = Route::_(JemOutput::prepareExportLink($url_base . $partItemid . $partDate . $partMode . ($task == 'archive' ? '&task=archive' : '') . '&print=1'));
         $pdf_link = Route::_(JemOutput::prepareExportLink($url_base . $partItemid . $partDate . $partMode . ($task == 'archive' ? '&task=archive' : '') . '&format=raw&layout=pdf'));
         $ical_link = $partDate;
-        $archive_link = Route::_($url_base . $partItemid . $partDate . $partMode);
+        $archive_link = Route::_($url_base . $partItemid . $partMode);
 
         if ($task == 'archive') {
             $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_($url_base . $partItemid . $partDate . $partMode . '&task=archive'));
@@ -155,6 +155,18 @@ class JemViewAnnualcalendar extends JemView
         $this->displayMode   = $displayMode;
         $this->calendar_link = Route::_($url_base . $partItemid . $partDate . ($task == 'archive' ? '&task=archive' : ''));
         $this->agenda_link   = Route::_($url_base . $partItemid . $partDate . '&mode=agenda' . ($task == 'archive' ? '&task=archive' : ''));
+        // Navigation stays within the range around the events (#2538).
+        $yearInRange = static function ($year) use ($period) {
+            $start = $period['start']->setDate((int) $year, (int) $period['start']->format('n'), 1);
+
+            return JemHelper::isCalendarPeriodNavigable($start, $start->modify('+12 months -1 day'));
+        };
+        if ($period['previous_year'] !== null && !$yearInRange($period['previous_year'])) {
+            $period['previous_year'] = null;
+        }
+        if ($period['next_year'] !== null && !$yearInRange($period['next_year'])) {
+            $period['next_year'] = null;
+        }
         $this->previous_link = $period['previous_year'] !== null
             ? Route::_($url_base . $partItemid . '&yearID=' . $period['previous_year'] . $partMode . ($task == 'archive' ? '&task=archive' : ''))
             : null;

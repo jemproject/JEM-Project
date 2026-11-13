@@ -135,7 +135,7 @@ class JemViewWeekcal extends JemView
         $partDate = ($year ? ('&yearID=' . $year) : '') . ($week ? ('&weekID=' . $week) : '');
         $url_base = 'index.php?option=com_jem&view=weekcal' . $partItemid
             . '&mode=' . JemCalendarAgendaHelper::getWeekMode($params);
-        $archive_link = Route::_($url_base . $partDate);
+        $archive_link = Route::_($url_base);
         $task = $jinput->getCmd('task', '');
         $partArchive = $task === 'archive' ? '&task=archive' : '';
         $navigationBase = $url_base . $partArchive
@@ -166,14 +166,25 @@ class JemViewWeekcal extends JemView
         $cal->enableWeekNum(Text::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
         $cal->setFirstWeekDay($params->get('firstweekday', 1));
         $cal->enableDayLinks(JemCalendarDayLink::build('index.php?option=com_jem&view=day' . $this->param_topcat . $partItemid . $partArchive, (int) $itemid, $task));
+        // Navigation stays within the range around the events (#2538); '' renders a link without href.
+        $periodDays = 7 * $nrweeks - 1;
+        $weekNavLink = static function (\DateTimeImmutable $start, $url) use ($periodDays, $period) {
+            if ($period['first_weekday'] === 0) {
+                $start = $start->modify('-1 day');
+            }
+            return JemHelper::isCalendarPeriodNavigable($start, $start->modify('+' . $periodDays . ' days')) ? Route::_($url) : '';
+        };
+        $previousYearStart = (new \DateTimeImmutable())->setISODate($previousYear, $previousYearWeek);
+        $nextYearStart = (new \DateTimeImmutable())->setISODate($nextYear, $nextYearWeek);
+
         $cal->setWeekNavigation(
             $this->escape($weekTitle),
-            Route::_($navigationBase . '&yearID=' . $previousWeek->format('o') . '&weekID=' . (int) $previousWeek->format('W')),
-            Route::_($navigationBase . '&yearID=' . $nextWeek->format('o') . '&weekID=' . (int) $nextWeek->format('W')),
+            $weekNavLink($previousWeek, $navigationBase . '&yearID=' . $previousWeek->format('o') . '&weekID=' . (int) $previousWeek->format('W')),
+            $weekNavLink($nextWeek, $navigationBase . '&yearID=' . $nextWeek->format('o') . '&weekID=' . (int) $nextWeek->format('W')),
             jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angle-left jem-calendar-nav-icon', Text::_('COM_JEM_WKCAL_PREVIOUS_WEEK'), array('class' => 'jem-calendar-nav-icon')),
             jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angle-right jem-calendar-nav-icon', Text::_('COM_JEM_WKCAL_NEXT_WEEK'), array('class' => 'jem-calendar-nav-icon')),
-            $params->get('show_year_navigation', 0) ? Route::_($navigationBase . '&yearID=' . $previousYear . '&weekID=' . $previousYearWeek) : null,
-            $params->get('show_year_navigation', 0) ? Route::_($navigationBase . '&yearID=' . $nextYear . '&weekID=' . $nextYearWeek) : null,
+            $params->get('show_year_navigation', 0) ? $weekNavLink($previousYearStart, $navigationBase . '&yearID=' . $previousYear . '&weekID=' . $previousYearWeek) : null,
+            $params->get('show_year_navigation', 0) ? $weekNavLink($nextYearStart, $navigationBase . '&yearID=' . $nextYear . '&weekID=' . $nextYearWeek) : null,
             jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angles-left jem-calendar-nav-icon', Text::_('JPREV'), array('class' => 'jem-calendar-nav-icon')),
             jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angles-right jem-calendar-nav-icon', Text::_('JNEXT'), array('class' => 'jem-calendar-nav-icon'))
         );

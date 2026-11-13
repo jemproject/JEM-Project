@@ -146,6 +146,8 @@ class JemModelWeekcal extends JemModelEventslist
      */
     public function getItems()
     {
+        $period = $this->getCalendarPeriod();
+        $this->prepareCalendarNavigation($period['start']->format('Y-m-d'), $period['end']->format('Y-m-d'));
         $items = parent::getItems();
 
         if ($items && $this->getState('filter.calendar_multiday', true) !== false) {
