@@ -1327,7 +1327,7 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
                 if (!$backend && ($jemsettings->regallowinvitation == 1) && array_key_exists('invited', $data)) {
                     if (!$this->_storeUsersInvited($pk, $invitedusers, !$backend, $new)) {
                         //    JemHelper::addLogEntry('Error storing users invited for event ' . $pk, __METHOD__, Log::ERROR);
-                        $this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
+                        $this->setError($this->getError() ?: Text::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
                         $saved = false;
                     }
                 }
@@ -3652,6 +3652,14 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
             return false;
         }
 
+        require_once JPATH_SITE . '/components/com_jem/classes/invitationaccess.class.php';
+        $access = new JemInvitationAccess($db);
+        foreach ($added as $userId) {
+            if ($access->message($id, (int) $userId) !== '') {
+                $this->setError(Text::_(JemInvitationAccess::NO_ACCESS));
+                return false;
+            }
+        }
         return true;
     }
 
@@ -3697,6 +3705,17 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
         $db->setQuery($query);
         $regs = $db->loadObjectList('uid');
 
+        require_once JPATH_SITE . '/components/com_jem/classes/invitationaccess.class.php';
+        $access = new JemInvitationAccess($db);
+        // Event access/categories may have changed in the same edit submission.
+        foreach ($users as $userId) {
+            if ((!isset($regs[$userId]) || (int) $regs[$userId]->status === -1)
+                && $access->message($eventId, (int) $userId) !== '') {
+                $this->setError(Text::_(JemInvitationAccess::NO_ACCESS));
+                return false;
+            }
+        }
+
         PluginHelper::importPlugin('jem');
         $dispatcher = JemFactory::getDispatcher();
 
@@ -3726,7 +3745,9 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
         # Remove obsolete invitations
         foreach ($regs as $reg)
         {
-            if (($reg->status == 0) && (array_search($reg->uid, $users) === false)) {
+            // Hidden candidates must not silently erase older invitations.
+            if (($reg->status == 0) && (array_search($reg->uid, $users) === false)
+                && $access->message($eventId, (int) $reg->uid) === '') {
                 $query = $db->getQuery(true);
                 $query->delete('#__jem_register');
                 $query->where('id = '.$reg->id);

@@ -122,6 +122,11 @@ class plgJemMailer extends CMSPlugin
             if (JemRegistrationAccessPolicy::invitationEventMessage($event) !== '') {
                 return false;
             }
+            require_once JPATH_SITE . '/components/com_jem/classes/invitationaccess.class.php';
+            if ((int) $event->uid > 0
+                && (new JemInvitationAccess($db))->message((int) $event->id, (int) $event->uid) !== '') {
+                return false;
+            }
         }
         $this->_applyAssociatedArticleContent($event);
         $this->_formatEventMailDateTime($event);
