@@ -7,4 +7,6 @@
 
 defined('_JEXEC') or die;
 
-require dirname(__DIR__) . '/default_event_filters.php';
+require is_file(dirname(__DIR__) . '/default_event_filters.php')
+    ? dirname(__DIR__) . '/default_event_filters.php'
+    : JPATH_SITE . '/components/com_jem/common/views/tmpl/default_event_filters.php';

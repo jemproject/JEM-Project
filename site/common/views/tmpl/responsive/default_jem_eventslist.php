@@ -224,7 +224,9 @@ if (jem_common_show_filter($this) && !$filterBelow): ?>
                 'calendarFilter' => $this->getName() === 'day',
                 'itemDisplay' => $itemDisplay,
             );
-            require __DIR__ . '/default_jem_eventslist_item.php';
+            require is_file(__DIR__ . '/default_jem_eventslist_item.php')
+                ? __DIR__ . '/default_jem_eventslist_item.php'
+                : JPATH_SITE . '/components/com_jem/common/views/tmpl/responsive/default_jem_eventslist_item.php';
 
             if ($paramShowMonthRow) {
                 $previousYearMonth = $yearMonth ?? '';

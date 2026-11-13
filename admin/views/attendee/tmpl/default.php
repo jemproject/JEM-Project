@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </table>
     </fieldset>
 
-    <?php require __DIR__ . '/relocation.php'; ?>
+    <?php require is_file(__DIR__ . '/relocation.php') ? __DIR__ . '/relocation.php' : JPATH_ADMINISTRATOR . '/components/com_jem/views/attendee/tmpl/relocation.php'; ?>
     <?php echo HTMLHelper::_('form.token'); ?>
     <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
     <input type="hidden" name="event" value="<?php echo ($this->row->event ? $this->row->event : $this->event); ?>" />

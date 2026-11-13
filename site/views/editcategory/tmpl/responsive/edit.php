@@ -7,4 +7,6 @@
 
 defined('_JEXEC') or die;
 
-require dirname(__DIR__) . '/edit.php';
+require is_file(dirname(__DIR__) . '/edit.php')
+    ? dirname(__DIR__) . '/edit.php'
+    : JPATH_SITE . '/components/com_jem/views/editcategory/tmpl/edit.php';

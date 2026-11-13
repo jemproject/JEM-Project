@@ -8,4 +8,6 @@
 defined('_JEXEC') or die;
 
 // Reuse the existing audited candidate table without duplicating its selection logic.
-require __DIR__ . '/default.php';
+require is_file(__DIR__ . '/default.php')
+    ? __DIR__ . '/default.php'
+    : JPATH_ADMINISTRATOR . '/components/com_jem/views/housekeeping/tmpl/default.php';

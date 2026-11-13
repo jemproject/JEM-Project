@@ -16,7 +16,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 
-require_once __DIR__ . '/../../../../helpers/calendardaylink.php';
+require_once JPATH_SITE . '/components/com_jem/helpers/calendardaylink.php';
 ?>
 
 <style>
@@ -487,7 +487,7 @@ require_once __DIR__ . '/../../../../helpers/calendardaylink.php';
                 </button>
             </div>
 
-            <?php include __DIR__ . '/default_legend.php'; ?>
+            <?php echo $this->loadTemplate('legend'); ?>
             <?php echo $specialDaysLegendHtml; ?>
         </div>
     <?php endif; ?>
@@ -511,7 +511,7 @@ require_once __DIR__ . '/../../../../helpers/calendardaylink.php';
                 </button>
             </div>
 
-            <?php include __DIR__ . '/default_legend.php'; ?>
+            <?php echo $this->loadTemplate('legend'); ?>
             <?php echo $specialDaysLegendHtml; ?>
         </div>
     <?php endif; ?>

@@ -7,4 +7,6 @@
 
 defined('_JEXEC') or die;
 
-include dirname(__DIR__) . '/timetable.php';
+include is_file(dirname(__DIR__) . '/timetable.php')
+    ? dirname(__DIR__) . '/timetable.php'
+    : JPATH_SITE . '/components/com_jem/views/day/tmpl/timetable.php';

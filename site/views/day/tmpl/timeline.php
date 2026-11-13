@@ -14,7 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\Registry\Registry;
 
-require_once __DIR__ . '/../../../helpers/calendardaylink.php';
+require_once JPATH_SITE . '/components/com_jem/helpers/calendardaylink.php';
 
 require_once JPATH_SITE . '/components/com_jem/classes/dayschedule.class.php';
 
