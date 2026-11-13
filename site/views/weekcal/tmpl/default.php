@@ -17,7 +17,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 
-require_once __DIR__ . '/../../../helpers/calendardaylink.php';
+require_once JPATH_SITE . '/components/com_jem/helpers/calendardaylink.php';
 ?>
 
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">

@@ -8,4 +8,6 @@
 
 defined('_JEXEC') or die;
 
-require dirname(__DIR__) . '/choosearticle.php';
+require is_file(dirname(__DIR__) . '/choosearticle.php')
+    ? dirname(__DIR__) . '/choosearticle.php'
+    : JPATH_SITE . '/components/com_jem/views/editevent/tmpl/choosearticle.php';

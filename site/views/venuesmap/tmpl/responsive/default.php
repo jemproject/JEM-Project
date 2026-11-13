@@ -10,4 +10,6 @@ defined('_JEXEC') or die;
 
 $this->jemLayoutStyle = 'responsive';
 
-require dirname(__DIR__) . '/default.php';
+require is_file(dirname(__DIR__) . '/default.php')
+    ? dirname(__DIR__) . '/default.php'
+    : JPATH_SITE . '/components/com_jem/views/venuesmap/tmpl/default.php';
