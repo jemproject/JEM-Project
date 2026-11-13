@@ -455,7 +455,7 @@ require_once JPATH_SITE . '/components/com_jem/helpers/calendardaylink.php';
 
         $content .= '<div class="eventcontenttextbody">';
         $content .= $editicon;
-        $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$contact.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+        $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$contact.$eventstate . JemOutput::moduleEventStatusBadge($row), $eventdate, $row->title . $statusicon . JemOutput::moduleEventStatusBadge($row), $detaillink, 'editlinktip hasTip', $timetp, $category->color);
         $content .= $eventaccess . '</div>' . $venueColorBar . '</div></div></div>';
 
         $this->cal->setEventContent($year, $month, $day, $content);

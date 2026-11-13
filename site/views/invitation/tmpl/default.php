@@ -18,7 +18,7 @@ $escape = static fn ($value) => htmlspecialchars((string) $value, ENT_QUOTES | E
         <?php if ($first->invitation_expires) : ?><p><?php echo Text::_('COM_JEM_INV_EXPIRES'); ?>: <?php echo $escape(HTMLHelper::_('date', $first->invitation_expires, 'Y-m-d H:i T')); ?></p><?php endif; ?>
         <ul>
         <?php foreach ($this->invitationRows as $item) : $row = $item['registration']; ?>
-            <li><strong><?php echo $escape($item['event']->title); ?></strong>
+            <li><strong><?php echo $escape($item['event']->title) . JemOutput::eventStatusNotice($item['event']); ?></strong>
                 — <?php echo $escape($item['event']->dates . ' ' . substr((string) $item['event']->times, 0, 5)); ?>
                 — <?php echo (int) $row->invitation_quantity; ?> <?php echo Text::_('COM_JEM_INV_PLACES'); ?>
                 <?php if (isset($row->preview_total)) : ?><p><?php echo Text::_('COM_JEM_TK_DUE'); ?>: <?php echo $escape($row->preview_total . ' ' . $row->preview_currency); ?></p><?php endif; ?>

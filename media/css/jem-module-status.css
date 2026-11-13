@@ -109,3 +109,12 @@
         right: calc(var(--jem-module-status-diagonal-offset, -2.2rem) + var(--jem-module-status-side-margin, 0));
     }
 }
+
+/* Keep the indicator readable in compact time slots, before a truncated title. */
+.jem-hourgrid-event-title .jem-module-event-status-badge,
+.jem-timetable-block-title .jem-module-event-status-badge {
+    margin-inline: 0 .35rem;
+    padding: .1rem .3rem;
+    font-size: .65rem;
+    vertical-align: middle;
+}

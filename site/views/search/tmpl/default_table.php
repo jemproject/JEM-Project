@@ -228,14 +228,14 @@ use Joomla\CMS\Uri\Uri;
                         <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
                         <td headers="jem_title" style="text-align: left; vertical-align: top;">
                             <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
-                                <span><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
+                                <span><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::moduleEventStatusBadge($row); ?></span>
                             </a><?php echo JemOutput::publishstateicon($row); ?>
                         </td>
                         <?php endif; ?>
 
                         <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
                         <td headers="jem_title" style="text-align: left; vertical-align: top;">
-                            <?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+                            <?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row) . JemOutput::moduleEventStatusBadge($row); ?>
                         </td>
                         <?php endif; ?>
 

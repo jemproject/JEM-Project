@@ -99,7 +99,7 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($this->day);
                                 ?>
                                 <article class="jem-venueboard-event">
                                     <div class="jem-venueboard-time"><?php echo $this->escape($time); ?></div>
-                                    <h3><a href="<?php echo $this->escape($eventUrl); ?>"><?php echo $this->escape($event->title); ?></a></h3>
+                                    <h3><a href="<?php echo $this->escape($eventUrl); ?>"><?php echo $this->escape($event->title); ?></a><?php echo JemOutput::moduleEventStatusBadge($event); ?></h3>
                                     <?php foreach ((array) ($event->categories ?? array()) as $category) : ?>
                                         <span class="jem-venueboard-category"><?php echo $this->escape($category->catname ?? ''); ?></span>
                                     <?php endforeach; ?>

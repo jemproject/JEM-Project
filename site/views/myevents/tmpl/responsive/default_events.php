@@ -361,7 +361,7 @@ $showAttendeeColumn = ((int) $this->params->get('displayattendeecolumn', 0) === 
 
             <?php if ($this->jemsettings->showtitle == 1) : ?>
               <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-                <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
+                <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title) . JemOutput::moduleEventStatusBadge($row); ?></a>
                 <?php echo JemOutput::recurrenceicon($row); ?>
                 <?php if (!empty($row->featured)) :?>
                   <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>

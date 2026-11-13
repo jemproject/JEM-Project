@@ -28,6 +28,12 @@ final class JemHelper
 /** Keeps time strings unchanged; time formatting is outside the localization regression. */
 final class JemOutput
 {
+    /** @param object $event Row. @return string No indicator in the localization fixture. */
+    public static function eventStatusLabel($event): string { return ''; }
+
+    /** @param object $event Row. @return string Neutral indicator in this unrelated rendering fixture. */
+    public static function moduleEventStatusBadge($event): string { return ''; }
+
     /** @param mixed $time Time. @param mixed ...$options Formatting options. @return string Time. */
     public static function formattime($time, ...$options): string
     {

@@ -269,7 +269,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
           <div class="jem-event-details" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 1)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
             <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : // Display title as title of jem-event with link ?>
             <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-              <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><span><?php echo $this->escape($row->title); ?></span></a>
+              <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><span><?php echo $this->escape($row->title) . JemOutput::moduleEventStatusBadge($row); ?></span></a>
               <?php echo JemOutput::recurrenceicon($row); ?>
               <?php echo JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
@@ -279,7 +279,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
 
             <?php elseif (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : //Display title as title of jem-event without link ?>
             <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-              <span><?php echo $this->escape($row->title); ?></span><?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+              <span><?php echo $this->escape($row->title) . JemOutput::moduleEventStatusBadge($row); ?></span><?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
@@ -332,7 +332,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
               <?php if ($this->jemsettings->showtitle == 0) : ?>
                 <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                   <i class="fa fa-comment" aria-hidden="true"></i>
-                  <span><?php echo $this->escape($row->title); ?></span><?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+                  <span><?php echo $this->escape($row->title) . JemOutput::moduleEventStatusBadge($row); ?></span><?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                 </div>
               <?php endif; ?>
 

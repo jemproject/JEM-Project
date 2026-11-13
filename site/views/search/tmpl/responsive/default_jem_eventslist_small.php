@@ -293,7 +293,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
             <?php if ($this->jemsettings->showtitle == 1) : ?>
               <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                 <i class="fa fa-comment" aria-hidden="true"></i>
-                <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><span><?php echo $this->escape($row->title); ?></span></a>
+                <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><span><?php echo $this->escape($row->title) . JemOutput::moduleEventStatusBadge($row); ?></span></a>
                 <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                 <?php if (!empty($row->featured)) :?>
                   <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>

@@ -44,7 +44,7 @@ if (!empty($hierarchy['parent_event_id']) && !empty($hierarchy['parent_event_tit
                 <div class="jem-programme-content">
                     <h4>
                         <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($programmeItem->slug)); ?>">
-                            <?php echo htmlspecialchars($programmeItem->title, ENT_QUOTES, 'UTF-8'); ?>
+                            <?php echo htmlspecialchars($programmeItem->title, ENT_QUOTES, 'UTF-8') . JemOutput::moduleEventStatusBadge($programmeItem); ?>
                         </a>
                     </h4>
                     <?php if (!empty($programmeItem->venue)) : ?>

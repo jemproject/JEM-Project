@@ -27,6 +27,8 @@ $mode = $params->get('display_mode', 'summary');
 
 if ($mode === 'topn') {
     $data = ModJemTypesHelper::getTopNByType($params);
+    JemOutput::prepareEventStatusItems($data, (int) $params->get('show_status_indicators', 1) === 1);
+    JemHelper::loadModuleStatusAssets();
 } else {
     $data = ModJemTypesHelper::getTypeSummary($params);
 }

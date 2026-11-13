@@ -53,7 +53,7 @@ class JemModelMytimeline extends BaseDatabaseModel
         $where = $this->_buildWhere();
         $userId = (int) JemFactory::getUser()->get('id');
 
-        return 'SELECT DISTINCT a.id AS eventid, a.id, a.dates, a.enddates, a.times, a.endtimes, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.title, a.alias, a.created, a.created_by, a.locid, a.published,'
+        return 'SELECT DISTINCT a.id AS eventid, a.id, a.dates, a.enddates, a.times, a.endtimes, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.title, a.alias, a.event_status, a.ticket_availability, a.registra_from, a.registra_until, a.created, a.created_by, a.locid, a.published,'
             . ' a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
             . ' a.access, a.attribs, a.article_id, a.datimage, a.image_path, a.featured, a.registra, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
             . ' a.introtext, a.fulltext,'

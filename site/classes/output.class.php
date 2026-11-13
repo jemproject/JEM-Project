@@ -1806,6 +1806,114 @@ static public function lightbox() {
     }
 
     /**
+     * Prepare one batch of event indicators, including nested category/programme rows.
+     * Disabled indicators are explicitly prepared so legacy list badges respect No.
+     *
+     * @param array       $items    Event rows or groups containing events.
+     * @param bool        $enabled Whether this surface displays indicators.
+     * @param object|null $settings Optional JEM settings.
+     * @param int|null    $now      Optional timestamp for deterministic evaluation.
+     *
+     * @return void
+     */
+    public static function prepareEventStatusItems(array $items, bool $enabled, $settings = null, $now = null): void
+    {
+        $events = array();
+        $collect = static function ($items) use (&$collect, &$events) {
+            foreach ((array) $items as $item) {
+                if (!is_object($item)) {
+                    continue;
+                }
+                if (property_exists($item, 'title') && property_exists($item, 'dates')) {
+                    $events[spl_object_id($item)] = $item;
+                }
+                foreach (array('events', 'child_events') as $property) {
+                    if (!empty($item->$property) && is_array($item->$property)) {
+                        $collect($item->$property);
+                    }
+                }
+            }
+        };
+        $collect($items);
+        $events = array_values($events);
+        foreach ($events as $event) {
+            $event->event_status_indicators_prepared = true;
+            $event->module_event_status = null;
+            $event->event_status_indicator_image_available = false;
+            $event->event_status_indicator_on_image = false;
+            $event->event_status_indicator_badge_rendered = false;
+        }
+        if ($enabled && $events !== array()) {
+            self::prepareModuleEventStatuses($events, $settings, $now);
+        }
+    }
+
+    /**
+     * Apply the current view's menu option to HTML and PDF event collections.
+     *
+     * @param array  $items  Event rows, possibly grouped by category.
+     * @param object $params Effective component/menu parameters.
+     * @param string $view   Current view name.
+     * @param string $layout Current layout name.
+     *
+     * @return void
+     */
+    public static function prepareViewEventStatuses(array $items, $params, string $view, string $layout = 'default'): void
+    {
+        if ($layout === 'pdf') {
+            $app = Factory::getApplication();
+            $menu = $app->getMenu()->getActive();
+            $layout = JemHelper::isActiveMenuView($view) ? (string) ($menu->query['layout'] ?? 'default') : 'default';
+            $dayLayout = $app->input->getCmd('day_pdf_layout', '');
+            if ($view === 'day' && in_array($dayLayout, array('default', 'timeline', 'timetable', 'venueboard'), true)) {
+                $layout = $dayLayout;
+            }
+        }
+        $legacy = array('category', 'day', 'event', 'eventslist', 'search', 'typeevents', 'venue');
+        $default = in_array($view, $legacy, true) ? 0 : 1;
+        if ($layout === 'calendar' || ($view === 'day' && in_array($layout, array('timetable', 'venueboard'), true))) {
+            $default = 1;
+        }
+        $enabled = JemHelper::isActiveMenuView($view) && is_object($params) && method_exists($params, 'get')
+            ? (int) $params->get('show_status_indicators', $default) : $default;
+        self::prepareEventStatusItems($items, $enabled === 1);
+        if ($enabled === 1 && (int) (JemHelper::config()->module_status_ribbons ?? 1)) {
+            JemHelper::loadModuleStatusAssets();
+        }
+    }
+
+    /**
+     * Return the prepared indicator's plain translated label for tooltips and PDF.
+     *
+     * @param object $event Prepared event row.
+     *
+     * @return string Empty when no indicator applies.
+     */
+    public static function eventStatusLabel($event): string
+    {
+        return !empty($event->module_event_status['label'])
+            ? Text::_($event->module_event_status['label']) : '';
+    }
+
+    /**
+     * Display an exceptional event state in operational reservation screens.
+     * This information remains visible independently of optional listing indicators.
+     *
+     * @param object $event Event or registration row carrying event_status.
+     *
+     * @return string Escaped status notice, or an empty string for scheduled events.
+     */
+    public static function eventStatusNotice($event): string
+    {
+        $status = self::getEventStatusPresentation($event);
+        if ($status['status'] === 'scheduled') {
+            return '';
+        }
+        return '<span class="jem-event-state-badge ' . htmlspecialchars($status['class'], ENT_QUOTES, 'UTF-8') . '">'
+            . htmlspecialchars(Text::_($status['label']), ENT_QUOTES, 'UTF-8') . '</span>';
+    }
+
+    /**
      * Add the effective module status presentation to event rows.
      *
      * Registration totals are loaded once for the complete result set when

@@ -573,7 +573,7 @@ final class JemNotificationService
     public function getOwnedRegistration($registrationId, $userId)
     {
         $query = $this->db->getQuery(true)
-            ->select(array('r.*', 'u.name AS user_name', 'u.email AS user_email', 'u.block AS user_block', 'e.title AS event_title'))
+            ->select(array('r.*', 'u.name AS user_name', 'u.email AS user_email', 'u.block AS user_block', 'e.title AS event_title', 'e.event_status'))
             ->from($this->db->quoteName('#__jem_register', 'r'))
             ->join('INNER', $this->db->quoteName('#__users', 'u') . ' ON u.id = r.uid')
             ->join('INNER', $this->db->quoteName('#__jem_events', 'e') . ' ON e.id = r.event')

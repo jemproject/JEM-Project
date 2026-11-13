@@ -195,52 +195,24 @@ class JemView extends HtmlView
     protected function prepareEventStatusIndicators()
     {
         $view = strtolower((string) $this->getName());
-        $supportedViews = array(
-            'category',
-            'day',
-            'event',
-            'eventsblog',
-            'eventslist',
-            'search',
-            'typeevents',
-            'venue',
-        );
-
-        if (!in_array($view, $supportedViews, true)
-            || !is_object($this->params)
-            || !method_exists($this->params, 'get')) {
+        $supported = array('category', 'categories', 'day', 'event', 'eventsblog',
+            'eventslist', 'eventsmap', 'search', 'typeevents', 'venue', 'calendar',
+            'weekcal', 'annualcalendar', 'myevents', 'myattendances', 'mytimeline');
+        if (!in_array($view, $supported, true)) {
             return;
         }
 
-        $default = $view === 'eventsblog' ? 1 : 0;
-        $enabled = JemHelper::isActiveMenuView($view)
-            ? (int) $this->params->get('show_status_indicators', $default)
-            : $default;
-
-        if ($enabled !== 1) {
-            return;
+        $items = array();
+        foreach (array('rows', 'eventslist', 'events', 'attending', 'items') as $property) {
+            if (isset($this->$property) && is_array($this->$property)) {
+                $items = array_merge($items, $this->$property);
+            }
         }
-
-        $settings = JemHelper::config();
-        if (!(int) ($settings->module_status_ribbons ?? 1)) {
-            return;
+        if ($view === 'event' && is_object($this->item)) {
+            $items[] = $this->item;
+            $items = array_merge($items, (array) ($this->eventHierarchy['child_events'] ?? array()));
         }
-
-        $candidates = $view === 'event'
-            ? (isset($this->item) && is_object($this->item) ? array($this->item) : array())
-            : (isset($this->rows) && is_array($this->rows) ? $this->rows : array());
-        $events = array_values(array_filter($candidates, static function ($candidate) {
-            return is_object($candidate)
-                && property_exists($candidate, 'title')
-                && (property_exists($candidate, 'event_status') || property_exists($candidate, 'dates'));
-        }));
-
-        if ($events === array()) {
-            return;
-        }
-
-        JemOutput::prepareModuleEventStatuses($events, $settings);
-        JemHelper::loadModuleStatusAssets();
+        JemOutput::prepareViewEventStatuses($items, $this->params, $view, $this->getLayout());
     }
 
     /**

@@ -108,6 +108,7 @@ class JemModelAttendeeregistrations extends BaseDatabaseModel
             'a.id AS eventid',
             'a.alias AS event_alias',
             'a.title AS event_title',
+            'a.event_status',
             'a.dates',
             'a.enddates',
             'a.times',

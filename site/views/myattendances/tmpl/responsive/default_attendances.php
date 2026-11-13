@@ -275,7 +275,7 @@ if (!function_exists('jem_myattendances_country_flag')) {
 
                     <?php if ($this->jemsettings->showtitle == 1) : ?>
             <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-              <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><span><?php echo $this->escape($row->title); ?></span></a>
+              <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><span><?php echo $this->escape($row->title) . JemOutput::moduleEventStatusBadge($row); ?></span></a>
               <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
               <small><a href="<?php echo Route::_('index.php?option=com_jem&view=registration&id=' . (int) $row->registration_id); ?>"><?php echo Text::_('COM_JEM_VIEW_REGISTRATION'); ?> · <code><?php echo $this->escape($row->registration_reference); ?></code></a></small>
               <?php if (!empty($row->featured)) :?>

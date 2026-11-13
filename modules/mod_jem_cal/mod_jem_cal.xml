@@ -28,6 +28,12 @@
     <config>
         <fields name="params">
             <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+                <field name="show_status_indicators" type="radio" default="1"
+                    label="MOD_JEM_CAL_SHOW_STATUS_INDICATORS" description="MOD_JEM_CAL_SHOW_STATUS_INDICATORS_DESC"
+                    class="btn-group btn-group-yesno">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
                 <field name="event_tree_mode" type="list"
                        default="calendar"
                        label="MOD_JEM_CAL_EVENT_TREE_MODE"

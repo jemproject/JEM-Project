@@ -338,7 +338,7 @@ class JemModelSearch extends BaseDatabaseModel
             $orderby = $this->_buildOrderBy();
 
             # Get Events from Database
-            $this->_query = 'SELECT a.id, a.dates, a.enddates, a.times, a.endtimes, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.title, a.created, a.created_by, a.created_by_alias, a.locid, a.published, a.access,'
+            $this->_query = 'SELECT a.id, a.dates, a.enddates, a.times, a.endtimes, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.title, a.event_status, a.ticket_availability, a.reservedplaces, a.registra_from, a.registra_until, a.created, a.created_by, a.created_by_alias, a.locid, a.published, a.access,'
                           . ' a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
                           . ' a.alias, a.attribs, a.article_id, a.checked_out ,a.checked_out_time, a.contactid, a.datimage, a.image_path, a.featured, a.hits, a.language, a.version,'
                           . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'

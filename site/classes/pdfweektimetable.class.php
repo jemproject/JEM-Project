@@ -186,7 +186,7 @@ final class JemPdfWeekTimetable
         return [
             'number' => $number,
             'date' => $date,
-            'title' => trim((string) ($row->title ?? '')),
+            'title' => trim((string) ($row->title ?? '') . ' ' . JemOutput::eventStatusLabel($row)),
             'venue' => trim((string) ($row->venue ?? '')),
             'label' => !empty($row->day_schedule['all_day'])
                 ? Text::_('COM_JEM_TIMETABLE_ALL_DAY') : (string) ($row->day_schedule['label'] ?? ''),

@@ -154,7 +154,7 @@ class ModJemTypesHelper
 
             $eventQuery = $db->getQuery(true)
                 ->select(array(
-                    'a.id', 'a.title', 'a.alias', 'a.attribs', 'a.dates', 'a.times', 'a.enddates', 'a.endtimes', 'a.article_id', 'a.created_by',
+                    'a.id', 'a.title', 'a.alias', 'a.attribs', 'a.dates', 'a.times', 'a.enddates', 'a.endtimes', 'a.article_id', 'a.event_status', 'a.created', 'a.timezone_mode', 'a.timezone', 'a.start_utc', 'a.end_utc', 'a.ticket_availability', 'a.registra', 'a.registra_from', 'a.registra_until', 'a.maxplaces', 'a.reservedplaces', 'a.waitinglist', 'a.created_by',
                     'eal.id AS event_age_id', 'eal.title AS event_age_title', 'eal.min_age AS event_age_minimum',
                     'eal.max_age AS event_age_maximum', 'eal.badge_label AS event_age_label',
                     'eal.badge_background AS event_age_background', 'eal.badge_text AS event_age_text',
@@ -180,7 +180,7 @@ class ModJemTypesHelper
                 ->where($db->quoteName('c.access') . ' IN (' . $levelsList . ')')
                 ->where(JemHelper::getVenueHierarchyVisibilityWhere('a', $levels))
                 ->where($ageCondition)
-                ->group('a.id, a.title, a.alias, a.attribs, a.dates, a.times, a.enddates, a.endtimes, a.article_id, a.created_by, '
+                ->group('a.id, a.title, a.alias, a.attribs, a.dates, a.times, a.enddates, a.endtimes, a.article_id, a.event_status, a.created, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.ticket_availability, a.registra, a.registra_from, a.registra_until, a.maxplaces, a.reservedplaces, a.waitinglist, a.created_by, '
                     . 'eal.id, eal.title, eal.min_age, eal.max_age, eal.badge_label, eal.badge_background, eal.badge_text, '
                     . 'val.id, val.title, val.min_age, val.max_age, val.badge_label, val.badge_background, val.badge_text')
                 // NULL times (all-day or unspecified) come before timed events on the same date.

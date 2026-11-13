@@ -132,6 +132,12 @@ final class JemHelper
 }
 final class JemOutput
 {
+    /** @param object $event Row. @return string Neutral indicator in this unrelated rendering fixture. */
+    public static function eventStatusLabel($event): string { return ''; }
+
+    /** @param array $items Rows. @param object $params Options. @param string $view View. @param string $layout Layout. @return void No decoration in this fixture. */
+    public static function prepareViewEventStatuses(array $items, $params, string $view, string $layout = 'default'): void {}
+
     /** @param string $date Date. @param string $format Format. @return string Formatted date. */
     public static function formatdate(string $date, string $format = 'Y-m-d'): string { return (new DateTimeImmutable($date))->format($format); }
 }

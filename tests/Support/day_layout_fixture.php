@@ -37,6 +37,12 @@ final class DayLayoutInput
 
 final class DayLayoutServices
 {
+    /** @param object $event Row. @return string Neutral indicator in this unrelated rendering fixture. */
+    public static function eventStatusLabel($event): string { return ''; }
+
+    /** @param object $event Row. @return string Neutral indicator in this unrelated rendering fixture. */
+    public static function moduleEventStatusBadge($event): string { return ''; }
+
     public static function getApplication() { return (object) ['input' => new DayLayoutInput()]; }
     public static function _($value, ...$arguments)
     {

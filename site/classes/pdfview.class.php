@@ -28,6 +28,9 @@ class JemPdfView
      */
     public static function renderEventList(string $title, array $rows, string $filename, string $profile = 'list', string $day = ''): void
     {
+        $app = Factory::getApplication();
+        JemOutput::prepareViewEventStatuses($rows, $app->getParams(), $app->input->getCmd('view', ''), $app->input->getCmd('layout', 'default'));
+
         $specialDaysHtml = '';
         if (JemHelper::isValidDate($day)) {
             $days = JemHelper::calendarSpecialDays($day, $day);
@@ -57,6 +60,9 @@ class JemPdfView
      */
     public static function renderLinkedEventList(string $title, array $rows, string $filename, string $profile = 'list', string $preListHtml = ''): void
     {
+        $app = Factory::getApplication();
+        JemOutput::prepareViewEventStatuses($rows, $app->getParams(), $app->input->getCmd('view', ''), $app->input->getCmd('layout', 'default'));
+
         if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
             Factory::getApplication()->close();
 
@@ -106,6 +112,9 @@ class JemPdfView
      */
     public static function renderDayTimeline(string $title, array $rows, string $filename, string $day = '', $params = null): void
     {
+        $app = Factory::getApplication();
+        JemOutput::prepareViewEventStatuses($rows, $app->getParams(), $app->input->getCmd('view', ''), $app->input->getCmd('layout', 'default'));
+
         if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
             Factory::getApplication()->close();
 
@@ -252,6 +261,9 @@ class JemPdfView
      */
     public static function renderCategoryList(string $title, array $rows, array $typeItems, string $filename, string $profile = 'list'): void
     {
+        $app = Factory::getApplication();
+        JemOutput::prepareViewEventStatuses($rows, $app->getParams(), $app->input->getCmd('view', ''), $app->input->getCmd('layout', 'default'));
+
         if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
             Factory::getApplication()->close();
 
@@ -292,6 +304,9 @@ class JemPdfView
      */
     public static function renderVenueDetail(string $title, $venue, array $rows, $params, string $filename): void
     {
+        $app = Factory::getApplication();
+        JemOutput::prepareViewEventStatuses($rows, $app->getParams(), $app->input->getCmd('view', ''), $app->input->getCmd('layout', 'default'));
+
         if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
             Factory::getApplication()->close();
 
@@ -332,6 +347,9 @@ class JemPdfView
      */
     public static function renderEventsMapList(string $title, array $rows, string $filename, string $mapProvider = 'osm', ?int $mapZoom = null, array $locationColumns = []): void
     {
+        $app = Factory::getApplication();
+        JemOutput::prepareViewEventStatuses($rows, $app->getParams(), $app->input->getCmd('view', ''), $app->input->getCmd('layout', 'default'));
+
         $mapWidth = 260.0;
 
         if (class_exists('JemPdf', false)) {
@@ -369,6 +387,9 @@ class JemPdfView
      */
     public static function renderMonthlyCalendar(string $title, array $rows, string $filename, int $year, int $month, $params = null): void
     {
+        $app = Factory::getApplication();
+        JemOutput::prepareViewEventStatuses($rows, $app->getParams(), $app->input->getCmd('view', ''), $app->input->getCmd('layout', 'default'));
+
         if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
             Factory::getApplication()->close();
 
@@ -418,6 +439,9 @@ class JemPdfView
      */
     public static function renderWeeklyCalendar(string $title, array $rows, string $filename, int $year, int $week, $params = null, ?array $period = null): void
     {
+        $app = Factory::getApplication();
+        JemOutput::prepareViewEventStatuses($rows, $app->getParams(), $app->input->getCmd('view', ''), $app->input->getCmd('layout', 'default'));
+
         if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
             Factory::getApplication()->close();
 
@@ -3468,7 +3492,7 @@ class JemPdfView
         $title = htmlspecialchars((string) ($row->title ?? ''), ENT_COMPAT, 'UTF-8');
 
         if ($title === '' || empty($row->slug)) {
-            return array('html' => $title);
+            return array('html' => $title . self::buildPdfEventIndicators($row));
         }
 
         return array('html' => '<a href="' . htmlspecialchars(self::absoluteUrl(Route::_(JemHelperRoute::getEventRoute($row->slug), false)), ENT_COMPAT, 'UTF-8') . '">' . $title . '</a>' . self::buildPdfEventIndicators($row));
@@ -3625,6 +3649,10 @@ class JemPdfView
     private static function buildPdfEventIndicators($row, bool $includeType = true): string
     {
         $html = '';
+        $status = JemOutput::eventStatusLabel($row);
+        if ($status !== '') {
+            $html .= ' <strong>' . htmlspecialchars($status, ENT_QUOTES, 'UTF-8') . '</strong>';
+        }
 
         if (!empty($row->featured)) {
             $html .= ' <span class="jem-pdf-muted">!</span>';

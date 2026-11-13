@@ -25,6 +25,9 @@ final class FrontendStatusIndicatorViewTest extends TestCase
         yield 'day' => array('day', '0');
         yield 'event type' => array('typeevents', '0');
         yield 'search' => array('search', '0');
+        foreach (array('calendar', 'weekcal', 'annualcalendar', 'eventsmap', 'categories', 'myevents', 'myattendances', 'mytimeline') as $view) {
+            yield $view => array($view, '1');
+        }
     }
 
     #[DataProvider('menuViewProvider')]
@@ -61,12 +64,13 @@ final class FrontendStatusIndicatorViewTest extends TestCase
             self::assertStringContainsString("'" . $name . "'", $view, $name);
         }
 
-        self::assertStringContainsString('JemHelper::isActiveMenuView($view)', $view);
-        self::assertStringContainsString("get('show_status_indicators', \$default)", $view);
-        self::assertStringContainsString("\$view === 'eventsblog' ? 1 : 0", $view);
-        self::assertStringContainsString('property_exists($candidate, \'event_status\')', $view);
-        self::assertStringContainsString('JemOutput::prepareModuleEventStatuses($events, $settings);', $view);
-        self::assertStringContainsString('JemHelper::loadModuleStatusAssets();', $view);
+        self::assertStringContainsString('JemOutput::prepareViewEventStatuses(', $view);
+        $output = $this->read('site/classes/output.class.php');
+        self::assertStringContainsString('JemHelper::isActiveMenuView($view)', $output);
+        self::assertStringContainsString("get('show_status_indicators', \$default)", $output);
+        self::assertStringContainsString('self::prepareEventStatusItems(', $output);
+        self::assertStringContainsString('self::prepareModuleEventStatuses($events, $settings, $now);', $output);
+        self::assertStringContainsString('JemHelper::loadModuleStatusAssets();', $output);
     }
 
     public function testSharedOutputUsesOneImageRibbonOrOneFallbackBadge(): void

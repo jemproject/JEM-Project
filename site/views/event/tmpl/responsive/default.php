@@ -132,7 +132,8 @@ if (!empty($this->item->event_status_indicators_prepared)) {
         && (bool) $params->get('event_show_venue', '1')
         && !empty($this->limage['original']);
     $this->item->event_status_indicator_image_available = $hasEventStatusImage || $hasVenueStatusImage;
-    $showEventStatusBadge = false;
+    $showEventStatusBadge = $showEventStatusBadge
+        && (($this->item->module_event_status['status'] ?? '') !== $eventStatus);
     $showTicketAvailabilityBadge = false;
 }
 $renderEventDetailImage = function ($layoutClass = '', $style = '', $useOriginalImage = false) use ($detailImageField) {

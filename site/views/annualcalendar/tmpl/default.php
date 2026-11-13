@@ -65,7 +65,7 @@ $buildDayTitle = static function (array $specialDays, array $dayEvents) {
             $time .= ($time ? ' - ' : '') . JemOutput::formattime($event['endtimes']);
         }
 
-        $label = trim(($time !== '' ? $time . ' ' : '') . (string) ($event['title'] ?? ''));
+        $label = trim(($time !== '' ? $time . ' ' : '') . (string) ($event['title'] ?? '') . ' ' . ($event['status_text'] ?? ''));
         if ($label !== '' && !in_array($label, $labels, true)) {
             $labels[] = $label;
         }
@@ -159,6 +159,8 @@ foreach ($this->rows as $row) {
         $eventDateKeys[$dedupeKey] = true;
         $eventsByDate[$eventDateKey][] = array(
             'title' => $row->title,
+            'status_html' => JemOutput::moduleEventStatusBadge($row),
+            'status_text' => JemOutput::eventStatusLabel($row),
             'dates' => $row->dates,
             'times' => $row->times,
             'enddates' => $row->enddates,
@@ -354,7 +356,7 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                                                 data-venue="<?php echo $this->escape($event['venue']); ?>">
                                                 <span class="jem-annual-agenda-event-time"><?php echo $time; ?></span>
                                                 <a class="jem-annual-agenda-event-title" href="<?php echo $this->escape($event['link']); ?>">
-                                                    <?php echo $this->escape($event['title']); ?>
+                                                    <?php echo $this->escape($event['title']) . $event['status_html']; ?>
                                                 </a>
                                                 <span class="jem-annual-agenda-event-venue"><?php echo $this->escape($event['venue_title']); ?></span>
                                                 <span class="jem-annual-agenda-event-type"><?php echo $this->escape($event['type_title']); ?></span>
@@ -444,7 +446,7 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                             $popoverHtml .= '<ul class="jem-annual-popover-events">';
 
                             foreach ($dayEvents as $event) {
-                                $popoverHtml .= '<li><a href="' . $this->escape($event['link']) . '">' . $this->escape($event['title']) . '</a></li>';
+                                $popoverHtml .= '<li><a href="' . $this->escape($event['link']) . '">' . $this->escape($event['title']) . $event['status_html'] . '</a></li>';
                             }
 
                             $popoverHtml .= '</ul></div>';
@@ -483,7 +485,7 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                                             data-categories="<?php echo $this->escape($event['categories']); ?>"
                                             data-venue="<?php echo $this->escape($event['venue']); ?>"
                                             <?php echo $style ? 'style="' . $style . '"' : ''; ?>
-                                            title="<?php echo $this->escape($event['title']); ?>"></span>
+                                            title="<?php echo $this->escape(trim($event['title'] . ' ' . $event['status_text'])); ?>"></span>
                                         <?php
                                         $shownMarkers++;
                                     endforeach;

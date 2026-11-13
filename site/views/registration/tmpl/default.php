@@ -24,7 +24,7 @@ $statusText = JemHtml::getAttendanceStatusText(
     <?php endif; ?>
     <h1><?php echo Text::_('COM_JEM_REGISTRATION_DETAILS'); ?></h1>
     <div class="card mb-4"><div class="card-body">
-        <h2><?php echo $this->escape($this->item->event_title); ?></h2>
+        <h2><?php echo $this->escape($this->item->event_title) . JemOutput::eventStatusNotice($this->item); ?></h2>
         <dl class="row">
             <dt class="col-sm-3"><?php echo Text::_('COM_JEM_REGISTRATION_REFERENCE'); ?></dt><dd class="col-sm-9"><code><?php echo $this->escape($this->item->reference); ?></code></dd>
             <dt class="col-sm-3"><?php echo Text::_('COM_JEM_STATUS'); ?></dt><dd class="col-sm-9"><?php echo $this->escape($statusText); ?></dd>

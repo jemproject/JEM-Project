@@ -110,7 +110,7 @@ if (empty($this->catrow->events)) { return; }
           <div class="jem-event-details" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 1)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
             <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : // Display title as title of jem-event with link ?>
             <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-              <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><span><?php echo $this->escape($row->title); ?></span></a>
+              <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><span><?php echo $this->escape($row->title) . JemOutput::eventStatusFallbackBadge($row); ?></span></a>
               <?php echo JemOutput::recurrenceicon($row); ?>
               <?php echo JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
@@ -121,7 +121,7 @@ if (empty($this->catrow->events)) { return; }
 
             <?php elseif (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : // Display title as title of jem-event without link ?>
             <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-              <span><?php echo $this->escape($row->title); ?></span><?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+              <span><?php echo $this->escape($row->title) . JemOutput::eventStatusFallbackBadge($row); ?></span><?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
@@ -178,7 +178,7 @@ if (empty($this->catrow->events)) { return; }
               <?php if ($this->jemsettings->showtitle == 0) : ?>
                 <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                   <i class="fa fa-comment" aria-hidden="true"></i>
-                  <span><?php echo $this->escape($row->title); ?></span>
+                  <span><?php echo $this->escape($row->title) . JemOutput::eventStatusFallbackBadge($row); ?></span>
                 </div>
               <?php endif; ?>
 

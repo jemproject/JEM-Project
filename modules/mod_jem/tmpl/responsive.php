@@ -47,6 +47,9 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
 
                 // Block: Date
                 $contentDate = ($linkdet == 1) ? '<a href="'.$item->link.'" title="'.strip_tags($item->dateinfo).'">'.$item->dateinfo.'</a>' : $item->dateinfo;
+                if (!$showtitle) {
+                    $contentDate .= JemOutput::moduleEventStatusBadge($item);
+                }
                 $blockDate = '<div class="event-date" style="font-size: 0.95em;">' . $contentDate . '</div>';
 
                 // Block: Venue

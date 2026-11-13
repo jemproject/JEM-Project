@@ -49,6 +49,9 @@ $showiconcountry    = (int) $params->get('showiconcountry');
 
             // Block Date
             $dateContent = (($linkdet === 1) && $eventLink !== '') ? '<a href="'.$eventLink.'" style="color: #007bff; text-decoration: none; font-weight: inherit;">'.$date.'</a>' : $date;
+            if (!$showtitle) {
+                $dateContent .= JemOutput::moduleEventStatusBadge($item);
+            }
             $blockDate = '<p style="'.$textStyle.' margin: 4px 0; font-size: 14px;">' . $dateContent . '</p>';
 
             // Block Venue

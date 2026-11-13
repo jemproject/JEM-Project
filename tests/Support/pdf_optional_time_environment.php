@@ -34,5 +34,5 @@ function pdfOptionalTimeMethod(string $file, string $method): string
 
 eval('class JemHelper extends PdfOptionalTimeSettings {'
     . pdfOptionalTimeMethod('site/helpers/helper.php', 'isValidTime') . '}');
-eval('class JemOutput {'
+eval('class JemOutput { public static function eventStatusLabel($event): string { return \'\'; }'
     . pdfOptionalTimeMethod('site/classes/output.class.php', 'formattime') . '}');

@@ -400,6 +400,8 @@ class JemMapHelper
                 'e.enddates',
                 'e.endtimes',
                 'e.event_status',
+                'e.created', 'e.timezone_mode', 'e.timezone', 'e.start_utc', 'e.end_utc', 'e.ticket_availability', 'e.registra', 'e.registra_from', 'e.registra_until',
+                'e.maxplaces', 'e.reservedplaces', 'e.waitinglist',
                 'e.ticket_availability',
                 'e.created_by',
                 'v.id AS venue_id',
