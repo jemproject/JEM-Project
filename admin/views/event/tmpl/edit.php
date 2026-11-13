@@ -21,6 +21,8 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 
+JemHelper::loadCss('event-editor-advanced');
+
 $this->document->addScript(Uri::root(true) . '/media/com_jem/js/recurrence.js');
 
 $wa = $this->document->getWebAssetManager();
@@ -653,19 +655,30 @@ $this->document->addStyleDeclaration('
             </div>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'advanced', Text::_('COM_JEM_ADVANCED')); ?>
-            <fieldset class="adminform">
-                <ul class="adminformlist">
-                    <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('event_status'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('ticket_availability'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('online_meeting_url'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('online_meeting_label'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('online_meeting_access', 'attribs'); ?></div></li>
-                    <li><div class="label-form"><input type="hidden" name="jform[attribs][online_meeting_registered]" value="0"><?php echo $this->form->renderfield('online_meeting_registered', 'attribs'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('publish_up'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('publish_down'); ?></div></li>
-                </ul>
+            <div class="jem-event-advanced">
+            <fieldset class="jem-event-advanced-section">
+                <legend><?php echo Text::_('COM_JEM_EVENT_PUBLICATION_HEADING'); ?></legend>
+                <p class="jem-event-advanced-description"><?php echo Text::_('COM_JEM_EVENT_PUBLICATION_DESCRIPTION'); ?></p>
+                <div class="jem-event-advanced-fields">
+                    <div class="jem-event-advanced-field jem-event-advanced-field--wide"><?php echo $this->form->renderField('access'); ?></div>
+                    <div class="jem-event-advanced-field"><?php echo $this->form->renderField('event_status'); ?></div>
+                    <div class="jem-event-advanced-field"><?php echo $this->form->renderField('ticket_availability'); ?></div>
+                    <div class="jem-event-advanced-field"><?php echo $this->form->renderField('publish_up'); ?></div>
+                    <div class="jem-event-advanced-field"><?php echo $this->form->renderField('publish_down'); ?></div>
+                </div>
             </fieldset>
+            <hr class="jem-event-advanced-separator">
+            <fieldset class="jem-event-advanced-section jem-event-advanced-online">
+                <legend><?php echo Text::_('COM_JEM_ONLINE_MEETING'); ?></legend>
+                <p class="jem-event-advanced-description"><?php echo Text::_('COM_JEM_EVENT_ONLINE_ACCESS_DESCRIPTION'); ?></p>
+                <div class="jem-event-advanced-fields">
+                    <div class="jem-event-advanced-field jem-event-advanced-field--wide"><?php echo $this->form->renderField('online_meeting_url'); ?></div>
+                    <div class="jem-event-advanced-field"><?php echo $this->form->renderField('online_meeting_label'); ?></div>
+                    <div class="jem-event-advanced-field"><?php echo $this->form->renderField('online_meeting_access', 'attribs'); ?></div>
+                    <div class="jem-event-advanced-field jem-event-advanced-field--wide jem-event-advanced-confirmation"><input type="hidden" name="jform[attribs][online_meeting_registered]" value="0"><?php echo $this->form->renderField('online_meeting_registered', 'attribs'); ?></div>
+                </div>
+            </fieldset>
+            </div>
 
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) : ?>

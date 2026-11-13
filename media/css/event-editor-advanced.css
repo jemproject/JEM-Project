@@ -1,0 +1,153 @@
+/**
+ * @package JEM
+ * @copyright (C) 2026 joomlaeventmanager.net
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+.jem-event-advanced {
+    max-width: 70rem;
+    min-width: 0;
+}
+
+.jem-event-advanced .jem-event-advanced-section {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.jem-event-advanced .jem-event-advanced-section > legend {
+    float: none;
+    width: 100%;
+    margin: 0 0 .5rem;
+    padding: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.jem-event-advanced .jem-event-advanced-description {
+    margin: 0 0 1.25rem;
+    font-size: .925em;
+}
+
+.jem-event-advanced .jem-event-advanced-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem 1.5rem;
+}
+
+.jem-event-advanced .jem-event-advanced-field,
+.jem-event-advanced .control-label,
+.jem-event-advanced .controls {
+    float: none;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.jem-event-advanced .jem-event-advanced-field--wide {
+    grid-column: 1 / -1;
+}
+
+.jem-event-advanced .control-group {
+    display: block;
+    margin: 0;
+}
+
+.jem-event-advanced .control-label {
+    margin-bottom: .4rem;
+}
+
+.jem-event-advanced .control-label label {
+    float: none;
+    width: auto;
+    max-width: 100%;
+    margin: 0;
+    white-space: normal;
+}
+
+.jem-event-advanced .jem-event-advanced-field input:not([type="checkbox"]):not([type="hidden"]),
+#jem.jem_editevent .jem-event-advanced .jem-event-advanced-field input:not([type="checkbox"]):not([type="hidden"]),
+.jem-event-advanced .jem-event-advanced-field select,
+.jem-event-advanced .field-calendar {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.jem-event-advanced .field-calendar .input-group {
+    flex-wrap: nowrap;
+}
+
+.jem-event-advanced .field-calendar .input-group input,
+#jem.jem_editevent .jem-event-advanced .field-calendar .input-group input {
+    flex: 1 1 0;
+    width: 0;
+}
+
+.jem-event-advanced .field-calendar button {
+    flex: 0 0 auto;
+}
+
+.jem-event-advanced .jem-event-advanced-confirmation .control-group {
+    display: grid;
+    grid-template-columns: fit-content(85%) minmax(1.15rem, 1fr);
+    align-items: center;
+    gap: .65rem;
+}
+
+.jem-event-advanced .jem-event-advanced-confirmation .control-label {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+    text-align: left;
+}
+
+.jem-event-advanced .jem-event-advanced-confirmation .controls {
+    display: contents;
+}
+
+.jem-event-advanced .jem-event-advanced-confirmation .controls > div {
+    grid-column: 1 / -1;
+}
+
+.jem-event-advanced .jem-event-advanced-confirmation .controls > .form-check {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.jem-event-advanced .jem-event-advanced-confirmation input[type="checkbox"] {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: start;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin: 0;
+}
+
+.jem-event-advanced .jem-event-advanced-separator {
+    margin: 1.75rem 0;
+    border: 0;
+    border-top: 1px solid currentColor;
+    opacity: .25;
+}
+
+.jem-event-advanced .jem-event-advanced-metadata {
+    margin-top: 1.75rem;
+}
+
+@media (max-width: 767px) {
+    .jem-event-advanced .jem-event-advanced-fields {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
