@@ -672,6 +672,12 @@
     </fieldset>
 
     <fields name="attribs">
+        <fieldset name="online_meeting_options">
+            <field name="online_meeting_access" type="accesslevel" default="1" filter="integer"
+                label="COM_JEM_ONLINE_MEETING_ACCESS" description="COM_JEM_ONLINE_MEETING_ACCESS_DESC" />
+            <field name="online_meeting_registered" type="checkbox" value="1" filter="integer"
+                label="COM_JEM_ONLINE_MEETING_REGISTERED" description="COM_JEM_ONLINE_MEETING_REGISTERED_DESC" />
+        </fieldset>
         <fieldset name="frontend_form_mode">
             <field name="frontend_form_mode" type="hidden"
                     default="easy"

@@ -49,7 +49,18 @@ final class JemSeriesInheritance
                 }
             }
         }
+        if ($root && self::onlinePolicy($child) != self::onlinePolicy($root)) {
+            $overrides[] = 'online';
+        }
         return ['inherit' => array_key_exists('inherit', $child) ? (bool) $child['inherit'] : true, 'overrides' => $overrides];
+    }
+
+    /** @param array $event Event fields. @return array Meeting policy belonging to the online inheritance group. */
+    private static function onlinePolicy(array $event): array
+    {
+        $attributes = new Registry($event['attribs'] ?? []);
+        return ['online_meeting_access' => $attributes->get('online_meeting_access', 1),
+            'online_meeting_registered' => $attributes->get('online_meeting_registered', 0)];
     }
 
     /**
@@ -114,6 +125,13 @@ final class JemSeriesInheritance
                 $attribs->set('article_usage', $source->get('article_usage', 'information'));
                 $attribs->set('article_sync_mode', 'none');
             }
+            if (!in_array('online', $policy['overrides'], true)) {
+                $sourceAttributes = new Registry($root['attribs'] ?? []);
+                $sourceAttributes->merge(new Registry($changes['attribs'] ?? []));
+                foreach (self::onlinePolicy(['attribs' => $sourceAttributes]) as $key => $value) {
+                    $attribs->set($key, $value);
+                }
+            }
             $child['attribs'] = $attribs->toArray();
         }
         return $child;
@@ -146,6 +164,17 @@ final class JemSeriesInheritance
                 } elseif (array_key_exists($field, $submitted) && array_key_exists($field, $stored)
                     && self::value($field, $submitted[$field]) !== self::value($field, $stored[$field])) {
                     $policy['overrides'][] = $group;
+                }
+            }
+            if ($group === 'online') {
+                if ($restore) {
+                    $attributes = new Registry($submitted['attribs'] ?? []);
+                    foreach (self::onlinePolicy($root) as $key => $value) {
+                        $attributes->set($key, $value);
+                    }
+                    $submitted['attribs'] = $attributes->toArray();
+                } elseif (isset($submitted['attribs']) && self::onlinePolicy($submitted) != self::onlinePolicy($stored)) {
+                    $policy['overrides'][] = 'online';
                 }
             }
             if ($restore && $group === 'description') {

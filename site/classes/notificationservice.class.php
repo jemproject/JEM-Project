@@ -255,6 +255,35 @@ final class JemNotificationService
     }
 
     /**
+     * Cancel an old unsent snapshot when its formerly public meeting URL is now restricted.
+     * New restricted messages contain only revalidated internal routes, never provider credentials.
+     * @param object $notification Stored message. @return bool Safe to attempt delivery.
+     */
+    private function meetingSnapshotStillPublic(object $notification): bool
+    {
+        if (empty($notification->event_id)) {
+            return true;
+        }
+        require_once __DIR__ . '/onlinemeeting.class.php';
+        $event = $this->db->setQuery('SELECT id,attribs,online_meeting_url FROM #__jem_events WHERE id='
+            . (int) $notification->event_id)->loadObject();
+        if (!$event || !JemOnlineMeeting::restricted($event)) {
+            return true;
+        }
+        $urls = $this->db->setQuery("SELECT url FROM #__jem_links WHERE type='online' AND event_id="
+            . (int) $event->id)->loadColumn() ?: [];
+        $urls[] = $event->online_meeting_url;
+        $body = html_entity_decode((string) ($notification->subject ?? '') . "\n"
+            . (string) ($notification->body ?? '') . "\n" . (string) ($notification->htmlbody ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        foreach ($urls as $url) {
+            if (trim((string) $url) !== '' && str_contains($body, (string) $url)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Atomically claim a queued/failed snapshot and append its attempt row.
      */
     public function beginAttempt($notificationId, $source = 'automatic', $actorId = 0)
@@ -266,7 +295,7 @@ final class JemNotificationService
             return false;
         }
 
-        if (!$this->invitationStillDeliverable($notification)) {
+        if (!$this->invitationStillDeliverable($notification) || !$this->meetingSnapshotStillPublic($notification)) {
             $query = $this->db->getQuery(true)
                 ->update($this->db->quoteName('#__jem_notifications'))
                 ->set($this->db->quoteName('state') . ' = ' . $this->db->quote(self::STATE_CANCELLED))

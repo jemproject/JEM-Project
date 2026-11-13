@@ -927,7 +927,10 @@ class plgJemMailer extends CMSPlugin
             return $text;
         }
 
-        $onlineMeetingUrl = $this->_getOnlineMeetingUrl($event);
+        // A message may be queued or forwarded: restricted provider URLs never enter its snapshot.
+        $onlineMeetingUrl = JemOnlineMeeting::restricted($event) && !empty($event->online_meeting_url)
+            ? JemHelperRoute::getAbsoluteSiteRoute(JemOnlineMeeting::route((int) $event->id))
+            : $this->_getOnlineMeetingUrl($event);
 
         if ($onlineMeetingUrl === '') {
             return $text;
@@ -1440,9 +1443,17 @@ class plgJemMailer extends CMSPlugin
         $sessions = [];
         $attachments = [];
         foreach ($rows as $registration) {
-            $date = $db->setQuery('SELECT title,dates,times FROM #__jem_events WHERE id=' . (int) $registration->event)->loadObject();
+            $date = $db->setQuery('SELECT * FROM #__jem_events WHERE id=' . (int) $registration->event)->loadObject();
             $sessions[] = $date->title . ' — ' . $date->dates . ' ' . substr((string) $date->times, 0, 5);
             if ($action === 'accepted' && (int) $registration->status === 1 && !$registration->waiting) {
+                if (JemOnlineMeeting::restricted($date) && !empty($date->online_meeting_url)
+                    && (int) JemHelper::globalattribs()->get('event_show_online_meeting', 1) === 1) {
+                    $join = (int) $registration->uid === 0 ? JemOnlineMeeting::guestUrl($date, $registration)
+                        : JemHelperRoute::getAbsoluteSiteRoute(JemOnlineMeeting::route((int) $registration->event));
+                    if ($join !== '') {
+                        $sessions[] = Text::_('COM_JEM_ONLINE_MEETING') . ': ' . $join;
+                    }
+                }
                 require_once JPATH_SITE . '/components/com_jem/classes/ticketservice.class.php';
                 require_once JPATH_SITE . '/components/com_jem/classes/ticketpdf.class.php';
                 $ticket = (new JemTicketService($db))->invitationDocument($registration);
@@ -1540,6 +1551,21 @@ class plgJemMailer extends CMSPlugin
             ? (int) $spec->recipient_user_id
             : (int) ($recipientUser->id ?? 0);
         $values = (array) $spec->values;
+        if ($recipientType === 'user' && (int) $spec->recipient_user_id === 0) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $booking = $db->setQuery('SELECT * FROM #__jem_register WHERE id=' . (int) $spec->registration_id)->loadObject();
+            if ($booking && (int) $booking->uid === 0
+                && strcasecmp((string) $booking->guest_email, (string) $receiver) === 0) {
+                $event = $db->setQuery('SELECT * FROM #__jem_events WHERE id=' . (int) $booking->event)->loadObject();
+                if ($event && JemOnlineMeeting::restricted($event) && !empty($event->online_meeting_url)
+                    && (int) JemHelper::globalattribs()->get('event_show_online_meeting', 1) === 1) {
+                    $join = JemOnlineMeeting::guestUrl($event, $booking);
+                    if ($join !== '') {
+                        $values['event_url'] = ($values['event_url'] ?? '') . "\n" . $join;
+                    }
+                }
+            }
+        }
         if (isset($spec->event_datetime)) {
             $values = array_replace($values, JemNotificationTemplateService::formatEventDateTime(
                 $spec->event_datetime['date'],

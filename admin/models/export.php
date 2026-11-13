@@ -45,7 +45,7 @@ class JemModelExport extends ListModel
                 'a.id', 'a.title', 'a.alias', 'a.dates', 'a.enddates', 'a.times', 'a.endtimes', 'a.timezone_mode', 'a.timezone',
                 'a.parent_event_id', 'a.event_tree_order', 'a.show_in_calendar',
                 'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.online_meeting_url', 'a.online_meeting_label',
-                'a.published', 'a.language',
+                'a.published', 'a.language', 'a.attribs',
                 'a.created', 'a.modified', 'a.locid',
                 $db->quoteName('v.venue', 'venue'), $db->quoteName('v.street', 'street'),
                 $db->quoteName('v.postalCode', 'postalCode'), $db->quoteName('v.city', 'city'),
@@ -58,6 +58,7 @@ class JemModelExport extends ListModel
             ->select("(SELECT GROUP_CONCAT(DISTINCT c2.catname ORDER BY c2.catname SEPARATOR ', ') FROM #__jem_cats_event_relations AS r2 INNER JOIN #__jem_categories AS c2 ON c2.id = r2.catid WHERE r2.itemid = a.id) AS categories")
             ->select("(SELECT GROUP_CONCAT(DISTINCT r3.catid ORDER BY r3.catid SEPARATOR ',') FROM #__jem_cats_event_relations AS r3 WHERE r3.itemid = a.id) AS category_ids")
             ->select("(SELECT l.url FROM #__jem_links AS l WHERE l.event_id = a.id AND l.state = 1 AND l.url <> '' ORDER BY l.ordering ASC, l.id ASC LIMIT 1) AS event_url")
+            ->select("(SELECT l.url FROM #__jem_links AS l WHERE l.event_id = a.id AND l.state = 1 AND l.url <> '' AND LOWER(TRIM(l.type)) <> 'online' ORDER BY l.ordering ASC, l.id ASC LIMIT 1) AS public_event_url")
             ->from($db->quoteName('#__jem_events', 'a'))
             ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON v.id = a.locid');
 
@@ -75,12 +76,19 @@ class JemModelExport extends ListModel
         $selectedFields = $this->normaliseCatalogExportFields($selectedFields, $includeCategories);
 
         foreach ($rows as &$row) {
+            // A private joining link must not become a public generic link on re-import.
+            if (JemOnlineMeeting::restricted($row)) {
+                $row['event_url'] = $row['public_event_url'] ?? '';
+            }
             $filtered = array();
 
             foreach ($selectedFields as $field) {
                 $filtered[$field] = $row[$field] ?? '';
             }
 
+            if (in_array('online_meeting_url', $selectedFields, true)) {
+                $filtered['attribs'] = json_encode(JemOnlineMeeting::settings($row));
+            }
             $filtered['jem_export_version'] = $version;
             $row = $filtered;
         }

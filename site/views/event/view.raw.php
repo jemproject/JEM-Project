@@ -181,7 +181,7 @@ class JemViewEvent extends HtmlView
         $venueImageHtml = $showImages ? $this->buildPdfImageHtml($row->locimage ?? '', 'venue', (string) $row->venue, $venueImageWidth, $venueImageHeight, (string) ($row->venue_image_path ?? '')) : '';
         $includeLinks = (int) ($jemsettings->pdf_event_include_links ?? 1) === 1;
         $includeAttachments = (int) ($jemsettings->pdf_event_include_attachments ?? 1) === 1;
-        $eventLinksHtml = $includeLinks && !empty($row->event_links) ? $this->buildPdfEventLinksHtml((array) $row->event_links) : '';
+        $eventLinksHtml = $includeLinks && !empty($row->event_links) ? $this->buildPdfEventLinksHtml(JemOnlineMeeting::publicLinks($row, (array) $row->event_links)) : '';
         $eventAttachmentsHtml = $includeAttachments && !empty($row->attachments) ? $this->buildPdfAttachmentsHtml(Text::_('COM_JEM_FILES'), (array) $row->attachments) : '';
         $venueAttachmentsHtml = $includeAttachments && !empty($row->vattachments) ? $this->buildPdfAttachmentsHtml(Text::_('COM_JEM_FILES'), (array) $row->vattachments) : '';
         $eventImagePosition = $this->normalisePdfImagePosition((string) ($jemsettings->pdf_event_image_position ?? 'right'));
@@ -335,7 +335,7 @@ class JemViewEvent extends HtmlView
             $html[] = $this->buildPdfProgrammeHtml((array) $row->child_events, $showVenueConfiguration);
         }
 
-        if ($showOnlineMeeting && (int) ($jemsettings->pdf_event_include_online_meeting ?? 1) === 1 && !empty($row->online_meeting_url)) {
+        if ($showOnlineMeeting && (int) ($jemsettings->pdf_event_include_online_meeting ?? 1) === 1 && JemHelper::getOnlineMeetingUrl($row) !== '') {
             $meetingLabel = !empty($row->online_meeting_label) ? (string) $row->online_meeting_label : Text::_('COM_JEM_ONLINE_MEETING');
             $html[] = '<h2>' . htmlspecialchars($meetingLabel, ENT_COMPAT, 'UTF-8') . '</h2>';
             $html[] = '<div class="jem-pdf-section"><a class="jem-pdf-inline-link" href="' . htmlspecialchars((string) $row->online_meeting_url, ENT_COMPAT, 'UTF-8') . '">' . htmlspecialchars((string) $row->online_meeting_url, ENT_COMPAT, 'UTF-8') . '</a></div>';

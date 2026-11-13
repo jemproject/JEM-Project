@@ -660,6 +660,8 @@ $this->document->addStyleDeclaration('
                     <li><div class="label-form"><?php echo $this->form->renderfield('ticket_availability'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('online_meeting_url'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('online_meeting_label'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('online_meeting_access', 'attribs'); ?></div></li>
+                    <li><div class="label-form"><input type="hidden" name="jform[attribs][online_meeting_registered]" value="0"><?php echo $this->form->renderfield('online_meeting_registered', 'attribs'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('publish_up'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('publish_down'); ?></div></li>
                 </ul>

@@ -79,7 +79,7 @@ class JemViewInvitation extends JemView
                     $this->invitationRows[] = ['registration' => $row, 'event' => null];
                     continue;
                 }
-                $event = $db->setQuery('SELECT title,dates,times FROM #__jem_events WHERE id=' . (int) $row->event)->loadObject();
+                $event = $db->setQuery('SELECT id,title,dates,times,event_status,attribs,online_meeting_url FROM #__jem_events WHERE id=' . (int) $row->event)->loadObject();
                 if ($event) {
                     $this->invitationRows[] = ['registration' => $row, 'event' => $event];
                 }

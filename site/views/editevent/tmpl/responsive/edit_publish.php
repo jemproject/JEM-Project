@@ -25,6 +25,10 @@ $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), 
         <dd><?php echo $this->form->getInput('online_meeting_url'); ?></dd>
         <dt><?php echo $this->form->getLabel('online_meeting_label'); ?></dt>
         <dd><?php echo $this->form->getInput('online_meeting_label'); ?></dd>
+        <dt><?php echo $this->form->getLabel('online_meeting_access', 'attribs'); ?></dt>
+        <dd><?php echo $this->form->getInput('online_meeting_access', 'attribs'); ?></dd>
+        <dt><?php echo $this->form->getLabel('online_meeting_registered', 'attribs'); ?></dt>
+        <dd><input type="hidden" name="jform[attribs][online_meeting_registered]" value="0"><?php echo $this->form->getInput('online_meeting_registered', 'attribs'); ?></dd>
         <dt><?php echo $this->form->getLabel('publish_up'); ?></dt>
         <dd><?php echo $this->form->getInput('publish_up'); ?></dd>
         <dt><?php echo $this->form->getLabel('publish_down'); ?></dt>

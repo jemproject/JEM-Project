@@ -368,6 +368,7 @@ class JemModelEvent extends ItemModel
             $res = 0;
         }
         $this->_item[$pk]->booked = $res;
+        JemOnlineMeeting::prepare($this->_item[$pk]);
 
         return $this->_item[$pk];
     }

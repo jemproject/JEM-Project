@@ -4459,6 +4459,7 @@ class JemControllerImport extends BaseController
             'country',
             'online_meeting_url',
             'online_meeting_label',
+            'attribs',
             'meta_keywords',
             'meta_description',
             'event_status',

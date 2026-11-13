@@ -877,7 +877,9 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
         <!-- DESCRIPTION -->
         <?php $hasDescription = ($this->item->fulltext != '' && $this->item->fulltext != '<br>') || ($this->item->introtext != '' && $this->item->introtext != '<br>'); ?>
         <?php
-        $onlineMeetingUrl = JemHelper::getOnlineMeetingUrl($this->item);
+        $onlineMeetingUrl = $this->item->jem_meeting_join_url ?? JemHelper::getOnlineMeetingUrl($this->item);
+        $meetingNotice = !empty($this->item->jem_private_meeting) && $onlineMeetingUrl === ''
+            && (int) $params->get('event_show_online_meeting', 1) === 1;
         $showOnlineMeeting = $onlineMeetingUrl !== '' && (int) $params->get('event_show_online_meeting', '1') === 1;
         $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('event_show_more_information', '1'));
         $moreInformationText = trim((string) $params->get('event_more_information_text', ''));
@@ -898,7 +900,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             && ($eventDescriptionHtml !== '' && $eventDescriptionHtml !== '<br>' || $eventCompactHasMore)
             && $hasDescription;
         ?>
-        <?php if ($showEventDescription || $showOnlineMeeting || !empty($this->event_links)) { ?>
+        <?php if ($showEventDescription || $showOnlineMeeting || $meetingNotice || !empty($this->event_links)) { ?>
             <?php if ($showEventDescription) : ?>
                 <h2 class="description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
             <?php endif; ?>
@@ -920,6 +922,9 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                         echo $renderEventCustomFieldsBlock();
                     }
 
+                    if ($meetingNotice) {
+                        echo '<p class="jem-online-meeting-notice">' . Text::_('COM_JEM_ONLINE_MEETING_RESTRICTED_NOTICE') . '</p>';
+                    }
                     if ($showOnlineMeeting) :
                         $onlineMeetingLabel = JemHelper::getOnlineMeetingLabel($this->item);
                         $onlineMeetingPlatform = JemHelper::getOnlineMeetingPlatform($onlineMeetingUrl);

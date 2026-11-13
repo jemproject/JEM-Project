@@ -524,7 +524,7 @@ class JemViewEvent extends JemView
                 }
 
                 if ($this->item_root && !empty($this->item_root->event_links)) {
-                    $this->event_links = $this->item_root->event_links;
+                    $this->event_links = JemOnlineMeeting::publicLinks($this->item, $this->item_root->event_links);
                 }
             }
         }

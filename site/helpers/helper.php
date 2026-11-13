@@ -40,6 +40,7 @@ require_once __DIR__ . '/../classes/automaticcleanup.class.php';
 require_once __DIR__ . '/../classes/registrationaccesspolicy.class.php';
 require_once __DIR__ . '/../classes/recurrenceexclusions.class.php';
 require_once __DIR__ . '/../classes/eventschedule.class.php';
+require_once __DIR__ . '/../classes/onlinemeeting.class.php';
 
 /**
  * Holds some usefull functions to keep the code a bit cleaner
@@ -1741,6 +1742,10 @@ class JemHelper
      */
     static public function getOnlineMeetingUrl($event)
     {
+        if (JemOnlineMeeting::restricted($event)) {
+            return '';
+        }
+
         $url = isset($event->online_meeting_url) ? trim((string) $event->online_meeting_url) : '';
 
         return self::sanitizeOnlineMeetingUrl($url);
@@ -1755,6 +1760,10 @@ class JemHelper
      */
     static public function getOnlineMeetingEventLink($event)
     {
+        if (JemOnlineMeeting::restricted($event)) {
+            return ['url' => '', 'label' => ''];
+        }
+
         $links = array();
 
         if (!empty($event->event_links) && is_array($event->event_links)) {

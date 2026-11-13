@@ -772,6 +772,12 @@ class JemModelEvent extends JemModelAdmin
     {
         $attribs = new Registry($data['attribs'] ?? []);
         $previous = new Registry($stored['attribs'] ?? []);
+        // Omitted policy fields in partial saves keep the existing meeting restrictions.
+        foreach (['online_meeting_access', 'online_meeting_registered'] as $key) {
+            if (!$attribs->exists($key) && $previous->exists($key)) {
+                $attribs->set($key, $previous->get($key));
+            }
+        }
         // These keys cannot be written directly through attribs or an old override.
         foreach (['series_inheritance', 'series_detached_dates'] as $key) {
             $attribs->remove($key);
@@ -1794,6 +1800,8 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
                 $rootBefore = $previousRoot->getProperties();
                 $rootBefore['cats'] = $this->getEventCategoryIds((int) $data['id']);
                 $changes = array_intersect_key($diff, array_flip($fieldAllow));
+                // The joining URL and its restrictions form one inherited online group.
+                $changes['attribs'] = JemOnlineMeeting::settings($data);
                 $allRecurrenceEvents = $this->getListRecurrenceEventsbyId($data['id'], $data['id'], time());
                 if ($allRecurrenceEvents === false) {
                     throw new RuntimeException((string) $this->getError());
@@ -1983,6 +1991,10 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
         }
 
         if ($saved) {
+            if (JemOnlineMeeting::settings($data) !== JemOnlineMeeting::settings($seriesSourceBefore)) {
+                // Discard pages which may still contain the formerly public joining URL.
+                $this->cleanCache('page');
+            }
             $stateName = $this->getName();
             $savedId   = (int) $this->getState($stateName . '.id');
 
@@ -4370,6 +4382,20 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
      */
     public function validateOnlineMeetingData(&$data)
     {
+        $attributes = new Registry($data['attribs'] ?? []);
+        $level = $attributes->get('online_meeting_access', 1);
+        $confirmed = $attributes->get('online_meeting_registered', 0);
+        if (!is_scalar($level) || !preg_match('/^[1-9][0-9]*$/D', (string) $level)
+            || !in_array($confirmed, [0, 1, '0', '1'], true)) {
+            $this->setError(Text::_('COM_JEM_ONLINE_MEETING_INVALID_ACCESS'));
+            return false;
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        if (!(int) $db->setQuery('SELECT id FROM #__viewlevels WHERE id=' . (int) $level)->loadResult()) {
+            $this->setError(Text::_('COM_JEM_ONLINE_MEETING_INVALID_ACCESS'));
+            return false;
+        }
+
         $url = isset($data['online_meeting_url']) ? trim((string) $data['online_meeting_url']) : '';
         $label = isset($data['online_meeting_label']) ? trim((string) $data['online_meeting_label']) : '';
 

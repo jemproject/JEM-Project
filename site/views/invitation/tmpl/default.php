@@ -26,6 +26,11 @@ $escape = static fn ($value) => htmlspecialchars((string) $value, ENT_QUOTES | E
                 <?php if ($this->answered) : ?>
                     <p><?php echo Text::_((int) $row->status < 0 ? 'COM_JEM_INV_DECLINED' : ($row->waiting ? 'COM_JEM_INV_WAITING' : 'COM_JEM_INV_ACCEPTED')); ?></p>
                     <?php if ((int) $row->status === 1 && !$row->waiting) : ?>
+                        <?php if (JemOnlineMeeting::restricted($item['event']) && !empty($item['event']->online_meeting_url)
+                            && (int) JemHelper::globalattribs()->get('event_show_online_meeting', 1) === 1) : ?>
+                            <p><a href="<?php echo $escape(Route::_(JemOnlineMeeting::route((int) $row->event)
+                                . ((int) $row->uid === 0 ? '&registration_id=' . (int) $row->id : ''))); ?>"><?php echo Text::_('COM_JEM_JOIN_ONLINE'); ?></a></p>
+                        <?php endif; ?>
                         <form method="post" action="<?php echo $escape(Route::_('index.php?option=com_jem&task=invitations.download')); ?>">
                             <input type="hidden" name="id" value="<?php echo (int) $row->id; ?>">
                             <button class="btn btn-secondary"><?php echo Text::_('COM_JEM_TK_DOWNLOAD'); ?></button>
