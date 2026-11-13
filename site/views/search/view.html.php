@@ -121,7 +121,7 @@ class JemViewSearch extends JemView
             //$uri->setVar('filter', $app->input->getString('filter', ''));
             //$filter        = $app->getUserStateFromRequest('com_jem.jem.filter', 'filter', '', 'string');
             $uri->setVar('filter', $lists['filter']);
-            $uri->setVar('filter_type', JemFilterInput::read($app->input, 'filter_type', ''));
+            $uri->setVar('filter_type', JemFilterInput::read($app->input, 'filter_type', 'title'));
         } else {
             $uri->delVar('filter');
             $uri->delVar('filter_type');
@@ -276,7 +276,7 @@ class JemViewSearch extends JemView
         }
         $filter_order_Dir = JemFilterInput::read($app->input, 'filter_order_Dir', $filter_order_DirDefault, 'cmd');
         $filter           = $this->getModel('search')->getSearchFilter('filter_search', '', 'string');
-        $filter_type      = JemFilterInput::read($app->input, 'filter_type', '');
+        $filter_type      = JemFilterInput::read($app->input, 'filter_type', 'title');
 
         $sortselects = array();
         $sortselects[] = HTMLHelper::_('select.option', 'title', Text::_('COM_JEM_TABLE_TITLE'));

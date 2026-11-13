@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 
 use Joomla\Utilities\ArrayHelper;
+require_once JPATH_SITE . '/components/com_jem/classes/filterinput.class.php';
 require_once __DIR__ . '/eventslist.php';
 
 /**
@@ -30,9 +31,9 @@ class JemModelVenues extends JemModelEventslist
         $task   = $app->input->getCmd('task','');
 
         // List state information
-        $limit  = $app->input->getInt('limit', $params->get('display_venues_num'));
+        $limit  = (int) \JemFilterInput::read($app->input, 'limit', (int) $params->get('display_venues_num'), 'int');
         $this->setState('list.limit', $limit);
-        $limitstart = $app->input->getInt('limitstart', 0);
+        $limitstart = (int) \JemFilterInput::read($app->input, 'limitstart', 0, 'int');
         // correct start value if required
         $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
         $this->setState('list.start', $limitstart);
