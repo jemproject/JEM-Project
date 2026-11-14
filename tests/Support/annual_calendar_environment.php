@@ -142,6 +142,11 @@ final class Database
 /** Only unrelated menu/publication/query boundaries are replaced. */
 class ModelBoundary
 {
+
+    /** @param string $start Start. @param string $end End. @return void Date/expansion fixtures have no database navigation bounds. */
+    protected function prepareCalendarNavigation(string $start, string $end): void
+    {
+    }
     public bool $show_archived_events = false;
     public int $menuFilterCalls = 0;
     protected array $state = [];
@@ -193,6 +198,20 @@ class ModelBoundary
 /** Extra helper services needed by the actual raw view display method. */
 class HelperBoundary
 {
+
+    /** @param mixed $start Period start. @param mixed $end Period end. @return bool Use real navigation with no fixture bounds. */
+    public static function isCalendarPeriodNavigable($start, $end = null): bool
+    {
+        require_once JEM_TEST_ROOT . '/site/helpers/calendarnavigation.php';
+        return \JemCalendarNavigation::allows($start, $end);
+    }
+
+    /** @param string $href Escaped URL. @param mixed $start Start. @param mixed $end End. @param string $rel Relationship. @return string Real navigation markup. */
+    public static function calendarNavigationAttributes($href, $start, $end = null, $rel = ''): string
+    {
+        require_once JEM_TEST_ROOT . '/site/helpers/calendarnavigation.php';
+        return \JemCalendarNavigation::attributes($href, $start, $end, $rel);
+    }
     public static ?string $filename = null;
 
     /** @return object Export limit. */

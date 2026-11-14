@@ -37,6 +37,20 @@ final class DayLayoutInput
 
 final class DayLayoutServices
 {
+
+    /** @param mixed $start Period start. @param mixed $end Period end. @return bool Use real navigation with no fixture bounds. */
+    public static function isCalendarPeriodNavigable($start, $end = null): bool
+    {
+        require_once JEM_TEST_ROOT . '/site/helpers/calendarnavigation.php';
+        return \JemCalendarNavigation::allows($start, $end);
+    }
+
+    /** @param string $href Escaped URL. @param mixed $start Start. @param mixed $end End. @param string $rel Relationship. @return string Real navigation markup. */
+    public static function calendarNavigationAttributes($href, $start, $end = null, $rel = ''): string
+    {
+        require_once JEM_TEST_ROOT . '/site/helpers/calendarnavigation.php';
+        return \JemCalendarNavigation::attributes($href, $start, $end, $rel);
+    }
     /** @param object $event Row. @return string Neutral indicator in this unrelated rendering fixture. */
     public static function eventStatusLabel($event): string { return ''; }
 

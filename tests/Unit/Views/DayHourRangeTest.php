@@ -83,7 +83,7 @@ final class DayHourRangeTest extends TestCase
 
     public function testResponsiveTimetableUsesTheSameImplementation(): void
     {
-        self::assertStringContainsString("include dirname(__DIR__) . '/timetable.php';", (string) file_get_contents(
+        self::assertStringContainsString("include is_file(dirname(__DIR__) . '/timetable.php')", (string) file_get_contents(
             JEM_TEST_ROOT . '/site/views/day/tmpl/responsive/timetable.php'
         ));
     }

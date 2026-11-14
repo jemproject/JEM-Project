@@ -207,6 +207,8 @@ final class CalendarExpansionBoundsTest extends TestCase
         }
         $model = new WeekModel($state + ['filter.calendar_multiday' => false]);
         $model->items = [self::event(1, '2020-01-01', '2200-01-01')];
+        // Period setup now precedes query loading; count only multiday expansion here.
+        $model->getCalendarPeriod();
         CountingDate::$modifications = Event::$clones = 0;
         self::assertSame($model->items, $model->getItems());
         self::assertSame(0, Event::$clones);
@@ -343,6 +345,11 @@ class Event
 /** Query/state boundary; production transformation methods are loaded into derived classes. */
 class ModelBoundary
 {
+
+    /** @param string $start Start. @param string $end End. @return void Date/expansion fixtures have no database navigation bounds. */
+    protected function prepareCalendarNavigation(string $start, string $end): void
+    {
+    }
     use LegacyCalendarExpansion;
 
     public array $items = [];

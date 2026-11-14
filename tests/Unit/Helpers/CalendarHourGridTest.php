@@ -68,6 +68,20 @@ namespace {
 
     final class JemHelper
     {
+
+        /** @param mixed $start Period start. @param mixed $end Period end. @return bool Use real navigation with no fixture bounds. */
+        public static function isCalendarPeriodNavigable($start, $end = null): bool
+        {
+            require_once JEM_TEST_ROOT . '/site/helpers/calendarnavigation.php';
+            return \JemCalendarNavigation::allows($start, $end);
+        }
+
+        /** @param string $href Escaped URL. @param mixed $start Start. @param mixed $end End. @param string $rel Relationship. @return string Real navigation markup. */
+        public static function calendarNavigationAttributes($href, $start, $end = null, $rel = ''): string
+        {
+            require_once JEM_TEST_ROOT . '/site/helpers/calendarnavigation.php';
+            return \JemCalendarNavigation::attributes($href, $start, $end, $rel);
+        }
         public static function isValidCalendarDate(string $date): bool
         {
             return (bool) preg_match('/^\d{4}-\d{2}-\d{2}$/', $date);
