@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../helpers/attendeeform.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Table\Table;
@@ -167,6 +169,7 @@ class JemControllerAttendee extends BaseController
         $attendee = Table::getInstance('jem_register', '');
         $attendee->bind(Factory::getApplication()->input->post->getArray(/*get them all*/));
         $attendee->checkin();
+        JemAttendeeFormHelper::clear((int) $attendee->event, (int) $attendee->id);
 
         $this->setRedirect('index.php?option=com_jem&view=attendees&eventid='. Factory::getApplication()->input->getInt('event', 0));
     }
@@ -203,6 +206,7 @@ class JemControllerAttendee extends BaseController
 
         // the id in case of edit
         $id = (!empty($post['id']) ? $post['id'] : 0);
+        $formId = (int) $id;
 
         $model = $this->getModel('attendee');
 
@@ -212,6 +216,8 @@ class JemControllerAttendee extends BaseController
             $id = 0;
             $task = 'apply';
         }
+
+        $formData = $post;
 
         // handle changing the user - must also trigger onEventUserUnregistered
         $uid = (!empty($post['uid']) ? $post['uid'] : 0);
@@ -231,7 +237,9 @@ class JemControllerAttendee extends BaseController
             $post['status'] = JemRegistrationTransition::WAITING_LIST;
         }
 
+        $messagesBefore = Factory::getApplication()->getMessageQueue();
         if ($row = $model->store($post)) {
+            JemAttendeeFormHelper::clear($eventid, $formId);
             $transition = JemRegistrationTransition::create(
                 $old_data,
                 $row,
@@ -332,8 +340,10 @@ class JemControllerAttendee extends BaseController
             $cache = Factory::getCache('com_jem');
             $cache->clean();
         } else {
-            $msg     = '';
-            $link     = 'index.php?option=com_jem&view=attendees&eventid='.$eventid;
+            JemAttendeeFormHelper::remember($formData, $eventid, (int) $id);
+            JemAttendeeFormHelper::reportError($model->getError(), $messagesBefore);
+            $this->setRedirect('index.php?option=com_jem&view=attendee&hidemainmenu=1&id=' . (int) $id . '&eventid=' . $eventid);
+            return;
         }
         $this->setRedirect($link, $msg);
     }

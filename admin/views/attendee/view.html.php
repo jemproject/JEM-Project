@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../../helpers/attendeeform.php';
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -37,6 +39,12 @@ class JemViewAttendee extends HtmlView {
 
         //Get data from the model
         $row = $this->get('Data');
+        $this->formDraft = JemAttendeeFormHelper::getDraft((int) ($row->event ?: $this->event), $id);
+        // The holder of an existing priced order cannot be changed in this form.
+        if ($id > 0 && in_array((string) ($row->event_pricing_mode ?? ''), ['single', 'multiple', 'priced'], true)) {
+            unset($this->formDraft['uid']);
+        }
+        $row = JemAttendeeFormHelper::restoreRow($row, $this->formDraft);
         $model = $this->getModel();
 
         //build selectlists
@@ -57,6 +65,15 @@ class JemViewAttendee extends HtmlView {
             (int) ($row->event ?: $this->event),
             (int) $row->id
         );
+        if ($this->formDraft) {
+            foreach ($this->pricing->options as $option) {
+                $option->quantity = (int) ($this->formDraft['admissions'][$option->id] ?? 0);
+            }
+            foreach ($this->capacity->options as &$option) {
+                $option['current_quantity'] = (int) ($this->formDraft['capacity_areas'][$option['key']] ?? 0);
+            }
+            unset($option);
+        }
         $this->registrationChanges = array();
         $this->notifications = array();
         $this->canNotificationResend = $this->featurePolicy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)

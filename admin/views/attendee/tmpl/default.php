@@ -69,7 +69,7 @@ Joomla.submitbutton = function(task)
             const quantities = Array.from(document.querySelectorAll('#jem-admission-options input[type="number"]'));
             const total = quantities.reduce((sum, input) => sum + Math.max(0, parseInt(input.value || '0', 10)), 0);
             if (!window.jemPricingLoaded || total < 1) {
-                alert(<?php echo json_encode(Text::_('COM_JEM_PRICED_REGISTRATION_SELECTION_REQUIRED')); ?>);
+                jemAdmissionFeedback(true, true);
                 return false;
             }
         }
@@ -179,6 +179,34 @@ function jemRenderAdmissionOptions(pricing) {
     jemUpdateAdmissionTotal();
 }
 
+/**
+ * Show or clear inline admission selection feedback without submitting the form.
+ * @param {boolean} invalid Whether an admission selection is missing.
+ * @param {boolean} focus Whether to focus the first editable quantity or message.
+ * @returns {void}
+ */
+function jemAdmissionFeedback(invalid, focus = false) {
+    const message = document.getElementById('jem-admission-selection-error');
+    if (!message) return;
+    message.hidden = !invalid;
+    const quantities = Array.from(document.querySelectorAll('#jem-admission-options input[type="number"]'));
+    quantities.forEach(function(input) {
+        ['is-invalid', 'border-danger', 'border-3'].forEach(function(className) {
+            input.classList.toggle(className, invalid && !input.disabled);
+        });
+        if (invalid && !input.disabled) {
+            input.setAttribute('aria-invalid', 'true');
+            input.setAttribute('aria-describedby', message.id);
+        } else {
+            input.removeAttribute('aria-invalid');
+            input.removeAttribute('aria-describedby');
+        }
+    });
+    if (invalid && focus) {
+        (quantities.find(input => !input.disabled) || message).focus();
+    }
+}
+
 function jemUpdateAdmissionTotal() {
     let quantity = 0;
     let total = 0;
@@ -187,6 +215,7 @@ function jemUpdateAdmissionTotal() {
         quantity += value;
         total += value * Number(input.dataset.unitGross || 0);
     });
+    if (quantity > 0 && window.jemPricingLoaded) jemAdmissionFeedback(false);
     document.getElementById('jem-admission-total-places').textContent = quantity;
     document.getElementById('jem-admission-total-price').textContent = jemFormatMoney(total, jemInitialPricing.currency || '');
 }
@@ -194,6 +223,7 @@ function jemUpdateAdmissionTotal() {
 window.jemLoadAdmissionOptions = function(userId) {
     if (!<?php echo $isPricedEditable ? 'true' : 'false'; ?> || !userId) return;
     window.jemPricingLoaded = false;
+    jemAdmissionFeedback(false);
     fetch(<?php echo json_encode($pricingEndpoint); ?> + '&uid=' + encodeURIComponent(userId), {
         credentials: 'same-origin',
         headers: {'Accept': 'application/json'}
@@ -212,6 +242,7 @@ function jemToggleRegistrationMode() {
     if (!block) return;
     const status = parseInt(document.getElementById('reg_status').value, 10);
     block.hidden = status !== 1 && status !== 2;
+    if (block.hidden) jemAdmissionFeedback(false);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -322,6 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </tr></tfoot>
                                 </table>
                             </div>
+                            <p id="jem-admission-selection-error" class="alert alert-danger" role="alert" tabindex="-1" hidden><?php echo Text::_('COM_JEM_PRICED_REGISTRATION_SELECTION_REQUIRED'); ?></p>
                             <small class="text-muted"><?php echo Text::_('COM_JEM_PRICED_REGISTRATION_ADMIN_HELP'); ?></small>
                         </div>
                     </div>
@@ -405,7 +437,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </label>
                 </td>
                 <td>
-                    <input type="checkbox" id="seriesbooking" name="seriesbooking" value="1"/>
+                    <input type="checkbox" id="seriesbooking" name="seriesbooking" value="1"<?php echo !empty($this->formDraft['seriesbooking']) ? ' checked="checked"' : ''; ?>/>
                 </td>
             </tr>
             <?php endif; ?>
@@ -416,7 +448,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </label>
                 </td>
                 <td>
-                    <input type="checkbox" id="sendemail" name="sendemail" value="1" checked="checked"/>
+                    <input type="checkbox" id="sendemail" name="sendemail" value="1"<?php echo !isset($this->formDraft['sendemail']) || $this->formDraft['sendemail'] ? ' checked="checked"' : ''; ?>/>
                 </td>
             </tr>
 
