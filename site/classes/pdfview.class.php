@@ -1029,7 +1029,7 @@ class JemPdfView
                 $typeColor = $accent;
             }
             $badge = '<span class="jem-pdf-badge" style="background-color:' . htmlspecialchars($typeColor, ENT_COMPAT, 'UTF-8') . '; color:' . self::getContrastingTextColor($typeColor) . ';">'
-                . htmlspecialchars((string) $row->type_name, ENT_COMPAT, 'UTF-8') . '</span>';
+                . htmlspecialchars(JemOutput::getTypeTranslationValue($row, 'type_', 'name'), ENT_COMPAT, 'UTF-8') . '</span>';
             $typeDetail = $badge;
         }
 
@@ -2712,7 +2712,7 @@ class JemPdfView
                 $html[] = '<td width="11%" class="jem-pdf-agenda-time">' . htmlspecialchars(self::getCalendarEventTime($event), ENT_COMPAT, 'UTF-8') . '</td>';
                 $html[] = '<td width="28%">' . self::buildCalendarAgendaEventTitle($event) . '</td>';
                 $html[] = '<td width="18%">' . self::buildCalendarAgendaVenue($event) . '</td>';
-                $html[] = '<td width="13%">' . htmlspecialchars((string) ($event->type_name ?? ''), ENT_COMPAT, 'UTF-8') . '</td>';
+                $html[] = '<td width="13%">' . htmlspecialchars(JemOutput::getTypeTranslationValue($event, 'type_', 'name'), ENT_COMPAT, 'UTF-8') . '</td>';
                 $html[] = '<td width="17%">' . self::buildPdfCategoryLinks((array) ($event->categories ?? array())) . '</td>';
                 $html[] = '</tr>';
             }
@@ -3720,7 +3720,7 @@ class JemPdfView
             }
 
             $textColor = self::getContrastingTextColor($color);
-            $badge = '<span class="jem-pdf-badge" style="background-color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8') . '; color:' . $textColor . ';">' . htmlspecialchars((string) $row->type_name, ENT_COMPAT, 'UTF-8') . '</span>';
+            $badge = '<span class="jem-pdf-badge" style="background-color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8') . '; color:' . $textColor . ';">' . htmlspecialchars(JemOutput::getTypeTranslationValue($row, 'type_', 'name'), ENT_COMPAT, 'UTF-8') . '</span>';
 
             if (!empty($row->type_id)) {
                 $slug = (int) $row->type_id . (!empty($row->type_alias) ? ':' . $row->type_alias : '');

@@ -166,7 +166,7 @@ foreach ($this->rows as $row) {
             'enddates' => $row->enddates,
             'endtimes' => $row->endtimes,
             'venue_title' => $row->venue ?? '',
-            'type_title' => $row->type_name ?? '',
+            'type_title' => JemOutput::getTypeTranslationValue($row, 'type_', 'name'),
             'category_titles' => implode(', ', array_unique($categoryNames)),
             'classes' => implode(' ', array_unique($categoryClasses)),
             'categories' => implode(' ', array_unique($categoryClasses)),

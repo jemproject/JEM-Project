@@ -235,7 +235,7 @@ class JemCalendarAgendaHelper
                     . '<span class="jem-calendar-agenda-time">' . htmlspecialchars($time, ENT_COMPAT, 'UTF-8') . '</span>'
                     . '<a class="jem-calendar-agenda-title" href="' . $eventLink . '">' . htmlspecialchars((string) ($event->title ?? ''), ENT_COMPAT, 'UTF-8') . JemOutput::moduleEventStatusBadge($event) . '</a>'
                     . '<span class="jem-calendar-agenda-venue">' . $venueHtml . '</span>'
-                    . '<span class="jem-calendar-agenda-type">' . htmlspecialchars((string) ($event->type_name ?? ''), ENT_COMPAT, 'UTF-8') . '</span>'
+                    . '<span class="jem-calendar-agenda-type">' . htmlspecialchars(JemOutput::getTypeTranslationValue($event, 'type_', 'name'), ENT_COMPAT, 'UTF-8') . '</span>'
                     . '<span class="jem-calendar-agenda-categories">' . htmlspecialchars(implode(', ', $categories), ENT_COMPAT, 'UTF-8') . '</span>'
                     . '</li>';
             }
