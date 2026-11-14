@@ -2209,7 +2209,7 @@ class JemControllerImport extends BaseController
             $escapeColumn = null;
             $csvEscape = '\\';
             $totalValueBytes = 0;
-            if (($data = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter)) !== false) {
+            if (($data = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, $csvEscape)) !== false) {
                 try {
                     JemImportBudgetHelper::assertTabularRow($data, $totalValueBytes);
                 } catch (RuntimeException $e) {
@@ -2904,15 +2904,15 @@ class JemControllerImport extends BaseController
             fseek($handle, 0);
         }
 
-        $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '\\');
+        $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '');
         if (is_array($header) && count($header) === 1 && strpos((string) $header[0], ',') !== false && $separator !== ',') {
             $separator = ',';
             fseek($handle, $hasBom ? 3 : 0);
-            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '\\');
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '');
         } elseif (is_array($header) && count($header) === 1 && strpos((string) $header[0], ';') !== false && $separator !== ';') {
             $separator = ';';
             fseek($handle, $hasBom ? 3 : 0);
-            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '\\');
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '');
         }
 
         if ($header === false) {
@@ -2952,14 +2952,19 @@ class JemControllerImport extends BaseController
         $rowOptions['record_fields'] = $this->mergeImportRecordFields($this->getExternalEventRecordFields($effectiveMapping), $staticValues);
         $line = 1;
 
-        while (($raw = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '\\')) !== false) {
+        while (($raw = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '')) !== false) {
             $line++;
             JemImportBudgetHelper::assertRecordCount($line - 1);
             JemImportBudgetHelper::assertTabularRow($raw, $totalValueBytes);
             array_walk($raw, 'jem_normalise_csv_utf8');
 
-            if (count(array_filter($raw, 'strlen')) === 0) {
+            if ($raw === array(null) || count(array_filter($raw, 'strlen')) === 0) {
                 continue;
+            }
+
+            if (count($raw) !== count($header)) {
+                fclose($handle);
+                throw new RuntimeException(Text::sprintf('COM_JEM_IMPORT_CSV_COLUMN_COUNT', $line, count($header), count($raw)));
             }
 
             $data = array();
@@ -3195,14 +3200,19 @@ class JemControllerImport extends BaseController
         $sourceRecords = array();
 
         $line = 1;
-        while (($raw = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter)) !== false) {
+        while (($raw = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '')) !== false) {
             $line++;
             JemImportBudgetHelper::assertRecordCount($line - 1);
             JemImportBudgetHelper::assertTabularRow($raw, $totalValueBytes);
             array_walk($raw, 'jem_normalise_csv_utf8');
 
-            if (count(array_filter($raw, 'strlen')) === 0) {
+            if ($raw === array(null) || count(array_filter($raw, 'strlen')) === 0) {
                 continue;
+            }
+
+            if (count($raw) !== count($header)) {
+                fclose($handle);
+                throw new RuntimeException(Text::sprintf('COM_JEM_IMPORT_CSV_COLUMN_COUNT', $line, count($header), count($raw)));
             }
 
             $record = array();
@@ -3228,7 +3238,7 @@ class JemControllerImport extends BaseController
 
         foreach ($candidates as $candidate) {
             fseek($handle, (int) $offset);
-            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $candidate, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $candidate, $delimiter, '');
             $columns = is_array($header) ? count($header) : 0;
 
             if ($columns > $bestColumns) {
@@ -3239,7 +3249,7 @@ class JemControllerImport extends BaseController
         }
 
         fseek($handle, (int) $offset);
-        $bestHeader = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $bestSeparator, $delimiter);
+        $bestHeader = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $bestSeparator, $delimiter, '');
 
         return array($bestSeparator, $bestHeader);
     }
@@ -3559,15 +3569,15 @@ class JemControllerImport extends BaseController
             fseek($handle, 0);
         }
 
-        $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
+        $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '');
         if (is_array($header) && count($header) === 1 && strpos((string) $header[0], ',') !== false && $separator !== ',') {
             $separator = ',';
             fseek($handle, $hasBom ? 3 : 0);
-            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '');
         } elseif (is_array($header) && count($header) === 1 && strpos((string) $header[0], ';') !== false && $separator !== ';') {
             $separator = ';';
             fseek($handle, $hasBom ? 3 : 0);
-            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '');
         }
 
         if ($header === false) {
@@ -3595,14 +3605,19 @@ class JemControllerImport extends BaseController
 
         $line = 1;
 
-        while (($raw = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter)) !== false) {
+        while (($raw = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '')) !== false) {
             $line++;
             JemImportBudgetHelper::assertRecordCount($line - 1);
             JemImportBudgetHelper::assertTabularRow($raw, $totalValueBytes);
             array_walk($raw, 'jem_normalise_csv_utf8');
 
-            if (count(array_filter($raw, 'strlen')) === 0) {
+            if ($raw === array(null) || count(array_filter($raw, 'strlen')) === 0) {
                 continue;
+            }
+
+            if (count($raw) !== count($header)) {
+                fclose($handle);
+                throw new RuntimeException(Text::sprintf('COM_JEM_IMPORT_CSV_COLUMN_COUNT', $line, count($header), count($raw)));
             }
 
             $data = array();
