@@ -22,6 +22,60 @@ use Joomla\String\StringHelper;
 class JemPdfView
 {
     /**
+     * Offer confirmation before loading/rendering a large Events List PDF.
+     *
+     * @param object $model Current filtered and access-controlled list model.
+     * @param string $title Resolved PDF title.
+     * @return bool True when the confirmation page replaced the PDF response.
+     */
+    public static function confirmEventsListExport($model, string $title): bool
+    {
+        require_once __DIR__ . '/pdfexportnotice.class.php';
+        if (JemPdfExportNotice::isConfirmed()) {
+            return false;
+        }
+
+        $settings = JemHelper::config();
+        $preview = JemPdfExportNotice::inspect($model, (int) ($settings->pdf_events_warning_threshold ?? JemPdfExportNotice::DEFAULT_THRESHOLD));
+        if ($preview === null) {
+            return false;
+        }
+
+        $pages = null;
+        // Leave room for Joomla and the preview renderer. This is only a preview
+        // safeguard, not an estimate of the memory required by the full document.
+        $limit = trim((string) ini_get('memory_limit'));
+        $bytes = (int) $limit;
+        $suffix = strtolower(substr($limit, -1));
+        if (in_array($suffix, ['g', 'm', 'k'], true)) {
+            $bytes *= 1024 ** (array_search($suffix, ['k', 'm', 'g'], true) + 1);
+        }
+        if (($bytes <= 0 || $bytes - memory_get_usage(true) >= 32 * 1024 * 1024) && JemPdf::isAvailable()) {
+            $paper = self::getProfilePaperSettings($settings, 'list');
+            $margins = JemPdf::fitSinglePageMargins(self::getMargins($settings), $paper['size']);
+            $pdf = JemPdf::createDocument($title, $paper['orientation'], $paper['size']);
+            $singlePage = JemPdf::prefersSinglePage($paper['size']);
+            $pdf->SetMargins($margins['left'], $margins['top'], $margins['right']);
+            $pdf->SetAutoPageBreak(!$singlePage, $singlePage ? 0 : $margins['bottom']);
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(true);
+            $pdf->AddPage();
+            $sample = $preview['sample'];
+            $app = Factory::getApplication();
+            JemOutput::prepareViewEventStatuses($sample, $app->getParams(), 'eventslist', 'pdf');
+            $pdf->writeHTML(self::buildLinkedEventListHtml($title, $sample, $paper['size']), true, false, true, false, '');
+            $height = max(1, $pdf->getPageHeight() - $margins['top'] - $margins['bottom']);
+            $usedPages = $pdf->getNumPages() - 1 + max(0, $pdf->GetY() - $margins['top']) / $height;
+            $pages = $singlePage ? 1 : JemPdfExportNotice::estimatePages($preview['count'], count($sample), $usedPages);
+            unset($pdf);
+        }
+
+        JemPdfExportNotice::display($preview['count'], $pages);
+
+        return true;
+    }
+
+    /**
      * Renders a simple event list PDF.
      */
     public static function renderEventList(string $title, array $rows, string $filename, string $profile = 'list', string $day = ''): void

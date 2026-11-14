@@ -1031,6 +1031,11 @@
             <option value="details">COM_JEM_PDF_LAYOUT_DETAILS</option>
             <option value="compact">COM_JEM_PDF_LAYOUT_COMPACT</option>
         </field>
+        <field name="pdf_events_warning_threshold" type="number"
+            label="COM_JEM_PDF_EVENTS_WARNING_THRESHOLD"
+            description="COM_JEM_PDF_EVENTS_WARNING_THRESHOLD_DESC"
+            default="100" min="1" step="1" filter="integer"
+        />
         <field name="pdf_list_paper_size" type="list"
             label="COM_JEM_PDF_LIST_PAPER_SIZE"
             description="COM_JEM_PDF_LIST_PAPER_SIZE_DESC"

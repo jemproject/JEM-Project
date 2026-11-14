@@ -122,6 +122,7 @@ use Joomla\CMS\Language\Text;
     <?php echo HTMLHelper::_('uitab.addTab', 'pdf-settings-pane', 'pdf-settings-lists', Text::_('COM_JEM_PDF_LISTS')); ?>
         <fieldset class="options-form">
             <ul class="adminformlist">
+                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_events_warning_threshold'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_list_paper_size'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_list_orientation'); ?></div></li>
             </ul>

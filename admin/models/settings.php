@@ -303,6 +303,7 @@ class JemModelSettings extends AdminModel
             'pdf_base_font_size' => 8,
             'pdf_heading_font_size' => 12,
             'pdf_event_layout' => 'details',
+            'pdf_events_warning_threshold' => 100,
             'pdf_list_paper_size' => 'A4',
             'pdf_list_orientation' => 'P',
             'pdf_map_paper_size' => 'A4',
