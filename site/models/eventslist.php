@@ -1498,6 +1498,21 @@ class JemModelEventslist extends ListModel
             }
         }
 
+        // Exclusion applies to the event, not just one of its category relations.
+        if (!$this->getState('filter.category_id.include', true)) {
+            $excludedCategories = array_unique(array_filter(
+                $this->normaliseParamIds($this->getState('filter.category_id')),
+                static function ($id) {
+                    return $id > 0;
+                }
+            ));
+            if ($excludedCategories) {
+                $query->where('NOT EXISTS (SELECT 1 FROM #__jem_cats_event_relations AS excluded_rel'
+                    . ' WHERE excluded_rel.itemid = a.id AND excluded_rel.catid IN ('
+                    . implode(',', $excludedCategories) . '))');
+            }
+        }
+
         ####################
         ## FILTER - BYLOC ##
         ####################
