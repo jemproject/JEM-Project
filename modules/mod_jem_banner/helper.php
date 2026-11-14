@@ -264,7 +264,7 @@ abstract class ModJemBannerHelper
             $lists[$i]->fulltitle   = $fulltitle;
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
-            $lists[$i]->typename    = htmlspecialchars($row->type_name ?? '', ENT_COMPAT, 'UTF-8');
+            $lists[$i]->typename    = htmlspecialchars(JemOutput::getTypeTranslationValue($row, 'type_', 'name'), ENT_COMPAT, 'UTF-8');
             $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');

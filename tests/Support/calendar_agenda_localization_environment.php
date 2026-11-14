@@ -26,7 +26,11 @@ final class JemHelper
 }
 
 /** Keeps time strings unchanged; time formatting is outside the localization regression. */
-final class JemOutput
+require_once __DIR__ . '/type_language_environment.php';
+eval('use Joomla\CMS\Factory; class JemAgendaTypeOutput {'
+    . \JemProject\Tests\TypeLanguage\methods('site/classes/output.class.php', ['getTypeTranslationValue']) . '}');
+
+final class JemOutput extends JemAgendaTypeOutput
 {
     /** @param object $event Row. @return string No indicator in the localization fixture. */
     public static function eventStatusLabel($event): string { return ''; }

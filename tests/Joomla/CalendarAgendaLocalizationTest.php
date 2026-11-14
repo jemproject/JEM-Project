@@ -52,6 +52,9 @@ final class CalendarAgendaLocalizationTest extends TestCase
         Factory::$application = new class {
             public Input $input;
 
+            /** @return object Current native language for Type labels. */
+            public function getLanguage(): object { return Factory::$language; }
+
             /** @return void Supply an empty request to the actual PDF layout selector. */
             public function __construct()
             {
@@ -125,6 +128,8 @@ final class CalendarAgendaLocalizationTest extends TestCase
         }
         mkdir($this->scratch . '/language/' . $locale, 0777, true);
         file_put_contents($this->scratch . '/language/' . $locale . '/joomla.ini', $ini);
+        file_put_contents($this->scratch . '/language/' . $locale . '/langmetadata.xml',
+            '<metafile><metadata><tag>' . $locale . '</tag><rtl>0</rtl></metadata></metafile>');
         $language = new Language($locale, false);
         self::assertTrue($language->load('joomla', $this->scratch, $locale, true, false));
         Factory::$language = $language;
@@ -219,5 +224,61 @@ final class CalendarAgendaLocalizationTest extends TestCase
                 }
             }
         }
+    }
+
+    /** @return iterable Translation, fallback and HTML-sensitive Type names. */
+    public static function typeLabels(): iterable
+    {
+        yield 'Spanish' => ['es-ES', '{"es-ES":{"name":"Baile"}}', 'Dancing', 'Baile'];
+        yield 'Dutch' => ['nl-NL', '{"nl-NL":{"name":"Dansen"}}', 'Dancing', 'Dansen'];
+        yield 'base language' => ['en-GB', '{"en-GB":{"name":"Ignored"}}', 'Dancing', 'Dancing'];
+        yield 'missing translation' => ['es-ES', '{}', 'Dancing', 'Dancing'];
+        yield 'empty translation' => ['es-ES', '{"es-ES":{"name":"  "}}', 'Dancing', 'Dancing'];
+        yield 'invalid metadata' => ['es-ES', '{broken', 'Dancing', 'Dancing'];
+        yield 'without type' => ['es-ES', '', '', ''];
+        yield 'escaped label' => ['es-ES', '{"es-ES":{"name":"<b>Baile & música</b>"}}', 'Dancing', '<b>Baile & música</b>'];
+    }
+
+    /** @param string $locale Language. @param string $json Metadata. @param string $base Original. @param string $expected Resolved label. @return void */
+    #[DataProvider('typeLabels')]
+    public function testTypeNamesAcrossAgendaPdfAndBanner(string $locale, string $json, string $base, string $expected): void
+    {
+        $this->language($locale, 'Europe/Madrid');
+        $row = (object) ['dates' => '2026-11-01', 'title' => 'Fixture', 'times' => '',
+            'type_name' => $base, 'type_base_language' => 'en-GB', 'type_translations' => $json];
+        $before = clone $row;
+        $html = JemCalendarAgendaHelper::renderAgenda([$row], '2026-11-01', '2026-11-01');
+        $this->assertLabels($this->document($html), 'jem-calendar-agenda-type', [$expected]);
+
+        $source = file_get_contents(JEM_TEST_ROOT . '/site/views/annualcalendar/tmpl/default.php');
+        self::assertSame(1, preg_match("/'type_title' => (.*),/", $source, $match));
+        self::assertSame($expected, eval('return ' . $match[1] . ';'));
+
+        $source = file_get_contents(JEM_TEST_ROOT . '/modules/mod_jem_banner/helper.php');
+        self::assertSame(1, preg_match('/\$lists\[\$i\]->typename\s*=\s*(.*);/', $source, $match));
+        self::assertSame(htmlspecialchars($expected, ENT_COMPAT, 'UTF-8'), eval('return ' . $match[1] . ';'));
+
+        $pdf = (new ReflectionMethod(JemPdfView::class, 'buildMonthlyCalendarHtml'))->invoke(
+            null, 'Calendar', [$row], 2026, 11, new Registry(['calendar_display_mode' => 'agenda']), 'A4'
+        );
+        $xpath = $this->document($pdf);
+        $cells = $xpath->query('//td[@width="13%" and not(@rowspan)]');
+        self::assertCount(1, $cells);
+        self::assertSame($expected, $cells->item(0)->textContent);
+        self::assertSame(0, $cells->item(0)->childElementCount);
+
+        $badge = (new ReflectionMethod(JemPdfView::class, 'buildPdfEventIndicators'))->invoke(null, $row);
+        if ($base !== '') {
+            $this->assertLabels($this->document($badge), 'jem-pdf-badge', [$expected]);
+        } else {
+            self::assertSame('', $badge);
+        }
+
+        $timeline = (new ReflectionMethod(JemPdfView::class, 'buildDayTimelineRow'))->invoke(
+            null, $row, false, 'left', false, 'left', 64, 48, 64, 48,
+            false, 'badge', false, true, false, 0, false, 'text', 'custom', '#ffffff', 'compact', false
+        );
+        $this->assertLabels($this->document($timeline), 'jem-pdf-badge', $base !== '' ? [$expected] : []);
+        self::assertEquals($before, $row, 'Rendering must not rewrite shared event data.');
     }
 }
