@@ -1592,7 +1592,12 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
             // Parameters contain the exclusion selection; compare their serialised values.
             $comparisonData = $data;
             $comparisonData['attribs'] = (string) new Registry($data['attribs']);
-            $diff = array_diff_assoc($comparisonData, $eventdb);
+            $diff = array_udiff_assoc($comparisonData, $eventdb, static function ($submitted, $stored): int {
+                // Keep content differences for child inheritance without casting arrays to strings.
+                return is_array($submitted) || is_array($stored)
+                    ? $submitted <=> $stored
+                    : strcmp((string) $submitted, (string) $stored);
+            });
 
             //If $diff contains some of fields (Defined in $fieldNotAllow) then dissolve recurrence and save again serie
             //If not, update de field of this event (save=false).
