@@ -22,7 +22,7 @@ require_once JPATH_SITE . '/components/com_jem/helpers/calendardaylink.php';
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
     <div class="buttons">
         <?php
-        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'ical_link' => $this->ical_link, 'archive_link' => $this->archive_link);
+        $btn_params = array('id' => $this->catid, 'slug' => $this->catid, 'task' => $this->task, 'print_link' => $this->print_link, 'ical_link' => $this->ical_link, 'archive_link' => $this->archive_link);
         if (!$this->params->get('show_archived_events', 0)) {
             $btn_params['show'] = array('archive');
         } else {
