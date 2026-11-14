@@ -133,10 +133,12 @@ abstract class ModJemJubileeHelper
         # Build SQL condition for matching events on specific calendar dates
         switch ($date_match_mode) {
             case 0: # somewhen from start date to end date
-                $cal_from  = " IF(YEAR(IFNULL(a.enddates, a.dates)) > YEAR(a.dates)";
+                // A span with an entire intervening calendar year covers every month/day.
+                $cal_from  = " (YEAR(COALESCE(a.enddates, a.dates)) - YEAR(a.dates) > 1";
+                $cal_from .= " OR IF(YEAR(IFNULL(a.enddates, a.dates)) > YEAR(a.dates)";
                 $cal_from .= " , (DATE_FORMAT(a.dates, '%m%d') <= '$cur_md') OR ('$cur_md' <= DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d'))";
                 $cal_from .= " , (DATE_FORMAT(a.dates, '%m%d') <= '$cur_md') AND ('$cur_md' <= DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d'))";
-                $cal_from .= " ) ";
+                $cal_from .= " )) ";
                 break;
             case 1: # on start date
             default:
