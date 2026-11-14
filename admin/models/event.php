@@ -609,6 +609,46 @@ class JemModelEvent extends JemModelAdmin
         return true;
     }
 
+    /**
+     * Authorise a stored recurrence occurrence and preserve protected backend fields.
+     *
+     * Edit-own checks must use the stored author, not submitted or inherited data.
+     * This guard applies to existing occurrences; creation and copies use their
+     * normal controller and table checks.
+     *
+     * @param array $data Occurrence data, with protected values restored in place.
+     *
+     * @return bool True when the stored occurrence may be edited.
+     */
+    protected function protectBackendEventAclData(array &$data): bool
+    {
+        $stored = $this->getTable();
+        $eventId = (int) ($data['id'] ?? 0);
+        if ($eventId <= 0 || !$stored->load($eventId)) {
+            $this->setError(Text::_('JLIB_APPLICATION_ERROR_RECORD_NOT_FOUND'));
+
+            return false;
+        }
+
+        if (!JemHelperBackend::can('event', 'edit', $stored)) {
+            $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+
+            return false;
+        }
+
+        if (!JemHelperBackend::can('event', 'edit.state', $stored)) {
+            foreach (['published', 'featured', 'ordering', 'publish_up', 'publish_down'] as $field) {
+                $data[$field] = $stored->$field;
+            }
+        }
+        if (!JemHelperBackend::can('event', 'edit.created', $stored)) {
+            $data['created_by'] = $stored->created_by;
+            $data['created'] = $stored->created;
+        }
+
+        return true;
+    }
+
     /** @var bool Allow confirmed recurrence replacement through the normal delete hooks. */
     protected $replacingRecurrence = false;
 
@@ -1049,7 +1089,12 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
             }
 
             // Get the fields changed
-            $diff = array_diff_assoc($data, $eventdb);
+            $diff = array_udiff_assoc($data, $eventdb, static function ($submitted, $stored): int {
+                // Form arrays must be compared as values, not cast to "Array".
+                return is_array($submitted) || is_array($stored)
+                    ? $submitted <=> $stored
+                    : strcmp((string) $submitted, (string) $stored);
+            });
 
             //If $diff contains some of fields (Defined in $fieldNotAllow) then dissolve recurrence and save again serie
             //If not, update de field of this event (save=false).
@@ -1389,9 +1434,9 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
             $saved = false;
             foreach ($events as $event) {
                 $eventCats = $this->normaliseEventCategoryIds($event['cats'] ?? $cats);
-                if (!$this->canReplaceRecurrenceChild('edit', $event)
+                if (($backend && !$this->protectBackendEventAclData($event))
+                    || (!$backend && !$this->canReplaceRecurrenceChild('edit', $event))
                     || !$this->validateEventCategoryIds($eventCats, $backend, false, (int) $event['id'])
-                    || ($backend && !$this->protectBackendEventAclData($event, $eventCats, false, ''))
                     || (!$backend && !$this->protectFrontendFeaturedData($event, $eventCats))) {
                     throw new RuntimeException(Text::_('COM_JEM_CUSTOM_SERIES_ACCESS_ERROR'));
                 }
