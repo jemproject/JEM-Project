@@ -101,7 +101,9 @@ final class JemWaitingListPromotion
                 return $result;
             }
 
-            if (!(int) $event->waitinglist || (int) $event->maxplaces < 1) {
+            // A closed waiting list still allows manual resolution of existing waiting rows.
+            if (($mode === self::MODE_AUTOMATIC && !(int) $event->waitinglist)
+                || (int) $event->maxplaces < 1) {
                 $db->transactionCommit();
                 $result->success = true;
                 $result->skipped = true;

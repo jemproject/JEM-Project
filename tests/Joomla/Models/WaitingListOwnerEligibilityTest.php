@@ -333,4 +333,69 @@ final class WaitingListOwnerEligibilityTest extends TestCase
         }
         $this->db->insertObject('#__jem_register', $row);
     }
+
+    /** @return iterable<string, array{array, string, bool}> Closed-list promotion cases. */
+    public static function closedWaitingCases(): iterable
+    {
+        yield 'manual existing row' => [[], '', true];
+        yield 'manual with notification' => [['notify' => true], '', true];
+        yield 'automatic stays disabled' => [['mode' => 'automatic'], 'waiting_list_unavailable', false];
+        yield 'full event' => [['maxplaces' => 1], 'capacity_exceeded', false];
+        yield 'zero capacity' => [['maxplaces' => 0], 'waiting_list_unavailable', false];
+        yield 'empty selection' => [['registrationIds' => []], 'no_selection', false];
+        yield 'confirmed selection' => [['registrationIds' => [1]], 'selection_not_waiting', false];
+        yield 'mixed selection' => [['registrationIds' => [1, 2]], 'selection_not_waiting', false];
+        yield 'deleted owner' => [['uid' => 999], 'selected_user_missing', false];
+        yield 'cancelled event' => [['event_status' => 'cancelled'], 'event_cancelled', false];
+        yield 'postponed event' => [['event_status' => 'postponed'], 'event_postponed', false];
+        yield 'enabled list unchanged' => [['waitinglist' => 1], '', true];
+    }
+
+    /**
+     * @param array $options Fixture and promotion overrides.
+     * @param string $reason Expected failure/skip reason, empty for a promotion.
+     * @param bool $promoted Whether the waiting registration must become confirmed.
+     * @return void Verify closed-list resolution without weakening selection or status guards.
+     */
+    #[DataProvider('closedWaitingCases')]
+    public function testClosedWaitingListManualResolution(array $options, string $reason, bool $promoted): void
+    {
+        $this->sql('UPDATE #__jem_events SET waitinglist=' . (int) ($options['waitinglist'] ?? 0)
+            . ', maxplaces=' . (int) ($options['maxplaces'] ?? 3)
+            . ', event_status=' . $this->db->quote($options['event_status'] ?? 'scheduled') . ' WHERE id=1');
+        $this->registration(1, 100, 1, 0);
+        $this->registration(2, (int) ($options['uid'] ?? 101));
+        $result = $this->promote($options + ['mode' => 'manual', 'registrationIds' => [2], 'notify' => false]);
+        self::assertSame($promoted ? [2] : [], $result->promotedIds, $result->reason);
+        self::assertSame($promoted ? 0 : 1, $this->waiting(2));
+        self::assertSame(0, $this->waiting(1));
+        if ($promoted) {
+            self::assertTrue($result->success, $result->reason);
+            self::assertSame(0, JemWaitingListPromotion::availability(1)->waitingBefore);
+        } else {
+            self::assertSame($reason, $result->reason);
+        }
+        $mail = array_values(array_filter(JemFactory::$notifications, static fn($row) => $row[0] === 'onUserOnOffWaitinglist'));
+        self::assertCount($promoted && !empty($options['notify']) ? 1 : 0, $mail);
+        if ($this->priced) {
+            self::assertSame($promoted ? [2] : [], array_map('intval', $this->db->setQuery('SELECT registration_id FROM #__jem_register_history')->loadColumn()));
+        }
+    }
+
+    /** @return void A closed queue still rejects a confirmed-to-waiting write. */
+    public function testClosedWaitingListRejectsNewWaitingAdmission(): void
+    {
+        require_once JEM_TEST_ROOT . '/site/classes/registrationservice.class.php';
+        $this->sql('UPDATE #__jem_events SET waitinglist=0, maxplaces=3 WHERE id=1');
+        $this->registration(1, 100, 1, 0);
+        $after = $this->db->setQuery('SELECT * FROM #__jem_register WHERE id=1')->loadObject();
+        $after->waiting = 1;
+        try {
+            (new JemRegistrationService($this->db))->save($after, ['respectPlaces' => true]);
+            self::fail('Closed queue accepted a new waiting admission.');
+        } catch (RuntimeException $error) {
+            self::assertStringContainsString('waiting list', $error->getMessage());
+        }
+        self::assertSame(0, $this->waiting(1));
+    }
 }

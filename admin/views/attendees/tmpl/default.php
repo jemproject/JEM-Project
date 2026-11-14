@@ -105,11 +105,11 @@ $wa->addInlineScript('
                 </div>
             </div>
         </fieldset>
-        <?php if ($this->event->waitinglist) : ?>
+        <?php if ($this->event->waitinglist || (int) $this->waitingListStatus->waitingBefore > 0) : ?>
             <div class="alert alert-info d-flex flex-wrap gap-4 align-items-center" role="status">
                 <span><?php echo Text::sprintf('COM_JEM_WAITINGLIST_CAPACITY_SUMMARY', (int) $this->waitingListStatus->availableBefore, (int) $this->waitingListStatus->waitingBefore); ?></span>
                 <span>
-                    <?php if ((int) ($this->jemsettings->waitinglist_automatic ?? 1)) : ?>
+                    <?php if ($this->event->waitinglist && (int) ($this->jemsettings->waitinglist_automatic ?? 1)) : ?>
                         <?php echo ($this->jemsettings->waitinglist_strategy ?? 'strict') === 'fill'
                             ? Text::_('COM_JEM_WAITINGLIST_MODE_AUTOMATIC_FILL')
                             : Text::_('COM_JEM_WAITINGLIST_MODE_AUTOMATIC_STRICT'); ?>
@@ -186,7 +186,7 @@ $wa->addInlineScript('
                         if ($status === 1 && (int) $row->waiting === 1) {
                             $status = 2;
                         }
-                        if ($this->event->waitinglist) {
+                        if ($this->event->waitinglist || ($status === 2 && (int) $this->event->maxplaces > 0)) {
                             echo jemhtml::toggleAttendanceStatus($i, $status, $canChange);
                         } else {
                             echo jemhtml::toggleAttendanceStatus($i, $status, false);
