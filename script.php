@@ -331,7 +331,7 @@ class com_jemInstallerScript
 
         $this->getHeader(); ?>
         <h2><?php echo Text::_('COM_JEM_UPDATE_STATUS'); ?>:</h2>
-        <p><?php echo Text::sprintf('COM_JEM_UPDATE_TEXT', $parent->getManifest()->version); ?></p>;
+        <p><?php echo Text::sprintf('COM_JEM_UPDATE_TEXT', $parent->getManifest()->version); ?></p>
         <?php
     }
 
