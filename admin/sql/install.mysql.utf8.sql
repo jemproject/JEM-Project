@@ -858,9 +858,13 @@ INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`
 (1, 0, 0, 3, 0, 'root', 'root', 1, 1, NOW(), NULL),
 (2, 1, 1, 2, 1, 'Uncategorised', 'uncategorised', 1, 1, NOW(), 'uncategorised');
 
-INSERT IGNORE INTO `#__jem_types` (`name`, `alias`, `entity`, `color`, `published`, `ordering`, `access`, `language`, `created`, `attribs`) VALUES
-('Weekend', 'weekend', 4, '#d1d5db', 1, 1, 1, '*', NOW(), '{"block_events":0}'),
-('Public holiday', 'public-holiday', 4, '#e5e7eb', 1, 2, 1, '*', NOW(), '{"block_events":0}');
+-- Reuse default Day types when installing over retained data.
+INSERT INTO `#__jem_types` (`name`, `alias`, `entity`, `color`, `published`, `ordering`, `access`, `language`, `created`, `attribs`)
+SELECT 'Weekend', 'weekend', 4, '#d1d5db', 1, 1, 1, '*', CURRENT_TIMESTAMP, '{"block_events":0}' FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM `#__jem_types` WHERE `entity` = 4 AND `alias` = 'weekend');
+INSERT INTO `#__jem_types` (`name`, `alias`, `entity`, `color`, `published`, `ordering`, `access`, `language`, `created`, `attribs`)
+SELECT 'Public holiday', 'public-holiday', 4, '#e5e7eb', 1, 2, 1, '*', CURRENT_TIMESTAMP, '{"block_events":0}' FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM `#__jem_types` WHERE `entity` = 4 AND `alias` = 'public-holiday');
 
 INSERT IGNORE INTO `#__jem_special_days` (`id`, `title`, `alias`, `day_type_id`, `day_type`, `start_date`, `end_date`, `weekdays`, `description`, `show_dates`, `published`, `access`, `ordering`, `created`) VALUES
 (1, 'Saturday and Sunday', 'weekend', (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'weekend' AND `entity` = 4 ORDER BY `id` ASC LIMIT 1), 'Weekend', '1900-01-01', '2100-12-31', '0,6', 'Regular weekend days', 0, 1, 1, 1, NOW());

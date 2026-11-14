@@ -63,7 +63,13 @@ UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.calendar_special_da
 UPDATE `#__jem_special_days` SET `title` = 'Saturday and Sunday', `description` = 'Regular weekend days' WHERE `title` = 'Weekend' AND `day_type` = 'Weekend' AND (`description` IS NULL OR `description` = '');
 UPDATE `#__jem_special_days` SET `show_dates` = 0 WHERE `alias` = 'weekend' AND `day_type` = 'Weekend' AND `weekdays` IN ('0,6', '6,0');
 ALTER TABLE `#__jem_types` MODIFY `entity` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue, 4=Day';
-INSERT IGNORE INTO `#__jem_types` (`name`, `alias`, `entity`, `color`, `published`, `ordering`, `access`, `language`, `created`, `attribs`) VALUES ('Weekend', 'weekend', 4, '#d1d5db', 1, 1, 1, '*', CURRENT_TIMESTAMP, '{"block_events":0}'), ('Public holiday', 'public-holiday', 4, '#e5e7eb', 1, 2, 1, '*', CURRENT_TIMESTAMP, '{"block_events":0}');
+-- Reuse default Day types when installing over retained data.
+INSERT INTO `#__jem_types` (`name`, `alias`, `entity`, `color`, `published`, `ordering`, `access`, `language`, `created`, `attribs`)
+SELECT 'Weekend', 'weekend', 4, '#d1d5db', 1, 1, 1, '*', CURRENT_TIMESTAMP, '{"block_events":0}' FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM `#__jem_types` WHERE `entity` = 4 AND `alias` = 'weekend');
+INSERT INTO `#__jem_types` (`name`, `alias`, `entity`, `color`, `published`, `ordering`, `access`, `language`, `created`, `attribs`)
+SELECT 'Public holiday', 'public-holiday', 4, '#e5e7eb', 1, 2, 1, '*', CURRENT_TIMESTAMP, '{"block_events":0}' FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM `#__jem_types` WHERE `entity` = 4 AND `alias` = 'public-holiday');
 UPDATE `#__jem_special_days` AS sd INNER JOIN `#__jem_types` AS t ON t.entity = 4 AND t.name = sd.day_type SET sd.day_type_id = t.id WHERE sd.day_type_id = 0;
 UPDATE `#__jem_venues` SET `attribs` = '{}' WHERE `attribs` IS NULL OR `attribs` = '' OR `attribs` = '""' OR `attribs` = "''" OR NOT JSON_VALID(`attribs`);
 UPDATE `#__jem_events` SET `attribs` = '{}' WHERE `attribs` IS NULL OR `attribs` = '' OR `attribs` = '""' OR `attribs` = "''" OR NOT JSON_VALID(`attribs`);
