@@ -161,6 +161,12 @@ abstract class ModJemCalHelper extends ModuleHelper
             }
         }
 
+        // Both options off must not fall back to the model's published events.
+        if (!$CurrentEvents && !$ArchivedEvents) {
+            $model->setState('filter.event_id', 0);
+            $model->setState('filter.event_id.include', true);
+        }
+
         $model->setState('filter.groupby','a.id');
 
         return $model;
