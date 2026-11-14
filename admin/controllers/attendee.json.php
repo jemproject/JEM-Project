@@ -10,9 +10,13 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
-// Only expose the admission lookup through this legacy JSON controller route.
-// The controller method retains its attendee permission and pricing profile checks.
-if (strtolower(Factory::getApplication()->input->getCmd('task', '')) !== 'pricingoptions') {
+// Only expose the AJAX operations used by the attendee editor.
+// Each method retains its existing permission, profile and CSRF checks.
+if (!in_array(
+    strtolower(Factory::getApplication()->input->getCmd('task', '')),
+    ['pricingoptions', 'relocationpreview', 'relocationconfirm'],
+    true
+)) {
     throw new RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
 }
 

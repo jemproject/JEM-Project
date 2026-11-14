@@ -50,7 +50,7 @@ final class PricedAttendeeRecoveryTest extends TestCase
     {
         yield ['save'];
         yield ['cancel'];
-        yield ['relocationConfirm'];
+        yield ['relocationNotify'];
     }
 
     /** @param string $task Forbidden action. @return void */

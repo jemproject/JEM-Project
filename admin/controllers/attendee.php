@@ -52,6 +52,9 @@ class JemControllerAttendee extends BaseController
     private function relocationResponse(bool $confirm): void
     {
         $app = Factory::getApplication();
+        JemHelper::setNoStoreHeaders();
+        $app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
+        $app->sendHeaders();
         try {
             if (!Session::checkToken('post')) {
                 throw new DomainException('JINVALID_TOKEN');
@@ -368,6 +371,7 @@ class JemControllerAttendee extends BaseController
         }
         $app = Factory::getApplication();
         JemHelper::setNoStoreHeaders();
+        $app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
         $app->sendHeaders();
         $eventId = $app->input->getInt('event', 0);
         $userId = $app->input->getInt('uid', 0);

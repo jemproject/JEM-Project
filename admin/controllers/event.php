@@ -79,6 +79,7 @@ class JemControllerEvent extends JemControllerForm
     {
         $app = Factory::getApplication();
         JemHelper::setNoStoreHeaders();
+        $app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
         $app->sendHeaders();
         require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
         if (!JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) {
@@ -114,6 +115,7 @@ class JemControllerEvent extends JemControllerForm
     {
         $app = Factory::getApplication();
         JemHelper::setNoStoreHeaders();
+        $app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
         $app->sendHeaders();
 
         try {
