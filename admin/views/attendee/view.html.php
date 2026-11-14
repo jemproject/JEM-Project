@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../../helpers/attendeeform.php';
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -36,6 +38,8 @@ class JemViewAttendee extends HtmlView {
 
         //Get data from the model
         $row = $this->get('Data');
+        $this->formDraft = JemAttendeeFormHelper::getDraft((int) ($row->event ?: $this->event), $id);
+        $row = JemAttendeeFormHelper::restoreRow($row, $this->formDraft);
 
         //build selectlists
         $lists = array();

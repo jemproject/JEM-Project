@@ -156,7 +156,7 @@ Joomla.submitbutton = function(task)
                     </label>
                 </td>
                 <td>
-                    <input type="checkbox" id="seriesbooking" name="seriesbooking" value="1"/>
+                    <input type="checkbox" id="seriesbooking" name="seriesbooking" value="1"<?php echo !empty($this->formDraft['seriesbooking']) ? ' checked="checked"' : ''; ?>/>
                 </td>
             </tr>
             <?php endif; ?>
@@ -167,7 +167,7 @@ Joomla.submitbutton = function(task)
                     </label>
                 </td>
                 <td>
-                    <input type="checkbox" id="sendemail" name="sendemail" value="1" checked="checked"/>
+                    <input type="checkbox" id="sendemail" name="sendemail" value="1"<?php echo !isset($this->formDraft['sendemail']) || $this->formDraft['sendemail'] ? ' checked="checked"' : ''; ?>/>
                 </td>
             </tr>
 
