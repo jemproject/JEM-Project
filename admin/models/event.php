@@ -523,6 +523,11 @@ class JemModelEvent extends JemModelAdmin
         // Increment version number.
         $table->version ++;
 
+        if ($this->preserveOccurrenceTimes) {
+            // The bound occurrence already contains its resolved, validated hours.
+            return;
+        }
+
         //get time-values from time selectlist and combine them accordingly
         $starthours   = $jinput->get('starthours','','cmd');
         $startminutes = $jinput->get('startminutes','','cmd');
@@ -553,6 +558,27 @@ class JemModelEvent extends JemModelAdmin
             $table->endtimes = $endhours.':'.$endminutes;
         } else {
             $table->endtimes = "";
+        }
+    }
+
+    /** @var bool Keep resolved occurrence hours during one parent-model save. */
+    protected bool $preserveOccurrenceTimes = false;
+
+    /**
+     * Save an occurrence without replacing its hours with another form's selectors.
+     *
+     * @param array $data Validated occurrence data after inheritance and scheduling.
+     *
+     * @return bool Whether the normal parent-model save succeeded.
+     */
+    protected function saveOccurrenceWithResolvedTimes(array $data): bool
+    {
+        $previous = $this->preserveOccurrenceTimes;
+        $this->preserveOccurrenceTimes = true;
+        try {
+            return parent::save($data);
+        } finally {
+            $this->preserveOccurrenceTimes = $previous;
         }
     }
 
@@ -1027,6 +1053,9 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
         }
         require_once JPATH_SITE . '/components/com_jem/classes/eventschedule.class.php';
         $seriesSourceBefore = $existingEvent ? $existingEvent->getProperties() : [];
+        $usesOccurrenceTimes = $task !== 'save2copy'
+            && (!empty($seriesSourceBefore['recurrence_first_id'])
+                || (!empty($seriesSourceBefore['series_id']) && !$customSeriesIsRoot));
         if ($seriesSourceBefore) {
             $seriesSourceBefore['cats'] = $this->getEventCategoryIds((int) $data['id']);
         }
@@ -1407,6 +1436,16 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
                 $data['endtimes'] = null;
             }
 
+            // Restore resolved child hours before time validation and comparison.
+            if (!empty($seriesSourceBefore['recurrence_first_id'])) {
+                $effective = $this->prepareSeriesSubmission($recurrenceSubmission, $seriesSourceBefore);
+                foreach (['times', 'endtimes'] as $field) {
+                    if (array_key_exists($field, $effective)) {
+                        $data[$field] = $effective[$field];
+                    }
+                }
+            }
+
             if ($scheduleTimes !== null) {
                 // The legacy recurrence comparison treats hour 00 as empty.
                 $data = array_replace($data, $scheduleTimes);
@@ -1463,14 +1502,6 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
 
             // Get the fields changed
             // Parameters contain the exclusion selection; compare their serialised values.
-            if (!empty($seriesSourceBefore['recurrence_first_id'])) {
-                $effective = $this->prepareSeriesSubmission($recurrenceSubmission, $seriesSourceBefore);
-                foreach (['times', 'endtimes'] as $field) {
-                    if (array_key_exists($field, $effective)) {
-                        $data[$field] = $effective[$field];
-                    }
-                }
-            }
             $comparisonData = $data;
             $comparisonData['attribs'] = (string) new Registry($data['attribs']);
             $diff = array_diff_assoc($comparisonData, $eventdb);
@@ -1673,7 +1704,9 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
             }
 
             // Save the event
-            $saved = parent::save($data);
+            $saved = $usesOccurrenceTimes
+                ? $this->saveOccurrenceWithResolvedTimes($data)
+                : parent::save($data);
 
             if ($saved && !empty($pricingContext['physical_active'])) {
                 $savedEventId = (int) $this->getState($this->getName() . '.id');
@@ -1848,7 +1881,10 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
                 $this->normaliseAssociatedArticleSyncMode(
                     $event, $this->getAssociatedArticleSyncEventData((int) $event['id'])
                 );
-                if (!parent::save($event)
+                $occurrenceSaved = $usesOccurrenceTimes || (int) $event['id'] !== (int) $data['id']
+                    ? $this->saveOccurrenceWithResolvedTimes($event)
+                    : parent::save($event);
+                if (!$occurrenceSaved
                     || !$this->_storeCategoriesSelected((int) $event['id'], $eventCats, !$backend, false)
                     || (isset($event['event_links']) && !$this->saveLinks((int) $event['id'], $event['event_links']))) {
                     throw new RuntimeException($this->getError() ?: Text::_('COM_JEM_EVENT_ERROR_EVENT_UPDATED'));
