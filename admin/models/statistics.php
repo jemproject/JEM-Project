@@ -653,6 +653,9 @@ class JemModelStatistics extends JemModelMain
      * Aggregate programme orders across each main event and its children.
      * Capacity is intentionally not summed because programme members can use
      * independent or shared physical pools.
+     * Both queries select only programme roots: a member belongs to itself if
+     * it is a root, otherwise to its direct parent. Keep this invariant when
+     * using the single-key joins below; descendants are not expanded recursively.
      */
     public function getProgrammeSummary($filters, $commerceEnabled = false)
     {
@@ -667,7 +670,7 @@ class JemModelStatistics extends JemModelMain
                 'COALESCE(SUM(CASE WHEN r.status = 1 AND r.waiting = 1 THEN r.places ELSE 0 END), 0) AS waiting_places',
             ))
             ->from($db->quoteName('#__jem_events', 'parent'))
-            ->join('INNER', $db->quoteName('#__jem_events', 'member') . ' ON member.id = parent.id OR member.parent_event_id = parent.id')
+            ->join('INNER', $db->quoteName('#__jem_events', 'member') . ' ON parent.id = CASE WHEN member.parent_event_id > 0 THEN member.parent_event_id ELSE member.id END')
             ->join('LEFT', $db->quoteName('#__jem_register', 'r') . ' ON r.event = member.id')
             ->where('(parent.parent_event_id IS NULL OR parent.parent_event_id = 0)')
             ->where('parent.published <> -2')
@@ -689,7 +692,7 @@ class JemModelStatistics extends JemModelMain
         $revenueQuery = $db->getQuery(true)
             ->select(array('parent.id AS programme_id', 'r.currency', 'SUM(r.grand_total) AS total'))
             ->from($db->quoteName('#__jem_events', 'parent'))
-            ->join('INNER', $db->quoteName('#__jem_events', 'member') . ' ON member.id = parent.id OR member.parent_event_id = parent.id')
+            ->join('INNER', $db->quoteName('#__jem_events', 'member') . ' ON parent.id = CASE WHEN member.parent_event_id > 0 THEN member.parent_event_id ELSE member.id END')
             ->join('INNER', $db->quoteName('#__jem_register', 'r') . ' ON r.event = member.id')
             ->where('parent.id IN (' . implode(',', $programmeIds) . ')')
             ->where('r.status = 1 AND r.waiting = 0')
