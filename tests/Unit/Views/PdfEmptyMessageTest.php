@@ -418,3 +418,13 @@ class HtmlView
         return self::$rows;
     }
 }
+
+
+/** Status decoration is unrelated to empty-result messages; leave fixture rows intact. */
+final class JemOutput
+{
+    /** @param mixed ...$arguments Rows and view context. @return void */
+    public static function prepareViewEventStatuses(...$arguments): void
+    {
+    }
+}

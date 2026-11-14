@@ -287,6 +287,12 @@ namespace {
     }
     final class JemOutput
     {
+
+        /** @param object $type Row. @param string $prefix Property prefix. @param string $field Field. @return string Plain fixture label; translation is outside these image/title tests. */
+        public static function getTypeTranslationValue($type, $prefix, $field): string
+        {
+            return (string) ($type->{$prefix . $field} ?? '');
+        }
         public static int $lightboxCalls = 0;
 
         /**

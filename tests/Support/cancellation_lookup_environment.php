@@ -337,6 +337,14 @@ namespace {
     require_once JEM_TEST_ROOT . '/site/classes/registrationaccesspolicy.class.php';
     require_once JEM_TEST_ROOT . '/site/classes/registrationtransition.class.php';
     require_once JEM_TEST_ROOT . '/site/classes/registrationquantity.class.php';
+    // Expose the checkout through Joomla's installation-shaped include paths, without loading an installed copy.
+    require_once JEM_TEST_ROOT . '/tests/Support/recurrence_source_stream.php';
+    if (!in_array('jemrecurrence', stream_get_wrappers(), true)) {
+        stream_wrapper_register('jemrecurrence', RecurrenceSourceStream::class);
+    }
+    if (!defined('JPATH_SITE')) {
+        define('JPATH_SITE', 'jemrecurrence://site');
+    }
     require_once JEM_TEST_ROOT . '/site/models/event.php';
 
     class CancellationEventModel extends JemModelEvent

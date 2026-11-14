@@ -143,7 +143,8 @@ final class FrontendFeaturedPermissionTest extends TestCase
         $source = file_get_contents(JEM_TEST_ROOT . '/admin/models/event.php');
         $early = strpos($source, 'if (!$backend && !$this->protectFrontendFeaturedData($data, $cats, $task))');
         self::assertNotFalse($early);
-        self::assertLessThan(strpos($source, '$diff = array_diff_assoc('), $early);
+        self::assertSame(1, preg_match('/\$(?:fullDiff|diff) = array_udiff_assoc\(/', $source, $comparison, PREG_OFFSET_CAPTURE));
+        self::assertLessThan($comparison[0][1], $early);
         self::assertLessThan(strpos($source, 'parent::save($data)'), $early);
 
         $loop = strpos($source, 'foreach ($events as $event)');

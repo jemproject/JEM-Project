@@ -215,7 +215,7 @@ final class AnnualCalendarPeriodTest extends TestCase
                     self::assertSame($mode === 'agenda' ? 'agenda' : 'calendar', $query['mode'] ?? 'calendar');
                 }
             }
-            $render = eval('namespace ' . self::NS . '; return function () { ?>' . self::$navigation . '<?php };');
+            $render = eval('namespace ' . self::NS . '; use \\JemCalendarNavigation; return function () { ?>' . self::$navigation . '<?php };');
             ob_start();
             try {
                 $render->call($view);

@@ -90,6 +90,11 @@ namespace {
 
     final class JemHelper
     {
+
+        /** @return void Status asset loading is outside tooltip rendering. */
+        public static function loadModuleStatusAssets(): void
+        {
+        }
         public static function globalattribs(): CalendarTooltipParams
         {
             return new CalendarTooltipParams();
@@ -103,6 +108,20 @@ namespace {
         public static function applyEventRouteLayout(string $route, object $params): string
         {
             return $route;
+        }
+    }
+
+    final class JemOutput
+    {
+
+        /** @param mixed ...$arguments Event and presentation options. @return string Omit status markup outside tooltip scope. */
+        public static function moduleEventStatusBadge(...$arguments): string
+        {
+            return '';
+        }
+        /** @param array $items Rows. @param bool $enabled Indicator option. @return void Status decoration is outside tooltip assertions. */
+        public static function prepareEventStatusItems(array $items, bool $enabled): void
+        {
         }
     }
 
