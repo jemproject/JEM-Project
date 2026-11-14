@@ -4138,7 +4138,8 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
         $update = (object) array('id' => $articleId);
 
         if (in_array('title', $fields, true)) {
-            $update->title = $this->buildAssociatedArticleTitle($eventData, $eventId);
+            $titleData = array_replace($eventData, ['_jem_article_language' => (string) ($article->language ?? '*')]);
+            $update->title = $this->buildAssociatedArticleTitle($titleData, $eventId);
         }
 
         if (in_array('alias', $fields, true)) {
@@ -4303,9 +4304,11 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
         $languageCode = $language === '*' || $language === ''
             ? ''
             : strtolower(substr($language, 0, 2));
+        $displayDate = str_contains($format, '{date}')
+            ? $this->formatAssociatedArticleDate($date, (string) ($eventData['_jem_article_language'] ?? $language)) : $date;
         $title = str_replace(
-            array('{title}', '{id}', '{date}', '{time}', '{lang}'),
-            array($eventTitle, (int) $eventId, $date, $time, $languageCode),
+            array('{title}', '{id}', '{date}', '{date_iso}', '{time}', '{lang}'),
+            array($eventTitle, (int) $eventId, $displayDate, $date, $time, $languageCode),
             $format
         );
         if ($recurrenceCounter !== null) {
@@ -4317,6 +4320,45 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
         $title = trim(preg_replace('/\s+/', ' ', $title));
 
         return $title !== '' ? $title : $eventTitle;
+    }
+
+    /**
+     * Format a calendar date for a persisted article title, independently of the editor's language.
+     *
+     * @param string $date Event date in database format.
+     * @param string $language Destination content language; All uses the frontend default.
+     * @return string Localised short date, or empty for an absent/invalid date.
+     */
+    protected function formatAssociatedArticleDate(string $date, string $language): string
+    {
+        if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D', $date, $parts)
+            || !checkdate((int) $parts[2], (int) $parts[3], (int) $parts[1])) {
+            return '';
+        }
+        $siteLanguage = (string) \Joomla\CMS\Component\ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
+        $key = $language . ':' . $siteLanguage;
+        static $formats = [];
+        if (!isset($formats[$key])) {
+            $formats[$key] = 'Y-m-d';
+            $factory = Factory::getContainer()->get(\Joomla\CMS\Language\LanguageFactoryInterface::class);
+            foreach (array_unique([$language, $siteLanguage, 'en-GB']) as $tag) {
+                if (!preg_match('/^[a-z]{2,3}(?:-[a-zA-Z0-9]{2,8})+$/D', $tag)) {
+                    continue;
+                }
+                $contentLanguage = $factory->createLanguage($tag);
+                if ($contentLanguage->load('joomla', JPATH_SITE, $tag, false, false)
+                    && $contentLanguage->hasKey('DATE_FORMAT_LC4')) {
+                    $format = trim($contentLanguage->_('DATE_FORMAT_LC4'));
+                    if ($format !== '') {
+                        $formats[$key] = $format;
+                        break;
+                    }
+                }
+            }
+        }
+        // This is a date, not an instant: timezone conversion must never move the calendar day.
+        $value = \DateTimeImmutable::createFromFormat('!Y-m-d', $date, new \DateTimeZone('UTC'));
+        return $value->format($formats[$key]);
     }
 
     /**
