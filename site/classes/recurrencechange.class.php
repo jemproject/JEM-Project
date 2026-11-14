@@ -115,6 +115,17 @@ final class JemRecurrenceChange
             // Includes confirmed, waiting, invited/unanswered and unknown states.
             return (string) ($row['status'] ?? '') !== '-1';
         }));
+        $blocked = [];
+        if ($active) {
+            $blocked[] = Text::_('COM_JEM_RECURRENCE_CHANGE_ACTIVE');
+        }
+        if (!$keepAllowed && !$deleteAllowed) {
+            $blocked[] = Text::_('COM_JEM_RECURRENCE_CHANGE_PERMISSION');
+        } elseif (!$deleteAllowed) {
+            $blocked[] = Text::_('COM_JEM_RECURRENCE_CHANGE_KEEP_ONLY');
+        } elseif (!$keepAllowed) {
+            $blocked[] = Text::_('COM_JEM_RECURRENCE_CHANGE_KEEP_PERMISSION');
+        }
         $count = count($snapshot['children']);
         $child = (int) $root['recurrence_first_id'] > 0;
         return [
@@ -130,8 +141,7 @@ final class JemRecurrenceChange
             'deleteAllowed' => $count > 0 && $deleteAllowed && !$active,
             'message' => $child ? Text::_('COM_JEM_RECURRENCE_CHANGE_CHILD')
                 : Text::sprintf('COM_JEM_RECURRENCE_CHANGE_ROOT', $count, $past, $count - $past),
-            'blocked' => $active ? Text::_('COM_JEM_RECURRENCE_CHANGE_ACTIVE')
-                : (!$deleteAllowed || !$keepAllowed ? Text::_('COM_JEM_RECURRENCE_CHANGE_PERMISSION') : ''),
+            'blocked' => implode(' ', $blocked),
         ];
     }
 

@@ -129,4 +129,150 @@ final class RecurrenceChangeTest extends TestCase
         $snapshot['root']['recurrence_byday']='MO,WE';
         self::assertFalse($this->plan($snapshot,['times'=>'10:00','recurrence_byday'=>'WE,MO'])['required']);
     }
+
+    /**
+     * Cover independent permissions, active registrations and both editor languages.
+     *
+     * @return iterable Named permission and registration scenarios.
+     */
+    public static function confirmationMessageCases(): iterable
+    {
+        $permissions = [
+            'both actions' => [true, true, ''],
+            'keep only' => [true, false, 'COM_JEM_RECURRENCE_CHANGE_KEEP_ONLY'],
+            'delete only' => [false, true, 'COM_JEM_RECURRENCE_CHANGE_KEEP_PERMISSION'],
+            'neither action' => [false, false, 'COM_JEM_RECURRENCE_CHANGE_PERMISSION'],
+        ];
+        foreach (['site', 'admin'] as $client) {
+            foreach ($permissions as $name => [$edit, $delete, $message]) {
+                foreach ([false, true] as $active) {
+                    yield $client . ' ' . $name . ($active ? ' with registrations' : '') =>
+                        [$client, $edit, $delete, $active, $message];
+                }
+            }
+        }
+    }
+
+    /**
+     * Explain each blocked action without changing the valid confirmation choices.
+     *
+     * @param string $client Editor language directory.
+     * @param bool $edit Whether the second child can be edited.
+     * @param bool $delete Whether the second child can be deleted.
+     * @param bool $active Whether a child has an active registration.
+     * @param string $permissionMessage Expected permission explanation key, or empty.
+     * @return void
+     */
+    #[DataProvider('confirmationMessageCases')]
+    public function testConfirmationExplainsAvailableActions(
+        string $client,
+        bool $edit,
+        bool $delete,
+        bool $active,
+        string $permissionMessage
+    ): void
+    {
+        $language = new Joomla\CMS\Language\Language('en-GB');
+        self::assertTrue($language->load('com_jem', JEM_TEST_ROOT . '/' . $client, 'en-GB', true));
+        Joomla\CMS\Factory::$language = $language;
+
+        $snapshot = $this->snapshot();
+        if ($active) {
+            $snapshot['registrations'][] = ['id' => 1, 'event' => 101, 'status' => 1, 'waiting' => 0];
+        }
+        // One restricted child must be enough, even if all others allow both actions.
+        $can = static fn ($operation, $row) => $row['id'] === 101 || ($operation === 'edit' ? $edit : $delete);
+        $plan = $this->plan($snapshot, ['times' => '11:00'], $can);
+        self::assertTrue($plan['required']);
+        self::assertSame($edit, $plan['keepAllowed']);
+        self::assertSame($delete && !$active, $plan['deleteAllowed']);
+        $unrestricted = $this->plan($snapshot, ['times' => '11:00']);
+        self::assertSame($unrestricted['fingerprint'], $plan['fingerprint']);
+
+        $expected = [];
+        if ($active) {
+            $expected[] = Joomla\CMS\Language\Text::_('COM_JEM_RECURRENCE_CHANGE_ACTIVE');
+        }
+        if ($permissionMessage !== '') {
+            $text = Joomla\CMS\Language\Text::_($permissionMessage);
+            self::assertNotSame($permissionMessage, $text, 'The editor must have a translated explanation.');
+            $expected[] = $text;
+        }
+        self::assertSame(implode(' ', $expected), $plan['blocked']);
+
+        foreach (['keep' => $edit, 'delete' => $delete && !$active] as $choice => $allowed) {
+            $error = null;
+            try {
+                JemRecurrenceChange::assertDecision($plan, $choice, $plan['fingerprint']);
+            } catch (RuntimeException $exception) {
+                $error = $exception;
+            }
+            if ($allowed) {
+                self::assertNull($error, $choice . ' must remain available.');
+            } else {
+                self::assertInstanceOf(RuntimeException::class, $error, $choice . ' must remain blocked.');
+                $expectedError = $choice === 'delete' ? $plan['blocked']
+                    : Joomla\CMS\Language\Text::_('COM_JEM_RECURRENCE_CHANGE_PERMISSION');
+                self::assertSame($expectedError, $error->getMessage());
+            }
+        }
+    }
+
+    /**
+     * Keep frontend and backend wording aligned for partial permission restrictions.
+     *
+     * @return void
+     */
+    public function testPartialPermissionMessagesDescribeTheAffectedAction(): void
+    {
+        $expected = [
+            'COM_JEM_RECURRENCE_CHANGE_KEEP_ONLY' => 'You can keep the existing occurrences, but you do not have permission to delete every affected event.',
+            'COM_JEM_RECURRENCE_CHANGE_KEEP_PERMISSION' => 'You do not have permission to keep all existing occurrences as independent events.',
+        ];
+        foreach (['site', 'admin'] as $client) {
+            $strings = parse_ini_file(JEM_TEST_ROOT . '/' . $client . '/language/en-GB/com_jem.ini', false, INI_SCANNER_RAW);
+            self::assertIsArray($strings);
+            foreach ($expected as $key => $text) {
+                self::assertSame($text, $strings[$key] ?? null);
+            }
+        }
+    }
+
+    /**
+     * A hidden Delete choice for a series without children is not a permission failure.
+     *
+     * @return void
+     */
+    public function testNoChildrenDoNotProduceAPermissionWarning(): void
+    {
+        $snapshot = $this->snapshot();
+        $snapshot['children'] = [];
+        $plan = $this->plan($snapshot, ['times' => '11:00'], static fn () => false);
+        self::assertSame(0, $plan['count']);
+        self::assertTrue($plan['keepAllowed']);
+        self::assertFalse($plan['deleteAllowed']);
+        self::assertSame('', $plan['blocked']);
+        JemRecurrenceChange::assertDecision($plan, 'keep', $plan['fingerprint']);
+    }
+
+    /**
+     * Cancelled registrations remove only the registration block, never an ACL block.
+     *
+     * @return void
+     */
+    public function testCancelledRegistrationsPreservePermissionExplanations(): void
+    {
+        $snapshot = $this->snapshot();
+        $snapshot['registrations'][] = ['id' => 1, 'event' => 101, 'status' => -1, 'waiting' => 0];
+        $plan = $this->plan($snapshot, ['times' => '11:00']);
+        self::assertSame('', $plan['blocked']);
+        self::assertTrue($plan['deleteAllowed']);
+        JemRecurrenceChange::assertDecision($plan, 'delete', $plan['fingerprint']);
+
+        $plan = $this->plan($snapshot, ['times' => '11:00'], static fn ($operation) => $operation === 'edit');
+        self::assertTrue($plan['keepAllowed']);
+        self::assertFalse($plan['deleteAllowed']);
+        self::assertSame(Joomla\CMS\Language\Text::_('COM_JEM_RECURRENCE_CHANGE_KEEP_ONLY'), $plan['blocked']);
+        JemRecurrenceChange::assertDecision($plan, 'keep', $plan['fingerprint']);
+    }
 }
