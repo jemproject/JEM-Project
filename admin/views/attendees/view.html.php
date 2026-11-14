@@ -159,6 +159,9 @@ class JemViewAttendees extends JemAdminView
                 if (!$this->isPriced) {
                     ToolbarHelper::custom('attendees.setWaitinglist', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETWAITINGLIST'), true);
                 }
+            }
+            if ($this->event->waitinglist
+                || ((int) $this->waitingListStatus->waitingBefore > 0 && (int) $this->event->maxplaces > 0)) {
                 ToolbarHelper::custom('attendees.promoteWaitingList', 'arrow-up', 'arrow-up', Text::_('COM_JEM_WAITINGLIST_PROMOTE_SELECTED'), true);
             }
         }

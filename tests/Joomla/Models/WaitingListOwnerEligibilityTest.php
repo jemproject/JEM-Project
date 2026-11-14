@@ -454,4 +454,142 @@ final class WaitingListOwnerEligibilityTest extends TestCase
         }
         $this->db->insertObject('#__jem_register', $row);
     }
+
+    /** @return iterable<string, array{array, string, bool}> Closed-list promotion cases. */
+    public static function closedWaitingCases(): iterable
+    {
+        yield 'manual existing row' => [[], '', true];
+        yield 'manual with notification' => [['notify' => true], '', true];
+        yield 'automatic stays disabled' => [['mode' => 'automatic'], 'waiting_list_unavailable', false];
+        yield 'full event' => [['maxplaces' => 1], 'capacity_exceeded', false];
+        yield 'zero capacity' => [['maxplaces' => 0], 'waiting_list_unavailable', false];
+        yield 'empty selection' => [['registrationIds' => []], 'no_selection', false];
+        yield 'confirmed selection' => [['registrationIds' => [1]], 'selection_not_waiting', false];
+        yield 'mixed selection' => [['registrationIds' => [1, 2]], 'selection_not_waiting', false];
+        yield 'deleted owner' => [['uid' => 999], 'selected_user_missing', false];
+        yield 'cancelled event' => [['event_status' => 'cancelled'], 'event_cancelled', false];
+        yield 'postponed event' => [['event_status' => 'postponed'], 'event_postponed', false];
+        yield 'enabled list unchanged' => [['waitinglist' => 1], '', true];
+    }
+
+    /**
+     * @param array $options Fixture and promotion overrides.
+     * @param string $reason Expected failure/skip reason, empty for a promotion.
+     * @param bool $promoted Whether the waiting registration must become confirmed.
+     * @return void Verify closed-list resolution without weakening selection or status guards.
+     */
+    #[DataProvider('closedWaitingCases')]
+    public function testClosedWaitingListManualResolution(array $options, string $reason, bool $promoted): void
+    {
+        $this->sql('UPDATE #__jem_events SET waitinglist=' . (int) ($options['waitinglist'] ?? 0)
+            . ', maxplaces=' . (int) ($options['maxplaces'] ?? 3)
+            . ', event_status=' . $this->db->quote($options['event_status'] ?? 'scheduled') . ' WHERE id=1');
+        $this->registration(1, 100, 1, 0);
+        $this->registration(2, (int) ($options['uid'] ?? 101));
+        $result = $this->promote($options + ['mode' => 'manual', 'registrationIds' => [2], 'notify' => false]);
+        self::assertSame($promoted ? [2] : [], $result->promotedIds, $result->reason);
+        self::assertSame($promoted ? 0 : 1, $this->waiting(2));
+        self::assertSame(0, $this->waiting(1));
+        if ($promoted) {
+            self::assertTrue($result->success, $result->reason);
+            self::assertSame(0, JemWaitingListPromotion::availability(1)->waitingBefore);
+        } else {
+            self::assertSame($reason, $result->reason);
+        }
+        $mail = array_values(array_filter(JemFactory::$notifications, static fn($row) => $row[0] === 'onUserOnOffWaitinglist'));
+        self::assertCount($promoted && !empty($options['notify']) ? 1 : 0, $mail);
+        if ($this->priced) {
+            self::assertSame($promoted ? [2] : [], array_map('intval', $this->db->setQuery('SELECT registration_id FROM #__jem_register_history')->loadColumn()));
+        }
+    }
+
+    /** @return void A closed queue still rejects a confirmed-to-waiting write. */
+    public function testClosedWaitingListRejectsNewWaitingAdmission(): void
+    {
+        require_once JEM_TEST_ROOT . '/site/classes/registrationservice.class.php';
+        $install = file_get_contents(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql');
+        self::assertSame(1, preg_match('/CREATE TABLE IF NOT EXISTS `#__jem_config`.*?;/s', $install, $match));
+        $this->sql($match[0]);
+        $this->sql("INSERT INTO #__jem_config (keyname,value) VALUES ('registration_schema_ready','1')");
+        $this->sql('UPDATE #__jem_events SET waitinglist=0, maxplaces=3 WHERE id=1');
+        $this->registration(1, 100, 1, 0);
+        $after = $this->db->setQuery('SELECT * FROM #__jem_register WHERE id=1')->loadObject();
+        $after->waiting = 1;
+        try {
+            (new JemRegistrationService($this->db))->save($after, ['respectPlaces' => true]);
+            self::fail('Closed queue accepted a new waiting admission.');
+        } catch (RuntimeException $error) {
+            self::assertStringContainsString('waiting list', $error->getMessage());
+        }
+        self::assertSame(0, $this->waiting(1));
+    }
+
+    /** @return iterable<string, array{int, int, bool}> Closed-list priced capacity checks. */
+    public static function closedPricedCases(): iterable
+    {
+        yield 'available pool and quota' => [1, 1, true];
+        yield 'full pool' => [0, 1, false];
+        yield 'full ticket quota' => [1, 0, false];
+    }
+
+    /**
+     * @param int $pool Shared pool capacity.
+     * @param int $quota Ticket quota.
+     * @param bool $promoted Expected promotion result.
+     * @return void Keep priced capacity, stored amounts and history when resolving a closed list.
+     */
+    #[DataProvider('closedPricedCases')]
+    public function testClosedWaitingListPricedCapacity(int $pool, int $quota, bool $promoted): void
+    {
+        $this->sql("UPDATE #__jem_events SET waitinglist=0, maxplaces=3, pricing_mode='priced' WHERE id=1");
+        $this->registration(2, 100);
+        $this->sql("INSERT INTO #__jem_capacity_pools (id,event_id,code,name,capacity) VALUES (1,1,'area','Area',$pool)");
+        $this->sql("INSERT INTO #__jem_event_prices (id,event_id,code,name,quota) VALUES (1,1,'adult','Adult',$quota)");
+        $this->pricedAdmission(2, 1, 1);
+        $result = $this->promote(['mode' => 'manual', 'registrationIds' => [2], 'notify' => false]);
+        self::assertSame($promoted ? [2] : [], $result->promotedIds, $result->reason);
+        self::assertSame($promoted ? 0 : 1, $this->waiting(2));
+        self::assertSame('10.90', $this->db->setQuery('SELECT grand_total FROM #__jem_register WHERE id=2')->loadResult());
+        self::assertSame($promoted ? [2] : [], array_map('intval', $this->db->setQuery('SELECT registration_id FROM #__jem_register_history')->loadColumn()));
+        if (!$promoted) {
+            self::assertSame('capacity_exceeded', $result->reason);
+        }
+    }
+
+    /** @return iterable<string, array{int, bool}> Available and occupied capacity-only areas. */
+    public static function closedAreaCases(): iterable
+    {
+        yield 'space remains' => [2, true];
+        yield 'area is full' => [1, false];
+    }
+
+    /**
+     * @param int $capacity Area capacity, with one place already confirmed.
+     * @param bool $promoted Expected outcome.
+     * @return void Verify manual resolution preserves physical area capacity and allocations.
+     */
+    #[DataProvider('closedAreaCases')]
+    public function testClosedWaitingListAreaCapacity(int $capacity, bool $promoted): void
+    {
+        $snapshot = ['schema' => 'jem-venue-capacity/v1', 'spaces' => [[
+            'code' => 'room', 'name' => 'Room', 'layout' => ['id' => 1, 'revision' => 1],
+            'capacity_areas' => [['id' => 1, 'code' => 'area', 'name' => 'Area', 'published' => 1, 'capacity' => $capacity]],
+        ]]];
+        $this->sql("UPDATE #__jem_events SET waitinglist=0, maxplaces=3, capacity_mode='areas', venue_snapshot="
+            . $this->db->quote(json_encode($snapshot, JSON_THROW_ON_ERROR)) . ' WHERE id=1');
+        $this->registration(1, 100, 1, 0);
+        $this->registration(2, 101);
+        foreach ([1, 2] as $id) {
+            $this->sql("INSERT INTO #__jem_register_capacity_allocations (register_id,registration_revision,event_id,venue_capacity_area_id,venue_layout_id,venue_layout_revision,area_code,area_name,space_code,space_name,quantity) VALUES ($id,1,1,1,1,1,'area','Area','room','Room',1)");
+        }
+        $result = $this->promote(['mode' => 'manual', 'registrationIds' => [2], 'notify' => false]);
+        self::assertSame($promoted ? [2] : [], $result->promotedIds, $result->reason);
+        self::assertSame($promoted ? 0 : 1, $this->waiting(2));
+        self::assertSame(0, $this->waiting(1));
+        self::assertSame($promoted ? [2] : [], array_map('intval', $this->db->setQuery('SELECT registration_id FROM #__jem_register_history')->loadColumn()));
+        self::assertSame(1, (int) $this->db->setQuery('SELECT quantity FROM #__jem_register_capacity_allocations WHERE register_id=2 ORDER BY registration_revision DESC')->loadResult());
+        if (!$promoted) {
+            self::assertStringContainsString('capacity area', $result->reason);
+        }
+    }
 }

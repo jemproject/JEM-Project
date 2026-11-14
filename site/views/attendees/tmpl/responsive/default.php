@@ -201,10 +201,10 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             </div>
         </div>
 
-        <?php if ($this->event->waitinglist) : ?>
+        <?php if ($this->event->waitinglist || (int) $this->waitingListStatus->waitingBefore > 0) : ?>
             <div class="alert alert-info" role="status">
                 <?php echo Text::sprintf('COM_JEM_WAITINGLIST_CAPACITY_SUMMARY', (int) $this->waitingListStatus->availableBefore, (int) $this->waitingListStatus->waitingBefore); ?>
-                <?php if ((int) ($this->jemsettings->waitinglist_automatic ?? 1)) : ?>
+                <?php if ($this->event->waitinglist && (int) ($this->jemsettings->waitinglist_automatic ?? 1)) : ?>
                     <?php echo ($this->jemsettings->waitinglist_strategy ?? 'strict') === 'fill'
                         ? Text::_('COM_JEM_WAITINGLIST_MODE_AUTOMATIC_FILL')
                         : Text::_('COM_JEM_WAITINGLIST_MODE_AUTOMATIC_STRICT'); ?>
@@ -270,7 +270,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                         if ($status === 1 && (int) $row->waiting === 1) {
                             $status = 2;
                         }
-                        if ($this->event->waitinglist) {
+                        if ($this->event->waitinglist || ($status === 2 && (int) $this->event->maxplaces > 0)) {
                             echo jemhtml::toggleAttendanceStatus($row->id, $status, true);
                         } else {
                             echo jemhtml::toggleAttendanceStatus($row->id, $status, false);
