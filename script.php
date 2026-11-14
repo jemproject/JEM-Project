@@ -435,6 +435,7 @@ class com_jemInstallerScript
             $this->repair501SchemaFallback();
             $this->repair502SchemaParity();
             $this->normaliseTypeLanguages();
+            $this->repairDefaultDayTypes();
             $this->repairModuleStatusSettings();
             $this->repair510HierarchySchemaFallback();
             $this->repair510AgeAccessSchema();
@@ -509,6 +510,144 @@ class com_jemInstallerScript
                 ->set($language . ' = ' . $db->quote('*'))
                 ->where('(' . $language . ' <> ' . $db->quote('*') . ' OR ' . $language . ' IS NULL)')
         )->execute();
+    }
+
+    /**
+     * Merge equivalent default Day types left by reinstalls, preserving the oldest ID.
+     *
+     * References and duplicate rows change in one transaction per alias. Conflicting
+     * settings or checked-out records are retained for an administrator to review.
+     *
+     * @return void
+     */
+    private function repairDefaultDayTypes(): void
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $tables = $db->getTableList();
+        foreach (array('#__jem_types', '#__jem_special_days') as $table) {
+            if (!in_array($db->replacePrefix($table), $tables, true)) {
+                return;
+            }
+        }
+
+        foreach (array('weekend', 'public-holiday') as $alias) {
+            $started = false;
+            try {
+                $db->transactionStart();
+                $started = true;
+                $query = $db->getQuery(true)
+                    ->select('*')
+                    ->from($db->quoteName('#__jem_types'))
+                    ->where($db->quoteName('entity') . ' = 4')
+                    ->where($db->quoteName('alias') . ' = ' . $db->quote($alias))
+                    ->order($db->quoteName('id') . ' ASC');
+                $rows = $db->setQuery((string) $query . ' FOR UPDATE')->loadAssocList();
+                if (count($rows) < 2) {
+                    $db->transactionCommit();
+                    continue;
+                }
+
+                foreach ($db->getTableCreate(array('#__jem_types', '#__jem_special_days')) as $definition) {
+                    if (!preg_match('/\bENGINE\s*=\s*InnoDB\b/i', $definition)) {
+                        throw new RuntimeException('Day type repair requires transactional tables.');
+                    }
+                }
+
+                $ids = array_map('intval', array_column($rows, 'id'));
+                $original = $rows[0];
+                $settings = $this->defaultDayTypeSettings($original);
+                $conflict = false;
+                foreach ($rows as $row) {
+                    if (!empty($row['checked_out']) || $this->defaultDayTypeSettings($row) !== $settings) {
+                        $conflict = true;
+                        break;
+                    }
+                }
+
+                // Do not invalidate an editor's selected type while its Special Day is open.
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName('checked_out'))
+                    ->from($db->quoteName('#__jem_special_days'))
+                    ->where($db->quoteName('day_type_id') . ' IN (' . implode(',', $ids) . ')');
+                $checkouts = $db->setQuery((string) $query . ' FOR UPDATE')->loadColumn();
+                $conflict = $conflict || (bool) array_filter($checkouts);
+                if ($conflict) {
+                    $db->transactionRollback();
+                    $started = false;
+                    Factory::getApplication()->enqueueMessage(
+                        Text::sprintf('COM_JEM_INSTALL_DAY_TYPES_CONFLICT', $alias, implode(', ', $ids)),
+                        'warning'
+                    );
+                    continue;
+                }
+
+                $duplicateIds = implode(',', array_slice($ids, 1));
+                $db->setQuery(
+                    $db->getQuery(true)
+                        ->update($db->quoteName('#__jem_special_days'))
+                        ->set($db->quoteName('day_type_id') . ' = ' . (int) $original['id'])
+                        ->where($db->quoteName('day_type_id') . ' IN (' . $duplicateIds . ')')
+                )->execute();
+                $db->setQuery(
+                    $db->getQuery(true)
+                        ->delete($db->quoteName('#__jem_types'))
+                        ->where($db->quoteName('entity') . ' = 4')
+                        ->where($db->quoteName('id') . ' IN (' . $duplicateIds . ')')
+                )->execute();
+                $db->transactionCommit();
+            } catch (Throwable $error) {
+                if ($started) {
+                    $db->transactionRollback();
+                }
+                Factory::getApplication()->enqueueMessage(
+                    Text::sprintf('COM_JEM_INSTALL_DAY_TYPES_REPAIR_FAILED', $alias),
+                    'warning'
+                );
+            }
+        }
+    }
+
+    /**
+     * Compare Day type behaviour without treating creation/audit metadata as settings.
+     *
+     * JSON key order and omitted default flags do not make equivalent types different.
+     * Unknown fields and attributes are retained so future settings are not discarded.
+     *
+     * @param array $type Stored type row.
+     * @return array Normalised settings used only for comparison; stored values are unchanged.
+     */
+    private function defaultDayTypeSettings(array $type): array
+    {
+        foreach (array('id', 'created', 'created_by', 'modified', 'modified_by', 'checked_out', 'checked_out_time') as $field) {
+            unset($type[$field]);
+        }
+        $type = array_map(static fn ($value) => (string) ($value ?? ''), $type);
+
+        // Associative JSON objects can be serialized in a different key order.
+        $sortKeys = static function (array $values) use (&$sortKeys): array {
+            foreach ($values as &$value) {
+                if (is_array($value)) {
+                    $value = $sortKeys($value);
+                }
+            }
+            unset($value);
+            if (!array_is_list($values)) {
+                ksort($values);
+            }
+            return $values;
+        };
+        foreach (array('attribs', 'translations') as $field) {
+            $value = json_decode($type[$field] ?: '{}', true);
+            if (is_array($value)) {
+                if ($field === 'attribs') {
+                    $value['block_events'] = (int) ($value['block_events'] ?? 0) === 1;
+                    $value['show_dates_default'] = (int) ($value['show_dates_default'] ?? 1) !== 0;
+                }
+                $type[$field] = $sortKeys($value);
+            }
+        }
+
+        return $type;
     }
 
     /**
