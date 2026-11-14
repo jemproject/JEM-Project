@@ -155,7 +155,7 @@ $renderImportMappingBlock = function (array $preview, $inputName, array $jemFiel
     $profileTitle = (string) ($preview['profile_title'] ?? '');
     $staticName = preg_replace('/_mapping$/', '_static_values', $inputName);
 
-    if (!$sourceFields) {
+    if (!$sourceFields || !empty($preview['ics_review'])) {
         return;
     }
     ?>
@@ -744,6 +744,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                         <p class="small"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_DATE_TIME_HELP'); ?></p>
                         <fieldset class="mb-3">
                             <legend class="h6"><?php echo Text::_('COM_JEM_IMPORT_ICS_WINDOW'); ?></legend>
+                            <p><?php echo Text::_('COM_JEM_IMPORT_ICS_REVIEW_POLICY'); ?></p>
                             <p class="small"><?php echo Text::_('COM_JEM_IMPORT_ICS_WINDOW_DESC'); ?></p>
                             <div class="jem-import-fields">
                                 <div class="jem-import-field">
