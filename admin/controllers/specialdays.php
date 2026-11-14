@@ -155,15 +155,15 @@ class JemControllerSpecialdays extends AdminController
             fseek($handle, 0);
         }
 
-        $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
+        $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '');
         if (is_array($header) && count($header) === 1 && strpos((string) $header[0], ',') !== false && $separator !== ',') {
             $separator = ',';
             fseek($handle, (strncmp($firstChars, $bom, 3) === 0) ? 3 : 0);
-            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '');
         } elseif (is_array($header) && count($header) === 1 && strpos((string) $header[0], ';') !== false && $separator !== ';') {
             $separator = ';';
             fseek($handle, (strncmp($firstChars, $bom, 3) === 0) ? 3 : 0);
-            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '');
         }
         if ($header === false) {
             fclose($handle);
@@ -198,7 +198,7 @@ class JemControllerSpecialdays extends AdminController
         $now = Factory::getDate()->toSql();
         $userId = (int) $user->id;
 
-        while (($row = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter)) !== false) {
+        while (($row = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter, '')) !== false) {
             $rowNumber++;
 
             try {
@@ -213,7 +213,15 @@ class JemControllerSpecialdays extends AdminController
 
             array_walk($row, 'jem_normalise_csv_utf8');
 
-            if (count(array_filter($row, 'strlen')) === 0) {
+            if ($row === array(null) || count(array_filter($row, 'strlen')) === 0) {
+                continue;
+            }
+
+            if (count($row) !== count($header)) {
+                $result['error']++;
+                $message = Text::sprintf('COM_JEM_IMPORT_CSV_COLUMN_COUNT', $rowNumber, count($header), count($row));
+                $this->addSpecialDaysImportLog($message, Log::WARNING);
+                $app->enqueueMessage($message, 'warning');
                 continue;
             }
 
