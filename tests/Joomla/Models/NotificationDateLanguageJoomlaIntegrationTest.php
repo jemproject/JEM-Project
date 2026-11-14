@@ -368,6 +368,71 @@ final class NotificationDateLanguageJoomlaIntegrationTest extends JoomlaTestCase
         }
     }
 
+    /** @return iterable Site routing modes; language-specific links only apply to multilingual sites. */
+    public static function recipientLinkModes(): iterable
+    {
+        yield 'multilingual' => [true];
+        yield 'monolingual' => [false];
+    }
+
+    /** @param bool $multilingual Site language-filter state. @return void Verify real persisted URLs without SMTP. */
+    #[DataProvider('recipientLinkModes')]
+    public function testRecipientLanguageLinks(bool $multilingual): void
+    {
+        $app = Factory::getApplication();
+        $originalFilter = $app->getLanguageFilter();
+        $originalEnabled = \Joomla\CMS\Language\Multilanguage::$enabled;
+        try {
+            $app->setLanguageFilter($multilingual);
+            \Joomla\CMS\Language\Multilanguage::$enabled = $multilingual;
+            $this->setRequestLanguage('en-GB');
+            self::assertTrue($this->plugin->onEventUserRegistered($this->registrationId, false, false, ['force_unique' => true]));
+            $service = new JemReminderService($this->db);
+            foreach ($this->recipients as $recipient) {
+                $registration = (object) ['user_id' => $recipient->id, 'user_email' => $recipient->email,
+                    'user_name' => $recipient->name, 'dates' => '2026-11-23', 'times' => '20:00:00',
+                    'event_title' => 'Link test', 'venue' => '', 'city' => '', 'places' => 1, 'event_description' => '',
+                    'event_id' => $this->eventId, 'registration_id' => $this->registrationId,
+                    'registration_reference' => 'link-test', 'registration_revision' => 1, 'modified' => '2026-01-01 12:00:00'];
+                (new ReflectionMethod($service, 'createReminder'))->invoke($service, $registration,
+                    (object) ['id' => 0, 'title' => 'One day', 'code' => 'test'], '2099-11-22 19:00:00', true);
+            }
+            $rows = $this->notifications();
+            self::assertCount(4, $rows);
+            self::assertCount(2, JemDateMailCapture::$messages, 'Reminders must only queue their notification.');
+            foreach ($rows as $row) {
+                self::assertContains($row->resolved_language, ['es-ES', 'en-GB']);
+                $values = json_decode($row->payload_json, true)['values'];
+                foreach (['event_url', 'reservation_url'] as $field) {
+                    parse_str((string) parse_url($values[$field], PHP_URL_QUERY), $query);
+                    self::assertSame($multilingual ? $row->resolved_language : null, $query['lang'] ?? null);
+                    self::assertStringNotContainsString('&amp;', $values[$field]);
+                }
+            }
+            // Preserve an existing meeting-information suffix when rebuilding the event URL.
+            $values = json_decode($rows[0]->payload_json, true)['values'];
+            $values['event_url'] .= "\nhttps://meeting.example.invalid/room";
+            $spec = (object) ['values' => $values, 'recipient_user_id' => 0, 'event_id' => $this->eventId,
+                'registration_id' => $this->registrationId, 'registration_reference' => 'link-test', 'revision' => 1,
+                'notification_type' => 'registration', 'subject_key' => 'PLG_JEM_MAILER_ADMIN_REG_SUBJECT',
+                'body_key' => 'PLG_JEM_MAILER_ADMIN_REG_BODY_8', 'force_unique' => true,
+                'resend_of' => 0, 'source' => 'test', 'created_by' => 0];
+            self::assertTrue((new ReflectionMethod($this->plugin, '_deliverPersistedNotification'))->invoke(
+                $this->plugin, (object) ['notification' => $spec], $this->recipients['es-ES']->email, 'admin'
+            ));
+            $rows = $this->notifications();
+            $last = end($rows);
+            $saved = json_decode($last->payload_json, true)['values'];
+            self::assertSame('es-ES', $last->resolved_language);
+            self::assertStringEndsWith("\nhttps://meeting.example.invalid/room", $saved['event_url']);
+            self::assertSame($values, $spec->values, 'One recipient must not overwrite shared notification values.');
+            self::assertSame('en-GB', $app->getLanguage()->getTag());
+        } finally {
+            $app->setLanguageFilter($originalFilter);
+            \Joomla\CMS\Language\Multilanguage::$enabled = $originalEnabled;
+        }
+    }
+
     /** @param string $tag Request language to simulate. @return void */
     private function setRequestLanguage(string $tag): void
     {

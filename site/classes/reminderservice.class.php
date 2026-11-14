@@ -368,6 +368,10 @@ final class JemReminderService
         $definitionTitle = strpos((string) $definition->title, 'COM_JEM_') === 0
             ? JemNotificationTemplateService::translateWithEnglishFallback((string) $definition->title, $language->resolved)
             : (string) $definition->title;
+        // The recipient language must be carried into URLs before the mail snapshot is saved.
+        $linkLanguage = \Joomla\CMS\Language\Multilanguage::isEnabled()
+            ? '&lang=' . rawurlencode((string) $language->resolved)
+            : '';
         $values = array(
             'user_name' => (string) $registration->user_name,
             'event_title' => (string) $registration->event_title,
@@ -376,8 +380,8 @@ final class JemReminderService
             'city' => (string) $registration->city,
             'places' => (int) $registration->places,
             'event_description' => trim(strip_tags((string) $registration->event_description)),
-            'event_url' => JEMHelperRoute::getAbsoluteSiteRoute('index.php?option=com_jem&view=event&id=' . (int) $registration->event_id),
-            'reservation_url' => JEMHelperRoute::getAbsoluteSiteRoute('index.php?option=com_jem&view=registration&id=' . (int) $registration->registration_id),
+            'event_url' => JEMHelperRoute::getAbsoluteSiteRoute('index.php?option=com_jem&view=event&id=' . (int) $registration->event_id . $linkLanguage),
+            'reservation_url' => JEMHelperRoute::getAbsoluteSiteRoute('index.php?option=com_jem&view=registration&id=' . (int) $registration->registration_id . $linkLanguage),
             'event_image_url' => $this->imageUrl($registration->datimage ?? '', 'event', $registration->image_path ?? ''),
             'venue_image_url' => $this->imageUrl($registration->locimage ?? '', 'venue', $registration->venue_image_path ?? ''),
             'site_name' => (string) Factory::getApplication()->get('sitename'),

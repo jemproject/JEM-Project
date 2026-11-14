@@ -1551,6 +1551,23 @@ class plgJemMailer extends CMSPlugin
             ? (int) $spec->recipient_user_id
             : (int) ($recipientUser->id ?? 0);
         $values = (array) $spec->values;
+        // Build recipient-language links when rendering each persisted notification.
+        // Preserve a possible second line containing online-meeting details.
+        if (\Joomla\CMS\Language\Multilanguage::isEnabled() && (int) $spec->event_id > 0) {
+            if (!empty($values['event_url'])) {
+                $split = strpos((string) $values['event_url'], "\n");
+                $extra = $split === false ? '' : substr((string) $values['event_url'], $split);
+                $values['event_url'] = JEMHelperRoute::getAbsoluteSiteRoute(
+                    JEMHelperRoute::getEventRoute((int) $spec->event_id, null, $language->resolved)
+                ) . $extra;
+            }
+            if (!empty($values['reservation_url']) && (int) $spec->registration_id > 0) {
+                $values['reservation_url'] = JEMHelperRoute::getAbsoluteSiteRoute(
+                    'index.php?option=com_jem&view=registration&id=' . (int) $spec->registration_id
+                    . '&lang=' . rawurlencode((string) $language->resolved)
+                );
+            }
+        }
         if ($recipientType === 'user' && (int) $spec->recipient_user_id === 0) {
             $db = Factory::getContainer()->get('DatabaseDriver');
             $booking = $db->setQuery('SELECT * FROM #__jem_register WHERE id=' . (int) $spec->registration_id)->loadObject();
