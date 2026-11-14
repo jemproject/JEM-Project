@@ -267,8 +267,8 @@ class JemModelStatistics extends JemModelMain
                 ? $this->getBookingValueTimeline($filters)
                 : array(),
             'registration_workflow' => !empty($permissions['registrations']) ? $this->getRegistrationWorkflowSummary($filters) : new stdClass(),
-            'registration_commercial' => !empty($permissions['registrations']) && $commerceEnabled
-                ? $this->getRegistrationCommercialSummary($filters)
+            'registration_commercial' => !empty($permissions['registrations'])
+                ? $this->getRegistrationCommercialSummary($filters, $commerceEnabled)
                 : (object) array('revenue' => array()),
         );
     }
@@ -494,9 +494,14 @@ class JemModelStatistics extends JemModelMain
     }
 
     /**
-     * Current registration/order summary and confirmed revenue per currency.
+     * Current registration/order summary, with optional confirmed revenue per currency.
+     * Operational counters remain available when the profile disables pricing.
+     *
+     * @param object $filters Event-scoped dashboard filters.
+     * @param bool $commerceEnabled Whether the caller enables pricing statistics.
+     * @return object Registration counts and permitted revenue totals.
      */
-    public function getRegistrationCommercialSummary($filters)
+    public function getRegistrationCommercialSummary($filters, $commerceEnabled = true)
     {
         $db = $this->getDatabase();
         $query = $db->getQuery(true)
@@ -518,6 +523,12 @@ class JemModelStatistics extends JemModelMain
         $summary = $db->loadObject() ?: new stdClass();
         foreach (array('classic', 'priced', 'confirmed', 'waiting', 'invited', 'cancelled', 'confirmed_places') as $field) {
             $summary->{$field} = (int) ($summary->{$field} ?? 0);
+        }
+
+        if (!$commerceEnabled) {
+            $summary->revenue = array();
+
+            return $summary;
         }
 
         $revenueQuery = $db->getQuery(true)
