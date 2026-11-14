@@ -51,6 +51,7 @@ final class JemImportIcsHelper
         }
         $groups = [];
         foreach ($events as $index => $event) {
+            $event['_jem_ics_keep_cancelled'] = !empty($options['review_changes']);
             foreach (['UID', 'DTSTART', 'DTEND', 'DURATION', 'RECURRENCE-ID', 'SEQUENCE', 'DTSTAMP', 'STATUS'] as $single) {
                 if (isset($event[$single]) && count($event[$single]) > 1) {
                     self::fail('COM_JEM_IMPORT_ICS_CONFLICT');
@@ -88,11 +89,15 @@ final class JemImportIcsHelper
                 continue;
             }
             if (strtoupper(self::value($master, 'STATUS')) === 'CANCELLED') {
+                self::append($result, $bytes, $master, '', $from, $to, $siteZone, $resolveZone);
                 continue;
             }
             if (!isset($master['DTSTART'])) {
                 self::fail('COM_JEM_IMPORT_ICS_INVALID_DATE');
             }
+            // Keep the original rule separate from concrete dates to detect changed series on re-import.
+            $master['_jem_ics_rule'] = isset($master['RRULE']) || isset($master['RDATE'])
+                ? hash('sha256', serialize(array_intersect_key($master, array_flip(['DTSTART', 'DTEND', 'DURATION', 'RRULE', 'RDATE', 'EXDATE'])))) : '';
             [$start, $allDay] = self::date($master['DTSTART'][0], $siteZone, $resolveZone);
             $duration = self::duration($master, $start, $allDay, $siteZone, $resolveZone);
             $firstKey = self::key($start, $allDay);
@@ -148,12 +153,14 @@ final class JemImportIcsHelper
                     continue;
                 }
                 $instance = $master;
+                $instance['_jem_ics_slot'] = $key;
                 self::setDates($instance, $date, $allDay, $span);
                 self::append($result, $bytes, $instance, $key === $firstKey ? '' : $key, $from, $to, $siteZone, $resolveZone);
             }
             foreach ($overrides as $key => $override) {
                 // Exceptions replace their original slot, even when moved outside the selected window.
                 $instance = array_replace($master, $override);
+                $instance['_jem_ics_slot'] = $key;
                 unset($instance['RRULE'], $instance['RDATE'], $instance['EXDATE']);
                 if (strtoupper(self::value($instance, 'STATUS')) !== 'CANCELLED') {
                     if (!isset($override['DTSTART'])) {
@@ -441,6 +448,16 @@ final class JemImportIcsHelper
     ): void
     {
         if (strtoupper(self::value($event, 'STATUS')) === 'CANCELLED') {
+            if (!empty($event['_jem_ics_keep_cancelled'])) {
+                $event['_jem_ics_identity'] = $identity;
+                $event['_jem_ics_slot'] = $event['_jem_ics_slot'] ?? $identity;
+                $bytes += strlen(serialize($event));
+                if ($bytes > JemImportBudgetHelper::MAX_TOTAL_VALUE_BYTES) {
+                    self::fail('COM_JEM_IMPORT_ICS_LIMIT');
+                }
+                $result[] = $event;
+                JemImportBudgetHelper::assertRecordCount(count($result));
+            }
             return;
         }
         if (!isset($event['DTSTART'])) {
@@ -453,6 +470,7 @@ final class JemImportIcsHelper
         // Detached events also need DURATION/all-day conversion, but never acquire a recurrence rule.
         self::setDates($event, $start, $allDay, self::duration($event, $start, $allDay, $zone, $resolver));
         $event['_jem_ics_identity'] = $identity;
+        $event['_jem_ics_slot'] = $event['_jem_ics_slot'] ?? ($identity !== '' ? $identity : self::key($start, $allDay));
         $bytes += strlen(serialize($event));
         if ($bytes > JemImportBudgetHelper::MAX_TOTAL_VALUE_BYTES) {
             self::fail('COM_JEM_IMPORT_ICS_LIMIT');

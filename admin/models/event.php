@@ -980,6 +980,94 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
 
 
     /**
+     * Apply one reviewed ICS change to its existing event, retaining local settings and bookings.
+     *
+     * @param array $record Normalised row from the private, user-bound import preview.
+     * @return int Updated event ID.
+     * @throws RuntimeException Conflict, changed permissions or failed validation/persistence.
+     */
+    public function saveReviewedIcsChange(array $record): int
+    {
+        require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importicsreview.php';
+        $expected = (array) ($record['_jem_ics_review'] ?? []);
+        $id = (int) ($expected['id'] ?? 0);
+        if ($id < 1 || empty($expected['eligible'])) {
+            throw new RuntimeException(Text::_('COM_JEM_IMPORT_ICS_REVIEW_NOT_ALLOWED'));
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db->transactionStart();
+        try {
+            $db->setQuery('SELECT * FROM ' . $db->quoteName('#__jem_events') . ' WHERE id = ' . $id . ' FOR UPDATE');
+            $stored = $db->loadAssoc();
+            if (!$stored || !hash_equals((string) ($expected['fingerprint'] ?? ''), JemImportIcsReview::fingerprint($stored))) {
+                throw new RuntimeException(Text::_('COM_JEM_IMPORT_ICS_REVIEW_CHANGED_SINCE_PREVIEW'));
+            }
+            if (!JemImportIcsReview::targets($record, JemImportIcsReview::index([$stored]))) {
+                throw new RuntimeException(Text::_('COM_JEM_IMPORT_ICS_REVIEW_NOT_ALLOWED'));
+            }
+            $review = JemImportIcsReview::review($record, $stored);
+            $userId = (int) Factory::getApplication()->getIdentity()->id;
+            if (!$review['eligible'] || !JemHelperBackend::can('event', 'edit', (object) $stored)
+                || (isset($review['changes']['event_status']) && !JemHelperBackend::can('event', 'edit.state', (object) $stored))
+                || (!empty($stored['checked_out']) && (int) $stored['checked_out'] !== $userId)) {
+                throw new RuntimeException(Text::_('COM_JEM_IMPORT_ICS_REVIEW_NOT_ALLOWED'));
+            }
+            $changes = [];
+            foreach ($review['changes'] as $field => $values) {
+                $changes[$field] = in_array($field, ['dates', 'enddates', 'times', 'endtimes'], true) && $values[1] === '' ? null : $values[1];
+            }
+            $data = array_replace($stored, $changes);
+            if (array_intersect(['dates', 'enddates', 'times', 'endtimes'], array_keys($changes))
+                && !$this->validateSpecialDayEventDates($data)) {
+                throw new RuntimeException((string) $this->getError());
+            }
+            $metadata = JemImportIcsReview::metadata($stored['metadata']);
+            $incomingMetadata = JemImportIcsReview::metadata($record[7]);
+            // Cancellation messages need not repeat the dates or the original recurrence definition.
+            $tracking = $metadata['jem_ics_import'];
+            $tracking['sequence'] = $incomingMetadata['jem_ics_import']['sequence'];
+            $tracking['stamp'] = $incomingMetadata['jem_ics_import']['stamp'];
+            if (empty($record['_jem_ics_cancelled'])) {
+                $metadata['jem_ics_time'] = $incomingMetadata['jem_ics_time'] ?? null;
+            }
+            $tracking['baseline'] = JemImportIcsReview::baseline($data);
+            $metadata['jem_ics_import'] = $tracking;
+            $data['metadata'] = json_encode($metadata, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+            $table = $this->getTable();
+            if (!$table->bind($data) || !$table->check()) {
+                throw new RuntimeException((string) $table->getError());
+            }
+            // The normal table validates dates, hierarchy and UTC bounds. Only managed fields are written:
+            // table::store/editor input also handle uploads, invitations and other unrelated local settings.
+            $write = (object) ['id' => $id, 'metadata' => $data['metadata'], 'start_utc' => $table->start_utc,
+                'end_utc' => $table->end_utc, 'modified' => Factory::getDate()->toSql(), 'modified_by' => $userId,
+                'version' => (int) $stored['version'] + 1];
+            foreach (array_keys($changes) as $field) {
+                $write->$field = $table->$field;
+            }
+            $db->updateObject('#__jem_events', $write, 'id', true);
+            $db->transactionCommit();
+        } catch (Throwable $error) {
+            $db->transactionRollback();
+            throw $error;
+        }
+        // Finder can implicitly commit SQL: notify it only after the event transaction has completed.
+        try {
+            PluginHelper::importPlugin('finder');
+            JemFactory::getDispatcher()->triggerEvent('onFinderAfterSave', ['com_jem.event', $table, false]);
+            $this->cleanCache();
+        } catch (Throwable $error) {
+            try {
+                \Joomla\CMS\Log\Log::add('ICS event ' . $id . ' saved; cache/index refresh failed: ' . $error->getMessage(),
+                    \Joomla\CMS\Log\Log::WARNING, 'com_jem.import');
+            } catch (Throwable $ignored) {
+                // A failed diagnostic must not report an already committed change as rolled back.
+            }
+        }
+        return $id;
+    }
+
+    /**
      * Method to save the form data.
      *
      * @param  $data array

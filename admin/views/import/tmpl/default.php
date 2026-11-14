@@ -166,7 +166,7 @@ $renderImportMappingBlock = function (array $preview, $inputName, array $jemFiel
     $profileTitle = (string) ($preview['profile_title'] ?? '');
     $staticName = preg_replace('/_mapping$/', '_static_values', $inputName);
 
-    if (!$sourceFields) {
+    if (!$sourceFields || !empty($preview['ics_review'])) {
         return;
     }
     ?>
@@ -381,7 +381,12 @@ $renderDynamicPreviewTable = function (array $preview, $context, array $fallback
                     ?>
                     <tr>
                         <td class="center" data-fixed="row-number"><?php echo (int) ($preview['preview_offset'] ?? 0) + (int) $index + 1; ?></td>
-                        <td data-fixed="status"><?php echo $renderImportStatus($statusText); ?></td>
+                        <td data-fixed="status">
+                            <?php echo $renderImportStatus($statusText); ?>
+                            <?php if (!empty($row['ics_review']['eligible'])) : ?>
+                                <label class="d-block"><input type="checkbox" name="ics_changes[]" value="<?php echo (int) $row['ics_selection']; ?>" /> <?php echo Text::_('COM_JEM_IMPORT_ICS_SELECT_CHANGE'); ?></label>
+                            <?php endif; ?>
+                        </td>
                         <td data-fixed="notes"><?php echo htmlspecialchars(implode('; ', (array) ($row['notes'] ?? array())), ENT_QUOTES, 'UTF-8'); ?></td>
                         <?php foreach ($recordFields as $field) : ?>
                             <td data-field="<?php echo htmlspecialchars($field, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $renderImportFieldValue($importData[$field] ?? '', $field, (array) $row); ?></td>
@@ -750,7 +755,11 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                         <p class="small"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_DATE_TIME_HELP'); ?></p>
                         <fieldset class="mb-3">
                             <legend class="h6"><?php echo Text::_('COM_JEM_IMPORT_ICS_WINDOW'); ?></legend>
+                            <p><?php echo Text::_('COM_JEM_IMPORT_ICS_REVIEW_POLICY'); ?></p>
                             <p class="small"><?php echo Text::_('COM_JEM_IMPORT_ICS_WINDOW_DESC'); ?></p>
+                            <label for="external_import_ics_source"><?php echo Text::_('COM_JEM_IMPORT_ICS_SOURCE'); ?></label>
+                            <input type="text" class="form-control" id="external_import_ics_source" name="external_import_ics_source" maxlength="200" value="<?php echo $this->escape($this->externalImportPreview['ics_source'] ?? ''); ?>" />
+                            <p class="small"><?php echo Text::_('COM_JEM_IMPORT_ICS_SOURCE_DESC'); ?></p>
                             <div class="jem-import-fields">
                                 <div class="jem-import-field">
                                     <label for="external_import_ics_from"><?php echo Text::_('COM_JEM_IMPORT_ICS_FROM'); ?></label>
@@ -788,6 +797,10 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                         <?php $renderImportMappingBlock((array) $this->externalCsvPreview, 'external_import_mapping', $eventMappingFields, 'external_import_profile'); ?>
                         <?php $renderImportPreviewButton('import.previewExternalImport', 'event-import', true); ?>
                         <?php $renderDynamicPreviewTable((array) $this->externalCsvPreview, 'events'); ?>
+                        <?php if (!empty($this->externalCsvPreview['ics_updates'])) : ?>
+                            <p><?php echo Text::_('COM_JEM_IMPORT_ICS_APPLY_DESC'); ?></p>
+                            <button type="button" class="btn btn-warning" onclick="JemImportSubmit('import.applyExternalIcsChanges', 'event-import');"><?php echo Text::_('COM_JEM_IMPORT_ICS_APPLY'); ?></button>
+                        <?php endif; ?>
                         <?php $renderPreviewActions('import.commitExternalImport', 'import.clearExternalImportPreview', 'event-import', $this->externalCsvPreview['valid_count'] ?? 0); ?>
                     </section>
                 <?php endif; ?>

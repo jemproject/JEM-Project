@@ -20,6 +20,7 @@ use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importics.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importicsreview.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importencoding.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importbudget.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/remotesource.php';
@@ -575,7 +576,10 @@ class JemControllerImport extends BaseController
         $options['language_label'] = $this->getLanguageLabel($options['language']);
 
         try {
+            $options['review_changes'] = true;
+            $options['ics_source'] = trim($input->post->getString('external_import_ics_source', ''));
             $preview = $this->buildExternalIcsPreview($file, $options);
+            $preview = $this->reviewExternalIcsPreview($preview);
             $preview = JemImportPreviewHelper::storePreview($preview, (int) $app->getIdentity()->id, 'events');
         } catch (RuntimeException $e) {
             $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
@@ -629,11 +633,12 @@ class JemControllerImport extends BaseController
         $model = $this->getModel('import');
         $result = $this->emptyExternalImportResult();
         $knownIcsHashes = $this->loadImportedIcsHashes();
+        $currentIcsIndex = $this->loadImportedIcsIndex();
         $duplicateCount = 0;
         ob_start();
         try {
             foreach (array_chunk($preview['records'], JemImportPreviewHelper::PAGE_SIZE) as $batch) {
-                $batch = $this->filterImportedIcsRecords($batch, $knownIcsHashes, $duplicateCount);
+                $batch = $this->filterImportedIcsRecords($batch, $knownIcsHashes, $duplicateCount, $currentIcsIndex);
                 if (!$batch) {
                     continue;
                 }
@@ -790,7 +795,10 @@ class JemControllerImport extends BaseController
                     (array) ($existingPreview['source_fields'] ?? array())
                 );
             } elseif ($extension === 'ics') {
+                $options['review_changes'] = true;
+                $options['ics_source'] = trim($input->post->getString('external_import_ics_source', ''));
                 $preview = $this->buildExternalIcsPreview($file, $options);
+                $preview = $this->reviewExternalIcsPreview($preview);
             } elseif ($extension === 'json') {
                 $preview = $this->buildExternalJsonPreview($file, $options);
             } elseif ($extension === 'xml') {
@@ -870,6 +878,67 @@ class JemControllerImport extends BaseController
 
         $app->setUserState('com_jem.import.active_preview', 'events');
         $this->setRedirect('index.php?option=com_jem&view=import#event-import', $preview['summary'], $preview['error_count'] ? 'warning' : 'message');
+    }
+
+    /**
+     * Apply explicitly selected changes from the current private ICS preview.
+     *
+     * @return void Redirect with per-record results; no booking cancellation or mail is sent.
+     */
+    public function applyExternalIcsChanges()
+    {
+        Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanImport();
+        $app = Factory::getApplication();
+        $preview = (array) $app->getUserState('com_jem.import.external_import.preview', []);
+        $selected = [];
+        $choices = $app->input->post->get('ics_changes', [], 'array');
+        foreach ($choices as $choice) {
+            if (!is_scalar($choice) || !preg_match('/^(0|[1-9][0-9]*)$/D', (string) $choice)
+                || count($choices) > JemImportPreviewHelper::PAGE_SIZE) {
+                $selected = [];
+                break;
+            }
+            $selected[(int) $choice] = true;
+        }
+        if (($preview['format'] ?? '') !== 'ics' || empty($preview['ics_updates']) || !$selected) {
+            $this->setRedirect('index.php?option=com_jem&view=import#event-import', Text::_('COM_JEM_IMPORT_ICS_REVIEW_SELECT_REQUIRED'), 'warning');
+            return;
+        }
+        $updated = 0;
+        $errors = 0;
+        $userId = (int) $app->getIdentity()->id;
+        $model = $this->getModel('event');
+        try {
+            foreach (JemImportPreviewHelper::getPayloadBatches($preview, $userId, 'records') as $batch) {
+                foreach ($batch as $record) {
+                    $selection = (int) ($record['_jem_ics_selection'] ?? -1);
+                    if (!isset($selected[$selection])) {
+                        continue;
+                    }
+                    unset($selected[$selection]);
+                    try {
+                        $id = $model->saveReviewedIcsChange($record);
+                        $updated++;
+                        $this->addImportLogEntry('external_ics', 'entity=events row=' . (int) ($record['_jem_source_line'] ?? 0)
+                            . ' id=' . $id . ' actor=' . $userId . ' outcome=UPDATED action=' . $record['_jem_ics_review']['action'], Log::INFO, false);
+                    } catch (Throwable $error) {
+                        $errors++;
+                        $this->addImportLogEntry('external_ics', 'entity=events id=' . (int) ($record['_jem_ics_review']['id'] ?? 0)
+                            . ' outcome=ERROR ' . $error->getMessage(), Log::ERROR, false);
+                        $app->enqueueMessage($error->getMessage(), 'warning');
+                    }
+                }
+            }
+            $errors += count($selected);
+        } catch (Throwable $error) {
+            $errors++;
+            $app->enqueueMessage($error->getMessage(), 'warning');
+        }
+        $app->setUserState('com_jem.import.external_import.preview', null);
+        JemImportPreviewHelper::deletePreview((string) ($preview['payload_token'] ?? ''), $userId);
+        $this->setRedirect('index.php?option=com_jem&view=import#event-import',
+            Text::sprintf('COM_JEM_IMPORT_ICS_REVIEW_RESULT', $updated, $errors), $errors ? 'warning' : 'message');
     }
 
     /**
@@ -967,6 +1036,7 @@ class JemControllerImport extends BaseController
         $result = $this->emptyExternalImportResult();
         $skippedCount = $remapOptions === null ? (int) ($preview['skipped_count'] ?? 0) : 0;
         $knownIcsHashes = $format === 'ics' ? $this->loadImportedIcsHashes() : array();
+        $currentIcsIndex = $format === 'ics' ? $this->loadImportedIcsIndex() : null;
         ob_start();
         try {
             $payloadKey = $remapOptions === null ? 'records' : 'source_records';
@@ -991,7 +1061,7 @@ class JemControllerImport extends BaseController
                 }
 
                 if ($format === 'ics') {
-                    $batch = $this->filterImportedIcsRecords($batch, $knownIcsHashes, $skippedCount);
+                    $batch = $this->filterImportedIcsRecords($batch, $knownIcsHashes, $skippedCount, $currentIcsIndex);
                     if (!$batch) {
                         continue;
                     }
@@ -2638,6 +2708,38 @@ class JemControllerImport extends BaseController
         return $known;
     }
 
+    /**
+     * Review an ICS preview without exposing stored content outside the actor's event permissions.
+     *
+     * @param array $preview Parsed external calendar preview.
+     * @return array Reviewed changes and safe new candidates.
+     */
+    protected function reviewExternalIcsPreview(array $preview): array
+    {
+        return JemImportIcsReview::preview($preview, $this->loadImportedIcsIndex(), true,
+            static function (array $stored, array $review): bool {
+                return JemHelperBackend::can('event', 'edit', (object) $stored)
+                    && (!isset($review['changes']['event_status']) || JemHelperBackend::can('event', 'edit.state', (object) $stored));
+            });
+    }
+
+    /**
+     * Load imported identities and comparison fields for review, preserving ambiguous matches.
+     *
+     * @return array Imported event index.
+     */
+    protected function loadImportedIcsIndex(): array
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $fields = array_merge(JemImportIcsReview::FIELDS, ['id', 'created_by', 'metadata', 'modified', 'version',
+            'recurrence_type', 'recurrence_first_id', 'series_id', 'article_id', 'event_schedule',
+            'pricing_mode', 'capacity_mode', 'venue_allocation_mode', 'venue_profile_id', 'timezone_mode', 'attribs']);
+        $fields = array_values(array_intersect($fields, array_keys($db->getTableColumns('#__jem_events'))));
+        $db->setQuery($db->getQuery(true)->select($db->quoteName($fields))->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('metadata') . ' LIKE ' . $db->quote('%jem_ics_uid_hash%')));
+        return JemImportIcsReview::index((array) $db->loadAssocList());
+    }
+
     protected function getImportedIcsHash($metadata): string
     {
         $decoded = json_decode((string) $metadata, true);
@@ -2646,11 +2748,36 @@ class JemControllerImport extends BaseController
         return preg_match('/^[a-f0-9]{64}$/', $hash) ? $hash : '';
     }
 
-    protected function filterImportedIcsRecords(array $records, array &$knownHashes, int &$skipped): array
+    /**
+     * Keep add-only imports separate from reviewed changes and cancellations.
+     *
+     * @param array $records Normalised rows from the stored preview.
+     * @param array $knownHashes Previously imported identities and identities seen in this batch.
+     * @param int $skipped Accumulated count of items left unchanged.
+     * @param array|null $currentIndex Current database identities for the commit-time check.
+     * @return array New records eligible for insertion.
+     */
+    protected function filterImportedIcsRecords(array $records, array &$knownHashes, int &$skipped, ?array $currentIndex = null): array
     {
         $remaining = array();
 
         foreach ($records as $record) {
+            // A preview is not a lock: recheck new candidates against imports made since preview.
+            if ($currentIndex !== null && ($record['_jem_ics_review']['action'] ?? 'new') === 'new') {
+                $targets = JemImportIcsReview::targets($record, $currentIndex);
+                $meta = JemImportIcsReview::metadata($record[7] ?? '');
+                $family = (string) ($meta['jem_ics_import']['family'] ?? '');
+                $record['_jem_ics_review'] = JemImportIcsReview::review($record, $targets[0] ?? null,
+                    $currentIndex['family'][$family] ?? $currentIndex['hash'][$family] ?? []);
+            }
+            if (!empty($record['_jem_ics_cancelled'])
+                || (isset($record['_jem_ics_review']) && $record['_jem_ics_review']['action'] !== 'new')) {
+                $skipped++;
+                $this->addImportLogEntry('external_ics', 'entity=events row=' . (int) ($record['_jem_source_line'] ?? 0)
+                    . ' outcome=SKIPPED reason=' . ($record['_jem_ics_review']['reason'] ?? 'CANCELLATION')
+                    . '; new-events-only import.', Log::WARNING, false);
+                continue;
+            }
             $hash = $this->getImportedIcsHash($record[7] ?? '');
             if ($hash !== '' && isset($knownHashes[$hash])) {
                 $skipped++;
@@ -3330,11 +3457,14 @@ class JemControllerImport extends BaseController
         foreach ($events as $event) {
             $line++;
             $row = $this->normaliseExternalIcsEvent($event, $options, $line);
+            $row['preview']['_jem_ics_invalid'] = !$row['valid'];
+            $row['record']['_jem_preview_row'] = count($rows);
+            $row['record'] = JemImportIcsReview::track($row['record'], $event, trim((string) ($options['ics_source'] ?? '')));
             $rows[] = $row['preview'];
 
             if ($row['valid']) {
                 $records[] = $row['record'];
-                $valid++;
+                $valid += empty($row['record']['_jem_ics_cancelled']) ? 1 : 0;
             } else {
                 $errors++;
                 $skipped++;
@@ -3350,6 +3480,7 @@ class JemControllerImport extends BaseController
             'has_errors' => $errors > 0,
             'catid' => (int) $options['catid'],
             'mode' => $options['mode'] ?? 'standard',
+            'ics_source' => trim((string) ($options['ics_source'] ?? '')),
             'ics_from' => (string) ($options['ics_from'] ?? ''),
             'ics_to' => (string) ($options['ics_to'] ?? ''),
             'type_id' => (int) $options['type_id'],
@@ -3955,6 +4086,15 @@ class JemControllerImport extends BaseController
                 'end' => $event['DTEND'][0]['raw'] ?? null,
             );
             $metadata = json_encode($values);
+        }
+        if (strtoupper((string) $this->getExternalIcsValue($event, 'STATUS')) === 'CANCELLED') {
+            // A cancellation may legally contain only UID/RECURRENCE-ID; it is never a new event.
+            return [
+                'valid' => $uid !== '',
+                'record' => [$title, null, null, null, null, '', '', $metadata, 0, '', null, null, '*', '', '_jem_source_line' => (int) $line],
+                'preview' => ['title' => $title ?: $uid, 'date_label' => '-', 'time_label' => '-', 'notes' => [],
+                    'status' => Text::_('COM_JEM_IMPORT_ICS_REVIEW_CANCELLED')],
+            ];
         }
         $start = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTSTART'));
         $end = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTEND'));
