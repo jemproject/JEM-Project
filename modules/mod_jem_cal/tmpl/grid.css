@@ -47,17 +47,24 @@ ul.mod_jemcalq_grid.daynames {
 }
 
 .mod_jemcalq_grid.days > li {
-  padding: 0 0 100% 0;
+  padding: 0;
   margin: 0;
   position: relative;
   border-radius: 50%;
   box-sizing: border-box;
 }
 
+.mod_jemcalq_grid.days > li:before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
 .mod_jemcalq_grid > li > .event,
 .mod_jemcalq_grid > li > .hasTooltip,
 .mod_jemcalq_grid > li > .hasTip {
   position: absolute;
+  inset: 0;
   display: flex;
   justify-content: center;
   align-items: center;
