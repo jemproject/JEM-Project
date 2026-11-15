@@ -10,6 +10,9 @@ final class AdminCodeContractsTest extends TestCase
 {
     /** @var array<string, array{string, string}> Approved format bridges and their targets. */
     private const CONTROLLER_BRIDGES = [
+        'attendee.json.php' => ['attendee.php', 'JemControllerAttendee'],
+        'event.json.php' => ['event.php', 'JemControllerEvent'],
+        'tickets.raw.php' => ['tickets.php', 'JemControllerTickets'],
         'imagehandler.json.php' => ['imagehandler.php', 'JemControllerImagehandler'],
         'jedreview.json.php' => ['jedreview.php', 'JemControllerJedreview'],
     ];

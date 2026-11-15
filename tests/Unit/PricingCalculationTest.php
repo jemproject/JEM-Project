@@ -29,7 +29,7 @@ final class PricingCalculationTest extends TestCase
         self::assertSame('', JemMoney::currencySymbol('invalid', 'es-ES'));
     }
 
-    /** @dataProvider invalidMoneyProvider */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidMoneyProvider')]
     public function testMoneyRejectsInexactOrInvalidInput($amount): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -88,7 +88,7 @@ final class PricingCalculationTest extends TestCase
         self::assertSame('0.01', $result->unitTax->decimal());
     }
 
-    /** @dataProvider zeroSemanticTypeProvider */
+    #[\PHPUnit\Framework\Attributes\DataProvider('zeroSemanticTypeProvider')]
     public function testNonTaxableSemanticTypesRemainDistinct(string $type): void
     {
         $result = JemTaxCalculator::calculate(

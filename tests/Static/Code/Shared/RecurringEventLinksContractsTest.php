@@ -28,7 +28,7 @@ final class RecurringEventLinksContractsTest extends TestCase
         self::assertIsInt($cleanup);
         self::assertLessThan($recurrenceBranch, $validation);
         self::assertLessThan($cleanup, $rootSave);
-        self::assertStringContainsString("saveLinks((int) \$event['id'], \$data['event_links'])", $model);
+        self::assertStringContainsString("saveLinks((int) \$event['id'], \$event['event_links'])", $model);
         self::assertStringContainsString('static public function copyEventLinks($sourceEventId, $targetEventId)', $helper);
         self::assertStringContainsString("'INSERT INTO ' . \$db->quoteName('#__jem_links')", $helper);
         self::assertStringContainsString("' WHERE ' . \$db->quoteName('event_id') . ' = ' . \$sourceEventId", $helper);

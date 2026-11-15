@@ -98,7 +98,7 @@ final class CustomEventSeriesContractsTest extends TestCase
 
         self::assertStringContainsString("->select(\$db->quoteName('root_event_id'))", $model);
         self::assertStringContainsString("\$customSeriesScope = \$customSeriesIsRoot ? 'all' : 'occurrence';", $model);
-        self::assertStringContainsString('propagateCustomSeriesFields($existingSeriesId, $savedId, $data, $cats, $backend)', $model);
+        self::assertStringContainsString('propagateCustomSeriesFields($existingSeriesId, $savedId, $data, $cats, $backend, $seriesSourceBefore)', $model);
         self::assertStringContainsString("'introtext', 'fulltext'", $model);
 
         foreach (array($adminView, $siteView) as $view) {

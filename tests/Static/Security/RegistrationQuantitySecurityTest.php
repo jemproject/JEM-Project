@@ -27,8 +27,8 @@ final class RegistrationQuantitySecurityTest extends TestCase
     {
         $service = (string) file_get_contents(JEM_TEST_ROOT . '/site/classes/registrationservice.class.php');
 
-        self::assertStringContainsString('$this->assertQuantityPolicy($after);', $service);
+        self::assertStringContainsString('$this->assertQuantityPolicy($after, $before);', $service);
         self::assertStringContainsString('JemRegistrationQuantity::assertStoredRow(', $service);
-        self::assertStringContainsString("array('minbookeduser', 'maxbookeduser')", $service);
+        self::assertStringContainsString("array('minbookeduser', 'maxbookeduser', 'event_status', 'published', 'publish_up', 'publish_down')", $service);
     }
 }

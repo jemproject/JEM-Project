@@ -17,17 +17,18 @@ final class EventDateValidationTest extends JoomlaTestCase
 {
     protected function setUp(): void
     {
-        self::bootJoomlaSite();
-
-        $language = Factory::getContainer()
-            ->get(LanguageFactoryInterface::class)
-            ->createLanguage('en-GB', false);
-        Factory::getApplication()->loadLanguage($language);
-        $language->load('com_jem', JEM_TEST_ROOT . '/site', 'en-GB', true);
+        // Use this checkout through installation-shaped paths, never mix installed JEM classes.
+        if (!is_file((string) getenv('JEM_TEST_JOOMLA_ROOT') . '/libraries/vendor/autoload.php')) {
+            self::markTestSkipped('Set JEM_TEST_JOOMLA_ROOT to Joomla.');
+        }
+        require JEM_TEST_ROOT . '/tests/Support/specialday_calendar_bootstrap.php';
 
         if (!class_exists('JemHelper')) {
             require_once JEM_TEST_ROOT . '/site/helpers/helper.php';
         }
+        // Capture validation diagnostics without writing to the installed site's logs.
+        (new ReflectionProperty(JemLog::class, 'loggerAdded'))->setValue(null, true);
+        \Joomla\CMS\Log\Log::addLogger(['logger' => 'callback', 'callback' => static function ($entry): void {}]);
     }
 
     public function testExactCalendarDateValidationRejectsRolloverDates(): void

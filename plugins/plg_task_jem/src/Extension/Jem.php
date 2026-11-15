@@ -13,6 +13,7 @@ use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
 use Joomla\Component\Scheduler\Administrator\Task\Status;
 use Joomla\Component\Scheduler\Administrator\Traits\TaskPluginTrait;
 use Joomla\Event\SubscriberInterface;
+use Joomla\CMS\Factory;
 
 defined('_JEXEC') or die;
 
@@ -63,7 +64,7 @@ final class Jem extends CMSPlugin implements SubscriberInterface
 
         try {
             require_once JPATH_SITE . '/components/com_jem/classes/invitationservice.class.php';
-            (new \JemInvitationService(\Joomla\CMS\Factory::getContainer()->get('DatabaseDriver')))->expire(100);
+            (new \JemInvitationService(Factory::getContainer()->get('DatabaseDriver')))->expire(100);
             $service = new \JemReminderService();
             PluginHelper::importPlugin('jem');
             $result = $service->processDue(function ($notificationId) use ($application) {

@@ -120,8 +120,8 @@ final class EventStatusIndicatorTest extends TestCase
         $wideDispatcher = (string) file_get_contents(
             JEM_TEST_ROOT . '/modules/mod_jem_wide/tmpl/responsive.php'
         );
-        self::assertStringContainsString("default_jem_eventslist_small.php", $wideDispatcher);
-        self::assertStringContainsString("default_jem_eventslist.php", $wideDispatcher);
+        self::assertStringContainsString("ModuleHelper::getLayoutPath('mod_jem_wide', 'default_jem_eventslist_small')", $wideDispatcher);
+        self::assertStringContainsString("ModuleHelper::getLayoutPath('mod_jem_wide', 'default_jem_eventslist')", $wideDispatcher);
     }
 
     public function testLegacyBlockImageContainersShrinkToTheRenderedImage(): void

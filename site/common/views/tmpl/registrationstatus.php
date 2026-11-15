@@ -17,10 +17,10 @@ $options = $report['options'];
 $escape = static fn ($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 $base = ['option' => 'com_jem', 'view' => 'registrationstatus'];
 require_once JPATH_SITE . '/components/com_jem/classes/invitationservice.class.php';
-$invitationService = new JemInvitationService(\Joomla\CMS\Factory::getContainer()->get('DatabaseDriver'));
-if ($invitationService->events(\Joomla\CMS\Factory::getApplication()->getIdentity())) {
-    echo '<p><a class="btn btn-primary" href="' . htmlspecialchars(\Joomla\CMS\Router\Route::_('index.php?option=com_jem&view=invitations'), ENT_QUOTES, 'UTF-8')
-        . '">' . \Joomla\CMS\Language\Text::_('COM_JEM_INV_TITLE') . '</a></p>';
+$invitationService = new JemInvitationService(Factory::getContainer()->get('DatabaseDriver'));
+if ($invitationService->events(Factory::getApplication()->getIdentity())) {
+    echo '<p><a class="btn btn-primary" href="' . htmlspecialchars(Route::_('index.php?option=com_jem&view=invitations'), ENT_QUOTES, 'UTF-8')
+        . '">' . Text::_('COM_JEM_INV_TITLE') . '</a></p>';
 }
 
 if (!$report['backend'] && Factory::getApplication()->input->getInt('Itemid') > 0) {

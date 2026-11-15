@@ -123,7 +123,7 @@ final class CalendarContactFiltersTest extends TestCase
             (string) file_get_contents(JEM_TEST_ROOT . '/site/views/annualcalendar/tmpl/responsive/default.php')
         );
         self::assertStringContainsString(
-            "include dirname(__DIR__) . '/timetable.php';",
+            "include is_file(dirname(__DIR__) . '/timetable.php')",
             (string) file_get_contents(JEM_TEST_ROOT . '/site/views/day/tmpl/responsive/timetable.php')
         );
 

@@ -27,7 +27,8 @@ final class AssociatedArticleDateTest extends TestCase
             self::assertNotEmpty($match);
             $methods .= str_replace(['protected function', '\\Joomla\\CMS\\Component\\ComponentHelper'], ['public function', 'Configuration'], $match[0]);
         }
-        eval('namespace ' . __NAMESPACE__ . '; class Model {' . $methods . '}');
+        eval('namespace ' . __NAMESPACE__ . '; use Joomla\\CMS\\Language\\LanguageFactoryInterface;'
+            . 'use ' . __NAMESPACE__ . '\\Configuration as ComponentHelper; class Model {' . $methods . '}');
         JemHelper::$format = '{title} | {date} | {date_iso} | {lang} | {time}';
         Configuration::$site = 'de-DE';
     }

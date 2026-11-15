@@ -10,6 +10,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Log\Log;
 
 require_once JPATH_SITE . '/components/com_jem/classes/invitationservice.class.php';
 
@@ -175,7 +176,7 @@ class JemControllerInvitations extends BaseController
             ? Text::_($error->getMessage()) : Text::_('COM_JEM_INV_ERROR');
         Factory::getApplication()->enqueueMessage($message, 'error');
         if (!($error instanceof DomainException)) {
-            JemHelper::addLogEntry('Invitation operation failed: ' . get_class($error), __METHOD__, \Joomla\CMS\Log\Log::ERROR);
+            JemHelper::addLogEntry('Invitation operation failed: ' . get_class($error), __METHOD__, Log::ERROR);
         }
     }
 }

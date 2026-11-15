@@ -30,6 +30,18 @@ final class PhpClassContract
         );
 
         $expected = "<?php defined('_JEXEC') or die; require_once __DIR__ . '/" . basename($target) . "';";
+        // These format bridges additionally reject every task outside the reviewed AJAX list.
+        $tasks = [
+            'attendee.json.php' => ['pricingoptions', 'relocationpreview', 'relocationconfirm'],
+            'event.json.php' => ['venueconfigurations', 'repairimage'],
+        ][basename($bridge)] ?? null;
+        if ($tasks !== null) {
+            $expected = "<?php defined('_JEXEC') or die; use Joomla\\CMS\\Factory; use Joomla\\CMS\\Language\\Text;"
+                . "if (!in_array(strtolower(Factory::getApplication()->input->getCmd('task', '')), "
+                . "['" . implode("', '", $tasks) . "'], true)) {"
+                . "throw new RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403); }"
+                . "require_once __DIR__ . '/" . basename($target) . "';";
+        }
         Assert::assertSame(
             self::tokens($expected),
             self::tokens((string) file_get_contents($bridge)),
@@ -49,6 +61,19 @@ final class PhpClassContract
     public static function assertClass(string $path, string $expectedClass): void
     {
         Assert::assertFileExists($path, 'Missing class implementation: ' . $path);
+        $relative = str_replace('\\', '/', substr($path, strlen(JEM_TEST_ROOT) + 1));
+        $shared = [
+            'admin/controllers/invitations.php' => 'controllers/invitations.php',
+            'admin/controllers/tickets.php' => 'controllers/tickets.php',
+            'admin/models/invitations.php' => 'models/invitations.php',
+            'admin/models/registrationstatus.php' => 'models/registrationstatus.php',
+        ];
+        if (isset($shared[$relative])) {
+            $expected = "<?php defined('_JEXEC') or die; require_once JPATH_SITE . '/components/com_jem/" . $shared[$relative] . "';";
+            Assert::assertSame(self::tokens($expected), self::tokens((string) file_get_contents($path)));
+            self::assertClass(JEM_TEST_ROOT . '/site/' . $shared[$relative], $expectedClass);
+            return;
+        }
         $tokens = self::tokens((string) file_get_contents($path));
         $classes = [];
         foreach ($tokens as $index => $token) {

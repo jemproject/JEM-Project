@@ -69,7 +69,7 @@ final class EditViewContractsTest extends TestCase
         $mainTab = strpos($template, "HTMLHelper::_('uitab.addTab', 'myTab', 'info'");
         $published = strpos($template, "renderfield('published')");
         $advancedTab = strpos($template, "HTMLHelper::_('uitab.addTab', 'myTab', 'advanced'");
-        $eventStatus = strpos($template, "renderfield('event_status')");
+        $eventStatus = strpos($template, "renderField('event_status')");
 
         self::assertNotFalse($mainTab);
         self::assertNotFalse($published);

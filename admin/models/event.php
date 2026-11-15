@@ -20,6 +20,8 @@ use Joomla\Filesystem\Path;
 use Joomla\String\StringHelper;
 
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\LanguageFactoryInterface;
 
 require_once __DIR__ . '/admin.php';
 require_once JPATH_SITE . '/components/com_jem/classes/registrationaccesspolicy.class.php';
@@ -1058,8 +1060,8 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
             $this->cleanCache();
         } catch (Throwable $error) {
             try {
-                \Joomla\CMS\Log\Log::add('ICS event ' . $id . ' saved; cache/index refresh failed: ' . $error->getMessage(),
-                    \Joomla\CMS\Log\Log::WARNING, 'com_jem.import');
+                Log::add('ICS event ' . $id . ' saved; cache/index refresh failed: ' . $error->getMessage(),
+                    Log::WARNING, 'com_jem.import');
             } catch (Throwable $ignored) {
                 // A failed diagnostic must not report an already committed change as rolled back.
             }
@@ -4340,12 +4342,12 @@ require_once JPATH_SITE . '/components/com_jem/classes/seriesinheritance.class.p
             || !checkdate((int) $parts[2], (int) $parts[3], (int) $parts[1])) {
             return '';
         }
-        $siteLanguage = (string) \Joomla\CMS\Component\ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
+        $siteLanguage = (string) ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
         $key = $language . ':' . $siteLanguage;
         static $formats = [];
         if (!isset($formats[$key])) {
             $formats[$key] = 'Y-m-d';
-            $factory = Factory::getContainer()->get(\Joomla\CMS\Language\LanguageFactoryInterface::class);
+            $factory = Factory::getContainer()->get(LanguageFactoryInterface::class);
             foreach (array_unique([$language, $siteLanguage, 'en-GB']) as $tag) {
                 if (!preg_match('/^[a-z]{2,3}(?:-[a-zA-Z0-9]{2,8})+$/D', $tag)) {
                     continue;

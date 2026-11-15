@@ -9,6 +9,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Multilanguage;
 
 require_once __DIR__ . '/registrationaccesspolicy.class.php';
 
@@ -369,7 +370,7 @@ final class JemReminderService
             ? JemNotificationTemplateService::translateWithEnglishFallback((string) $definition->title, $language->resolved)
             : (string) $definition->title;
         // The recipient language must be carried into URLs before the mail snapshot is saved.
-        $linkLanguage = \Joomla\CMS\Language\Multilanguage::isEnabled()
+        $linkLanguage = Multilanguage::isEnabled()
             ? '&lang=' . rawurlencode((string) $language->resolved)
             : '';
         $values = array(

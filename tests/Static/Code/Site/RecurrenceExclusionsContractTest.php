@@ -30,7 +30,7 @@ final class RecurrenceExclusionsContractTest extends TestCase
         $store = strpos($source, '$new_event->store()', $guard);
         self::assertGreaterThan($guard, $store);
         self::assertStringContainsString("(int) \$recurrence_row['first_id']", substr($source, strpos($source, '$policyQuery'), 250));
-        $excluded = substr($source, strpos($source, 'if ($excluded)'), $store - strpos($source, 'if ($excluded)'));
+        $excluded = substr($source, strpos($source, 'if ($excluded || in_array('), $store - strpos($source, 'if ($excluded || in_array('));
         self::assertStringContainsString('calculate_recurrence($recurrence_row)', $excluded);
         self::assertStringContainsString('continue;', $excluded);
         self::assertStringNotContainsString("['counter']++", $excluded);
@@ -44,6 +44,6 @@ final class RecurrenceExclusionsContractTest extends TestCase
         self::assertStringNotContainsString('attribs', $fields[1]);
         self::assertStringContainsString("\$data['attribs']['recurrence_exclusions'] = \$exclusions", $source);
         self::assertStringContainsString('array_diff($exclusions, $previousExclusions, array_keys($availableExclusions))', $source);
-        self::assertStringContainsString('A past root may be outside', $source);
+        self::assertStringContainsString('$events = [$data];', $source);
     }
 }

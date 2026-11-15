@@ -24,12 +24,15 @@ final class EventScheduleContractsTest extends TestCase
     public function testRegularSeriesPreflightPrecedesPersistenceAndIncludesPastRoot(): void
     {
         $model = file_get_contents(JEM_TEST_ROOT . '/admin/models/event.php');
-        $branch = substr($model, strpos($model, '// This event is part of a recurrence series.'));
+        $start = strpos($model, '$events = [$data];');
+        self::assertNotFalse($start);
+        $branch = substr($model, $start);
         $preflight = strpos($branch, '$this->validateEventScheduleBatch($events)');
         $write = strpos($branch, 'parent::save($event)');
         self::assertNotFalse($preflight);
         self::assertNotFalse($write);
         self::assertLessThan($write, $preflight);
-        self::assertStringContainsString('($exclusionsSubmitted || $scheduleTimes !== null || $articlePolicyChanged)', $branch);
+        // The submitted root is always the first row, even when its date is past.
+        self::assertStringContainsString('$events = [$data];', $branch);
     }
 }

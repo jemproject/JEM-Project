@@ -17,6 +17,9 @@ use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Language;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\User\UserFactoryInterface;
 
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
@@ -1376,11 +1379,11 @@ class plgJemMailer extends CMSPlugin
         }
         $change = json_decode($history->change_snapshot, true, 512, JSON_THROW_ON_ERROR);
         $service = new JemNotificationService($db);
-        $owner = !empty($row->uid) ? Factory::getContainer()->get(\Joomla\CMS\User\UserFactoryInterface::class)->loadUserById((int) $row->uid) : null;
+        $owner = !empty($row->uid) ? Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $row->uid) : null;
         $email = $owner ? $owner->email : $row->guest_email;
         $name = $owner ? $owner->name : $row->guest_name;
         $language = $service->resolveRecipientLanguage((int) $row->uid, $email);
-        $lang = \Joomla\CMS\Language\Language::getInstance($language->resolved);
+        $lang = Language::getInstance($language->resolved);
         $lang->load('com_jem', JPATH_SITE, 'en-GB', true);
         $lang->load('com_jem', JPATH_SITE, $language->resolved, true);
         require_once JPATH_SITE . '/components/com_jem/classes/relocationnotice.class.php';
@@ -1434,7 +1437,7 @@ class plgJemMailer extends CMSPlugin
         }
         $row = reset($rows);
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $owner = !empty($row->uid) ? Factory::getContainer()->get(\Joomla\CMS\User\UserFactoryInterface::class)->loadUserById((int) $row->uid) : null;
+        $owner = !empty($row->uid) ? Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $row->uid) : null;
         $email = $owner ? $owner->email : $row->guest_email;
         $name = $owner ? $owner->name : $row->guest_name;
         $service = new JemNotificationService();
@@ -1520,7 +1523,7 @@ class plgJemMailer extends CMSPlugin
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
         $row = $db->setQuery('SELECT * FROM #__jem_register WHERE id=' . (int) $spec->registration_id)->loadObject();
-        $owner = Factory::getContainer()->get(\Joomla\CMS\User\UserFactoryInterface::class)->loadUserById((int) $spec->recipient_user_id);
+        $owner = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById((int) $spec->recipient_user_id);
         if (!$row || (int) $row->revision !== (int) $spec->revision || (int) $row->uid !== (int) $owner->id
             || (int) $row->status !== 1 || (int) $row->waiting || (int) $owner->block
             || strcasecmp(trim($receiver), trim((string) $owner->email)) !== 0) {
@@ -1553,7 +1556,7 @@ class plgJemMailer extends CMSPlugin
         $values = (array) $spec->values;
         // Build recipient-language links when rendering each persisted notification.
         // Preserve a possible second line containing online-meeting details.
-        if (\Joomla\CMS\Language\Multilanguage::isEnabled() && (int) $spec->event_id > 0) {
+        if (Multilanguage::isEnabled() && (int) $spec->event_id > 0) {
             if (!empty($values['event_url'])) {
                 $split = strpos((string) $values['event_url'], "\n");
                 $extra = $split === false ? '' : substr((string) $values['event_url'], $split);

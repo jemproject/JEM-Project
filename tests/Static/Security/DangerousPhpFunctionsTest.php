@@ -10,6 +10,8 @@ final class DangerousPhpFunctionsTest extends TestCase
      * Existing reviewed uses. New uses should be reviewed before being added here.
      */
     private const ALLOWED_CALLS = array(
+        // Private PDF bytes: strict base64 decoding and SHA-256 integrity verification.
+        'plugins/plg_jem_mailer/mailer.php:base64_decode',
         'admin/controllers/source.php:base64_decode',
         'admin/models/source.php:base64_decode',
         'site/classes/iCalcreator.class.php:unserialize',

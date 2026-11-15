@@ -8,6 +8,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\Database\DatabaseDriver;
+use Joomla\CMS\Language\Text;
 
 require_once __DIR__ . '/money.class.php';
 require_once __DIR__ . '/pricingcountry.class.php';
@@ -710,7 +711,7 @@ final class JemPricingQuoteService
         if ($statusMessage !== '') {
             throw new JemPricingQuoteException(
                 'registration_closed',
-                \Joomla\CMS\Language\Text::_($statusMessage)
+                Text::_($statusMessage)
             );
         }
 

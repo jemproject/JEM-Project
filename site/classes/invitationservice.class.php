@@ -9,6 +9,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\CMS\Language\Text;
 
 require_once __DIR__ . '/invitationpolicy.class.php';
 require_once __DIR__ . '/invitationaccess.class.php';
@@ -193,8 +194,8 @@ final class JemInvitationService
                 }
                 $message = $this->availabilityMessage($events[$id]);
                 if ($message !== '') {
-                    throw new DomainException(\Joomla\CMS\Language\Text::sprintf(
-                        'COM_JEM_EVENT_REGISTRATION_EVENT_MESSAGE', (int) $id, \Joomla\CMS\Language\Text::_($message)
+                    throw new DomainException(Text::sprintf(
+                        'COM_JEM_EVENT_REGISTRATION_EVENT_MESSAGE', (int) $id, Text::_($message)
                     ));
                 }
             }

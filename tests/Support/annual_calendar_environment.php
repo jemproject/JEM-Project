@@ -295,3 +295,8 @@ final class HTMLHelper
         return (new DateTimeImmutable($date))->format($format);
     }
 }
+
+// The real navigation helper uses Joomla's translation boundary.
+if (!class_exists('Joomla\\CMS\\Language\\Text', false)) {
+    class_alias(Text::class, 'Joomla\\CMS\\Language\\Text');
+}

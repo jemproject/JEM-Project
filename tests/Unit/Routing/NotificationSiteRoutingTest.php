@@ -104,8 +104,10 @@ final class NotificationSiteRoutingTest extends TestCase
     public function testMailerCallSitesUseTheSharedSiteRouter(): void
     {
         $source = file_get_contents(JEM_TEST_ROOT . '/plugins/plg_jem_mailer/mailer.php');
-        self::assertSame(4, substr_count($source, 'JEMHelperRoute::getAbsoluteSiteRoute(JEMHelperRoute::getEventRoute($event->slug))'));
-        self::assertSame(1, substr_count($source, 'JEMHelperRoute::getAbsoluteSiteRoute(JEMHelperRoute::getVenueRoute($venue->slug))'));
+        self::assertSame(3, substr_count($source, 'JEMHelperRoute::getAbsoluteSiteRoute(JEMHelperRoute::getEventRoute($event->slug))'));
+        self::assertStringContainsString("JEMHelperRoute::getAbsoluteSiteRoute(\$kind === 'event'", $source);
+        self::assertStringContainsString('JEMHelperRoute::getEventRoute($item->slug)', $source);
+        self::assertStringContainsString('JEMHelperRoute::getVenueRoute($item->slug)', $source);
         self::assertDoesNotMatchRegularExpression('/Route::_\(\$uri->root\(\)/', $source);
         if (preg_match('/^    private function _reservationUrl\([^\n]*\n.*?^    }/ms', $source, $method)) {
             eval('namespace ' . __NAMESPACE__ . '; use ' . __NAMESPACE__ . '\\AbsoluteSiteRouteHarness as JEMHelperRoute;'
@@ -146,7 +148,7 @@ final class NotificationSiteRoutingTest extends TestCase
         foreach (['event_url' => 'event&id=123', 'reservation_url' => 'registration&id=67'] as $key => $destination) {
             self::assertSame(1, preg_match('/\x27' . $key . '\x27 => ([^\r\n]+),/', $source, $match));
             $run = eval('namespace ' . __NAMESPACE__ . '; use ' . __NAMESPACE__ . '\\AbsoluteSiteRouteHarness as JEMHelperRoute;'
-                . 'return static function () { $registration = (object) ["event_id" => 123, "registration_id" => 67];'
+                . 'return static function () { $linkLanguage = ""; $registration = (object) ["event_id" => 123, "registration_id" => 67];'
                 . 'return ' . $match[1] . '; };');
             $run();
             self::assertSame('index.php?option=com_jem&view=' . $destination, end(NotificationRouteBoundary::$calls)[1]);

@@ -20,6 +20,9 @@ final class NetworkAndLatencyGuardrailTest extends TestCase
         'media/js/recurrence-change.js:fetch',
         // Same-origin cancellation preview with token, ownership and confirmation checks.
         'media/js/registration-cancellation.js:fetch',
+        // Local ticket operations and relocation preview/confirm; POST with CSRF and ACL checks.
+        'media/js/ticket-desk.js:fetch',
+        'media/js/registration-relocation.js:fetch',
         'media/js/attachments.js:fetch',
         // Same-origin POST to the CSRF/ACL-protected image filename check; no upload.
         'media/js/image-filename-policy.js:fetch',

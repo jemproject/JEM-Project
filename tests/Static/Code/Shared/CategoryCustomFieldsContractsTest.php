@@ -24,7 +24,7 @@ final class CategoryCustomFieldsContractsTest extends TestCase
 
         self::assertStringContainsString('JemCategoryCustomFields::filterEventData($data, $cats);', $eventModel);
         self::assertLessThan(
-            strpos($eventModel, '$saved = parent::save($data);'),
+            strpos($eventModel, 'parent::save($data)', strpos($eventModel, 'public function save($data)')),
             strpos($eventModel, 'JemCategoryCustomFields::filterEventData($data, $cats);')
         );
         self::assertStringContainsString("unset(\$data[\$fieldName]);", $helper);

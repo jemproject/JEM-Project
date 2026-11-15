@@ -25,7 +25,9 @@ final class AttendeeStatusDisplayTest extends TestCase
                 foreach ([0, 1] as $enabled) {
                     foreach ([false, true] as $canChange) {
                         foreach ([false, true] as $isPriced) {
-                            yield [$status, $waiting, $enabled, $canChange, $isPriced];
+                            foreach ([0, 10] as $capacity) {
+                                yield [$status, $waiting, $enabled, $canChange, $isPriced, $capacity];
+                            }
                         }
                     }
                 }
@@ -34,12 +36,13 @@ final class AttendeeStatusDisplayTest extends TestCase
     }
 
     #[DataProvider('registrations')]
-    public function testStoredStatusIsDisplayedWithoutEnablingNewActions(
+    public function testStoredStatusAndManualPromotionRespectCapacityAndPermissions(
         int $status,
         int $waiting,
         int $enabled,
         bool $canChange,
-        bool $isPriced
+        bool $isPriced,
+        int $capacity
     ): void {
         foreach ([
             'admin/views/attendees/tmpl/default.php',
@@ -57,7 +60,7 @@ final class AttendeeStatusDisplayTest extends TestCase
             $view = new class {
                 public object $event;
             };
-            $view->event = (object) ['waitinglist' => $enabled];
+            $view->event = (object) ['waitinglist' => $enabled, 'maxplaces' => $capacity];
             $run = function () use ($fragment, $status, $waiting, $canChange, $isPriced): void {
                 $row = (object) ['id' => 10, 'status' => $status, 'waiting' => $waiting];
                 $i = 0;
@@ -67,7 +70,8 @@ final class AttendeeStatusDisplayTest extends TestCase
             $run->call($view);
             $logicalStatus = $status === 1 && $waiting === 1 ? 2 : $status;
             $pricedReadOnly = $isPriced && str_contains($fragment, '!$isPriced');
-            $expectedChange = (bool) $enabled
+            // #2549: closing the waiting list does not prevent manual promotion of existing rows.
+            $expectedChange = ((bool) $enabled || ($logicalStatus === 2 && $capacity > 0))
                 && (str_starts_with($path, 'site/') || ($canChange && !$pricedReadOnly));
             self::assertSame([[$logicalStatus, $expectedChange]], AttendeeStatusRecorder::$calls, $path);
         }

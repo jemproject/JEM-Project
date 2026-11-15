@@ -8,7 +8,7 @@ require_once JEM_TEST_ROOT . '/admin/classes/spaceavailability.class.php';
 
 final class SpaceAvailabilityIntervalTest extends TestCase
 {
-    /** @dataProvider overlapProvider */
+    #[\PHPUnit\Framework\Attributes\DataProvider('overlapProvider')]
     public function testHalfOpenUtcIntervals(string $aStart, string $aEnd, string $bStart, string $bEnd, bool $expected): void
     {
         self::assertSame($expected, JemSpaceAvailabilityService::intervalsOverlap($aStart, $aEnd, $bStart, $bEnd));

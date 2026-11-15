@@ -10,6 +10,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Log\Log;
 
 require_once JPATH_SITE . '/components/com_jem/classes/ticketservice.class.php';
 
@@ -64,7 +65,7 @@ class JemControllerTickets extends BaseController
             echo json_encode(['success' => false, 'message' => Text::_($error->getMessage())]);
         } catch (Throwable $error) {
             http_response_code(500);
-            JemHelper::addLogEntry('Tickets operation failed: ' . get_class($error), __METHOD__, \Joomla\CMS\Log\Log::ERROR);
+            JemHelper::addLogEntry('Tickets operation failed: ' . get_class($error), __METHOD__, Log::ERROR);
             echo json_encode(['success' => false, 'message' => Text::_('COM_JEM_TK_ERROR')]);
         }
         $app->close();

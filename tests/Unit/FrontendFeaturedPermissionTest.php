@@ -141,6 +141,9 @@ final class FrontendFeaturedPermissionTest extends TestCase
     public function testProductionSaveRoutesInvokeTheGuardBeforeWritingOrDiffing(): void
     {
         $source = file_get_contents(JEM_TEST_ROOT . '/admin/models/event.php');
+        $save = strpos($source, 'public function save($data)');
+        self::assertNotFalse($save);
+        $source = substr($source, $save);
         $early = strpos($source, 'if (!$backend && !$this->protectFrontendFeaturedData($data, $cats, $task))');
         self::assertNotFalse($early);
         self::assertSame(1, preg_match('/\$(?:fullDiff|diff) = array_udiff_assoc\(/', $source, $comparison, PREG_OFFSET_CAPTURE));
@@ -151,7 +154,7 @@ final class FrontendFeaturedPermissionTest extends TestCase
         $guard = strpos($source, '!$backend && !$this->protectFrontendFeaturedData($event, $eventCats)', $loop);
         self::assertNotFalse($guard);
         self::assertLessThan(strpos($source, 'parent::save($event)', $loop), $guard);
-        self::assertSame(2, substr_count($source, 'if (!$backend && !$this->protectFrontendFeaturedData($eventData, $categories))'));
+        self::assertSame(2, preg_match_all('/!\$backend && !\$this->protectFrontendFeaturedData\(\$eventData, \$(?:categories|eventCategories)\)/', $source));
     }
 
     public function testFormDisablesFeaturedForNewEventsAndNonPublishers(): void

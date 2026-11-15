@@ -53,7 +53,7 @@ trait JemRegistrationStatusView
         }
         $assets->registerAndUseScript('com_jem.ticket-desk', 'com_jem/ticket-desk.js', ['version' => (string) filemtime(JPATH_ROOT . '/media/com_jem/js/ticket-desk.js')], ['type' => 'module']);
 
-        $assets->registerAndUseStyle('com_jem.registration-status', 'com_jem/registration-status.css', ['version' => (string) filemtime(JPATH_ROOT . '/media/com_jem/css/registration-status.css')]);
+        JemHelper::loadCss('registration-status');
         $assets->registerAndUseScript('com_jem.registration-status', 'com_jem/registration-status.js', ['version' => (string) filemtime(JPATH_ROOT . '/media/com_jem/js/registration-status.js')], ['defer' => true]);
     }
 }

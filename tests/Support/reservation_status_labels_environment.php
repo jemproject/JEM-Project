@@ -136,7 +136,7 @@ final class View
     {
         $path = $backend ? '/admin/views/notificationhistory/tmpl/default.php' : '/site/views/registration/tmpl/default.php';
         $code = file_get_contents(JEM_TEST_ROOT . $path);
-        foreach (['HTML\\HTMLHelper', 'Language\\Text', 'Router\\Route'] as $class) {
+        foreach (['HTML\\HTMLHelper', 'Language\\Text', 'Router\\Route', 'Uri\\Uri'] as $class) {
             $code = str_replace('use Joomla\\CMS\\' . $class . ';', '', $code);
         }
         $code = str_replace('\\Joomla\\CMS\\Uri\\Uri', 'Uri', $code);

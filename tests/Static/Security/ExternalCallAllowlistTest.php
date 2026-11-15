@@ -20,6 +20,7 @@ final class ExternalCallAllowlistTest extends TestCase
         'docs.joomla.org',
         'docs-next.joomla.org',
         'en.wikipedia.org',
+        'example.org', // Non-delivered notification-template preview data.
         'api.worldbank.org',
         'bugs.php.net',
         'erikastokes.com',
@@ -60,6 +61,7 @@ final class ExternalCallAllowlistTest extends TestCase
         'www.google',
         'www.google.com',
         'www.ietf.org',
+        'www.rfc-editor.org', // RFC 5545 references in the native ICS implementation.
         'www.joomla.org',
         'www.joomlaeventmanager.net',
         'www.micronetwork.de',

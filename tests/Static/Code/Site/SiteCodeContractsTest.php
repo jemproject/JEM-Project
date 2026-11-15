@@ -10,6 +10,7 @@ final class SiteCodeContractsTest extends TestCase
 {
     /** @var array<string, array{string, string}> Approved format bridges and their targets. */
     private const CONTROLLER_BRIDGES = [
+        'tickets.raw.php' => ['tickets.php', 'JemControllerTickets'],
         'imagefilename.json.php' => ['imagefilename.php', 'JemControllerImagefilename'],
     ];
 

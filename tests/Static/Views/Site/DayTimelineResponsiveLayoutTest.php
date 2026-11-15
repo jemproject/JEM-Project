@@ -36,11 +36,10 @@ final class DayTimelineResponsiveLayoutTest extends TestCase
     {
         $default = file_get_contents(JEM_TEST_ROOT . '/site/views/day/tmpl/timeline.php');
         $responsive = file_get_contents(JEM_TEST_ROOT . '/site/views/day/tmpl/responsive/timeline.php');
-        // The responsive template is one directory deeper. Verify both include
-        // paths before comparing layout code; their spelling must not be identical.
-        self::assertStringContainsString("__DIR__ . '/../../../helpers/calendardaylink.php'", $default);
-        self::assertStringContainsString("__DIR__ . '/../../../../helpers/calendardaylink.php'", $responsive);
-        $responsive = str_replace('/../../../../helpers/calendardaylink.php', '/../../../helpers/calendardaylink.php', $responsive);
+        // Installation-root includes also work when Joomla loads a template override.
+        foreach ([$default, $responsive] as $template) {
+            self::assertStringContainsString("JPATH_SITE . '/components/com_jem/helpers/calendardaylink.php'", $template);
+        }
         self::assertSame(str_replace("\r\n", "\n", $default), str_replace("\r\n", "\n", $responsive));
     }
 }

@@ -10,6 +10,7 @@ final class DebugArtifactTest extends TestCase
         'media/js/leaflet.js',
         'media/js/leaflet-fullscreen.js',
         'media/js/lightbox.min.js',
+        'media/js/qr-scanner/qr-scanner.min.js', // Upstream decoder diagnostic, not a JEM debug statement.
     );
 
     private const ALLOWED_PHP_DEBUG_HELPERS = array(
