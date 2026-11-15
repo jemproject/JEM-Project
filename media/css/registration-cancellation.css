@@ -11,3 +11,56 @@
 .jem-cancellation-dialog::backdrop {
     background: rgb(0 0 0 / 45%);
 }
+
+#jem .jem-cancellation-areas {
+    width: fit-content;
+    max-width: min(36rem, 100%);
+    min-width: 0;
+    margin: 1rem auto;
+    text-align: left;
+}
+
+#jem .jem-cancellation-areas legend {
+    float: none;
+    width: 100%;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: inherit;
+}
+
+#jem .jem-cancellation-areas .jem-cancellation-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    margin: 0 0 0.75rem;
+}
+
+#jem .jem-cancellation-area > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+#jem .jem-cancellation-area > input[type="number"] {
+    flex: 0 0 4.5rem;
+    width: 4.5rem;
+    min-width: 0;
+    margin: 0;
+}
+
+#jem #jem_send_attend {
+    margin-top: 1rem !important;
+}
+
+#jem #cancelplaces[readonly] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+#jem #cancelplaces[readonly]::-webkit-inner-spin-button,
+#jem #cancelplaces[readonly]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

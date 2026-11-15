@@ -1465,7 +1465,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                             echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
                         }
                         echo $this->loadTemplate('attendees');
-                        if($showCancellationInfo && $this->dateUnregistationUntil) {
+                        if($showCancellationInfo && $this->dateUnregistationUntil && empty($this->cancellationDeadlineRendered)) {
                             echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2')) . '</dd>';
                         }
                         break;
@@ -1485,7 +1485,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                             echo $this->loadTemplate('attendees');
 
                             //Event with date starting annulation
-                            if($showCancellationInfo && $this->dateUnregistationUntil) {
+                            if($showCancellationInfo && $this->dateUnregistationUntil && empty($this->cancellationDeadlineRendered)) {
                                 echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2')) . '</dd>';
                             }
                         }else if($this->dateRegistationUntil !== false && $this->dateRegistationUntil < $timeNow) {
@@ -1493,7 +1493,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                             echo $this->loadTemplate('attendees');
 
                             //Event with date starting annulation
-                            if($showCancellationInfo && $this->dateUnregistationUntil) {
+                            if($showCancellationInfo && $this->dateUnregistationUntil && empty($this->cancellationDeadlineRendered)) {
                                 echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2')) . '</dd>';
                             }
                         } else {

@@ -37,7 +37,7 @@ $canFinance = Joomla\CMS\Factory::getApplication()->getIdentity()->authorise('je
     </div>
 </div>
 
-<?php if (JemHelperBackend::canManage('jem.notifications.resend')) : ?>
+<?php if (Joomla\CMS\Factory::getApplication()->isClient('administrator') && JemHelperBackend::canManage('jem.notifications.resend')) : ?>
     <?php $latestRelocation = Joomla\CMS\Factory::getContainer()->get('DatabaseDriver')
         ->setQuery('SELECT COUNT(*) FROM #__jem_register_history WHERE registration_id=' . (int) $this->row->id
             . ' AND revision=' . (int) $this->row->revision . " AND action='relocated'")->loadResult(); ?>

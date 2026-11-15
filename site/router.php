@@ -63,6 +63,7 @@ class JemRouter extends RouterView
             'categories',
             'category',
             'attendees',
+            'editattendee',
             'myattendances',
             'myevents',
             'mytimeline',

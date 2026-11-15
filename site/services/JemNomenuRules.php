@@ -232,13 +232,14 @@ class JemNomenuRules implements RulesInterface
                 }
                 break;
 
+            case 'editattendee':
             case 'attendees':
                 {
                     if(isset($segments[1])){
                         $id = explode(':', $segments[1]);
                         $vars['id'] = $id[0];
                     }
-                    $vars['view'] = 'attendees';
+                    $vars['view'] = $segments[0];
                 }
                 break;
 

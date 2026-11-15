@@ -104,6 +104,75 @@ final class RegistrationRelocationTransactionTest extends TestCase
         self::assertSame(0, (int) $this->db->setQuery('SELECT COUNT(*) FROM #__jem_ticket_operations')->loadResult());
     }
 
+    /** @return void Frontend event editors can move only reservations in their own event scope. */
+    public function testFrontendEditorUsesEventScopeAndRecordsItsSource(): void
+    {
+        $actor = new class {
+            public int $id = 99;
+            public bool $allowed = true;
+            public function authorise($permission, $asset): bool { return false; }
+            public function can($action, $type, $id, $owner): bool
+            {
+                return $this->allowed && $action === 'edit' && $type === 'event' && $id === 7;
+            }
+        };
+        $service = new JemRegistrationRelocation($this->db, 'site.attendee.relocation');
+        $input = ['areas' => ['area:2' => 1], 'reason' => 'Frontend holder request'];
+        $review = $service->preview(41, $input, $actor);
+        $actor->allowed = false;
+        $this->rejected(fn () => $service->confirm(41, $input, $actor, $review['fingerprint'], JemRegistrationIdentity::generateOperationReference()), 'JERROR_ALERTNOAUTHOR');
+        self::assertSame(1, (int) $this->row()->revision);
+        $actor->allowed = true;
+        $result = $service->confirm(41, $input, $actor, $review['fingerprint'], JemRegistrationIdentity::generateOperationReference());
+        self::assertSame(2, (int) $result->after->revision);
+        self::assertSame('site.attendee.relocation', $this->db->setQuery('SELECT source FROM #__jem_register_history')->loadResult());
+    }
+
+    /** @return void The writer protects admission after acquiring locks, while allowing a note edit. */
+    public function testFrontendAdmissionProtectionRejectsStructuralChangesAtomically(): void
+    {
+        $this->ledger('admission', null, 1);
+        $before = $this->row();
+        $service = new JemRegistrationService($this->db);
+        $cancel = clone $before;
+        $cancel->status = -1;
+        $options = ['protectAdmission' => true, 'expectedRevision' => 1, 'respectPlaces' => true,
+            'requireExisting' => true, 'actorId' => 99, 'source' => 'site.attendee.edit'];
+        $this->rejected(fn () => $service->save($cancel, $options), 'COM_JEM_RELOCATION_ALREADY_ENTERED');
+        self::assertEquals($before, $this->row());
+        self::assertSame(0, (int) $this->db->setQuery('SELECT COUNT(*) FROM #__jem_register_history')->loadResult());
+        $note = clone $before;
+        $note->comment = 'Admission already checked';
+        $saved = $service->save($note, $options);
+        self::assertSame('Admission already checked', $saved->after->comment);
+        self::assertSame(1, (int) $saved->after->places);
+    }
+
+    /** @return void Free places include one's own confirmed allocation, but exclude waiting/cancelled demand. */
+    public function testDisplayedAreaAvailabilityDiffersFromEditableCapacity(): void
+    {
+        $service = new JemRegistrationService($this->db);
+        $options = array_column($service->capacityOptions(7, 41)->options, null, 'key');
+        self::assertSame(10, $options['area:1']['remaining']);
+        self::assertSame(9, $options['area:1']['free_remaining']);
+        self::assertSame(1, $options['area:1']['current_quantity']);
+        foreach ([[42,1,1,4],[43,-1,0,4],[44,1,0,2]] as [$id,$status,$waiting,$quantity]) {
+            $this->insert('register', ['id'=>$id,'event'=>7,'uid'=>$id,'places'=>$quantity,'status'=>$status,
+                'waiting'=>$waiting,'uregdate'=>'2026-11-15 10:00:00','uip'=>'','comment'=>'',
+                'reference'=>JemRegistrationIdentity::generateRegistrationReference(),'revision'=>1]);
+            $this->insert('register_capacity_allocations', ['register_id'=>$id,'registration_revision'=>1,
+                'event_id'=>7,'venue_capacity_area_id'=>1,'venue_layout_id'=>1,'venue_layout_revision'=>1,
+                'area_code'=>'A','area_name'=>'Area A','space_code'=>'hall','space_name'=>'Hall','quantity'=>$quantity]);
+        }
+        $edited = array_column($service->capacityOptions(7,41)->options,null,'key');
+        $new = array_column($service->capacityOptions(7)->options,null,'key');
+        self::assertSame(8,$edited['area:1']['remaining']);
+        self::assertSame(7,$edited['area:1']['free_remaining']);
+        self::assertSame(7,$new['area:1']['free_remaining']);
+        self::assertSame(7,$new['area:1']['remaining']);
+        self::assertSame(10,$edited['area:2']['free_remaining']);
+    }
+
     public function testStaleAndFullDestinationLeaveEverythingUntouched(): void
     {
         $service = new JemRegistrationRelocation($this->db);

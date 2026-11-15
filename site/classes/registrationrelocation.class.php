@@ -13,8 +13,11 @@ require_once __DIR__ . '/featurepolicy.class.php';
 /** Reviewed, atomic relocation within one event; no new reservation or payment records. */
 final class JemRegistrationRelocation
 {
-    /** @param object $db Joomla database connection used for reviews and atomic writes. */
-    public function __construct(private readonly object $db)
+    /**
+     * @param object $db Joomla database connection used for reviews and atomic writes.
+     * @param string $source Trusted caller name recorded in reservation history.
+     */
+    public function __construct(private readonly object $db, private readonly string $source = 'administrator.attendee.relocation')
     {
     }
 
@@ -49,11 +52,11 @@ final class JemRegistrationRelocation
      */
     public function confirm(int $id, array $input, object $actor, string $fingerprint, string $operation): object
     {
-        $this->assertManager($actor);
         if (!JemRegistrationIdentity::isOperationReference($operation)) {
             throw new DomainException('COM_JEM_RELOCATION_REVIEW_EXPIRED');
         }
         $eventId = (int) $this->db->setQuery('SELECT event FROM #__jem_register WHERE id=' . $id)->loadResult();
+        $this->assertManager($actor, $eventId);
         $this->db->transactionStart();
         try {
             $this->db->setQuery('SELECT id FROM #__jem_events WHERE id=' . $eventId . ' FOR UPDATE')->loadResult();
@@ -84,7 +87,7 @@ final class JemRegistrationRelocation
             $row = $prepared['before'];
             $after = clone $row;
             $after->places = $review['new_places'];
-            $options = ['actorId' => (int) $actor->id, 'source' => 'administrator.attendee.relocation',
+            $options = ['actorId' => (int) $actor->id, 'source' => $this->source,
                 'action' => 'relocated', 'reasonCode' => $review['financial']['choice'],
                 'operationReference' => $operation, 'expectedRevision' => (int) $row->revision,
                 'requireExisting' => true, 'respectPlaces' => true, 'allowWaiting' => false,
@@ -141,18 +144,26 @@ final class JemRegistrationRelocation
         }
     }
 
-    /** @param object $actor Authenticated operator. @return void Enforce management permission at the service boundary. */
-    private function assertManager(object $actor): void
+    /**
+     * Enforce global management or event-scoped frontend permission.
+     * @param object $actor Authenticated operator.
+     * @param int $eventId Authoritative reservation event.
+     * @return void
+     */
+    private function assertManager(object $actor, int $eventId = 0): void
     {
-        if (empty($actor->id) || (!$actor->authorise('core.admin', 'com_jem') && !$actor->authorise('jem.attendees.manage', 'com_jem'))) {
-            throw new DomainException('JERROR_ALERTNOAUTHOR');
+        if (!empty($actor->id) && ($actor->authorise('core.admin', 'com_jem') || $actor->authorise('jem.attendees.manage', 'com_jem'))) {
+            return;
         }
+        require_once __DIR__ . '/attendeeeditoraccess.class.php';
+        JemAttendeeEditorAccess::assertEvent($this->db, $actor, $eventId);
     }
 
     /** @param int $id Reservation ID. @param array $input Review choices. @param object $actor Operator. @return array Review plus private writer inputs. */
     private function prepare(int $id, array $input, object $actor): array
     {
-        $this->assertManager($actor);
+        $eventId = (int) $this->db->setQuery('SELECT event FROM #__jem_register WHERE id=' . $id)->loadResult();
+        $this->assertManager($actor, $eventId);
         if (!isset($this->db->getTableColumns('#__jem_register_history')['change_snapshot'])) {
             throw new DomainException('COM_JEM_RELOCATION_SCHEMA_REQUIRED');
         }

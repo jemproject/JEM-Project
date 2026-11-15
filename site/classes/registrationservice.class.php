@@ -234,6 +234,19 @@ final class JemRegistrationService
             throw new RuntimeException('The registration was modified by another operation.');
         }
 
+        // Frontend editor protection is evaluated after both rows are locked, so
+        // admission cannot race a change of quantities, status or allocations.
+        if (is_object($before) && !empty($options['protectAdmission'])
+            && ($oldStatus !== $newStatus || (int) $before->places !== (int) $after->places
+                || !empty($capacity['changed']) || !empty($options['forceRevision']))) {
+            $entered = (int) $this->db->setQuery('SELECT COALESCE(SUM(quantity), 0) FROM #__jem_ticket_operations'
+                . ' WHERE registration_reference=' . $this->db->quote($before->reference) . " AND action='admission'"
+            )->loadResult();
+            if ($entered > 0) {
+                throw new DomainException('COM_JEM_RELOCATION_ALREADY_ENTERED');
+            }
+        }
+
         if (is_object($before)) {
             require_once __DIR__ . '/ticketservice.class.php';
             (new JemTicketService($this->db))->reconcile($before, $after);
@@ -645,6 +658,54 @@ final class JemRegistrationService
         return (array) $this->db->loadObjectList();
     }
 
+    /**
+     * Return the current owner's place breakdown without exposing other bookings.
+     *
+     * @param object|null $registration Current registration loaded by the event model.
+     * @param int         $viewerId     Authenticated user requesting the event page.
+     * @return array Rows with ticket type, space, area and quantity; no personal or payment data.
+     */
+    public function ownPlaceBreakdown(?object $registration, int $viewerId): array
+    {
+        if (!$registration || $viewerId < 1 || (int) $registration->uid !== $viewerId
+            || (int) $registration->id < 1 || (int) $registration->revision < 1
+            || !in_array((int) $registration->status, [1, 2], true)) {
+            return [];
+        }
+
+        $areas = $this->loadCapacityAllocationRevision((int) $registration->id, (int) $registration->revision);
+        $rows = [];
+        if (!self::isPricedRegistration($registration)) {
+            foreach ($areas as $area) {
+                if ((int) $area['quantity'] > 0) {
+                    $rows[] = ['type' => '', 'space' => (string) $area['space_name'],
+                        'area' => (string) $area['area_name'], 'quantity' => (int) $area['quantity']];
+                }
+            }
+            return $rows;
+        }
+
+        $query = $this->db->getQuery(true)->select('*')
+            ->from($this->db->quoteName('#__jem_capacity_pools'))
+            ->where($this->db->quoteName('event_id') . ' = ' . (int) $registration->event);
+        $pools = (array) $this->db->setQuery($query)->loadAssocList('id');
+        foreach ($this->commercialItems((int) $registration->id, (int) $registration->revision) as $item) {
+            if ($item->line_kind !== 'admission' || (int) $item->quantity < 1) {
+                continue;
+            }
+            $pool = $pools[(int) $item->capacity_pool_id] ?? [];
+            $areaId = (int) ($pool['venue_capacity_area_id'] ?? 0);
+            $layoutId = (int) ($pool['venue_layout_id'] ?? 0);
+            $area = $areas[$areaId > 0 ? 'area:' . $areaId : 'layout:' . $layoutId] ?? [];
+            if ((int) ($area['venue_layout_id'] ?? 0) !== $layoutId) {
+                $area = [];
+            }
+            $rows[] = ['type' => (string) $item->item_name, 'space' => (string) ($area['space_name'] ?? ''),
+                'area' => (string) ($area['area_name'] ?? $pool['name'] ?? ''), 'quantity' => (int) $item->quantity];
+        }
+        return $rows;
+    }
+
     private function persistCommercialRevision($before, $after, array $options, $now)
     {
         if (!self::isPricedRegistration($after)) {
@@ -913,11 +974,14 @@ final class JemRegistrationService
             ? $this->loadCapacityAllocationRevision($registerId, 0, false)
             : array();
         $used = $this->loadUsedCapacity($eventId, $registerId);
+        // Editing capacity includes the holder's allocation; displayed free places must not.
+        $allUsed = $registerId > 0 ? $this->loadUsedCapacity($eventId) : $used;
         foreach ($catalogue as $key => $option) {
             $usedQuantity = (int) ($used[$key] ?? 0);
             $currentQuantity = (int) ($current[$key]['quantity'] ?? 0);
             $option['used'] = $usedQuantity;
             $option['remaining'] = max(0, (int) $option['capacity'] - $usedQuantity);
+            $option['free_remaining'] = max(0, (int) $option['capacity'] - (int) ($allUsed[$key] ?? 0));
             $option['current_quantity'] = $currentQuantity;
             $option['input_max'] = JemRegistrationQuantity::areaInputMaximum($option, $event);
             $result->options[] = $option;

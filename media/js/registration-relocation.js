@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const box = document.getElementById('jem-relocation');
     if (!box) return;
     const form = document.getElementById('adminForm');
+    const controller = form.dataset.relocationController || 'attendee';
+    const endpoint = form.dataset.relocationEndpoint || 'index.php?option=com_jem&format=json';
     document.getElementById('jem-relocation-notify')?.addEventListener('click', () => {
         form.querySelector('input[name=task]').value = 'attendee.relocationNotify';
         form.submit();
@@ -66,11 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
         busy = true; preview.disabled = true; confirm.disabled = true; error.hidden = true;
         const data = new FormData(form);
         const requestedGeneration = generation;
-        data.set('task', commit ? 'attendee.relocationConfirm' : 'attendee.relocationPreview');
+        data.set('task', controller + (commit ? '.relocationConfirm' : '.relocationPreview'));
         data.set('format', 'json');
         if (commit) data.set('relocation_token', token);
         try {
-            const response = await fetch('index.php?option=com_jem&format=json', { method: 'POST', body: data, credentials: 'same-origin' });
+            const response = await fetch(endpoint, { method: 'POST', body: data, credentials: 'same-origin' });
             const result = await response.json();
             if (!result.success) throw new Error(result.message || tr('FAILED'));
             if (commit) { window.location.reload(); return; }

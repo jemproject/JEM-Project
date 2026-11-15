@@ -261,7 +261,7 @@ $renderChart = static function ($card) {
                 <div class="col-6 col-md-4 col-xl-2">
                     <label class="form-label" for="period"><?php echo Text::_('COM_JEM_STATISTICS_FILTER_PERIOD'); ?></label>
                     <select class="form-select" id="period" name="period">
-                        <?php foreach (array('30d' => 'COM_JEM_STATISTICS_PERIOD_30D', '90d' => 'COM_JEM_STATISTICS_PERIOD_90D', '12m' => 'COM_JEM_STATISTICS_PERIOD_12M', 'all' => 'COM_JEM_STATISTICS_PERIOD_ALL', 'custom' => 'COM_JEM_STATISTICS_PERIOD_CUSTOM') as $value => $label) : ?>
+                        <?php foreach (array('7d' => 'COM_JEM_STATISTICS_PERIOD_7D', '14d' => 'COM_JEM_STATISTICS_PERIOD_14D', '30d' => 'COM_JEM_STATISTICS_PERIOD_30D', '90d' => 'COM_JEM_STATISTICS_PERIOD_90D', '6m' => 'COM_JEM_STATISTICS_PERIOD_6M', '12m' => 'COM_JEM_STATISTICS_PERIOD_12M', '2y' => 'COM_JEM_STATISTICS_PERIOD_2Y', '5y' => 'COM_JEM_STATISTICS_PERIOD_5Y', 'all' => 'COM_JEM_STATISTICS_PERIOD_ALL', 'custom' => 'COM_JEM_STATISTICS_PERIOD_CUSTOM') as $value => $label) : ?>
                             <option value="<?php echo $value; ?>"<?php echo $filters->period === $value ? ' selected' : ''; ?>><?php echo Text::_($label); ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -323,7 +323,7 @@ $renderChart = static function ($card) {
                     </div>
                 <?php endif; ?>
                 <div class="col-12 col-md-auto ms-xl-auto d-flex gap-2">
-                    <button class="btn btn-primary" type="submit"><span class="icon-filter" aria-hidden="true"></span> <?php echo Text::_('JFILTER'); ?></button>
+                    <button class="btn btn-primary" type="submit"><span class="icon-filter" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_FILTER'); ?></button>
                     <a class="btn btn-outline-secondary" href="<?php echo Route::_('index.php?option=com_jem&view=statistics'); ?>"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></a>
                 </div>
             </div>
@@ -401,7 +401,7 @@ $renderChart = static function ($card) {
                 <div class="card-body">
                     <div class="jem-statistics-kpis">
                         <div><span><?php echo Text::_('COM_JEM_STATISTICS_PERIOD_TOTAL'); ?></span><strong><?php echo (int) $card->period_total; ?></strong></div>
-                        <div><span><?php echo Text::_('COM_JEM_STATISTICS_ALL_TIME_TOTAL'); ?></span><strong><?php echo (int) $card->all_total; ?></strong></div>
+                        <div><span><?php echo Text::_($card->key === 'events' ? 'COM_JEM_STATISTICS_FILTERED_EVENTS' : 'COM_JEM_STATISTICS_ALL_TIME_TOTAL'); ?></span><strong><?php echo (int) $card->all_total; ?></strong></div>
                     </div>
                     <?php $renderChart($card); ?>
                     <div class="jem-statistics-summary" aria-label="<?php echo $this->escape(Text::_($card->title_key)); ?>">

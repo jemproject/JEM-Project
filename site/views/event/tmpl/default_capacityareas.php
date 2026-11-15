@@ -37,7 +37,7 @@ if (empty($this->capacityRegistration->enabled)) {
                             name="capacity_areas[<?php echo $this->escape((string) $option['key']); ?>]"
                             min="0" max="<?php echo (int) $option['input_max']; ?>"
                             value="<?php echo (int) $option['current_quantity']; ?>">
-                        <span class="input-group-text"><?php echo Text::sprintf('COM_JEM_CAPACITY_REGISTRATION_AREA_AVAILABLE', (int) $option['remaining']); ?></span>
+                        <span class="input-group-text"><?php echo Text::sprintf('COM_JEM_CAPACITY_REGISTRATION_AREA_AVAILABLE', (int) ($option['free_remaining'] ?? $option['remaining'])); ?></span>
                     </div>
                 </div>
             <?php endforeach; ?>

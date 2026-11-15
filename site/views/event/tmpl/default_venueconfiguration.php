@@ -25,4 +25,22 @@ if (empty($this->venueConfiguration)) {
             </li>
         <?php endforeach; ?>
     </ul>
+    <?php if (!empty($this->venuePlans)) : ?>
+        <details class="jem-event-plans my-3">
+            <summary class="btn btn-outline-secondary"><?php echo Text::_('COM_JEM_EVENT_VIEW_PLAN'); ?></summary>
+            <p class="text-muted mt-2"><?php echo Text::_('COM_JEM_EVENT_PLAN_INFORMATION'); ?></p>
+            <?php foreach ($this->venuePlans as $plan) : ?>
+                <?php $planUrl = \Joomla\CMS\Uri\Uri::root() . implode('/', array_map('rawurlencode', explode('/', $plan['path']))); ?>
+                <figure class="my-3">
+                    <figcaption class="mb-2"><strong><?php echo $this->escape($plan['space'] . ' — ' . $plan['layout']); ?></strong></figcaption>
+                    <a href="<?php echo $this->escape($planUrl); ?>" target="_blank" rel="noopener">
+                        <img src="<?php echo $this->escape($planUrl); ?>" loading="lazy" class="img-fluid"
+                             style="max-width:100%;height:auto"
+                             alt="<?php echo $this->escape($plan['alt'] ?: $plan['space'] . ' — ' . $plan['layout']); ?>">
+                        <span class="d-block"><?php echo Text::_('COM_JEM_EVENT_PLAN_FULL_SIZE'); ?></span>
+                    </a>
+                </figure>
+            <?php endforeach; ?>
+        </details>
+    <?php endif; ?>
 </section>

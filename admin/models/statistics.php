@@ -34,7 +34,7 @@ class JemModelStatistics extends JemModelMain
         }
 
         $period = $input->getCmd('period', '12m');
-        if (!in_array($period, array('30d', '90d', '12m', 'all', 'custom'), true)) {
+        if (!in_array($period, array('7d', '14d', '30d', '90d', '6m', '12m', '2y', '5y', 'all', 'custom'), true)) {
             $period = '12m';
         }
 
@@ -42,6 +42,18 @@ class JemModelStatistics extends JemModelMain
         $today = new DateTimeImmutable('today', $timeZone);
         $to = $today;
         switch ($period) {
+            case '7d':
+                $from = $today->modify('-6 days');
+                break;
+            case '14d':
+                $from = $today->modify('-13 days');
+                break;
+            case '6m':
+            case '2y':
+            case '5y':
+                $months = array('6m' => 5, '2y' => 23, '5y' => 59);
+                $from = $today->modify('first day of this month')->modify('-' . $months[$period] . ' months');
+                break;
             case '30d':
                 $from = $today->modify('-29 days');
                 break;
@@ -67,7 +79,7 @@ class JemModelStatistics extends JemModelMain
 
         $group = $input->getCmd('group', '');
         if (!in_array($group, array('day', 'week', 'month', 'year'), true)) {
-            $group = $period === 'all' ? 'year' : ($period === '12m' ? 'month' : 'day');
+            $group = $period === 'all' ? 'year' : (in_array($period, array('6m', '12m', '2y', '5y'), true) ? 'month' : 'day');
         }
 
         $days = max(1, (int) $from->diff($to)->format('%a') + 1);
@@ -186,7 +198,7 @@ class JemModelStatistics extends JemModelMain
     {
         $commerceEnabled = JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_PRICING);
         $summaries = array(
-            'events' => !empty($permissions['events']) ? $this->getEventsData() : null,
+            'events' => !empty($permissions['events']) ? $this->getFilteredEventSummary($filters) : null,
             'venues' => !empty($permissions['venues']) ? $this->getVenuesData() : null,
             'categories' => $this->getCategoriesData(),
             'types' => $this->getTypesData(),
@@ -196,9 +208,6 @@ class JemModelStatistics extends JemModelMain
             'registrations' => !empty($permissions['registrations']) ? $this->getRegistrationData() : null,
         );
         if ($this->hasEventFilters($filters)) {
-            if ($summaries['events']) {
-                $summaries['events'] = $this->getFilteredEventSummary($filters);
-            }
             if ($summaries['registrations']) {
                 $summaries['registrations'] = $this->getFilteredRegistrationSummary($filters);
             }
@@ -217,10 +226,6 @@ class JemModelStatistics extends JemModelMain
             }
         }
         $hierarchy = $this->getHierarchyData();
-        if ($summaries['events'] && !$this->hasEventFilters($filters)) {
-            $summaries['events']->parents = $hierarchy->event_parents;
-            $summaries['events']->children = $hierarchy->event_children;
-        }
         if ($summaries['venues'] && (int) $filters->venue_id === 0) {
             $summaries['venues']->parents = $hierarchy->venue_parents;
             $summaries['venues']->children = $hierarchy->venue_children;
@@ -282,6 +287,11 @@ class JemModelStatistics extends JemModelMain
             || (int) $filters->author_id > 0;
     }
 
+    /**
+     * Count the same creation-date cohort as the Events statistics chart.
+     * @param object $filters Normalised period, state, hierarchy and event filters.
+     * @return object Counts for the filtered events, never the global inventory.
+     */
     private function getFilteredEventSummary($filters)
     {
         $db = $this->getDatabase();
@@ -296,7 +306,9 @@ class JemModelStatistics extends JemModelMain
                 'SUM(CASE WHEN e.parent_event_id > 0 AND e.published <> -2 THEN 1 ELSE 0 END) AS children',
             ))
             ->from($db->quoteName('#__jem_events', 'e'));
-        foreach ($this->eventFilterConditions($filters, 'e') as $condition) {
+        $query->where('e.created >= ' . $db->quote($filters->from_sql))
+            ->where('e.created < ' . $db->quote($filters->to_exclusive_sql));
+        foreach ($this->eventStatisticsConditions($filters, 'e') as $condition) {
             $query->where($condition);
         }
         $db->setQuery($query);
@@ -799,6 +811,28 @@ class JemModelStatistics extends JemModelMain
         return $conditions;
     }
 
+    /**
+     * Share event state and hierarchy restrictions between the chart and summary.
+     * @param object $filters Normalised dashboard filters.
+     * @param string $alias Trusted query alias, empty for the chart's single table.
+     * @return array SQL conditions using validated identifiers and integer values.
+     */
+    private function eventStatisticsConditions($filters, $alias = '')
+    {
+        $conditions = $this->eventFilterConditions($filters, $alias);
+        $prefix = $alias !== '' ? $alias . '.' : '';
+        if ($filters->state !== '') {
+            $conditions[] = $prefix . 'published = ' . (int) $filters->state;
+        }
+        if ($filters->subtype === 'parent') {
+            $conditions[] = '(' . $prefix . 'parent_event_id IS NULL OR ' . $prefix . 'parent_event_id = 0)';
+        } elseif ($filters->subtype === 'child') {
+            $conditions[] = $prefix . 'parent_event_id > 0';
+        }
+
+        return $conditions;
+    }
+
     private function timeline($metric, $filters, array $permissions)
     {
         $where = array();
@@ -809,15 +843,7 @@ class JemModelStatistics extends JemModelMain
             case 'events':
                 $table = '#__jem_events';
                 $dateExpression = 'created';
-                $this->addStateFilter($where, $filters);
-                foreach ($this->eventFilterConditions($filters) as $condition) {
-                    $where[] = $condition;
-                }
-                if ($filters->subtype === 'parent') {
-                    $where[] = 'parent_event_id = 0';
-                } elseif ($filters->subtype === 'child') {
-                    $where[] = 'parent_event_id > 0';
-                }
+                $where = $this->eventStatisticsConditions($filters);
                 break;
             case 'venues':
                 $table = '#__jem_venues';

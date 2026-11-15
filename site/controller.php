@@ -155,6 +155,7 @@ class JemController extends BaseController
             switch ($viewName) {
                 case 'annualcalendar':
                 case 'attendees':
+                case 'editattendee':
                 case 'attendeeregistrations':
                 case 'registrationstatus':
                 case 'invitations':

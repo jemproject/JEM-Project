@@ -36,6 +36,7 @@ $canDecline = !$registration && !empty($this->item->requestanswer) && $this->all
 } ?>
 <form id="JEM" name="adminForm" method="post"
     action="<?php echo Route::_('index.php?option=com_jem&view=event&id=' . (int) $this->item->id); ?>">
+    <div class="jem-cancellation-action">
     <p>
         <label for="jem_unregister_event">
             <input id="jem_unregister_event" type="radio" name="reg_check" value="-1" checked>
@@ -61,16 +62,18 @@ $canDecline = !$registration && !empty($this->item->requestanswer) && $this->all
             <p><?php echo Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_3'); ?></p>
         <?php endif; ?>
     <?php endif; ?>
+    <?php echo $this->loadTemplate('cancellationdeadline'); ?>
+    </div>
     <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
         <p><label for="reg_comment"><?php echo Text::_('COM_JEM_OPTIONAL_COMMENT'); ?></label></p>
         <textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255"><?php
             echo $this->escape((string) ($registration->comment ?? ''));
         ?></textarea>
     <?php endif; ?>
+    <?php echo $this->loadTemplate('cancellation'); ?>
     <p><button class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend">
         <?php echo Text::_($canCancel ? ($pricedReservation ? 'COM_JEM_PRICED_CANCELLATION_ACTION' : 'COM_JEM_CANCELLATION_ACTION') : 'COM_JEM_SEND_REGISTER'); ?>
     </button></p>
-    <?php echo $this->loadTemplate('cancellation'); ?>
     <input type="hidden" name="rdid" value="<?php echo (int) $this->item->did; ?>">
     <input type="hidden" name="regid" value="<?php echo (int) ($registration->id ?? 0); ?>">
     <input type="hidden" name="task" value="event.userregister">

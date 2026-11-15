@@ -400,12 +400,22 @@ class JemModelAttendee extends BaseDatabaseModel
         return true;
     }
 
+    /** @param string $action Audit action suffix. @return string Editor audit source. */
+    protected function editorSource(string $action): string
+    {
+        return 'administrator.attendee.' . $action;
+    }
+
+    /** @return bool Whether edits must preserve already-recorded admissions. */
+    protected function protectAdmission(): bool
+    {
+        return false;
+    }
+
     /**
-     * Method to store the attendee
-     *
-     * @access public
-     * @return boolean  True on success
-     *
+     * Validate and store an attendee using the common registration services.
+     * @param array $data Editable reservation fields.
+     * @return object|false Saved registration or validation failure.
      */
     public function store($data)
     {
@@ -530,8 +540,9 @@ class JemModelAttendee extends BaseDatabaseModel
                             'comment' => (string) ($data['comment'] ?? $before->comment),
                         ), array(
                             'requireExisting' => true,
-                            'expectedRevision' => (int) $before->revision,
-                            'source' => 'administrator.attendee.order_edit',
+                            'expectedRevision' => (int) ($data['_expected_revision'] ?? $before->revision),
+                            'source' => $this->editorSource('order_edit'),
+                            'protectAdmission' => $this->protectAdmission(),
                         ));
                         $this->_data = $result->after;
                         return $result->after;
@@ -550,11 +561,12 @@ class JemModelAttendee extends BaseDatabaseModel
                 JemRegistrationRelocation::requireReview($db, $before, (int) $status, $service->quoteCapacityAllocations($quote));
                 $options = array(
                     'actorId' => (int) Factory::getApplication()->getIdentity()->id,
-                    'source' => $id > 0 ? 'administrator.attendee.order_edit' : 'administrator.attendee.order_add',
+                    'source' => $id > 0 ? $this->editorSource('order_edit') : $this->editorSource('order_add'),
+                    'protectAdmission' => $this->protectAdmission(),
                     'requestedStatus' => (int) $status,
                 );
                 if ($before) {
-                    $options['expectedRevision'] = max(1, (int) ($before->revision ?? 1));
+                    $options['expectedRevision'] = max(1, (int) ($data['_expected_revision'] ?? $before->revision ?? 1));
                 }
                 $result = $service->confirm(
                     $eventid,
@@ -642,9 +654,11 @@ class JemModelAttendee extends BaseDatabaseModel
                     JemRegistrationTransition::logicalStatus($row), $capacityAllocations);
                 $result = (new JemRegistrationService($db))->save($row, array(
                     'actorId' => (int) Factory::getApplication()->getIdentity()->id,
-                    'source'  => 'administrator.attendee.edit',
+                    'source'  => $this->editorSource('edit'),
+                    'protectAdmission' => $this->protectAdmission(),
                     'respectPlaces' => true,
                     'requireExisting' => true,
+                    'expectedRevision' => (int) ($data['_expected_revision'] ?? $stored->revision ?? 1),
                     'capacityAllocations' => $capacityAllocations,
                 ));
             } catch (Throwable $e) {

@@ -169,7 +169,7 @@ if ($this->showRegForm && empty($this->print)) :
                 $renderSeriesSummary($seriesEvents);
                 ?>
             </p>
-            <p>
+            <div class="jem-booking-action">
                 <input type="radio" name="reg_check" value="1" onclick="check(this, document.getElementById('jem_send_attend'))"
                     <?php if ($this->isregistered !== false
                         && ($placesavailableevent === 0 || ($placesavailableuser === 0 && $statusRegistrationUser != 0))
@@ -257,9 +257,10 @@ if ($this->showRegForm && empty($this->print)) :
                     echo '<div class="px-3 small">' . Text::_('COM_JEM_SERIES_BOOKING_AGE_NOTICE') . '</div>';
                 }
                 ?>
-            </p>
+                <?php echo $this->loadTemplate('capacityareas'); ?>
+            </div>
             <?php if ($placesRegisteredUser || $waitingPlacesUser || $this->item->requestanswer) {?>
-                <p>
+                <div class="jem-cancellation-action">
 
                     <?php if ($this->allowAnnulation || ($this->isregistered != 1) || $waitingPlacesUser) : ?>
                         <input id="jem_unregister_event" type="radio" name="reg_check" value="-1" onclick="check(this, document.getElementById('jem_send_attend'));"
@@ -314,15 +315,13 @@ if ($this->showRegForm && empty($this->print)) :
                         <i class="fa fa-times-circle-o fa-lg jem-unregisterbutton" aria-hidden="true"></i>
                         <?php echo ' '.Text::_('COM_JEM_NOT_ALLOWED_TO_ANNULATE'); ?>
                     <?php endif; ?>
-                </p>
+                    <?php echo $this->loadTemplate('cancellationareas'); ?>
+                    <?php echo $this->loadTemplate('cancellationdeadline'); ?>
+                </div>
             <?php }
 
             $canSendExplicitNoAnswer = !empty($this->item->requestanswer) && $this->isregistered === false;
             $disabledOptions = (($placesavailableuser && !$this->allowRegistration) || (!$placesavailableuser && $this->allowRegistration && !$this->allowAnnulation) || (!$this->allowAnnulation && !$this->allowRegistration)) && !$canSendExplicitNoAnswer;
-
-            if (!empty($this->capacityRegistration->enabled)) {
-                echo $this->loadTemplate('capacityareas');
-            }
 
             //Comment?>
             <?php if (!empty($this->jemsettings->regallowcomments)) { ?>
@@ -332,13 +331,13 @@ if ($this->showRegForm && empty($this->print)) :
                             echo $this->escape((string) $this->registration->comment);
                         } ?></textarea></p>
             <?php } ?>
+            <?php echo $this->loadTemplate('cancellation'); ?>
             <p>
                 <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend"
                     <?php echo ($disabledOptions? 'disabled="disabled"':'');?>
                        value="<?php echo ($placesRegisteredUser ? Text::_('COM_JEM_SEND_REGISTER') : Text::_('COM_JEM_REGISTER')); ?>"  />
             </p>
 
-            <?php echo $this->loadTemplate('cancellation'); ?>
             <input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />
             <input type="hidden" name="regid" value="<?php echo (is_object($this->registration) ? $this->registration->id : 0); ?>" />
             <input type="hidden" name="task" value="event.userregister"/>

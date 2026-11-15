@@ -22,6 +22,8 @@ use Joomla\String\StringHelper;
  */
 class JemViewEvent extends JemView
 {
+    /** @var bool Prevent repeating a deadline already shown inside the cancellation action. */
+    public $cancellationDeadlineRendered = false;
     public $item;
     public $params;
     public $print;
@@ -478,6 +480,10 @@ class JemViewEvent extends JemView
             (int) $item->id,
             is_object($registration) ? (int) $registration->id : 0
         );
+        $this->ownPlaceBreakdown = (new JemRegistrationService())->ownPlaceBreakdown(
+            is_object($registration) ? $registration : null,
+            (int) $this->user->id
+        );
         $showVenueConfiguration = (int) $item->params->get('event_show_venue_configuration', -1);
         if ($showVenueConfiguration < 0) {
             $showVenueConfiguration = (int) $settings->get('event_show_venue_configuration', 1);
@@ -486,6 +492,7 @@ class JemViewEvent extends JemView
         $this->venueConfiguration = $this->showVenueConfiguration
             ? JemVenueSnapshot::lines($item)
             : array();
+        $this->venuePlans = $this->showVenueConfiguration ? $model->getVenuePlans($item) : [];
         $this->dispatcher    = $dispatcher;
         $pageclass_sfx          =  $item->params->get('pageclass_sfx');
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;

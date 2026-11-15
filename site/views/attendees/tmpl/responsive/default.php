@@ -251,7 +251,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                     </div>
 
                     <div class="jem-event-info-small jem-attendee-name">
-                        <?php echo $this->escape($row->$namefield); ?>
+                        <a href="<?php echo Route::_('index.php?option=com_jem&view=editattendee&layout=default&id=' . (int) $row->id); ?>"><?php echo $this->escape($row->$namefield); ?></a>
                     </div>
 
                     <?php if ($this->enableemailaddress == 1) :?>

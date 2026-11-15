@@ -41,6 +41,63 @@ class JemModelEvent extends ItemModel
     private array $cancellationResults = array();
 
     /**
+     * Load existing plan images for the exact layouts assigned to a visible event.
+     * Media is mutable; capacity and layout selection remain in the event snapshot.
+     *
+     * @param object $event Authorised event loaded by this model.
+     * @return array Local plan images with snapshot room and layout labels.
+     */
+    public function getVenuePlans(object $event): array
+    {
+        require_once dirname(__DIR__) . '/classes/venuesnapshot.class.php';
+        require_once dirname(__DIR__) . '/classes/venueimagepath.class.php';
+        $snapshot = JemVenueSnapshot::decode($event);
+        $venueId = (int) ($snapshot['venue_id'] ?? 0);
+        if ($venueId < 1 || $venueId !== (int) ($event->locid ?? 0)) {
+            return [];
+        }
+
+        $selected = [];
+        foreach ((array) ($snapshot['spaces'] ?? []) as $space) {
+            $spaceId = (int) ($space['id'] ?? 0);
+            $layoutId = (int) ($space['layout']['id'] ?? 0);
+            if ($spaceId > 0 && $layoutId > 0) {
+                $selected[$layoutId] = $space;
+            }
+        }
+        if (!$selected) {
+            return [];
+        }
+        $db = $this->getDatabase();
+        $query = $db->getQuery(true)->select('l.id, l.venue_space_id, l.image, l.image_alt')
+            ->from($db->quoteName('#__jem_venue_layouts', 'l'))
+            ->join('INNER', $db->quoteName('#__jem_venue_spaces', 's') . ' ON s.id = l.venue_space_id')
+            ->where('s.venue_id = ' . $venueId)
+            ->where('l.id IN (' . implode(',', array_keys($selected)) . ')');
+        $plans = [];
+        foreach ($db->setQuery($query)->loadObjectList() as $layout) {
+            $space = $selected[(int) $layout->id];
+            $filename = (string) $layout->image;
+            if ((int) $space['id'] !== (int) $layout->venue_space_id
+                || $filename !== basename(str_replace('\\', '/', $filename))
+                || !preg_match('/\.(?:png|jpe?g|gif|webp|avif)$/iD', $filename)) {
+                continue;
+            }
+            $path = JemVenueImagePath::imagePath(
+                JemVenueImagePath::layoutFolder($venueId, (int) $space['id'], (int) $layout->id),
+                $filename
+            );
+            if (!is_file(JPATH_SITE . '/' . $path)) {
+                continue;
+            }
+            $plans[] = ['path' => $path, 'space' => (string) ($space['name'] ?? ''),
+                'layout' => (string) ($space['layout']['name'] ?? ''), 'alt' => (string) $layout->image_alt];
+        }
+
+        return $plans;
+    }
+
+    /**
      * Method to auto-populate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
@@ -1068,7 +1125,7 @@ class JemModelEvent extends ItemModel
         // usercheck
         // -1 if user will not attend, 0 if invened/unknown, 1 if registeredm 2 if on waiting list
         try {
-            $query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment, places, revision, pricing_mode, invitation_key'
+            $query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, uid, event, comment, places, revision, pricing_mode, invitation_key'
                 . ' FROM #__jem_register'
                 . ' WHERE uid = ' . $this->_db->quote($userid)
                 . ' AND event = ' . $this->_db->quote($eventId);

@@ -255,7 +255,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                     <tr class="row<?php echo $i % 2; ?>">
                         <td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
                         <!--td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td-->
-                        <td><?php echo $this->escape($row->$namefield); ?></td>
+                        <td><a href="<?php echo Route::_('index.php?option=com_jem&view=editattendee&layout=default&id=' . (int) $row->id); ?>"><?php echo $this->escape($row->$namefield); ?></a></td>
                         <?php if ($this->enableemailaddress == 1) : ?>
                         <td><a href="mailto:<?php echo htmlspecialchars((string) $row->email, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $this->escape($row->email); ?></a></td>
                         <?php endif; ?>

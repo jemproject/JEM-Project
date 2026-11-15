@@ -310,6 +310,7 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
             <dd><a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES') ?> <i class="icon-out-2" aria-hidden="true"></i></a></dd>
         <?php endif; ?>
     </dl>
+    <?php echo $this->loadTemplate('ownplaces'); ?>
     <?php if (!empty($this->registrationStatusMessage)) : ?>
         <p class="alert alert-warning" role="status"><?php echo Text::_($this->registrationStatusMessage); ?></p>
     <?php endif; ?>
