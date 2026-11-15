@@ -40,8 +40,8 @@ final class RegistrationCapacityConcurrencySecurityTest extends TestCase
         self::assertNotFalse($writeLoop);
         self::assertTrue($lockLoop < $writeLoop);
         self::assertTrue(strpos($batch, 'lockEvent(') < strpos($batch, 'saveLocked('));
-        self::assertTrue(strpos($batch, 'saveLocked(') < strpos($batch, 'transactionCommit()'));
-        self::assertStringContainsString('transactionRollback()', $batch);
+        self::assertTrue(strpos($batch, 'saveLocked(') < strpos($batch, 'transactionCommit($useSavepoint)'));
+        self::assertStringContainsString('transactionRollback($useSavepoint)', $batch);
     }
 
     public function testFrontendUsesTheAtomicBatchForNewAndExistingRegistrations(): void

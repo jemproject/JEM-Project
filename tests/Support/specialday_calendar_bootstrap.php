@@ -75,8 +75,17 @@ $document = new class {
 };
 Joomla\CMS\Factory::$document = $document;
 Joomla\CMS\Factory::$application = new class ($document, $language) {
+    public Joomla\Input\Input $input;
+
     public function __construct(private object $document, private object $language)
     {
+        $this->input = new Joomla\Input\Input([]);
+    }
+
+    /** @param string $client Client name. @return bool Isolated CLI context, with no request URL. */
+    public function isClient(string $client): bool
+    {
+        return $client === 'cli';
     }
 
     public function getDocument(): object
@@ -87,6 +96,12 @@ Joomla\CMS\Factory::$application = new class ($document, $language) {
     public function getLanguage(): object
     {
         return $this->language;
+    }
+
+    /** @return Joomla\Registry\Registry Fixed timezone for isolated calendar validation. */
+    public function getConfig(): Joomla\Registry\Registry
+    {
+        return new Joomla\Registry\Registry(['offset' => 'UTC']);
     }
 
     public function getIdentity(): object

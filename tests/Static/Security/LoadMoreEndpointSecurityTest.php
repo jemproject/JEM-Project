@@ -42,7 +42,8 @@ final class LoadMoreEndpointSecurityTest extends TestCase
         $partial = $this->read('site/common/views/tmpl/responsive/default_jem_eventslist_item.php');
 
         self::assertStringContainsString('/default_jem_eventslist_item.php', $controller);
-        self::assertStringContainsString("require __DIR__ . '/default_jem_eventslist_item.php';", $template);
+        self::assertStringContainsString("require is_file(__DIR__ . '/default_jem_eventslist_item.php')", $template);
+        self::assertStringContainsString("JPATH_SITE . '/components/com_jem/common/views/tmpl/responsive/default_jem_eventslist_item.php'", $template);
         self::assertStringNotContainsString('private function renderEventItems', $controller);
         self::assertStringNotContainsString('onclick=', $partial);
         self::assertStringContainsString('data-jem-event-url=', $partial);

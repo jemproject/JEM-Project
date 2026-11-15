@@ -17,6 +17,7 @@ site/views/annualcalendar/tmpl/default.xml|onlyfeatured
 site/views/annualcalendar/tmpl/default.xml|show_addevent_icon
 site/views/annualcalendar/tmpl/default.xml|show_archived_events
 site/views/annualcalendar/tmpl/default.xml|show_only_start
+site/views/annualcalendar/tmpl/default.xml|show_status_indicators
 site/views/annualcalendar/tmpl/default.xml|show_types_of_days_legend
 site/views/annualcalendar/tmpl/default.xml|showfootertext
 site/views/annualcalendar/tmpl/default.xml|showintrotext
@@ -52,6 +53,7 @@ site/views/calendar/tmpl/default.xml|show_archived_events
 site/views/calendar/tmpl/default.xml|show_copyevent_icon
 site/views/calendar/tmpl/default.xml|show_editevent_icon
 site/views/calendar/tmpl/default.xml|show_only_start
+site/views/calendar/tmpl/default.xml|show_status_indicators
 site/views/calendar/tmpl/default.xml|show_types_of_days_legend
 site/views/calendar/tmpl/default.xml|show_year_navigation
 site/views/calendar/tmpl/default.xml|showfootertext
@@ -72,6 +74,7 @@ site/views/categories/tmpl/default.xml|show_category_description
 site/views/categories/tmpl/default.xml|show_category_events
 site/views/categories/tmpl/default.xml|show_category_image
 site/views/categories/tmpl/default.xml|show_category_type
+site/views/categories/tmpl/default.xml|show_status_indicators
 site/views/categories/tmpl/default.xml|showemptycats
 site/views/categories/tmpl/default.xml|showemptychilds
 site/views/categories/tmpl/default.xml|showfootertext
@@ -101,6 +104,7 @@ site/views/category/tmpl/calendar.xml|show_archived_events
 site/views/category/tmpl/calendar.xml|show_copyevent_icon
 site/views/category/tmpl/calendar.xml|show_editevent_icon
 site/views/category/tmpl/calendar.xml|show_only_start
+site/views/category/tmpl/calendar.xml|show_status_indicators
 site/views/category/tmpl/calendar.xml|show_types_of_days_legend
 site/views/category/tmpl/calendar.xml|show_year_navigation
 site/views/category/tmpl/calendar.xml|showfootertext
@@ -187,6 +191,7 @@ site/views/day/tmpl/timetable.xml|footertext
 site/views/day/tmpl/timetable.xml|introtext
 site/views/day/tmpl/timetable.xml|onlyfeatured
 site/views/day/tmpl/timetable.xml|show_empty_days
+site/views/day/tmpl/timetable.xml|show_status_indicators
 site/views/day/tmpl/timetable.xml|show_week_navigation
 site/views/day/tmpl/timetable.xml|showfootertext
 site/views/day/tmpl/timetable.xml|showintrotext
@@ -285,6 +290,7 @@ site/views/eventsmap/tmpl/default.xml|show_directions_link
 site/views/eventsmap/tmpl/default.xml|show_events_table
 site/views/eventsmap/tmpl/default.xml|show_full_map_link
 site/views/eventsmap/tmpl/default.xml|show_my_location
+site/views/eventsmap/tmpl/default.xml|show_status_indicators
 site/views/eventsmap/tmpl/default.xml|show_table_city
 site/views/eventsmap/tmpl/default.xml|show_table_country
 site/views/eventsmap/tmpl/default.xml|show_table_county
@@ -295,6 +301,7 @@ site/views/myattendances/tmpl/default.xml|filtermyregs
 site/views/myattendances/tmpl/default.xml|footertext
 site/views/myattendances/tmpl/default.xml|introtext
 site/views/myattendances/tmpl/default.xml|myregspast
+site/views/myattendances/tmpl/default.xml|show_status_indicators
 site/views/myattendances/tmpl/default.xml|showcat
 site/views/myattendances/tmpl/default.xml|showcity
 site/views/myattendances/tmpl/default.xml|showcomment
@@ -311,6 +318,7 @@ site/views/myattendances/tmpl/timeline.xml|filtermyregs
 site/views/myattendances/tmpl/timeline.xml|footertext
 site/views/myattendances/tmpl/timeline.xml|introtext
 site/views/myattendances/tmpl/timeline.xml|myregspast
+site/views/myattendances/tmpl/timeline.xml|show_status_indicators
 site/views/myattendances/tmpl/timeline.xml|showfootertext
 site/views/myattendances/tmpl/timeline.xml|showintrotext
 site/views/myattendances/tmpl/timeline.xml|timeline_show_axis_date
@@ -319,6 +327,7 @@ site/views/myevents/tmpl/default.xml|displayattendeecolumn
 site/views/myevents/tmpl/default.xml|enableemailaddress
 site/views/myevents/tmpl/default.xml|footertext
 site/views/myevents/tmpl/default.xml|introtext
+site/views/myevents/tmpl/default.xml|show_status_indicators
 site/views/myevents/tmpl/default.xml|showcat
 site/views/myevents/tmpl/default.xml|showcity
 site/views/myevents/tmpl/default.xml|showdate
@@ -333,6 +342,7 @@ site/views/mytimeline/tmpl/default.xml|introtext
 site/views/mytimeline/tmpl/default.xml|mytimeline_include_registered
 site/views/mytimeline/tmpl/default.xml|mytimeline_purposes
 site/views/mytimeline/tmpl/default.xml|mytimelinepast
+site/views/mytimeline/tmpl/default.xml|show_status_indicators
 site/views/mytimeline/tmpl/default.xml|showfootertext
 site/views/mytimeline/tmpl/default.xml|showintrotext
 site/views/mytimeline/tmpl/default.xml|timeline_show_axis_date
@@ -414,6 +424,7 @@ site/views/venue/tmpl/calendar.xml|show_archived_events
 site/views/venue/tmpl/calendar.xml|show_copyevent_icon
 site/views/venue/tmpl/calendar.xml|show_editevent_icon
 site/views/venue/tmpl/calendar.xml|show_only_start
+site/views/venue/tmpl/calendar.xml|show_status_indicators
 site/views/venue/tmpl/calendar.xml|show_types_of_days_legend
 site/views/venue/tmpl/calendar.xml|show_venue_selector
 site/views/venue/tmpl/calendar.xml|show_venue_title
@@ -511,6 +522,7 @@ site/views/weekcal/tmpl/default.xml|show_archived_events
 site/views/weekcal/tmpl/default.xml|show_copyevent_icon
 site/views/weekcal/tmpl/default.xml|show_editevent_icon
 site/views/weekcal/tmpl/default.xml|show_only_start
+site/views/weekcal/tmpl/default.xml|show_status_indicators
 site/views/weekcal/tmpl/default.xml|show_types_of_days_legend
 site/views/weekcal/tmpl/default.xml|show_year_navigation
 site/views/weekcal/tmpl/default.xml|showfootertext
