@@ -60,6 +60,7 @@ ul.mod_jemcalq_grid.daynames {
   padding-top: 100%;
 }
 
+.mod_jemcalq_grid.days > li > a,
 .mod_jemcalq_grid > li > .event,
 .mod_jemcalq_grid > li > .hasTooltip,
 .mod_jemcalq_grid > li > .hasTip {
